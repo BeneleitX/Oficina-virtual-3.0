@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es" data-overlayscrollbars-initialize>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="scabbia@gmail.com">
+        <meta name="generator" content="Hugo 0.122.0">
+        <title>BENELEIT</title>
+
+        <link href="<?php echo base_url(); ?>assets/css/bootstrap.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/fontawesome.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/OverlayScrollbars.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/beneleit.css" rel="stylesheet">
+        
+        <script src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
+        <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
+
+    </head>
+    <body data-overlayscrollbars-initialize>
