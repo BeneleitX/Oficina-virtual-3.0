@@ -1,0 +1,13 @@
+
+### CodeIgniter ###
+*/config/development
+*/logs/log-*.php
+!*/logs/index.html
+writable/cache/*
+writable/logs/*
+debugbar*
+!*/cache/index.html
+!*/cache/.htaccess
+writable/logs/*
+.env
+
