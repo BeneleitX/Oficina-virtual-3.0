@@ -10,3 +10,5 @@ $routes->get('/inicio', 'Dashboard::inicio');
 $routes->get('/login', 'Sesion::login');
 $routes->get('/logout', 'Sesion::logout');
 $routes->get('/oauth', 'Sesion::procesa_login');
+$routes->get('/perfil', 'Usuario::perfil');
+$routes->get('/tienda', 'Tienda::carrito'); 

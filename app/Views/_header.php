@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" data-overlayscrollbars-initialize>
+<html lang="es" class="<?php echo $navbar ? "" : "full-body"; ?>">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,4 +17,6 @@
         <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
 
     </head>
-    <body data-overlayscrollbars-initialize>
+    <body class="<?php echo $navbar ? "" : "full-body"; ?>">
+        <div class="container-fluid">
+        

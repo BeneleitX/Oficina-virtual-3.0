@@ -1,14 +1,16 @@
 html, body{
-    background: #f0f0f0;
+    background: #fff;
+}
+
+.full-body {
+    background: #dcf5f5;
 }
 
 #contenedor-main {
 }
 
 #contenedor-body {
-    padding:15px;
     margin: 0 0 0 80px;
-    background: #f0f0f0; --e7e7e7
 }
 
 #contenedor-menu {
@@ -20,7 +22,7 @@ html, body{
     z-index: 1030;
     height:100%;
     width:80px;
-    background: #fff;
+    background: var(--bs-secondary);
     color: #aaa;
 }
 
@@ -29,15 +31,24 @@ a.menu-opcion{
     padding:10px 0;
     display:block;
     font-size:30px;
-    color: #abadb1;
+    color: rgba(255,255,255,0.4);
+
+    border: 3px solid transparent;
+
+    -moz-transition: all .5s ease-in-out;
+    -o-transition: all .5s ease-in-out;
+    -webkit-transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
 }
 
 a.menu-opcion:hover, a.menu-opcion:active {
-    color: #4eac6d;
+    color: var(--bs-teal);
+    border-left: 3px solid var(--bs-teal);
 }         
 
 a.menu-opcion.selected{
-    color: #4eac6d;
+    color: var(--bs-primary);
+    border-left: 3px solid var(--bs-primary);
 }
 
 .avatar img{
@@ -65,7 +76,7 @@ a.menu-opcion.selected{
     #contenedor-menu {
         right: 0;
         top: auto;
-        height:80px;
+        height:65px;
         width:auto;
         text-align:center;
     }    
@@ -77,6 +88,16 @@ a.menu-opcion.selected{
         display:inline-block;
     }   
 
+    a.menu-opcion:hover, a.menu-opcion:active {
+        border-left: 3px solid transparent;
+        border-bottom: 3px solid #13D3B3;
+    }         
+    
+    a.menu-opcion.selected{
+        border-left:none;
+        border-bottom: 3px solid var(--bs-primary);
+    }
+    
     .avatar img{
         margin: 0 0 10px 0;
         left:18px;

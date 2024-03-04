@@ -17,20 +17,20 @@
     </a>
   <ul class="dropdown-menu">
     <li>
-        <a class="dropdown-item" href="#">
+        <a class="dropdown-item d-none" href="#">
             <div style="width:200px; height:200px; border:1px solid gray; border-radius:8px;">
             </div>
         </a>
     </li>
-    <li><a class="dropdown-item" href="#"><i class="fa fa-user"></i> Perfil de socio</a></li>
-    <li><a class="dropdown-item" href="/logout"><i class="fa fa-right-from-bracket"></i> Cerrar sesión</a></li>
+    <li><a class="dropdown-item" href="<?php echo base_url( "perfil" ); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
+    <li><a class="dropdown-item" href="<?php echo base_url( "logout" ); ?>"><i class="fa fa-right-from-bracket"></i> Cerrar sesión</a></li>
   </ul>
 </div>
 
-    <a data-bs-toggle="tooltip" title="Inicio" class="menu-opcion selected" href="#"><i class="fa fa-house"></i></a>
+    <a data-bs-toggle="tooltip" title="Inicio" class="menu-opcion selected" href="<?php echo base_url( "inicio" ); ?>"><i class="fa fa-house"></i></a>
     <a data-bs-toggle="tooltip" title="Recompensas" class="menu-opcion" href="#"><i class="fa fa-award"></i></a>
     <a data-bs-toggle="tooltip" title="Balance" class="menu-opcion" href="#"><i class="fa fa-sack-dollar"></i></a>
-    <a data-bs-toggle="tooltip" title="Tienda" class="menu-opcion" href="#"><i class="fa fa-cart-shopping"></i></a>
+    <a data-bs-toggle="tooltip" title="Tienda" class="menu-opcion" href="<?php echo base_url( "tienda" ); ?>"><i class="fa fa-cart-shopping"></i></a>
     <a data-bs-toggle="tooltip" title="Redes" class="menu-opcion" href="#"><i class="fa fa-diagram-project"></i></a>
     <a data-bs-toggle="tooltip" title="Comunicación" class="menu-opcion" href="#"><i class="fa fa-comment-dots"></i></a>            
 
