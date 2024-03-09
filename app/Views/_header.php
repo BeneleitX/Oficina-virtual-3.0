@@ -6,6 +6,8 @@
         <meta name="description" content="">
         <meta name="author" content="scabbia@gmail.com">
         <meta name="generator" content="Hugo 0.122.0">
+        <?php echo csrf_meta() ?>
+
         <title>BENELEIT</title>
 
         <link href="<?php echo base_url(); ?>assets/css/bootstrap.css" rel="stylesheet">
@@ -18,5 +20,4 @@
 
     </head>
     <body class="<?php echo $navbar ? "" : "full-body"; ?>">
-        <div class="container-fluid">
         

@@ -44,25 +44,3 @@
 </div>
 
 
-
-3 niveles
-puntos
-color del status actual
-color del estatus mes anterior
-calificación
-tipo calificación
-tipo calificación mes anterior
-
-detalle de socio 
-- datos de contacto solo de tus patrocinados
-- rango
-- compra
-- estatus
-- conteo de bono profundidad
-
-
-open pay
-
-codigo postal
-opción a colonia "nueva"
-en registro

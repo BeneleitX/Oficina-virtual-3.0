@@ -91,8 +91,8 @@
   --bs-secondary-bg-rgb: 233, 236, 239;
   --bs-tertiary-color: rgba(33, 37, 41, 0.5);
   --bs-tertiary-color-rgb: 33, 37, 41;
-  --bs-tertiary-bg: #f8f9fa;
-  --bs-tertiary-bg-rgb: 248, 249, 250;
+  --bs-tertiary-bg: #dcf5f5;
+  --bs-tertiary-bg-rgb: 220, 245, 245;
   --bs-heading-color: inherit;
   --bs-link-color: var(--bs-primary);
   --bs-link-color-rgb: 13, 110, 253;
@@ -345,7 +345,7 @@ strong {
 }
 
 small, .small {
-  font-size: 0.875em;
+  font-size: 0.7em;
 }
 
 mark, .mark {

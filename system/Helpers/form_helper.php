@@ -759,7 +759,9 @@ if (! function_exists('validation_show_error')) {
             throw ValidationException::forInvalidTemplate($template);
         }
 
-        return $view->setVar('error', implode("\n", $errors))
+        return $view
+            ->setVar('field', $field)
+            ->setVar('error', implode("\n", $errors))
             ->render($config->templates[$template]);
     }
 }
