@@ -1,6 +1,7 @@
 <?php
-
 namespace App\Controllers;
+
+use App\Entities\Usuario;
 
 class Sesion extends BaseController
 {
@@ -21,9 +22,8 @@ class Sesion extends BaseController
 
     public function procesa_login(){
 
-        $data = $this->request->getPost();
-
         $validation = service("validation");
+
         $validation->setRules([
             "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
             "socio_password" => "required"
@@ -45,12 +45,13 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-        if(0) {
-            //return redirect()->back()->with
-        }
-        $this->session->set( "usuario", $data[ "socio_id" ] );
+        $data = $this->request->getPost();
 
-//        return redirect()->route( "inicio" )->with('message', "The event was succesfully removed"); 
-        return redirect()->route( "inicio" )->with('msg', [ "type" => "success", "body" => "The event was succesfully removed"]); 
+        $this->session->set( "usuario", model( "UsuarioModel" )->find( $data[ "socio_id" ] ) );
+
+        return redirect()->route( "inicio" )->with('msg', [ 
+            "clase" => "success", 
+            "icono" => "user-check", 
+            "texto" => "Sesión de usuario iniciada con éxito"]); 
     }
 }

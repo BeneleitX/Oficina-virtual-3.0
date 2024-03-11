@@ -1,4 +1,4 @@
-        
+            </div>        
         <script src="<?php echo base_url(); ?>assets/js/popper.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/bootstrap.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/OverlayScrollbars.js"></script>
@@ -27,12 +27,17 @@
                 if( Notification.permission !== "granted" ){  
                     // Notification.requestPermission();
 
-                    alerta( 'no_notifica', 'warning', 'No has autorizado las notificaciones. <button class="btn btn-sm btn-warning" onclick="activa_notificaciones()">Autorizar</button>' );
+                    alerta( 'warning', 'warning', 'No has autorizado las notificaciones. <button class="btn btn-sm btn-warning" onclick="activa_notificaciones()">Autorizar</button>', 'no_notifica' );
                 }
             }
 
+            $( '.submit' ).on( 'click', function(){
+                $( this ).attr( 'disabled', true ).html( '<i class="fa fa-circle-notch fa-spin"></i> Espere...' );
+                $( this ).closest( 'form' ).submit();
+            });
 
-            function notify(){
+
+            function notify( $mensaje ){
                 // SI existe la propiedad de notificaciones en el navegador actual
                 if( "Notification" in window ){
 
@@ -40,7 +45,7 @@
                     if( Notification.permission === "granted" ){  
                         // Check whether notification permissions have already been granted;
                         // if so, create a notification
-                        const notification = new Notification("Hi there!");
+                        const notification = new Notification( $mensaje );
                     }
                 }
             }
@@ -56,21 +61,16 @@
             }
 
 
-            function alerta( id, tipo, mensaje ){
+            function alerta( clase, icono, mensaje, id = null ){
 
-                switch( tipo ){
-                    case 'warning' : 
-                        icono = 'warning';
-                        clase = 'warning';
-                        break;
+                $( '#contenedor-body' ).prepend( '<div ' + (id ? 'id="alerta_'+id : '') + '" class="alerta alert alert-' + clase + '"><i class="fa fa-' + icono + '"></i> ' + mensaje + '</div>' );
 
-                    default:
-                        icono = 'info';
-                        clase = 'info';   
-                }
-
-                $( '#contenedor-body' ).prepend( '<div id="alerta_' + id + '" class="alert alert-' + clase + '"><i class="fa fa-' + icono + '"></i> ' + mensaje + '</div>' );
+                $(".alerta").fadeTo(5000, 500).slideUp(500, function() {
+                    $(".alerta").slideUp();
+                });
             }
+
+            <?php if( session( "msg" ) !== null ) echo alertas( session('msg') ); ?>
 
         </script>
     </body>

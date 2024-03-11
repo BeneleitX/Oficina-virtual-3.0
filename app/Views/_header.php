@@ -19,5 +19,6 @@
         <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
 
     </head>
-    <body class="<?php echo $navbar ? "" : "full-body"; ?>">
-        
+    <body class="">
+        <div class="p-3 <?php echo $navbar ? "con-navbar" : ""; ?>" id="contenedor-body">
+            

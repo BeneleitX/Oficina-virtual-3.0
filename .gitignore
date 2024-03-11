@@ -3,9 +3,7 @@
 */config/development
 */logs/log-*.php
 !*/logs/index.html
-writable/cache/*
-writable/logs/*
-writable/session/*
+writable/*
 debugbar*
 !*/cache/index.html
 !*/cache/.htaccess

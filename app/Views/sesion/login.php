@@ -1,5 +1,3 @@
-<div class="p-3">
-    <?php if( session( "message" ) !== null ) echo session('message'); ?>
 	<div class="row">
 		<div class="col-8 offset-2 col-md-4 offset-md-4 col-lg-3 offset-lg-8 col-xl-2 offset-xl-9" style="padding-top:50px">
 			<p class="text-center"><img src="<?php echo base_url(); ?>assets/img/logo_color.png" class="w-50 mb-4"></p>
@@ -15,13 +13,12 @@
 						<p class="small text-danger"><?php echo session( "errors.socio_password" ); ?></p>
 						<p class="text-center mt-3"><a href="#">¿Olvidaste tu password?</a></p>
 						<hr class="b-primary">
-						<p class="mt-3 mb-1 text-end"><button id="submit_login" class="btn btn-primary rounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
+						<p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary rounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
 					</form>
 				</div>
 				
 			</div>
-			<p class="text-center">¿Aun no eres socio?<br><a href="#"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+			<p class="text-center">¿Aun no eres socio?<br><a href="<?php echo base_url( "registro" ); ?>"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
 		</div>
 	</div>
-</div>
 

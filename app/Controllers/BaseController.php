@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
@@ -8,6 +7,8 @@ use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+
+
 
 /**
  * Class BaseController
@@ -35,7 +36,7 @@ abstract class BaseController extends Controller
      *
      * @var array
      */
-    protected $helpers = [ "template", "form" ];
+    protected $helpers = [ "template", "form", "tools" ];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -61,5 +62,6 @@ abstract class BaseController extends Controller
 
         $this->session = session();
         $this->data[ "usuario" ] = session( "usuario" );
+
     }
 }

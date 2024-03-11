@@ -8,7 +8,7 @@ function template($url, $data)
     // carga central de vista
     $html .= view( $url, $data );
 
-    if( $data[ "usuario" ] && $data[ "navbar" ] ){
+    if( $data[ "navbar" ] ){
         $html .= view( "_navbar", $data );
     }
 

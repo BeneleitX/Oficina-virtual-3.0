@@ -1,3 +1,4 @@
+</div>
 <div id="contenedor-menu" class="">
 <div class="dropdown dropup" style="display: inline;">
   <a class="menu-opcion avatar" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,5 +34,3 @@
     <a data-bs-toggle="tooltip" title="Tienda" class="menu-opcion" href="<?php echo base_url( "tienda" ); ?>"><i class="fa fa-cart-shopping"></i></a>
     <a data-bs-toggle="tooltip" title="Redes" class="menu-opcion" href="#"><i class="fa fa-diagram-project"></i></a>
     <a data-bs-toggle="tooltip" title="Comunicación" class="menu-opcion" href="#"><i class="fa fa-comment-dots"></i></a>            
-
-</div>
