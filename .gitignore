@@ -5,9 +5,9 @@
 !*/logs/index.html
 writable/cache/*
 writable/logs/*
+writable/session/*
 debugbar*
 !*/cache/index.html
 !*/cache/.htaccess
-writable/logs/*
 .env
 
