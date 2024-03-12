@@ -5,9 +5,7 @@
     <h4 class="text-center mb-4"><?php echo $titulo; ?></h4>
     <div class="col-12">
         <div class="card mb-3">
-        <div class="card-body">
-
-<?php d( $nuevo ) ?>
+            <div class="card-body">
 
             </div>
         </div>

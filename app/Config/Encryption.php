@@ -21,7 +21,7 @@ class Encryption extends BaseConfig
      * You need to ensure it is long enough for the cipher and mode you plan to use.
      * See the user guide for more info.
      */
-    public string $key = '';
+    public string $key = 'B3n3l31t';
 
     /**
      * --------------------------------------------------------------------------
@@ -55,7 +55,7 @@ class Encryption extends BaseConfig
      *
      * HMAC digest to use, e.g. 'SHA512' or 'SHA256'. Default value is 'SHA512'.
      */
-    public string $digest = 'SHA512';
+    public string $digest = 'SHA256';
 
     /**
      * Whether the cipher-text should be raw. If set to false, then it will be base64 encoded.

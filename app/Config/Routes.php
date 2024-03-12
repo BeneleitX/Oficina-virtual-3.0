@@ -10,8 +10,8 @@ $routes->get('login', 'Sesion::login');
 $routes->get('logout', 'Sesion::logout');
 $routes->post('oauth', 'Sesion::procesa_login');
 
-$routes->get('registro', 'Registro::formulario');
-$routes->get('registro_exito', 'Registro::registro_exito');
+$routes->get('formulario', 'Registro::formulario');
+$routes->get('registro_exito/(:num)', 'Registro::registro_exito/$1');
 $routes->post('procesa_registro', 'Registro::procesa_registro');
 
 $routes->group('/',  ['filter' => 'auth'], static function ($routes) {

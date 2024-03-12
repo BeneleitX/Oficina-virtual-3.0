@@ -92,4 +92,3 @@
         <p class="text-center"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Regresar</a></p>
     </div>
 </div>
-

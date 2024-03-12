@@ -20,7 +20,7 @@ class Registro extends BaseController
             "nombre" => "required",
             "apellido1" => "required",
             "correo" => "valid_email",
-            "curp" => "required",
+            "curp" => "required|curp",
             "celular" => "numeric|exact_length[10]",
         ],[
             "nombre" => [
@@ -43,7 +43,6 @@ class Registro extends BaseController
         $recibe = [
             "estatus_codigo" => "NUEVO_INACTIVO",
             "rol_codigo" => "SOCIO",
-            "password" => "pass1",
             "nombre" => [
                 "nombre" => $data[ "nombre" ],
                 "apellidos" => [ $data[ "apellido1" ], $data[ "apellido2" ]],
@@ -51,6 +50,7 @@ class Registro extends BaseController
             "correo" => $data[ "correo" ],
             "telefono" => $data[ "celular" ],
             "curp" => $data[ "curp" ],
+            "password" => random_password(),
             "nacionalidad" => $data[ "nacionalidad" ],
             "residencia" => $data[ "residencia" ],
             "beneficiario" => $data[ "beneficiario" ],
@@ -61,17 +61,17 @@ class Registro extends BaseController
         $usuariomodel = model( "UsuarioModel" );
         $id = $usuariomodel->insert( $candidato );
 
-        return redirect()->route( "registro_exito" )->with( "nuevo_id", $id )->with( "msg", [ 
+        return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "user-check", 
             "texto" => "Cuenta de nuevo socio creada con éxito"] );
     }
 
 
-    public function registro_exito(){
+    public function registro_exito( $nuevo_id ){
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Nuevo socio creado";
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( session( "nuevo_id" ) );
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( 10 );
 
         echo template( "registro/exito", $this->data );
     }
