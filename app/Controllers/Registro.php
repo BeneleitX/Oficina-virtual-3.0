@@ -20,15 +20,8 @@ class Registro extends BaseController
             "nombre" => "required",
             "apellido1" => "required",
             "correo" => "valid_email",
-            "curp" => "required|curp",
+            "curp" => "required|curp|curp_existe",
             "celular" => "numeric|exact_length[10]",
-        ],[
-            "nombre" => [
-                "required" => "No has escrito un Nombre",
-            ],
-            "apellido1" => [
-                "required" => "No has escrito apellido",
-            ]
         ]);
 
         if( !$validation->withRequest( $this->request )->run()){
@@ -41,7 +34,7 @@ class Registro extends BaseController
         $data = $this->request->getPost();
 
         $recibe = [
-            "estatus_codigo" => "NUEVO_INACTIVO",
+            "estatus_codigo" => "210-NUEVO",
             "rol_codigo" => "SOCIO",
             "nombre" => [
                 "nombre" => $data[ "nombre" ],
@@ -58,6 +51,7 @@ class Registro extends BaseController
         ];
 
         $candidato = new \App\Entities\E_usuario( $recibe );
+
         $usuariomodel = model( "UsuarioModel" );
         $id = $usuariomodel->insert( $candidato );
 
