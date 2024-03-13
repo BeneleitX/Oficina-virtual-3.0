@@ -13,29 +13,30 @@
             }
             });
 
-            $(function(){
+            $(document).ready(function(){
                 $('[data-bs-toggle="tooltip"]').tooltip({
                     container: 'body',
                     placement : 'top'
                 });   
-            }); 
 
-            // SI existe la propiedad de notificaciones en el navegador actual
-            if( "Notification" in window ){
+                $('[data-bs-toggle="popover"]').popover();
 
-                // Si no estan activas
-                if( Notification.permission !== "granted" ){  
-                    // Notification.requestPermission();
+                // SI existe la propiedad de notificaciones en el navegador actual
+                if( "Notification" in window ){
 
-                    alerta( 'warning', 'warning', 'No has autorizado las notificaciones. <button class="btn btn-sm btn-warning" onclick="activa_notificaciones()">Autorizar</button>', 'no_notifica' );
+                    // Si no estan activas
+                    if( Notification.permission !== "granted" ){  
+                        // Notification.requestPermission();
+
+                        alerta( 'warning', 'warning', 'No has autorizado las notificaciones. <button class="btn btn-sm btn-warning" onclick="activa_notificaciones()">Autorizar</button>', 'no_notifica' );
+                    }
                 }
-            }
 
-            $( '.submit' ).on( 'click', function(){
-                $( this ).attr( 'disabled', true ).html( '<i class="fa fa-circle-notch fa-spin"></i> Espere...' );
-                $( this ).closest( 'form' ).submit();
+                $( '.submit' ).on( 'click', function(){
+                    $( this ).attr( 'disabled', true ).html( '<i class="fa fa-circle-notch fa-spin"></i> Espere...' );
+                    $( this ).closest( 'form' ).submit();
+                });
             });
-
 
             function notify( $mensaje ){
                 // SI existe la propiedad de notificaciones en el navegador actual

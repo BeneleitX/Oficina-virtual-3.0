@@ -75,7 +75,7 @@
                         </div>
  
                         <div class="col-2">
-                            <label>Patrocinador</label>
+                            <label data-bs-toggle="tooltip" title="Proporciona el número de socio de tu patrocinador">Patrocinador <i class="fa fa-circle-question text-gray"></i></label>
                             <input type="number" class="form-control <?php echo session( "errors.patrocinador" ) ? "is-invalid" : ""; ?>" name="patrocinador" value="<?php echo old( "patrocinador" ); ?>" placeholder="">
 						    <p class="small text-danger"><?php echo session( "errors.patrocinador" ); ?></p>
                         </div>
@@ -92,3 +92,4 @@
         <p class="text-center"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Regresar</a></p>
     </div>
 </div>
+
