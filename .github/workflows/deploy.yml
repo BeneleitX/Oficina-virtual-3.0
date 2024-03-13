@@ -1,18 +1,15 @@
+on: push
 name: Desplegar sitio en entorno de pruebas
-on:
-  push:
-    branches:
-      - main
 jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deply-Action
+  web-deploy:
+    name: Deploy a cPanel
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.1.0
-      with:
-        fetch-depth: 2
-    - name: FTP_Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+    - name: Get latest code
+      uses: actions/checkout@v4
+    
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         ftp-server: ${{secrets.FTP_ADDRESS }}
         ftp-username: ${{secrets.FTP_USER }}
