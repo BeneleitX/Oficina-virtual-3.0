@@ -22,7 +22,7 @@ html, body{
     z-index: 1030;
     height:100%;
     width:80px;
-    background: var(--bs-secondary);
+    background: var(--bs-warning);
     color: #aaa;
 }
 
