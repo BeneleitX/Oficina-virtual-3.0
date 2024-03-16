@@ -45,9 +45,11 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-        $data = $this->request->getPost();
 
-        $this->session->set( "usuario", model( "UsuarioModel" )->find( $data[ "socio_id" ] ) );
+
+        $data = $this->request->getPost();
+        $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
+        $this->session->set( "usuario", $usuario );
 
         return redirect()->route( "inicio" )->with('msg', [ 
             "clase" => "success", 

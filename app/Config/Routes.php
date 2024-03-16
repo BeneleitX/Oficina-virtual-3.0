@@ -12,6 +12,7 @@ $routes->post('oauth', 'Sesion::procesa_login');
 
 $routes->get('formulario', 'Registro::formulario');
 $routes->get('registro_exito/(:num)', 'Registro::registro_exito/$1');
+$routes->post('valida_patrocinador', 'Registro::valida_patrocinador');
 $routes->post('procesa_registro', 'Registro::procesa_registro');
 
 $routes->group('/',  ['filter' => 'auth'], static function ($routes) {

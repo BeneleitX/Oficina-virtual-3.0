@@ -22,7 +22,7 @@ html, body{
     z-index: 1030;
     height:100%;
     width:80px;
-    background: var(--bs-warning);
+    background: var(--bs-marine);
     color: #aaa;
 }
 
@@ -41,21 +41,37 @@ a.menu-opcion{
     transition: all .5s ease-in-out;
 }
 
-a.menu-opcion:hover, a.menu-opcion:active {
+a.menu-opcion:not(:first-child):hover, a.menu-opcion:not(:first-child):active {
     color: var(--bs-teal);
     border-left: 3px solid var(--bs-teal);
 }         
 
-a.menu-opcion.selected{
+a.menu-opcion:not(:first-child).selected{
     color: var(--bs-primary);
     border-left: 3px solid var(--bs-primary);
 }
 
 .avatar img{
     width: 40px;
+    height:40px;
     border-radius:50%;
     margin: 10px 0 0 0;
 }
+
+.avatar .emoji{
+    position:relative;
+    
+    height:52px;
+    width:40px;
+}
+
+.avatar .emoji > div{
+    top: -3px;
+    left:17px;
+    font-size:40px !important;
+    position:absolute;
+}
+
 
 .pie-chart {
 	position: absolute;
@@ -88,12 +104,12 @@ a.menu-opcion.selected{
         display:inline-block;
     }   
 
-    a.menu-opcion:hover, a.menu-opcion:active {
+    a.menu-opcion:not(:first-child):hover, a.menu-opcion:not(:first-child):active {
         border-left: 3px solid transparent;
         border-bottom: 3px solid #13D3B3;
     }         
     
-    a.menu-opcion.selected{
+    a.menu-opcion:not(:first-child).selected{
         border-left:none;
         border-bottom: 3px solid var(--bs-primary);
     }
@@ -104,12 +120,22 @@ a.menu-opcion.selected{
         top:27px;
     }
 
+    .avatar .emoji{
+        height:9px;
+    }
+    
+    .avatar .emoji > div{
+        left: 0;
+        top: -20px;
+    }
+
+    
     .pie-chart {
         left:12px;
         top:21px;
     }
 
-    a.menu-opcion svg{
+    a.menu-opcion > svg{
         margin-top:15px;
         display:inline-block;
     }   

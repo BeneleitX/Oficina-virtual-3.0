@@ -54,3 +54,15 @@ function random_password(){
     $pos = rand(0, strlen($cad));
     return substr($cad, 0, $pos)."*".substr($cad, $pos);
 }
+
+
+function mask( $texto ){
+    $ok = 2;
+    $nueva = "";
+ 
+    foreach( str_split( $texto ) as $k => $d ){
+        $nueva .= ($k >= $ok ? "*" : $d );
+    }
+
+    return $nueva;
+}

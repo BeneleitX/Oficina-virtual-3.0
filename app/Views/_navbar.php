@@ -14,7 +14,8 @@
 			#57595e 0,
 			#57595e 100%
 	); "></div>   -->
-  <img src="<?php echo base_url(); ?>data/usuarios/666/img/avatar/iCezEnwD_400x400.jpg">
+  <?php echo $usuario->avatar(); ?>
+  
     </a>
   <ul class="dropdown-menu">
     <li>

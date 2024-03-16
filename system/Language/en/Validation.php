@@ -60,9 +60,7 @@ return [
     'valid_url_strict'      => 'The {field} field must contain a valid URL.',
     'valid_date'            => 'The {field} field must contain a valid date.',
     'valid_json'            => 'The {field} field must contain a valid json.',
-    'curp'                  => 'No es una CURP válida.',
-    'curp_existe'           => 'Ya existe un socio activo con esta CURP.',
-    
+
     // Credit Cards
     'valid_cc_num' => '{field} does not appear to be a valid credit card number.',
 

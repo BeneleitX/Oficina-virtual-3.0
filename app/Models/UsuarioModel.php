@@ -18,15 +18,11 @@ class UsuarioModel extends Model
         "estatus_codigo", 
         "rol_codigo",
         "password",
-        "nombre",
-        "genero",
+        "data",
         "correo",
         "telefono",
         "fechanac",
         "curp",
-        "nacionalidad",
-        "residencia",
-        "beneficiario",
         "redes"
     ];
 

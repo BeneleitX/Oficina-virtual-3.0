@@ -19,9 +19,10 @@ class Registro extends BaseController
         $validation->setRules([
             "nombre" => "required",
             "apellido1" => "required",
-            "correo" => "valid_email",
             "curp" => "required|curp|curp_existe",
-            "celular" => "numeric|exact_length[10]",
+            "correo" => "valid_email|correo_existe",
+            "celular" => "numeric|exact_length[10]|celular_existe",
+            "patrocinador" => "required|patrocinador_activo",
         ]);
 
         if( !$validation->withRequest( $this->request )->run()){
@@ -36,29 +37,49 @@ class Registro extends BaseController
         $recibe = [
             "estatus_codigo" => "210-NUEVO",
             "rol_codigo" => "SOCIO",
-            "nombre" => [
+            "data" => [
                 "nombre" => $data[ "nombre" ],
                 "apellidos" => [ $data[ "apellido1" ], $data[ "apellido2" ]],
+                "avatar" => [
+                    "imagenes" => [],
+                    "activo" => null
+                ],
+                // "beneficiario" => $data[ "beneficiario" ],
             ],
             "correo" => $data[ "correo" ],
             "telefono" => $data[ "celular" ],
             "curp" => $data[ "curp" ],
             "password" => random_password(),
-            "nacionalidad" => $data[ "nacionalidad" ],
-            "residencia" => $data[ "residencia" ],
-            "beneficiario" => $data[ "beneficiario" ],
             "redes" => []
         ];
 
-        $candidato = new \App\Entities\E_usuario( $recibe );
-
         $usuariomodel = model( "UsuarioModel" );
-        $id = $usuariomodel->insert( $candidato );
+        $id = $usuariomodel->insert( new \App\Entities\E_usuario( $recibe ) );
 
         return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "user-check", 
             "texto" => "Cuenta de nuevo socio creada con éxito"] );
+    }
+
+    public function valida_patrocinador(){
+        $respuesta    = [ "error" => null ];
+        $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "id" ) );
+
+        if(!$patrocinador){
+            $respuesta[ "error" ] = "No existe el patrocinador";
+            return json_encode( $respuesta );
+        }
+
+        if( substr( $patrocinador->estatus_codigo, 0, 3 ) < 200 ){
+            $respuesta[ "error" ] = "El patrocinador no está activo";
+            return json_encode( $respuesta );
+        }
+
+        $respuesta[ "nombre" ] = $patrocinador->nombre( 2, true );
+        $respuesta[ "avatar" ] = $patrocinador->avatar( $this->request->getPost( "avatar_size" )  );
+
+        return json_encode( $respuesta );
     }
 
 

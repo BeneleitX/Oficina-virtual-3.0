@@ -1,0 +1,114 @@
+:root {
+--bs-indigo      : #4150b4;
+--bs-deep-purple : #673ab7;
+--bs-purple      : #9c27b0;
+--bs-violet      : #c0228c;
+--bs-pink        : #e91e63;
+--bs-red         : #f42326;
+--bs-deep-orange : #ff5722;
+--bs-orange      : #ff6d00;
+--bs-mustard     : #ff9800;
+--bs-amber       : #ffc107;
+--bs-yellow      : #ffeb3b;
+--bs-lime        : #cddc39;
+--bs-light-green : #8bc34a;
+--bs-green       : #47c24c;
+--bs-teal        : #009779;
+--bs-cyan        : #00bcd4;
+--bs-light-blue  : #03a9f4;
+--bs-blue        : #2479d1;
+--bs-marine      : #1A2542;
+--bs-black       : #000000;
+--bs-white       : #ffffff;
+--bs-light       : #eef5f3;
+--bs-brown       : #795548;
+
+--bs-gray-100    : #f8f9fa;
+--bs-gray-200    : #e9ecef;
+--bs-gray-300    : #dee2e6;
+--bs-gray-400    : #ced4da;
+--bs-gray-500    : #adb5bd;
+--bs-gray-600    : #6c757d;
+--bs-gray-700    : #495057;
+--bs-gray-800    : #343a40;
+--bs-gray-900    : #212529;
+
+--bs-primary: var(--bs-teal);
+--bs-secondary: var(--bs-marine);
+--bs-success: var(--bs-green);
+--bs-info: var(--bs-light-blue);
+--bs-warning: var(--bs-mustard);
+--bs-danger: var(--bs-red);
+}
+
+.border-indigo { border-color: var(--bs-indigo); }
+.border-deep-purple { border-color: var(--bs-deep-purple); }
+.border-purple { border-color: var(--bs-purple); }
+.border-violet { border-color: var(--bs-violet); }
+.border-pink { border-color: var(--bs-pink); }
+.border-red { border-color: var(--bs-red); }
+.border-deep-orange { border-color: var(--bs-deep-orange); }
+.border-orange { border-color: var(--bs-orange); }
+.border-mustard { border-color: var(--bs-mustard); }
+.border-amber { border-color: var(--bs-amber); }
+.border-yellow { border-color: var(--bs-yellow); }
+.border-lime { border-color: var(--bs-lime); }
+.border-light-green { border-color: var(--bs-light-green); }
+.border-green { border-color: var(--bs-green); }
+.border-teal { border-color: var(--bs-teal); }
+.border-cyan { border-color: var(--bs-cyan); }
+.border-light-blue { border-color: var(--bs-light-blue); }
+.border-blue { border-color: var(--bs-blue); }
+.border-marine { border-color: var(--bs-marine); }
+.border-black { border-color: var(--bs-black); }
+.border-white { border-color: var(--bs-white); }
+.border-light { border-color: var(--bs-light); }
+.border-brown { border-color: var(--bs-brown); }
+
+.text-indigo { color: var(--bs-indigo); }
+.text-deep-purple { color: var(--bs-deep-purple); }
+.text-purple { color: var(--bs-purple); }
+.text-violet { color: var(--bs-violet); }
+.text-pink { color: var(--bs-pink); }
+.text-red { color: var(--bs-red); }
+.text-deep-orange { color: var(--bs-deep-orange); }
+.text-orange { color: var(--bs-orange); }
+.text-mustard { color: var(--bs-mustard); }
+.text-amber { color: var(--bs-amber); }
+.text-yellow { color: var(--bs-yellow); }
+.text-lime { color: var(--bs-lime); }
+.text-light-green { color: var(--bs-light-green); }
+.text-green { color: var(--bs-green); }
+.text-teal { color: var(--bs-teal); }
+.text-cyan { color: var(--bs-cyan); }
+.text-light-blue { color: var(--bs-light-blue); }
+.text-blue { color: var(--bs-blue); }
+.text-marine { color: var(--bs-marine); }
+.text-black { color: var(--bs-black); }
+.text-white { color: var(--bs-white); }
+.text-light { color: var(--bs-light); }
+.text-brown { color: var(--bs-brown); }
+
+.bg-indigo { background-color: var(--bs-indigo); }
+.bg-deep-purple { background-color: var(--bs-deep-purple); }
+.bg-purple { background-color: var(--bs-purple); }
+.bg-violet { background-color: var(--bs-violet); }
+.bg-pink { background-color: var(--bs-pink); }
+.bg-red { background-color: var(--bs-red); }
+.bg-deep-orange { background-color: var(--bs-deep-orange); }
+.bg-orange { background-color: var(--bs-orange); }
+.bg-mustard { background-color: var(--bs-mustard); }
+.bg-amber { background-color: var(--bs-amber); }
+.bg-yellow { background-color: var(--bs-yellow); }
+.bg-lime { background-color: var(--bs-lime); }
+.bg-light-green { background-color: var(--bs-light-green); }
+.bg-green { background-color: var(--bs-green); }
+.bg-teal { background-color: var(--bs-teal); }
+.bg-cyan { background-color: var(--bs-cyan); }
+.bg-light-blue { background-color: var(--bs-light-blue); }
+.bg-blue { background-color: var(--bs-blue); }
+.bg-marine { background-color: var(--bs-marine); }
+.bg-black { background-color: var(--bs-black); }
+.bg-white { background-color: var(--bs-white); }
+.bg-light { background-color: var(--bs-light); }
+.bg-brown { background-color: var(--bs-brown); }

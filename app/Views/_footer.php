@@ -5,7 +5,10 @@
 
         <script>
 
-            const osInstance = OverlayScrollbars(document.querySelector('body'), { });
+            const osInstance = OverlayScrollbars(document.querySelector('body'), { }),
+                base_url = '<?php echo base_url(); ?>',
+                csrf_token = '<?php echo csrf_token() ?>',
+                csrf_hash = '<?php echo csrf_hash(); ?>';
 
             OverlayScrollbars(osInstance, {
             scrollbars: {
@@ -74,5 +77,15 @@
             <?php if( session( "msg" ) !== null ) echo alertas( session('msg') ); ?>
 
         </script>
+
+        <?php
+        
+        $router = \Config\Services::router();
+        $_method = $router->methodName();
+        $_controller = explode("\\", $router->controllerName()); 
+        $includescript = "assets/js/{$_controller[3]}/{$_method}.js";
+        
+        if(file_exists( $includescript )) echo "<script src=\"".base_url()."assets/js/{$_controller[3]}/{$_method}.js\"></script>"; ?>
+
     </body>
 </html>
