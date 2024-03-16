@@ -36,4 +36,5 @@ class BeneleitRules
     {
         $db = db_connect();
         return $db->query("select * from t_usuarios where id = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0;
-    }}
+    }
+}

@@ -86,7 +86,7 @@ class Registro extends BaseController
     public function registro_exito( $nuevo_id ){
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Nuevo socio creado";
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( 10 );
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $nuevo_id );
 
         echo template( "registro/exito", $this->data );
     }

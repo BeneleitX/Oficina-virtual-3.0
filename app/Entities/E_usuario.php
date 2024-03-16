@@ -25,7 +25,7 @@ class E_usuario extends Entity
     }
 
 
-    protected function getPassword(): string 
+    public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );
         return $encrypter->decrypt( base64_decode( $this->attributes[ "password" ] ), [ "key" => $this->attributes[ "curp" ] ] );
@@ -91,7 +91,7 @@ class E_usuario extends Entity
     public function id($fondo = true): string 
     {
         if( $fondo )
-            return "<span class=\"badge bg-info\">".id( $this->id, 6 )."</span>";
+            return "<span class=\"badge bg-teal\">".id( $this->id, 6 )."</span>";
         else
             return id( $this->id, 6 );
     }

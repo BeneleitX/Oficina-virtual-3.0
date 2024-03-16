@@ -45,10 +45,16 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-
-
         $data = $this->request->getPost();
         $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
+
+        if( $usuario->getPassword() != $data[ "socio_password" ] ){
+            return redirect()
+                ->back()
+                ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
+                ->withInput();
+        }
+
         $this->session->set( "usuario", $usuario );
 
         return redirect()->route( "inicio" )->with('msg', [ 
