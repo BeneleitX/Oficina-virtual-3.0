@@ -31,7 +31,7 @@
 
     <a data-bs-toggle="tooltip" title="Inicio" class="menu-opcion selected" href="<?php echo base_url( "inicio" ); ?>"><i class="fa fa-house"></i></a>
     <a data-bs-toggle="tooltip" title="Recompensas" class="menu-opcion" href="#"><i class="fa fa-award"></i></a>
-    <a data-bs-toggle="tooltip" title="Balance" class="menu-opcion" href="#"><i class="fa fa-sack-dollar"></i></a>
+    <a data-bs-toggle="tooltip" title="Balance" class="menu-opcion" href="<?php echo base_url( "balance" ); ?>"><i class="fa fa-sack-dollar"></i></a>
     <a data-bs-toggle="tooltip" title="Tienda" class="menu-opcion" href="<?php echo base_url( "tienda" ); ?>"><i class="fa fa-cart-shopping"></i></a>
-    <a data-bs-toggle="tooltip" title="Redes" class="menu-opcion" href="#"><i class="fa fa-diagram-project"></i></a>
+    <a data-bs-toggle="tooltip" title="Redes" class="menu-opcion" href="<?php echo base_url( "red" ); ?>"><i class="fa fa-diagram-project"></i></a>
     <a data-bs-toggle="tooltip" title="Comunicación" class="menu-opcion" href="#"><i class="fa fa-comment-dots"></i></a>            

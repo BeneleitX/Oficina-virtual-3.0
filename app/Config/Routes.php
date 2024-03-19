@@ -18,6 +18,8 @@ $routes->post('procesa_registro', 'Registro::procesa_registro');
 $routes->group('/',  ['filter' => 'auth'], static function ($routes) {
     $routes->get('',       'Dashboard::inicio');
     $routes->get('inicio', 'Dashboard::inicio');
-    $routes->get('perfil', 'Usuario::perfil');
+    $routes->get('perfil', 'Socio::perfil');
     $routes->get('tienda', 'Tienda::carrito'); 
+    $routes->get('balance', 'Ingresos::balance'); 
+    $routes->get('red', 'Redes::arbol'); 
 });
