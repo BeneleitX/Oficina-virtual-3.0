@@ -19,6 +19,7 @@ $routes->group('/',  ['filter' => 'auth'], static function ($routes) {
     $routes->get('',       'Dashboard::inicio');
     $routes->get('inicio', 'Dashboard::inicio');
     $routes->get('perfil', 'Socio::perfil');
+    $routes->get('perfil/(:num)', 'Socio::perfil/$1');
     $routes->get('tienda', 'Tienda::carrito'); 
     $routes->get('balance', 'Ingresos::balance'); 
     $routes->get('red', 'Redes::arbol'); 

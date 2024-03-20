@@ -4,6 +4,11 @@ namespace App\Rules;
 
 class BeneleitRules
 {
+    public function __construct()
+    {
+        $this->db = db_connect();
+    }
+
     public function curp( $value ): bool
     {
         if(strlen( $value ) != 18)
@@ -16,25 +21,21 @@ class BeneleitRules
 
     public function curp_existe( $value ): bool
     {
-        $db = db_connect();
-        return !( $db->query("select * from t_usuarios where curp = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
+        return !( $this->db->query("select * from t_usuarios where curp = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
     }
 
     public function correo_existe( $value ): bool
     {
-        $db = db_connect();
-        return !( $db->query("select * from t_usuarios where correo = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
+        return !( $this->db->query("select * from t_usuarios where correo = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
     }
 
     public function celular_existe( $value ): bool
     {
-        $db = db_connect();
-        return !( $db->query("select * from t_usuarios where telefono = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
+        return !( $this->db->query("select * from t_usuarios where telefono = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0 );
     }
 
     public function patrocinador_activo( $value ): bool
     {
-        $db = db_connect();
-        return $db->query("select * from t_usuarios where id = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0;
+        return $this->db->query("select * from t_usuarios where id = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0;
     }
 }

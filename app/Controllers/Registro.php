@@ -50,11 +50,19 @@ class Registro extends BaseController
             "telefono" => $data[ "celular" ],
             "curp" => $data[ "curp" ],
             "password" => random_password(),
-            "redes" => []
+            "redes" => [
+                "patrocinador" => $data[ "patrocinador" ]
+            ]
         ];
 
         $usuariomodel = model( "UsuarioModel" );
         $id = $usuariomodel->insert( new \App\Entities\E_usuario( $recibe ) );
+        
+        // BITACORA Creación de cuenta de usuario
+        bitacora( 4, $id, [ 
+            "patrocinador" => $recibe[ "patrocinador" ] 
+            "password" => $recibe[ "password" ] 
+        ] );
 
         return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
             "clase" => "success", 

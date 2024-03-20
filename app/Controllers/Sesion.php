@@ -13,9 +13,14 @@ class Sesion extends BaseController
 
 
     public function logout(){
-        if( $this->session->usuario ){
+        if( session( "usuario" ) ){
+            // BITACORA cerre manual de sesión
+            bitacora( 3, session( "usuario" )->id );
+
             $this->session->destroy();
         }
+
+
         return redirect()->route( "login" );
     }
 
@@ -49,6 +54,12 @@ class Sesion extends BaseController
         $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
 
         if( $usuario->getPassword() != $data[ "socio_password" ] ){
+
+            // BITACORA inicio de sesión fallido
+            bitacora( 2, $usuario->id, [ 
+                "password" => $data[ "socio_password" ] 
+            ] );
+
             return redirect()
                 ->back()
                 ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
@@ -56,6 +67,9 @@ class Sesion extends BaseController
         }
 
         $this->session->set( "usuario", $usuario );
+        
+        // BITACORA inicio de sesión exitoso
+        bitacora( 1, $usuario->id );
 
         return redirect()->route( "inicio" )->with('msg', [ 
             "clase" => "success", 

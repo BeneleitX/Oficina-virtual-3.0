@@ -15,6 +15,19 @@
 </ul>
 
 
+<div class="card mb-4">
+            <div class="card-body">
+				<div class="row">
+				<div class="col-md-4">
+					<?php echo $usuario->avatar(); ?>
+				</div>
+				<div class="col-md-4"></div>
+				<div class="col-md-4"></div>
+				</div>
+			</div>
+        </div>
+
+
 <div class="row">
 	<div class="col-6">
 	<div class="card mb-4">

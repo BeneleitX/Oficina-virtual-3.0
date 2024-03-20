@@ -28,6 +28,20 @@ function id($n, $digitos = 0)
 }
 
 
+function getIP(){
+    if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+        //ip from share internet
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+        //ip pass from proxy
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }else{
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip;
+}
+
+
 function getReferencia( string $p ){
     // Inicializamos variable para acumular la sumatoria de dígitos
     $s = 0;
@@ -65,4 +79,10 @@ function mask( $texto ){
     }
 
     return $nueva;
+}
+
+
+function bitacora( $accion, $usuario, array $variables = [] ){
+    $db = db_connect();
+    $db->query("insert into t_bitacora values(NULL, {$accion}, {$usuario}, '".date("Y-m-d H:i:s")."', '".json_encode($variables)."', '".getIP()."') ");
 }

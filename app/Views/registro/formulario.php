@@ -56,5 +56,5 @@
     </div>
 </form>
 
-<p class="text-center"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Regresar</a></p>
+<p class="text-center mt-3"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Cancelar y regresar</a></p>
 
