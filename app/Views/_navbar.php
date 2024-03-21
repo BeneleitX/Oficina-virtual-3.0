@@ -24,7 +24,7 @@
             </div>
         </a>
     </li>
-    <li><a class="dropdown-item" href="<?php echo base_url( "perfil" ); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
+    <li><a class="dropdown-item" href="<?php echo base_url( "perfil"); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
     <li><a class="dropdown-item" href="<?php echo base_url( "logout" ); ?>"><i class="fa fa-right-from-bracket"></i> Cerrar sesión</a></li>
   </ul>
 </div>

@@ -375,6 +375,9 @@ class Security implements SecurityInterface
      */
     public function getHash(): ?string
     {
+        // Esta línea se la puse yo (Alex)
+        if(!$this->hash) $this->generateHash();
+
         return $this->config->tokenRandomize ? $this->randomize($this->hash) : $this->hash;
     }
 

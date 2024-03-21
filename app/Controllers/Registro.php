@@ -60,7 +60,7 @@ class Registro extends BaseController
         
         // BITACORA Creación de cuenta de usuario
         bitacora( 4, $id, [ 
-            "patrocinador" => $recibe[ "patrocinador" ] 
+            "patrocinador" => $recibe[ "patrocinador" ],
             "password" => $recibe[ "password" ] 
         ] );
 

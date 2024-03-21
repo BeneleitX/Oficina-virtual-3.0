@@ -10,11 +10,11 @@
                 csrf_token = '<?php echo csrf_token() ?>',
                 csrf_hash = '<?php echo csrf_hash(); ?>';
 
-            OverlayScrollbars(osInstance, {
+        /*     OverlayScrollbars(osInstance, {
             scrollbars: {
                 theme: 'os-theme-light'
             }
-            });
+            }); */
 
             $(document).ready(function(){
                 $('[data-bs-toggle="tooltip"]').tooltip({
@@ -85,7 +85,7 @@
         $_controller = explode("\\", $router->controllerName()); 
         $includescript = "assets/js/{$_controller[3]}/{$_method}.js";
         
-        if(file_exists( $includescript )) echo "<script src=\"".base_url()."assets/js/{$_controller[3]}/{$_method}.js\"></script>"; ?>
+        if(file_exists( $includescript )) echo "<script src=\"".base_url()."assets/js/".strtolower( $_controller[3] )."/{$_method}.js?".filemtime( $includescript )."\"></script>"; ?>
 
     </body>
 </html>

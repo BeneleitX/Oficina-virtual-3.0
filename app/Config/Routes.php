@@ -18,8 +18,11 @@ $routes->post('procesa_registro', 'Registro::procesa_registro');
 $routes->group('/',  ['filter' => 'auth'], static function ($routes) {
     $routes->get('',       'Dashboard::inicio');
     $routes->get('inicio', 'Dashboard::inicio');
+
     $routes->get('perfil', 'Socio::perfil');
-    $routes->get('perfil/(:num)', 'Socio::perfil/$1');
+    $routes->get('fotografia', 'Socio::fotografia');
+    $routes->post('guarda_avatar', 'Socio::guarda_avatar');
+    
     $routes->get('tienda', 'Tienda::carrito'); 
     $routes->get('balance', 'Ingresos::balance'); 
     $routes->get('red', 'Redes::arbol'); 
