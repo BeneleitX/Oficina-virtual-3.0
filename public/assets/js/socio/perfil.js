@@ -1,5 +1,11 @@
 
-var cropper;
+function borra_beneficiario( id){
+
+	$( '[name=old_beneficiario]' ).val( id );
+	$( '#borra_beneficiario' ).modal( 'show' );
+}
+
+
 
 $(document).ready(function(){
 

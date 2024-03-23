@@ -25,6 +25,8 @@ $routes->group( "/",  ["filter" => "auth"], static function ( $routes ) {
     $routes->get( "valida_credencial", "Socio::valida_credencial" );
     $routes->post( "credencial", "Socio::credencial" );
     $routes->post( "guarda_avatar", "Socio::guarda_avatar" );
+    $routes->post( "add_beneficiario", "Socio::add_beneficiario" );
+    $routes->post( "cancela_beneficiario", "Socio::cancela_beneficiario" );
     
     $routes->get( "tienda", "Tienda::carrito" ); 
     $routes->get( "balance", "Ingresos::balance" ); 

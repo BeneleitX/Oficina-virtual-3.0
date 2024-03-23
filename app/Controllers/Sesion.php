@@ -66,7 +66,7 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-        $this->session->set( "usuario", $usuario );
+        $this->session->set( "usuario", $usuario->id );
         
         // BITACORA inicio de sesión exitoso
         bitacora( 1, $usuario->id );

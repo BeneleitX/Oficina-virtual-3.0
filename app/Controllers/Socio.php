@@ -11,6 +11,7 @@ class Socio extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Perfil de socio";
         $this->data[ "socio"  ] = $this->data[ "usuario" ];
+        $this->data[ "porc" ]   = $this->data[ "socio"  ]->porcentaje_beneficiarios();
         
         foreach( $this->data["socio"]->data->verificacion as $j => $k){
             $total++;
@@ -48,12 +49,6 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
-        //$this->session->set( "socio", $this->data[ "socio" ] );    
-        //if( $this->data[ "usuario" ]->id == $this->data[ "socio" ]->id )
-        {
-            $this->session->set( "usuario", $this->data[ "socio" ] );        
-        }
-
         list($type, $data) = explode(';', $data);
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
@@ -89,12 +84,6 @@ class Socio extends BaseController
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
-
-        //$this->session->set( "socio", $this->data[ "socio" ] );    
-        //if( $this->data[ "usuario" ]->id == $this->data[ "socio" ]->id )
-        {
-            $this->session->set( "usuario", $this->data[ "socio" ] );
-        }
 
         if( !is_dir( $path ) ){
             mkdir( $path, 0644, true );
@@ -138,12 +127,6 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
-        //$this->session->set( "socio", $this->data[ "socio" ] );    
-        //if( $this->data[ "usuario" ]->id == $this->data[ "socio" ]->id )
-        {
-            $this->session->set( "usuario", $this->data[ "socio" ] );
-        }
-
         return redirect()->to( "perfil" )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "trash", 
@@ -154,7 +137,7 @@ class Socio extends BaseController
     public function valida_credencial(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
-        // BITACORA Cancelar carga de foto INE
+        // BITACORA Enviar credencial para validacion
         bitacora( 10, $this->data[ "socio" ]->id, [ 
             "usuario" => $this->data[ "usuario" ]->id
         ] );
@@ -165,16 +148,76 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
-        //$this->session->set( "socio", $this->data[ "socio" ] );    
-        //if( $this->data[ "usuario" ]->id == $this->data[ "socio" ]->id )
-        {
-            $this->session->set( "usuario", $this->data[ "socio" ] );
-        }
-
         return redirect()->to( "perfil" )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "trash", 
             "texto" => "Se envió la credencial INE para su validación" ] );
 
+    }
+
+
+    public function add_beneficiario(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $nuevo = [
+            "nombre" => $this->request->getPost( "beneficiario_nuevo" ),
+            "porcentaje" => $this->request->getPost( "beneficiario_porcentaje" )
+        ];
+
+        $json = $this->data["socio"]->data;
+        $json->beneficiarios[] = $nuevo;
+
+        $nporc = $nuevo[ "porcentaje" ] + $this->data[ "socio" ]->porcentaje_beneficiarios();
+
+        if( $nporc == 100 ){
+            $json->verificacion->beneficiario = true;
+        }
+        $this->data["socio"]->data = $json; 
+
+        if(  $nporc <= 100 ){
+            model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+            // BITACORA Agregar beneficiario
+            bitacora( 11, $this->data[ "socio" ]->id, [ 
+                "nombre" => $nuevo[ "nombre"],
+                "porcentaje" => $nuevo[ "porcentaje" ],
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+        }
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se agregó beneficiario" ] );
+    }
+
+
+    public function cancela_beneficiario(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $beneficiario = $this->request->getPost( "old_beneficiario" );
+
+        $json = $this->data["socio"]->data;
+        $temp = $json->beneficiarios[ $beneficiario ];
+
+        unset( $json->beneficiarios[ $beneficiario ] );
+
+        $json->beneficiarios = array_values( $json->beneficiarios );
+        $json->verificacion->beneficiario = false;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 12, $this->data[ "socio" ]->id, [ 
+            "nombre" => $temp->nombre,
+            "porcentaje" => $temp->porcentaje,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se eliminó beneficiario" ] );        
     }
 }

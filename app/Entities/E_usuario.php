@@ -120,4 +120,15 @@ class E_usuario extends Entity
             return "<div class=\"emoji\"><div><i style=\"font-size:{$size}px;\" class=\"text-".$this->data->avatarbg." fa fa-".$this->data->avatarface."\"></i></div></div>";
         }
     }
+
+
+    public function porcentaje_beneficiarios(){
+        $porcentaje = 0;
+
+        foreach( $this->data->beneficiarios as $b ){
+            $porcentaje += $b->porcentaje;
+        }
+
+        return $porcentaje;
+    }
 }

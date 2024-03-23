@@ -160,13 +160,19 @@
 
 			<div class="card mb-3 mb-0">	
 			<table class="table align-middle mb-0">
-				<tr>
-					<td><strong>Juan Pérez López</strong></td>
-					<td>100%</td>
-					<td class="text-end"><a href="javascript:$( '#beneficiario' ).modal( 'show' )" class="text-red"><i class="fa fa-trash"></i></a></td>
-				</tr>
+				<?php 
+
+					foreach( $socio->data->beneficiarios as $k => $b ){
+						echo "\n<tr>
+							<td><strong>{$b->nombre}</strong></td>
+							<td>{$b->porcentaje}%</td>
+							<td class=\"text-end\"><a href=\"javascript:borra_beneficiario( {$k} )\" class=\"text-red\"><i class=\"fa fa-trash\"></i></a></td>
+						</tr>
+						";
+					}
+				?>
 			</table>
-			<div class="card-body">	
+			<div class="card-body <?php if( $porc == 100 ) echo "d-none"; ?>">	
 			<button class="btn btn-success" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
 			</div></div>
 			
@@ -212,7 +218,7 @@
 <div class="modal" tabindex="-1" id="beneficiario">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form method="post" action="<?php echo base_url( "resolucion_ine" ); ?>">
+			<form method="post" action="<?php echo base_url( "add_beneficiario" ); ?>">
                 <?php echo csrf_field() ?>
                 <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
 
@@ -222,12 +228,48 @@
 				</div>
 				<div class="modal-body">
 
+					<div class="alert alert-info"><i class="fa fa-circle-info"></i> Asegurate que el nombre del beneficiario coincida fielmente a su documentación oficial</div>
+					<label for="beneficiario_nuevo">Nombre completo del nuevo beneficiario</label><br>
+					<input type="text" class="form-control mb-3" name="beneficiario_nuevo">
 
-
-
+					<div class="w-50">
+						<label for="beneficiario_porcentaje">Porcentaje</label><br>
+						<select class="form-select" name="beneficiario_porcentaje">
+							<?php 
+							for($a = 100; $a > 0; $a -= 10){
+								if( $porc + $a <= 100 )
+									echo "\n<option value=\"{$a}\">{$a}%</option>";
+							}
+							?>
+						</select>
+					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success disabled">Agregar</button>
+					<button type="submit" class="btn btn-success">Agregar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal" tabindex="-1" id="borra_beneficiario">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="post" action="<?php echo base_url( "cancela_beneficiario" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+				<input type="hidden" name="old_beneficiario"  value="">
+
+				<div class="modal-header">
+					<h5 class="modal-title">Eliminar beneficiario</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Al eliminar el beneficiario, su porcentaje asignado se liberará, por lo que deberás asignar uno nuevo para cumplir con el 100% de asignación de tu cuenta.
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">Eliminar</button>
 				</div>
 			</form>
 		</div>
@@ -236,5 +278,5 @@
 
 
 <script>
-	var porcentaje = <?php echo $socio->porcentaje_beneficiarios(); ?>;
+	var porcentaje = <?php echo $porc; ?>;
 </script>

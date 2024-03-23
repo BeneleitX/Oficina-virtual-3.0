@@ -62,6 +62,15 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         $this->session = session();
-        $this->data[ "usuario" ] = session( "usuario" );
+
+        // protección temporal para evitar objeto en cookie
+        if( is_object( session( "usuario" ) ) ){
+            $u = session( "usuario" );
+            $this->session->set( "usuario", null );
+            return redirect()->to( "login" );
+        }
+
+        $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
+
     }
 }
