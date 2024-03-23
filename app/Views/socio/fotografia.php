@@ -1,42 +1,15 @@
-<style>
 
-.upload-demo .upload-demo-wrap,
-.upload-demo .upload-result,
-.upload-demo.ready .upload-msg {
-    display: none;
-}
-.upload-demo.ready .upload-demo-wrap {
-    display: block;
-}
-.upload-demo.ready .upload-result {
-    display: inline-block;    
-}
-.upload-demo-wrap {
-    width: 100%;
-    height: auto;
-    margin: 0 auto;
-}
-
-
-    </style>
-
-
-<h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
+<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+<p><a href="<?php echo base_url( "perfil" ); ?>"><i class="fa fa-undo"></i> Regresar al perfil de socio</a></p>
 
 <link href="<?php echo base_url(); ?>assets/css/croppie.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>assets/js/croppie.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/exif.js" type="text/javascript"></script>
 
-
-
-    <input type="file" id="foto_upload" accept="image/*" style="display: none">
-    <div class="upload-demo-wrap mb-3">
-        <div id="upload-demo"></div>
-
-
-    </div>
-
-
+<input type="file" id="foto_upload" accept="image/*" style="display: none">
+<div class="upload-demo-wrap mb-3">
+    <div id="upload-demo"></div>
+</div>
 
 <div class="row">
     <div class="col-md-4">
@@ -58,4 +31,3 @@
 </div>
     
     
-</div>

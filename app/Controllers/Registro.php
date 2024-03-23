@@ -44,7 +44,13 @@ class Registro extends BaseController
                     "imagenes" => [],
                     "activo" => null
                 ],
-                // "beneficiario" => $data[ "beneficiario" ],
+                "verificacion" => [],
+                "credencial" => [
+                    "frente" => null,
+                    "reverso" => null,
+                    "estatus" => 0,
+                    "motivo" => ""
+                ]
             ],
             "correo" => $data[ "correo" ],
             "telefono" => $data[ "celular" ],
@@ -55,12 +61,17 @@ class Registro extends BaseController
             ]
         ];
 
+        $puntos_verificacion = admin( "puntos_verificacion" );
+        foreach( $puntos_verificacion as $codigo => $punto){
+            $recibe[ "data"][ "verificacion" ][ $codigo ] = false;
+        }
+
         $usuariomodel = model( "UsuarioModel" );
         $id = $usuariomodel->insert( new \App\Entities\E_usuario( $recibe ) );
         
         // BITACORA Creación de cuenta de usuario
         bitacora( 4, $id, [ 
-            "patrocinador" => $recibe[ "patrocinador" ],
+            "patrocinador" => $recibe[ "redes" ][ "patrocinador" ],
             "password" => $recibe[ "password" ] 
         ] );
 

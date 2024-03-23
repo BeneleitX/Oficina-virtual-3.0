@@ -259,11 +259,11 @@ sup {
 }
 
 a {
-  color: rgba(var(--bs-primary-rgb), 1);
+  color: var(--bs-teal);
   text-decoration: none;
 }
 a:hover {
-  color: var(--bs-teal);
+  color: var(--bs-green);
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -3268,6 +3268,13 @@ textarea.form-control-lg {
   --bs-btn-padding-y: 0.25rem;
   --bs-btn-padding-x: 0.5rem;
   --bs-btn-font-size: 0.875rem;
+  --bs-btn-border-radius: var(--bs-border-radius-sm);
+}
+
+.btn-xs, .btn-group-xs > .btn {
+  --bs-btn-padding-y: 0.24rem;
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-font-size: 0.5rem;
   --bs-btn-border-radius: var(--bs-border-radius-sm);
 }
 

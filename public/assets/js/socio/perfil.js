@@ -15,4 +15,32 @@ $(document).ready(function(){
         $('#profileImageModal').modal( 'show' );    
     });
 
+	$( 'input.upload').on( 'change', function(){
+		var campo = $( this ),
+			tipo  = campo.attr( 'tipo' ),
+			formData = new FormData();
+
+			formData.append( 'tipo', tipo );
+			formData.append( 'image', $( 'input.upload[tipo=' +tipo+ ']' )[0].files[0] ); 
+			formData.append( [csrf_token] , csrf_hash ),
+
+			$.ajax({
+				url: base_url + 'credencial',
+				data: formData,
+				type: 'POST',
+				dataType: "json",
+				async: true,
+				contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+				processData: false, // NEEDED, DON'T OMIT THIS
+				success: function( respuesta ){
+					$( '.ct_' + tipo ).html( '<img src="' + respuesta.path + respuesta[tipo] + '" alt="" class="img-fluid rounded-3">\n<a href="' + base_url + 'cancela_ine/' + tipo + '" class="small"><i class="fa fa-trash"></i> Cancelar esta foto</a>' );
+
+					
+					if( respuesta.frente && respuesta.reverso ){
+						$( '#valida_credencial' ).removeClass( 'disabled' );
+					}
+				}
+			});
+	});
+
 });    

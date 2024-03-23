@@ -84,13 +84,7 @@ class E_usuario extends Entity
         $data->nacionalidad = substr( $this->attributes[ "curp" ], 11, 2) != "NE" ? "MEXICANA" : "EXTRANJERA";
         $data->avatarface = $caras[ rand( 0, sizeof( $caras ) - 1 ) ];
         $data->avatarbg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
-        $this->attributes[ "data" ] = json_encode( $data );
-    }
-
-    public function setAvatar( string $filename ){
-        $data = json_decode( $this->attributes[ "data" ] );
-        $data->avatar->imagenes[] = $filename;
-        $data->avatar->activo = sizeof( $data->avatar->imagenes ) -1;
+        $data->beneficiarios = [];
         $this->attributes[ "data" ] = json_encode( $data );
     }
 
@@ -120,7 +114,7 @@ class E_usuario extends Entity
     public function avatar( int $size = 40, string $id = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
-            return "<img ".($id ?? "")." class=\"rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/usuarios/{$this->id}/img/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
+            return "<img ".($id ?? "")." class=\"rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
         }
         else{
             return "<div class=\"emoji\"><div><i style=\"font-size:{$size}px;\" class=\"text-".$this->data->avatarbg." fa fa-".$this->data->avatarface."\"></i></div></div>";

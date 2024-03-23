@@ -141,3 +141,19 @@ a.menu-opcion:not(:first-child).selected{
     }   
 }
 
+.upload-demo .upload-demo-wrap,
+.upload-demo .upload-result,
+.upload-demo.ready .upload-msg {
+    display: none;
+}
+.upload-demo.ready .upload-demo-wrap {
+    display: block;
+}
+.upload-demo.ready .upload-result {
+    display: inline-block;    
+}
+.upload-demo-wrap {
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
