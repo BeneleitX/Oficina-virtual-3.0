@@ -15,7 +15,7 @@ class Sesion extends BaseController
     public function logout(){
         if( session( "usuario" ) ){
             // BITACORA cerre manual de sesión
-            bitacora( 3, session( "usuario" )->id );
+            bitacora( 3, session( "usuario" ));
 
             $this->session->destroy();
         }

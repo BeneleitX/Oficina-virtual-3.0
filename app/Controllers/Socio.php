@@ -220,4 +220,56 @@ class Socio extends BaseController
             "icono" => "check", 
             "texto" => "Se eliminó beneficiario" ] );        
     }
+
+
+
+    public function guarda_clabe(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $clabe = $this->request->getPost( "clabe" );
+
+        $json = $this->data["socio"]->data;
+
+        $json->clabe = $clabe;
+        $json->verificacion->clabe = true;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 13, $this->data[ "socio" ]->id, [ 
+            "clabe"   => $clabe,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó la CLABE interbancaria" ] );        
+    }
+
+
+    public function nuevo_password(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        extract( $this->request->getPost() );
+
+        $json = $this->data["socio"]->data;
+        $json->verificacion->password = true;
+        $this->data["socio"]->data = $json; 
+        $this->data["socio"]->password = $nuevo;
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 14, $this->data[ "socio" ]->id, [ 
+            "password" => $nuevo,
+            "usuario"  => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó tu password" ] );        
+    }
 }

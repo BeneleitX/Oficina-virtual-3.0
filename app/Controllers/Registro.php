@@ -55,6 +55,7 @@ class Registro extends BaseController
             "correo" => $data[ "correo" ],
             "telefono" => $data[ "celular" ],
             "curp" => $data[ "curp" ],
+            "clabe" => "",
             "password" => random_password(),
             "redes" => [
                 "patrocinador" => $data[ "patrocinador" ]

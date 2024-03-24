@@ -131,4 +131,21 @@ class E_usuario extends Entity
 
         return $porcentaje;
     }
+
+
+    public function banco( $url = false){
+        $banco_codigo = substr( $this->data->clabe, 0, 3);
+
+        if( $url ){
+            $url = "assets/img/bancos/{$banco_codigo}.png";
+            if( file_exists( $url ) ){
+                return base_url().$url;
+            }
+            else{
+                return base_url()."assets/img/blank.png";
+            }
+        }
+        
+        return $banco_codigo;
+    }
 }

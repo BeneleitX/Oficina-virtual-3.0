@@ -27,7 +27,8 @@ $routes->group( "/",  ["filter" => "auth"], static function ( $routes ) {
     $routes->post( "guarda_avatar", "Socio::guarda_avatar" );
     $routes->post( "add_beneficiario", "Socio::add_beneficiario" );
     $routes->post( "cancela_beneficiario", "Socio::cancela_beneficiario" );
-    
+    $routes->post( "guarda_clabe", "Socio::guarda_clabe" );
+    $routes->post( "nuevo_password", "Socio::nuevo_password" );
     $routes->get( "tienda", "Tienda::carrito" ); 
     $routes->get( "balance", "Ingresos::balance" ); 
     $routes->get( "red", "Redes::arbol" ); 

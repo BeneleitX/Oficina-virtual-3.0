@@ -2,15 +2,13 @@
 
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
 
-
 		<a href="javascript:$( '#verificacion').modal( 'show' )" data-bs-toggle="tooltip" title="Click para ver detalles de verificación" class="col-12">
 		
-				<div class="progress bg-white mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $avance; ?>" aria-valuemin="0" aria-valuemax="100">
-					<div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $avance; ?>%"><?php echo $avance; ?>%</div>
-				</div>
+			<div class="progress bg-white mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $avance; ?>" aria-valuemin="0" aria-valuemax="100">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $avance; ?>%"><?php echo $avance; ?>%</div>
+			</div>
 			
 		</a>
-
 
 
 <div class="card mb-4">
@@ -24,24 +22,24 @@
 		</div>
 		<div class="col-md-4">
 			<label>Nombre</label>
-			<input type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
 
 			<label>Primer apellido</label>
-			<input type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[0]; ?>">
+			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[0]; ?>">
 
 			<label>Segundo apellido</label>
-			<input type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[1]; ?>">
+			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[1]; ?>">
 
 		</div>
 		<div class="col-md-4">
 			<label>Correo electrónico</label>
-			<input type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
+			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
 
 			<label>Teléfono</label>
-			<input type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
+			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
 
 			<label>CURP</label>
-			<input type="text" class="form-control" value="<?php echo $socio->curp; ?>">			
+			<input disabled  type="text" class="form-control" value="<?php echo $socio->curp; ?>">			
 		</div>
 		</div>
 	</div>
@@ -53,9 +51,7 @@
 		<div class="card mb-4">
             <div class="card-header p-0">
 				<div class="row">
-				<div class="col-6 py-2 px-4">
-						Identificación oficial
-					</div>
+				<div class="col-6 py-2 px-4"><h5 class="mb-0">Identificación oficial</h5></div>
 					<div class="col-6 text-end" style="padding: 0.2rem 1.8rem 0 4.8rem">
 						<img src="<?php echo base_url(); ?>assets/img/logo_ine.png" style="width:105px">
 					</div>
@@ -116,32 +112,71 @@
         </div>
 
 		<div class="card mb-4">
-            <div class="card-header">Password</div>
+            <div class="card-header"><h5 class="mb-0">Password</h5></div>
             <div class="card-body">	
-				x
+				<?php
+					if(! $socio->data->verificacion->password ){
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> IMPORTANTE: Debes reemplazar el password generado al registrarte, por uno propio que te sea fácil de recordar</div>";
+					}
+				?>
+				<form method="post" action="<?php echo base_url( "nuevo_password" ); ?>">
+					<?php echo csrf_field() ?>
+
+					<label>Password actual</label>
+					<input type="password" name="actual" class="form-control mb-3" value="">
+
+					<ul class="small">
+						<li>Debe tener un mínimo de 6 caracteres</li>
+						<li>Debe tener al menos un número</li>
+						<lI>No uses nombres propios ni fechas</li>
+						<li>GUarda una copia en un lugar seguro</li>
+					</ul>
+
+					<label>Escribe tu nuevo password</label>
+					<input type="password" name="nuevo" class="form-control mb-3" value="">
+
+					<label>Confirma el password</label>
+					<input type="password" name="nuevo_bis" class="form-control mb-3" value="">
+
+					<button type="submit" class="btn btn-success">Asignar nuevo password</button>
+				</form>
 			</div>
 		</div>
 
 	</div>
 
 	<div class="col-md-6">
-	<div class="card mb-4">
-            <div class="card-header">CLABE Interbancaria</div>
-            <div class="card-body" style="position:relative">	
-				<div class="alert m-0 p-0 text-end">
-				<img src="<?php echo base_url(); ?>assets/img/bancos/1.png" style="height:30px; position:absolute; top:0px; left: 0">
-				<h4 class="m-0">646209401776584352 <button class="btn btn-outline-success"><i class="fa fa-edit"></i></button></h4>
-				</div>
+		<div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">CLABE Interbancaria</h5></div>
+            <div class="card-body">	
+				<form method="post" action="<?php echo base_url( "guarda_clabe" ); ?>">
+					<?php echo csrf_field() ?>
+					<table class="mb-3">
+						<tr>
+							<td><img id="clabe_banco" src="<?php echo $socio->banco( true ); ?>" style="height:50px; width:100px"></td>
+							<td style="width:100%; padding: 0 20px;"><input name="clabe" id="clabe" style="font-weight:bold" disabled class="form-control m-0 text-center" value="<?php echo $socio->data->clabe; ?>"></td>
+							<td class="pt-1"><h5><a href="javascript:edita_clabe()" data-bs-toggle="tooltip" title="Click para editar tu CLABE interbancaria"><i class="fa fa-edit"></i></a></h5></td>
+						</tr>
+					</table>
+
+					<small><i class="fa fa-circle-info"></i> La <strong>CLABE</strong> interbancaria se compone de 18 dígitos y es un requisito indispensable para la operación de tu oficina virtual.</small>	
+					<div id="nota_clabe" style="display:none" class="mt-3">
+						<h5>Actualizar CLABE interbancaria</h5>
+						<p>Proporciona tu clabe interbancaria a 18 dígitos. Esta CLABE debe pertenecer a una cuenta bancaria de la que seas titular y se encuentre activa. Al terminar haz click en el botón.</p>
+						<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar cambios</button>
+					</div>
+				</form>
 			</div>
 		</div>
 
 		<div class="card mb-4">
-            <div class="card-header">Domicilios</div>
+            <div class="card-header"><h5 class="mb-0">Domicilios</h5></div>
             <div class="card-body">	
-				<div class="row">
-					<div class="col-md-6">
+				<div class="row mb-3">
+					<div class="col-xl-6">
 						<div class="alert alert-info mb-0">
-							<h5>Mi casa</h5>
+							<h5>Mi casa <a style="float:right" class="text-teal" href="#"><i class="fa fa-edit"></i></a></h5>
+							
 							<p class="mb-0">
 								Av. Lázaro Cárdenas 345 int. A<br>
 								Colonia Nuevo progreso<br>
@@ -151,11 +186,13 @@
 						</div>
 					</div>
 				</div>
+
+				<button class="btn btn-success"><i class="fa fa-plus"></i> Agregar domicilio</button>
 			</div>
 		</div>	
 		
 		<div class="card mb-4">
-            <div class="card-header">Beneficiarios de la cuenta </div>
+            <div class="card-header"><h5 class="mb-0">Beneficiarios de la cuenta</h5></div>
 			<div class="card-body">	
 
 			<div class="card mb-3 mb-0">	
@@ -164,7 +201,7 @@
 
 					foreach( $socio->data->beneficiarios as $k => $b ){
 						echo "\n<tr>
-							<td><strong>{$b->nombre}</strong></td>
+							<td>{$b->nombre}</td>
 							<td>{$b->porcentaje}%</td>
 							<td class=\"text-end\"><a href=\"javascript:borra_beneficiario( {$k} )\" class=\"text-red\"><i class=\"fa fa-trash\"></i></a></td>
 						</tr>
@@ -176,7 +213,7 @@
 			<button class="btn btn-success" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
 			</div></div>
 			
-			<small><i class="fa fa-circle-info"></i> Un beneficiario es una persona designada por el socio titular, que heredaría los derechos (o un porcentaje de ellos) sobre su cuenta, su red y sus ingresos pasivos, en dado caso de que el titular llegue a fallecer.</small>
+			<small><i class="fa fa-circle-info"></i> Un <strong>beneficiario</strong> es una persona designada por el socio titular, que heredaría los derechos (o un porcentaje de ellos) sobre su cuenta, su red y sus ingresos pasivos, en dado caso de que el titular llegue a fallecer.</small>
 			</div>
 		</div>			
 	</div>
