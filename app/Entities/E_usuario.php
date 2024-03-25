@@ -148,4 +148,34 @@ class E_usuario extends Entity
         
         return $banco_codigo;
     }
+
+
+    public function getBitacora(){
+        $this->db = db_connect();
+        $respuesta = [];
+
+        $sql = "SELECT t_bitacora.fecha as fecha, 
+                    t_bitacora.id as indice,
+                    t_acciones.id as codigo, 
+                    t_bitacora.ip as ip, 
+                    t_acciones.string as string, 
+                    t_bitacora.variables as variables  
+                FROM t_bitacora 
+                JOIN t_acciones on t_acciones.id = t_bitacora.accion_id 
+                WHERE usuario_id = {$this->id} 
+                ORDER BY fecha desc";
+
+        $movimientos = $this->db->query( $sql );
+
+        foreach( $movimientos->getResult() as $m ){
+            $respuesta[] = $m;
+            $m->variables = json_decode( $m->variables ); 
+
+            foreach($m->variables as $k => $v){
+                $m->string = str_replace( "#{$k}#", $v, $m->string );
+            }
+        }
+
+        return $respuesta;
+    }
 }

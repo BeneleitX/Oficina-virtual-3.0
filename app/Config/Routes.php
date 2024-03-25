@@ -19,6 +19,8 @@ $routes->group( "/",  ["filter" => "auth"], static function ( $routes ) {
     $routes->get( "",       "Dashboard::inicio" );
     $routes->get( "inicio", "Dashboard::inicio" );
 
+    $routes->get( "bitacora/(:num)", "Bitacora::listado/$1" );
+
     $routes->get( "perfil", "Socio::perfil" );
     $routes->get( "fotografia", "Socio::fotografia" );
     $routes->get( "cancela_ine/(:any)", "Socio::cancela_ine/$1" );

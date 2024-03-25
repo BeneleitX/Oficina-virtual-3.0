@@ -314,6 +314,15 @@
 </div>
 
 
+<div class="card border-red">
+	<div class="card-header">
+		<h5 class="text-red mb-0">Administración de socio</h5>
+	</div>
+	<div class="card-body">
+		<a class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-magnifying-glass"></i> Ver bitácora de movimientos</a>
+	</div>
+</div>
+
 <script>
 	var porcentaje = <?php echo $porc; ?>;
 </script>
