@@ -1,4 +1,4 @@
-<div class="alert alert-warning"><i class="fa fa-warning"></i> Tu dirección de correo <strong><?php echo $socio->correo; ?></strong> no ha sido validada. Haz <button class="btn btn-warning">Click aquí</button> para enviarte un mensaje, abre tu correo y sigue las instrucciones.</div>
+<div class="alert alert-warning"><i class="fa fa-warning"></i> Tu dirección de correo <strong><?php echo $socio->correo; ?></strong> no ha sido validada. Haz <button class="btn btn-warning btn-sm">Click aquí</button> para enviarte un mensaje, abre tu correo y sigue las instrucciones.</div>
 
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
 
@@ -65,7 +65,7 @@
 						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tu credencial fue rechazada por el siguiente motivo: <strong>{$socio->data->credencial->motivo}</strong>. Por favor carga nuevas imagenes de tu credencial.</div>";
 						break; 
 					case 0 : 
-						echo "<div class=\"alert alert-warning\"><i class=\"fa fa-address-card\"></i> Verifica tu cuenta cargando fotografías de tu credencial de elector (INE) por ambos lados.</div>";
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Verifica tu cuenta cargando fotografías de tu credencial de elector (INE) por ambos lados.</div>";
 						break; 
 					case 1 : 
 						echo "<div class=\"alert alert-info\"><i class=\"fa fa-address-card\"></i> Tu identificación oficial se encuentra en proceso de validación.</div>";

@@ -50,12 +50,12 @@ class Registro extends BaseController
                     "reverso" => null,
                     "estatus" => 0,
                     "motivo" => ""
-                ]
+                ],
+                "clabe" => ""
             ],
             "correo" => $data[ "correo" ],
             "telefono" => $data[ "celular" ],
             "curp" => $data[ "curp" ],
-            "clabe" => "",
             "password" => random_password(),
             "redes" => [
                 "patrocinador" => $data[ "patrocinador" ]
