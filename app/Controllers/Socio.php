@@ -283,9 +283,10 @@ class Socio extends BaseController
         $config['SMTPUser'] = 'hola@beneleit.mx';
         $config['SMTPPass'] = 'Z@p0zEU8';
         $config['SMTPPort'] = 465;
+        $config['mailType'] = 'html';
         $config['SMTPCrypto'] = 'ssl';
         $config['mailPath'] = '/usr/sbin/sendmail';
-        $config['charset']  = 'iso-8859-1';
+        $config['charset']  = 'utf-8';
         $config['wordWrap'] = true;
 
         $email->initialize($config);
