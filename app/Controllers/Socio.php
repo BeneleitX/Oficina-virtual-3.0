@@ -278,7 +278,7 @@ class Socio extends BaseController
     public function valida_correo(){
         $email = \Config\Services::email();
 
-        $config['protocol'] = 'smtp';
+        $config['protocol'] = 'sendmail';
         $config['SMTPHost'] = 'beneleit.mx';
         $config['SMTPUser'] = 'hola@beneleit.mx';
         $config['SMTPPass'] = 'Z@p0zEU8';
@@ -294,7 +294,7 @@ class Socio extends BaseController
         $email->setFrom('hola@beneleit.mx', 'Oficina Beneleit');
         $email->setTo('scabbia@gmail.com');
 
-        $email->setSubject('Email Test');
+        d( $email->setSubject('Email Test') );
         $email->setMessage('Testing the email class. {unwrap}http://example.com/a_long_link_that_should_not_be_wrapped.html{/unwrap}');
 
         $email->send( false );
