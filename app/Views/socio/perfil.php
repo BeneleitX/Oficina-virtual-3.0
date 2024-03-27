@@ -14,33 +14,47 @@
 <div class="card mb-4">
 	<div class="card-body">
 		<div class="row">
-		<div class="col-md-4 p-4 position-relative text-center">
-			<div id="imagencontenedor">
-				<div id="imagen_avatar"><?php echo $socio->avatar( 200 ); ?></div>
+			<div class="col-md-4 p-4 position-relative text-center">
+				<div id="imagencontenedor">
+					<div id="imagen_avatar"><?php echo $socio->avatar( 200 ); ?></div>
+				</div>
+				<div id="cambia_avatar" style="display:none" class="position-absolute top-50 start-50 text-center translate-middle"><a class="btn btn-sm btn-primary" href="<?php echo base_url()."fotografia"; ?>"><i class="fa fa-edit"></i> Cambiar foto</a></div>
 			</div>
-			<div id="cambia_avatar" style="display:none" class="position-absolute top-50 start-50 text-center translate-middle"><a class="btn btn-sm btn-primary" href="<?php echo base_url()."fotografia"; ?>"><i class="fa fa-edit"></i> Cambiar foto</a></div>
-		</div>
-		<div class="col-md-4">
-			<label>Nombre</label>
-			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+			<div class="col-md-8">
+				<div class="row mb-3">
+					<div class="col-md-4">
+						<label>Nombre</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+					</div>
+					<div class="col-md-4">
+						<label>Primer apellido</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[0]; ?>">
+					</div>
+					<div class="col-md-4">
+						<label>Segundo apellido</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[1]; ?>">					
+					</div>
+					<div class="col-md-4">
+						<label>Fecha de nacimiento</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->fechanac; ?>">
+					</div>
+					<div class="col-md-4">
+						<label>CURP</label>
+						<input disabled  type="text" class="form-control" value="<?php echo $socio->curp; ?>">			
+					</div>
+				</div>
 
-			<label>Primer apellido</label>
-			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[0]; ?>">
-
-			<label>Segundo apellido</label>
-			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->apellidos[1]; ?>">
-
-		</div>
-		<div class="col-md-4">
-			<label>Correo electrónico</label>
-			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
-
-			<label>Teléfono</label>
-			<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
-
-			<label>CURP</label>
-			<input disabled  type="text" class="form-control" value="<?php echo $socio->curp; ?>">			
-		</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label>Correo electrónico</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
+					</div>
+					<div class="col-md-4">
+						<label>Teléfono</label>
+						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -48,6 +62,64 @@
 
 <div class="row">
 	<div class="col-md-6">
+
+		<?php if( $socio->es_menor() ){
+		?>
+		<div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">Acta de nacimiento</h5></div>
+            <div class="card-body">
+				<div class="row">
+						<div class="col-4 text-center ct_acta">
+							<?php if( $socio->data->credencial->acta ){ ?>
+								<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}"; ?>" alt="" class="img-fluid rounded-3">
+							<?php 
+								if( $socio->data->credencial->estatus <= 0 ) echo "<a href=\"".base_url("cancela_ine/acta")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
+							} else { ?>
+								<button tipo="acta" onclick="$( 'input[tipo=acta]' ).click()" class="btn btn-outline-success col-12" style="padding: 200px 0">Cargar foto de <h5 class="text-green m-0">Acta de Nacimiento</h5></button>
+							<?php } ?>
+						</div>
+						<div class="col-8">
+						<?php 
+				switch( $socio->data->credencial->estatus ){
+					case -1 : 
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tu Acta de nacimiento fue rechazada por el siguiente motivo: <strong>{$socio->data->credencial->motivo}</strong>. Por favor carga una nueva imagen.</div>";
+						break; 
+					case 0 : 
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Verifica tu cuenta cargando una fotografía de tu acta de nacimiento.</div>";
+						break; 
+					case 1 : 
+						echo "<div class=\"alert alert-info\"><i class=\"fa fa-address-card\"></i> Tu Acta de nacimiento se encuentra en proceso de validación.</div>";
+						break; 
+					case 2 : 
+						echo "<div class=\"alert alert-success\"><i class=\"fa fa-address-card\"></i> Tu Acta de nacimiento ha sido validada.</div>";
+						break; 
+					}												
+				 ?>
+				 							
+						<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
+							<input type="file" class="d-none upload" tipo="acta" accept="image/jpeg">
+
+							<h5 class="mt-4">1. Carga de fotografía</h5>
+							<p>Click en el botón para carga fotografía de tu Acta de nacimiento. Cancelala si deseas repetir el proceso con una nueva foto.</p>
+
+							<h5>2. Envíala a revisión</h5>
+							<p>Click en el botón para enviarla. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
+							<a class="btn btn-success <?php echo $socio->data->credencial->acta ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+						<?php } ?>
+
+
+						<p class="mt-4"><small><i class="fa fa-circle-info"></i> El <strong>Acta de nacimiento</strong> es el documento que valida las cuentas de menores de edad. Al cumplir 18 años, deberás revalidar tu cuenta con tu credencial de elector.</small></p>
+
+						</div>
+					</div>
+					
+
+			</div>
+        </div>
+		<?php 
+		} 
+		else{
+		?>
 		<div class="card mb-4">
             <div class="card-header p-0">
 				<div class="row">
@@ -106,10 +178,12 @@
 
 						<h5>2. Envíalas a revisión</h5>
 						<p>Click en el botón para enviarlas. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-						<a class="btn btn-success <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso > 0 ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+						<a class="btn btn-success <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
 					<?php } ?>
 			</div>
         </div>
+		<?php } ?>
+
 
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">Password</h5></div>

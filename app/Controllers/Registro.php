@@ -49,7 +49,8 @@ class Registro extends BaseController
                     "frente" => null,
                     "reverso" => null,
                     "estatus" => 0,
-                    "motivo" => ""
+                    "motivo" => "",
+                    "acta" => null
                 ],
                 "clabe" => ""
             ],

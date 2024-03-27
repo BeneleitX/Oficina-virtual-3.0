@@ -15,9 +15,13 @@ class Admin extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Validar credenciales INE";
 
-        $sql = "data->>'$.credencial.frente' is not null 
-            and data->>'$.credencial.reverso' is not null 
-            and data->>'$.credencial.estatus' = 1";
+        $sql = "
+        (
+            ( data->>'$.credencial.frente' != 'null' and data->>'$.credencial.reverso' != 'null' )
+            OR 
+            data->>'$.credencial.acta' != 'null' 
+        )
+        and data->>'$.credencial.estatus' = 1";
 
         $this->data[ "socios" ] = model( "UsuarioModel" )->where( $sql , null, false )->findAll();
 
@@ -45,7 +49,7 @@ class Admin extends BaseController
         model( "UsuarioModel" )->save( $socio );
 
         // BITACORA Creación de cuenta de usuario
-        bitacora( $accion == "acepta" ? 8 : 9, $socio->id, [ 
+        bitacora( $accion == "acepta" ? ( $socio->es_menor() ? 18 : 8 ) : ( $socio->es_menor() ? 19 : 9 ), $socio->id, [ 
             "usuario" => $this->data[ "usuario" ]->id,
             "motivo"  => $motivo
         ] );

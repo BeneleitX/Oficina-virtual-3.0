@@ -21,19 +21,21 @@ $routes->group( "/",  ["filter" => "auth"], static function ( $routes ) {
 
     $routes->get( "bitacora/(:num)", "Bitacora::listado/$1" );
 
+    $routes->get( "tienda", "Tienda::carrito" ); 
+    $routes->get( "balance", "Ingresos::balance" ); 
+    $routes->get( "red", "Redes::arbol" ); 
+    
     $routes->get( "perfil", "Socio::perfil" );
     $routes->get( "fotografia", "Socio::fotografia" );
     $routes->get( "cancela_ine/(:any)", "Socio::cancela_ine/$1" );
     $routes->get( "valida_credencial", "Socio::valida_credencial" );
+    $routes->get( "valida_correo", "Socio::valida_correo" ); 
     $routes->post( "credencial", "Socio::credencial" );
     $routes->post( "guarda_avatar", "Socio::guarda_avatar" );
     $routes->post( "add_beneficiario", "Socio::add_beneficiario" );
     $routes->post( "cancela_beneficiario", "Socio::cancela_beneficiario" );
     $routes->post( "guarda_clabe", "Socio::guarda_clabe" );
     $routes->post( "nuevo_password", "Socio::nuevo_password" );
-    $routes->get( "tienda", "Tienda::carrito" ); 
-    $routes->get( "balance", "Ingresos::balance" ); 
-    $routes->get( "red", "Redes::arbol" ); 
 
     $routes->get( "admin", "Admin::dashboard" ); 
     $routes->get( "valida_credenciales", "Admin::credenciales" ); 

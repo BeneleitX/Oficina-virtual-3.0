@@ -34,6 +34,7 @@ class Socio extends BaseController
         echo template( "socio/fotografia", $this->data );
     }
 
+
     public function guarda_avatar(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -92,21 +93,22 @@ class Socio extends BaseController
         $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];
         move_uploaded_file( $fileTmpName, $path.$filename );
 
-        // BITACORA Carga de foto INE
-        bitacora( 6, $this->data[ "socio" ]->id, [ 
+        // BITACORA Carga de foto INE o Acta
+        bitacora( $this->data["socio"]->es_menor() ? 15 : 6, $this->data[ "socio" ]->id, [ 
             "archivo" => $filename,
             "tipo"    => $tipo,
             "usuario" => $this->data[ "usuario" ]->id
         ] );
 
         session()->setFlashdata('msg', [ 
-            "clase" => "success", 
-            "icono" => "check", 
-            "texto" => "Se ha recibido el {$tipo} de la credencial"]);
+            "clase"   => "success", 
+            "icono"   => "check", 
+            "texto"   => "Se ha recibido el {$tipo} de la credencial"]);
 
         echo json_encode([
             "frente"  => $this->data["socio"]->data->credencial->frente,
             "reverso" => $this->data["socio"]->data->credencial->reverso,
+            "acta"    => $this->data["socio"]->data->credencial->acta,
             "path"    => base_url().$path
         ]);
     }    
@@ -115,8 +117,8 @@ class Socio extends BaseController
     public function cancela_ine( string $tipo ){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
-        // BITACORA Cancelar carga de foto INE
-        bitacora( 7, $this->data[ "socio" ]->id, [ 
+        // BITACORA Cancelar carga de foto INE o Acta
+        bitacora( $this->data["socio"]->es_menor() ? 16 : 7, $this->data[ "socio" ]->id, [ 
             "tipo"    => $tipo,
             "usuario" => $this->data[ "usuario" ]->id
         ] );
@@ -138,7 +140,7 @@ class Socio extends BaseController
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
         // BITACORA Enviar credencial para validacion
-        bitacora( 10, $this->data[ "socio" ]->id, [ 
+        bitacora( $this->data["socio"]->es_menor() ? 17 : 10, $this->data[ "socio" ]->id, [ 
             "usuario" => $this->data[ "usuario" ]->id
         ] );
         
@@ -222,7 +224,6 @@ class Socio extends BaseController
     }
 
 
-
     public function guarda_clabe(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -271,5 +272,32 @@ class Socio extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Se actualizó tu password" ] );        
+    }
+
+
+    public function valida_correo(){
+        $email = \Config\Services::email();
+
+        $config['protocol'] = 'smtp';
+        $config['SMTPHost'] = 'beneleit.mx';
+        $config['SMTPUser'] = 'hola@beneleit.mx';
+        $config['SMTPPass'] = 'Z@p0zEU8';
+        $config['SMTPPort'] = 465;
+        $config['SMTPCrypto'] = 'ssl';
+        $config['mailPath'] = '/usr/sbin/sendmail';
+        $config['charset']  = 'iso-8859-1';
+        $config['wordWrap'] = true;
+
+        $email->initialize($config);
+
+        $email->setFrom('hola@beneleit.mx', 'Oficina Beneleit');
+        $email->setTo('scabbia@gmail.com');
+
+        $email->setSubject('Email Test');
+        $email->setMessage('Testing the email class. {unwrap}http://example.com/a_long_link_that_should_not_be_wrapped.html{/unwrap}');
+
+        $email->send( false );
+
+        echo $email->printDebugger(['headers']);
     }
 }

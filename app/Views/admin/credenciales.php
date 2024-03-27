@@ -33,7 +33,7 @@
             <th>CURP</th>
             <th>Sexo</th>
             <th>Fecha de nacimiento</th>
-            <th>Credencial</th>
+            <th>Documentos</th>
             <th></th>
         </tr>
     </thead>
@@ -48,7 +48,7 @@
                 <td>{$socio->curp}</td>
                 <td>{$socio->data->genero}</td>
                 <td>{$socio->fechanac}</td>
-                <td><div class=\"row\"><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">FRENTE</a></div><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">REVERSO</a></div></div></td>
+                <td><div class=\"row\"><div class=\"col-6\">".( $socio->es_menor() ? "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">ACTA</a>" : "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">FRENTE</a></div><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">REVERSO</a>" )."</div></div></td>
                 <td class=\"text-end\"><button class=\"btn btn-xs btn-success aprueba\">APROBAR</button> <button class=\"btn btn-xs btn-danger rechaza\">RECHAZAR</button></td>
             </tr>";
 
@@ -70,11 +70,11 @@
 
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Aceptar documento credencial INE</h5>
+                    <h5 class="modal-title">Aceptar documento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Al ACEPTAR el documento oficial, se estará confirmando la identidad del socio, permitiendole participar en todas las actividades de la empresa.</p>
+                    <p>Al ACEPTAR el documento , se estará confirmando la identidad del socio, permitiendole participar en todas las actividades de la empresa.</p>
                     <p>Nombre de quien acepta:<br><strong><?php echo $usuario->nombre(2); ?></strong></p>
                 </div>
                 <div class="modal-footer">
@@ -94,11 +94,11 @@
                 <input type="hidden" name="socio"  value="">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Rechazar documento credencial INE</h5>
+                    <h5 class="modal-title">Rechazar documento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Al RECHAZAR el documento oficial, se solicitará al socio que vuelva a enviar el documento, su participación en las actividades de la empresa seguirá limitada.</p>
+                    <p>Al RECHAZAR el documento, se solicitará al socio que vuelva a enviarlo de nuevo, su participación en las actividades de la empresa seguirá limitada.</p>
                     <p class="mb-0">Por favor introduzca el motivo del rechazo</p>
                     <textarea class="form-control mb-3" name="motivo"></textarea>
                     <p>Nombre de quien rechaza:<br><strong><?php echo $usuario->nombre(2); ?></strong></p>

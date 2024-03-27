@@ -65,7 +65,7 @@ $(document).ready(function(){
 				$( '.ct_' + tipo ).html( '<img src="' + respuesta.path + respuesta[tipo] + '" alt="" class="img-fluid rounded-3">\n<a href="' + base_url + 'cancela_ine/' + tipo + '" class="small"><i class="fa fa-trash"></i> Cancelar esta foto</a>' );
 
 				
-				if( respuesta.frente && respuesta.reverso ){
+				if( ( respuesta.frente && respuesta.reverso ) || respuesta.acta ){
 					$( '#valida_credencial' ).removeClass( 'disabled' );
 				}
 			}

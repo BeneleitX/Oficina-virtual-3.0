@@ -2,20 +2,23 @@
 namespace App\Entities;
 
 use CodeIgniter\Entity\Entity;
+use CodeIgniter\I18n\Time;
+
+
 
 class E_usuario extends Entity
 {
     protected $casts = [
-        "id"       => "integer",
+        "id"             => "integer",
         "estatus_codigo" => "string",
-        "data"     => "json",
-        "redes"    => "json",
-        "curp"     => "string",
-        "password" => "string",
-        "redes"    => "json"
+        "data"           => "json",
+        "curp"           => "string",
+        "password"       => "string",
+        "redes"          => "json"
     ];
 
     protected $dates = [ "created_at", "updated_at" ];
+
 
     protected function setPassword( string $password ): string
     {
@@ -91,10 +94,11 @@ class E_usuario extends Entity
 
     public function id($fondo = true): string 
     {
-        if( $fondo )
+        if( $fondo ){
             return "<span class=\"badge bg-teal\">".id( $this->id, 6 )."</span>";
-        else
-            return id( $this->id, 6 );
+        }
+
+        return id( $this->id, 6 );
     }
 
 
@@ -110,7 +114,6 @@ class E_usuario extends Entity
     }
 
 
-
     public function avatar( int $size = 40, string $id = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
@@ -122,9 +125,7 @@ class E_usuario extends Entity
     }
 
 
-    public function porcentaje_beneficiarios(){
-        $porcentaje = 0;
-
+    public function porcentaje_beneficiarios( $porcentaje = 0 ){
         foreach( $this->data->beneficiarios as $b ){
             $porcentaje += $b->porcentaje;
         }
@@ -133,7 +134,7 @@ class E_usuario extends Entity
     }
 
 
-    public function banco( $url = false){
+    public function banco( $url = false ){
         $banco_codigo = substr( $this->data->clabe, 0, 3);
 
         if( $url ){
@@ -154,7 +155,8 @@ class E_usuario extends Entity
         $this->db = db_connect();
         $respuesta = [];
 
-        $sql = "SELECT t_bitacora.fecha as fecha, 
+        $sql = "SELECT 
+                    t_bitacora.fecha as fecha, 
                     t_bitacora.id as indice,
                     t_acciones.id as codigo, 
                     t_bitacora.ip as ip, 
@@ -177,5 +179,10 @@ class E_usuario extends Entity
         }
 
         return $respuesta;
+    }
+
+    public function es_menor(){
+        $fecha = new Time( $this->fechanac );
+        return $fecha->getAge() < 18;
     }
 }
