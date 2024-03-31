@@ -61,6 +61,8 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
+        catalogos();
+
         $this->session = session();
 
         // protección temporal para evitar objeto en cookie

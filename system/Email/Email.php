@@ -629,7 +629,8 @@ class Email
     {
         $this->tmpArchive['subject'] = $subject;
 
-        // $subject = $this->prepQEncoding($subject);
+        // scabbia
+        $subject = $this->prepQEncoding($subject);
         $this->setHeader('Subject', $subject);
 
         return $this;

@@ -10,6 +10,7 @@ class UsuarioModel extends Model
     protected $primaryKey = "id";
 
     protected $useAutoIncrement = true;
+    protected $extras = ["estatus"=>"f_get_estatus"];
 
     protected $returnType     = \App\Entities\E_usuario::class;
     protected $useSoftDeletes = false;
@@ -23,7 +24,9 @@ class UsuarioModel extends Model
         "telefono",
         "fechanac",
         "curp",
-        "redes"
+        "redes",
+        "historial",
+        "shoppingcart"
     ];
 
     protected bool $allowEmptyInserts = false;

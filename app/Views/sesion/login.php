@@ -21,9 +21,3 @@
 			<p class="text-center">¿Aun no eres socio?<br><a href="<?php echo base_url( "formulario" ); ?>"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
 		</div>
 	</div>
-	
-
-20
-<br>
-*0799
-

@@ -45,11 +45,11 @@
 				</div>
 
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-6">
 						<label>Correo electrónico</label>
 						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-6">
 						<label>Teléfono</label>
 						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
 					</div>
@@ -261,7 +261,7 @@
 					</div>
 				</div>
 
-				<button class="btn btn-success"><i class="fa fa-plus"></i> Agregar domicilio</button>
+				<button class="btn btn-success" id="nuevo_domicilio"><i class="fa fa-plus"></i> Agregar domicilio</button>
 			</div>
 		</div>	
 		
@@ -291,8 +291,19 @@
 			</div>
 		</div>			
 	</div>
-
 </div>
+
+
+
+<div class="card border-red mt-3">
+	<div class="card-header">
+		<h5 class="text-red mb-0">Administración de socio</h5>
+	</div>
+	<div class="card-body">
+		<a class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-magnifying-glass"></i> Ver bitácora de movimientos</a>
+	</div>
+</div>
+
 
 
 <div class="modal" tabindex="-1" id="verificacion">
@@ -380,7 +391,7 @@
 					Al eliminar el beneficiario, su porcentaje asignado se liberará, por lo que deberás asignar uno nuevo para cumplir con el 100% de asignación de tu cuenta.
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-danger">Eliminar</button>
+					<button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button>
 				</div>
 			</form>
 		</div>
@@ -388,15 +399,84 @@
 </div>
 
 
-<div class="card border-red">
-	<div class="card-header">
-		<h5 class="text-red mb-0">Administración de socio</h5>
-	</div>
-	<div class="card-body">
-		<a class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-magnifying-glass"></i> Ver bitácora de movimientos</a>
+
+<div class="modal" tabindex="-1" id="modal_domicilio">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form method="post" action="<?php echo base_url( "cancela_beneficiario" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="dom_socio"  value="<?php echo $socio->id; ?>">
+				<input type="hidden" name="dom_id"  value="">
+
+				<div class="modal-header">
+					<h5 class="modal-title">Agregar domicilio</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+					<div class="col-md-4">
+							<label>Nombre</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<p class="mt-4"><small><i class="fa fa-circle-info"></i> Cada domicio que agregues debe estar identificado con un nombre. Por ejemplo: "Mi casa", "oficina", "casa de luis", etc.</small></p>
+
+						</div>
+
+						<div class="col-md-4">
+							<label>Calle y número exterior/interior</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+
+						<div class="col-md-4">
+							<label>Código postal</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+
+						<div class="col-md-4">
+							<label>Colonia</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+
+						<div class="col-md-4">
+							<label>Entidad</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+
+						<div class="col-md-4">
+							<label>Localidad</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+
+						<div class="col-md-4">
+							<label>Referencias adicionales</label>
+							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Guardar domicilio</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </div>
+
 
 <script>
 	var porcentaje = <?php echo $porc; ?>;
 </script>
+
+
+<?php
+
+d( $usuario );
+foreach( MODELOS as $codigo => $m){
+    if( $m[ "settings" ][ "efectivo" ] ){
+        d( $codigo, ESTATUS [ $usuario->estatus->modelos->{$codigo} ] );
+    }
+}
+
+$db = db_connect();
+
+foreach( $db->query( "select * from codigopostal where entidad = 4" )->getResult() as $cp ){
+	$db->query( "update colonia set localidad_id= {$cp->localidad}, entidad_id= {$cp->entidad} where codigopostal= {$cp->cp}" );
+}

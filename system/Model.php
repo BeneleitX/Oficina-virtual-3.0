@@ -190,6 +190,16 @@ class Model extends BaseModel
             $builder->where($this->table . '.' . $this->deletedField, null);
         }
 
+        // scabbia
+        if( isset( $this->extras ) ){
+			$q = $this->table.".*";
+			foreach( $this->extras as $campo => $procedure )
+				$q .= ", {$procedure}(id) as {$campo}";
+
+			$builder->select( $q );
+		}
+
+
         if (is_array($id)) {
             $row = $builder->whereIn($this->table . '.' . $this->primaryKey, $id)
                 ->get()

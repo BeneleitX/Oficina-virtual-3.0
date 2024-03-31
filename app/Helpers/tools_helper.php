@@ -84,12 +84,12 @@ function mask( $texto ){
 
 function bitacora( $accion, $usuario, array $variables = [] ){
     $db = db_connect();
-    $db->query("insert into t_bitacora values(NULL, {$accion}, {$usuario}, '".date("Y-m-d H:i:s")."', '".json_encode($variables)."', '".getIP()."') ");
+    $db->query("insert into t_bitacoras values(NULL, {$accion}, {$usuario}, '".date("Y-m-d H:i:s")."', '".json_encode($variables)."', '".getIP()."') ");
 }
 
 function admin( $codigo ){
     $db = db_connect();
-    $data = $db->query("select * from t_configuracion where codigo = '{$codigo}'")->getRow();
+    $data = $db->query("select * from t_variables where codigo = '{$codigo}'")->getRow();
 
     if($data->tipo == 'JSON'){
         $data->valor = json_decode( $data->valor );

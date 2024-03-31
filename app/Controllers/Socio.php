@@ -290,15 +290,10 @@ class Socio extends BaseController
         $config['wordWrap'] = true;
 
         $email->initialize($config);
-
         $email->setFrom('hola@beneleit.mx', 'Oficina Beneleit');
         $email->setTo('scabbia@gmail.com');
-
-        d( $email->setSubject('Email Test') );
         $email->setMessage('Testing the email class. {unwrap}http://example.com/a_long_link_that_should_not_be_wrapped.html{/unwrap}');
 
         $email->send( false );
-
-        echo $email->printDebugger(['headers']);
     }
 }

@@ -11,10 +11,16 @@ class E_usuario extends Entity
     protected $casts = [
         "id"             => "integer",
         "estatus_codigo" => "string",
-        "data"           => "json",
-        "curp"           => "string",
+        "rol_codigo"     => "string",
         "password"       => "string",
-        "redes"          => "json"
+        "data"           => "json",
+        "correo"         => "string",
+        "telefono"       => "string",
+        "fechanac"       => "string",
+        "curp"           => "string",
+        "redes"          => "json",
+        "historial"      => "json",
+        "shoppingcart"   => "json"
     ];
 
     protected $dates = [ "created_at", "updated_at" ];
@@ -34,6 +40,11 @@ class E_usuario extends Entity
         return $encrypter->decrypt( base64_decode( $this->attributes[ "password" ] ), [ "key" => $this->attributes[ "curp" ] ] );
     }
 
+    public function getEstatus(){
+        return json_Decode( $this->attributes['estatus'] );
+
+        // return ESTATUS[$e->{"10-NUTRI"}];
+    }
 
     protected function setCurp( string $curp ){
         $this->attributes[ "curp" ]     = strtoupper( $curp );
@@ -156,14 +167,14 @@ class E_usuario extends Entity
         $respuesta = [];
 
         $sql = "SELECT 
-                    t_bitacora.fecha as fecha, 
-                    t_bitacora.id as indice,
+                    t_bitacoras.fecha as fecha, 
+                    t_bitacoras.id as indice,
                     t_acciones.id as codigo, 
-                    t_bitacora.ip as ip, 
+                    t_bitacoras.ip as ip, 
                     t_acciones.string as string, 
-                    t_bitacora.variables as variables  
-                FROM t_bitacora 
-                JOIN t_acciones on t_acciones.id = t_bitacora.accion_id 
+                    t_bitacoras.variables as variables  
+                FROM t_bitacoras 
+                JOIN t_acciones on t_acciones.id = t_bitacoras.accion_id 
                 WHERE usuario_id = {$this->id} 
                 ORDER BY fecha desc";
 

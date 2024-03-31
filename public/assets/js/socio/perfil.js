@@ -72,4 +72,10 @@ $(document).ready(function(){
 		});
 	});
 
+	$( '#nuevo_domicilio' ).on( 'click', function(){
+		$( '[name=dom_id]' ).val( 0 );
+
+		$( '#modal_domicilio' ).modal( 'show' );
+	});
+
 });    

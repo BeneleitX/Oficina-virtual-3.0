@@ -38,8 +38,14 @@ class Admin extends BaseController
         $json->credencial->estatus = $accion == "acepta" ? 2 : -1;
         $json->credencial->motivo  = $motivo;
         $json->verificacion->credencial = $accion == "acepta";
+        
 
-        if( $accion != "acepta" ){
+        if( $accion == "acepta" ){
+            $historial = $socio->historial;    
+            $historial->validacion = date( "Y-m-d" );
+            $socio->historial = $historial; 
+        }
+        else{
             $json->credencial->frente   = null;
             $json->credencial->reverso  = null;
         }
