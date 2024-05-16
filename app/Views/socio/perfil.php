@@ -1,4 +1,9 @@
-<div class="alert alert-warning"><i class="fa fa-warning"></i> Tu dirección de correo <strong><?php echo $socio->correo; ?></strong> no ha sido validada. Haz <button class="btn btn-warning btn-sm">Click aquí</button> para enviarte un mensaje, abre tu correo y sigue las instrucciones.</div>
+<?php 
+
+
+if( !$socio->data->verificacion->correo ){ ?>
+<div class="alert alert-warning"><i class="fa fa-warning"></i> Tu dirección de correo <strong><?php echo $socio->correo; ?></strong> no ha sido validada. Haz <a class="btn btn-warning btn-sm" href="<?php echo base_url( "valida_correo" ) ?>">Click aquí</a> para enviarte un mensaje, abre tu correo y sigue las instrucciones.</div>
+<?php } ?>
 
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
 
@@ -9,7 +14,6 @@
 			</div>
 			
 		</a>
-
 
 <div class="card mb-4">
 	<div class="card-body">
@@ -47,11 +51,20 @@
 				<div class="row">
 					<div class="col-md-6">
 						<label>Correo electrónico</label>
-						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->correo; ?>">
+
+<div class="input-group mb-3">
+  <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->correo; ?>">
+  <a data-bs-toggle="tooltip" title="Correo electrónico <?php echo $socio->data->verificacion->correo ? "verificado" : "sin verificar. Click aquí para enviar mensaje de verificación ahora"; ?>" class="btn btn-<?php echo $socio->data->verificacion->correo ? "success" : "danger"; ?>" href="<?php echo base_url( "valida_correo" ); ?>" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->correo ? "check" : "xmark"; ?>"></i></a>
+</div>
 					</div>
 					<div class="col-md-6">
 						<label>Teléfono</label>
-						<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->telefono; ?>">
+
+<div class="input-group mb-3">
+  <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->telefono; ?>">
+  <button data-bs-toggle="tooltip" title="Teléfono <?php echo $socio->data->verificacion->telefono ? "verificado" : "sin verificar"; ?>" class="btn btn-<?php echo $socio->data->verificacion->telefono ? "success" : "danger"; ?>" type="button" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->telefono ? "check" : "xmark"; ?>"></i></button>
+</div>
+
 					</div>
 				</div>
 			</div>
@@ -70,7 +83,7 @@
             <div class="card-body">
 				<div class="row">
 						<div class="col-4 text-center ct_acta">
-							<?php if( $socio->data->credencial->acta ){ ?>
+							<?php if( $socio->data->credencial->acta ?? false ){ ?>
 								<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}"; ?>" alt="" class="img-fluid rounded-3">
 							<?php 
 								if( $socio->data->credencial->estatus <= 0 ) echo "<a href=\"".base_url("cancela_ine/acta")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
@@ -243,22 +256,65 @@
 			</div>
 		</div>
 
+
+		<div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">Declaración de impuestos</h5></div>
+            <div class="card-body">	
+				<table><tr><td>
+					<input id="check_sat" type="checkbox" style="transform: scale(3); margin:0 15px" <?php if( $socio->data->sat->estatus == 0) echo "checked"; ?> <?php if( $socio->data->sat->csf ?? false ) echo "disabled"; ?>>
+				</td><td style="padding-left:10px" <?php if( $socio->data->sat->csf ) echo "class=\"text-gray-500\""; ?>> <strong>SI,</strong> estoy de acuerdo en que BENELEIT se haga cargo de la declaración de impuestos generados por los ingresos residuales obtenidos a mi nombre. 
+				</td></tr></table>
+				<div id="sube_csf" class="alert alert-<?php echo !$socio->data->sat->csf ? "warning" : "success"; ?> mt-3 mb-0" <?php if( $socio->data->sat->estatus == 0) echo "style=\"display:none\""; ?>>
+					<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente cancela tu constancia y marca de nuevo la casilla.</p>
+
+					<?php if( $socio->data->sat->csf ){ ?>
+						<table><tr>
+							<td class="text-end pe-3">
+								<a href="<?php echo base_url()."data/{$socio->id}/csf/{$socio->data->sat->csf}"; ?>" target="_blank"><img src="<?php echo base_url(); ?>assets/img/csf.png" style="width:50%" class="rounded-3 border border-5 border-white"></a>
+							</td>
+							<td>
+								<p>La Constancia de Situación Fiscal ha sido recibida. La opción de declaración de impuestos por parte de la empresa ha quedado deshabilitada.</p>
+								<a href="<?php echo base_url("cancela_csf"); ?>" class="small"><i class="fa fa-trash"></i> Cancelar constancia</a></td>
+					</tr></table>
+					<?php } else { ?>
+						<button tipo="frente" onclick="$( '#carga_csf' ).click()" class="btn bg-white btn-outline-success col-6 xoffset-3 py-4 mt-3">Cargar <h5 class="text-green m-0">Constancia de Situación Fiscal</h5>reciente</button>
+					<?php } ?>
+
+					<input type="file" class="d-none" id="carga_csf" accept="application/pdf">
+				</div>
+			</div>
+		</div>	
+
+
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">Domicilios</h5></div>
             <div class="card-body">	
-				<div class="row mb-3">
-					<div class="col-xl-6">
-						<div class="alert alert-info mb-0">
-							<h5>Mi casa <a style="float:right" class="text-teal" href="#"><i class="fa fa-edit"></i></a></h5>
-							
-							<p class="mb-0">
-								Av. Lázaro Cárdenas 345 int. A<br>
-								Colonia Nuevo progreso<br>
-								Villa de Alvarez, Colima<br>
-								C.P. 23380
-							</p>
-						</div>
-					</div>
+				<div class="row">
+					<?php
+						$domicilios = $socio->getDomicilios();
+
+						if( sizeof($domicilios) ){
+							foreach( $domicilios as $d ){
+								echo "
+									<div class=\"col-xl-12  mb-3\">
+										<div class=\"alert alert-info mb-0\">
+											<h5>{$d[ "nombre" ]} <a style=\"float:right\" class=\"text-teal\" href=\"#\"><i class=\"fa fa-edit\"></i></a></h5>
+											
+											<p class=\"mb-0\">
+												{$d[ "calleynumero" ]}<br>
+												Colonia {$d[ "colonia" ]}<br>
+												{$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+												C.P. {$d[ "codigopostal" ]}
+											</p>
+										</div>
+									</div>
+								";
+							}
+						}
+						else{
+							// echo "<div class=\"col-xl-12  mb-3\">x</div>";
+						}
+					?>
 				</div>
 
 				<button class="btn btn-success" id="nuevo_domicilio"><i class="fa fa-plus"></i> Agregar domicilio</button>
@@ -323,11 +379,17 @@
 					$puntos_verificacion = admin( "puntos_verificacion" );
 	 				
 					foreach( $puntos_verificacion as $codigo => $punto){
-						if( $socio->data->verificacion->{$codigo} ){
-							echo "<p class=\"\"><i class=\"fas fa-square-check text-teal\"></i> {$punto}</p>";
+
+						if( $codigo == "csf" && $socio->data->sat->estatus == 0){
+							echo "<p class=\"text-gray-500\"><i class=\"fas fa-square-xmark text-gray\"></i> {$punto} <span class=\"badge bg-red\">no aplica</span></p> ";
 						}
 						else{
-							echo "<p class=\"text-gray-500\"><i class=\"far fa-square\"></i> {$punto}</p>"; // $socio->data->verificacion
+							if( $socio->data->verificacion->{$codigo} ){
+								echo "<p class=\"\"><i class=\"fas fa-square-check text-teal\"></i> {$punto}</p>";
+							}
+							else{
+								echo "<p class=\"text-gray-500\"><i class=\"far fa-square\"></i> {$punto}</p>"; // $socio->data->verificacion
+							}
 						}
 					} 
 				?>
@@ -403,59 +465,80 @@
 <div class="modal" tabindex="-1" id="modal_domicilio">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<form method="post" action="<?php echo base_url( "cancela_beneficiario" ); ?>">
-                <?php echo csrf_field() ?>
-                <input type="hidden" name="dom_socio"  value="<?php echo $socio->id; ?>">
-				<input type="hidden" name="dom_id"  value="">
 
-				<div class="modal-header">
-					<h5 class="modal-title">Agregar domicilio</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
+			<div class="modal-header">
+				<h5 class="modal-title">Domicilio</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="form_domicilio">
+
+					<?php echo csrf_field() ?>
+					<input type="hidden" name="dom_socio"  value="<?php echo $socio->id; ?>">
+					<input type="hidden" name="dom_id"  value="">
+					<input type="hidden" name="n_localidad_id"  value="">
+					<input type="hidden" name="tipo_colonia"  value="select">
+					<input type="hidden" name="n_entidad_id"  value="">
 					<div class="row">
-					<div class="col-md-4">
+						<div class="col-md-4">
 							<label>Nombre</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
-							<p class="mt-4"><small><i class="fa fa-circle-info"></i> Cada domicio que agregues debe estar identificado con un nombre. Por ejemplo: "Mi casa", "oficina", "casa de luis", etc.</small></p>
+							<input required type="text" name="n_nombre" class="form-control mb-3" value="">
+							</div>
+
+							<div class="col-md-8 pt-3">
+							<small><i class="fa fa-circle-info"></i> Cada domicio que agregues debe estar identificado con un nombre.<br>Por ejemplo: "Mi casa", "oficina", "casa de luis", etc.</small>
 
 						</div>
-
-						<div class="col-md-4">
+					</div>
+					<div class="row">
+						<div class="col-md-8">
 							<label>Calle y número exterior/interior</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<input required type="text"  name="n_calle"  class="form-control mb-3" value="">
 						</div>
 
 						<div class="col-md-4">
 							<label>Código postal</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<input required type="text"  name="n_cp" id="getCP" class="form-control mb-3" value="">
 						</div>
 
-						<div class="col-md-4">
+						<div class="col-md-4" id="colonia_select">
 							<label>Colonia</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<select required disabled id="n_colonia" name="n_colonia" class="form-select mb-3">
+
+							</select>
+						</div>
+
+						<div class="col-md-4" id="colonia_nueva" style="display:none">
+							<label>Colonia</label>
+							<input id="n_colonia_nueva" name="n_colonia_nueva" class="form-control mb-3">
+						</div>
+						
+						<div class="col-md-4">
+							<label>Localidad</label>
+							<input disabled type="text" id="n_localidad" class="form-control mb-3" value="">
 						</div>
 
 						<div class="col-md-4">
 							<label>Entidad</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<input disabled type="text" id="n_entidad" class="form-control mb-3" value="">
 						</div>
 
-						<div class="col-md-4">
-							<label>Localidad</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
-						</div>
+						<div class="col-md-12 small mb-3" id="aviso_colonia_select"><i class="fa fa-circle-info"></i> Si tu colonia no aparece en el listado después de escribir tu código postal, <a href="javascript:agrega_colonia()">haz click aquí</a> para agregarla.</div>
 
-						<div class="col-md-4">
+						<div class="col-md-12 small mb-3 text-red" id="aviso_colonia_nueva" style="display:none"><i class="fa fa-warning"></i> Escribe el nombre de tu colonia exactamente como viene en los recibos de tus servicios o estados de cuenta bancarios. Para regresar al listado de colonias existentes en tu código postal <a href="javascript:regresar_colonia()">haz click aquí</a>.</div>
+
+						<div class="col-md-12">
 							<label>Referencias adicionales</label>
-							<input disabled  type="text" class="form-control mb-3" value="<?php echo $socio->data->nombre; ?>">
+							<input type="text"  name="n_referencias" class="form-control mb-3" value="">
 						</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Guardar domicilio</button>
-				</div>
-			</form>
+				</form>
+				
+			</div>
+			<div class="modal-footer">
+				<button id="submit_domicilio" class="btn btn-success"><i class="fa fa-check"></i> Guardar</button>
+			</div>
+			
 		</div>
 	</div>
 </div>
@@ -464,19 +547,3 @@
 <script>
 	var porcentaje = <?php echo $porc; ?>;
 </script>
-
-
-<?php
-
-d( $usuario );
-foreach( MODELOS as $codigo => $m){
-    if( $m[ "settings" ][ "efectivo" ] ){
-        d( $codigo, ESTATUS [ $usuario->estatus->modelos->{$codigo} ] );
-    }
-}
-
-$db = db_connect();
-
-foreach( $db->query( "select * from codigopostal where entidad = 4" )->getResult() as $cp ){
-	$db->query( "update colonia set localidad_id= {$cp->localidad}, entidad_id= {$cp->entidad} where codigopostal= {$cp->cp}" );
-}

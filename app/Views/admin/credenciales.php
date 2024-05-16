@@ -9,23 +9,23 @@
     <div class="row">
         <div class="col-md-4">
             <h5>1. Abrir fotografías</h5>
-            <p>Click en los botones grises para ver la imagen detallada del frente y reverso de la credencial del socio.</p>
+            <p class="mb-0">Click en los botones grises para ver la imagen detallada del frente y reverso de la credencial del socio.</p>
         </div>
 
         <div class="col-md-4">
             <h5>2. Verificar datos</h5>
-            <p>Validar que el nombre, la CURP, el sexo y la fecha de nacimiento coincidan fielmente con los datos impresos en la credencial.</p>
+            <p class="mb-0">Validar que el nombre, la CURP, el sexo y la fecha de nacimiento coincidan fielmente con los datos impresos en la credencial.</p>
         </div>
 
         <div class="col-md-4">
             <h5>3. Aceptar o rechazar</h5>
-            <p>Si todo coincide, click en el botón verde para aceptar el documento. Si hay algun error o la imagen no es legible, rechazar con el botón rojo.</p>
+            <p class="mb-0">Si todo coincide, click en el botón verde para aceptar el documento. Si hay algun error o la imagen no es legible, rechazar con el botón rojo.</p>
         </div>
     </div>    
 
 </div>
 
-<table class="table table-striped" id="tabla_credenciales">
+<table class="table table-striped bg-white" id="tabla_credenciales">
     <thead>
         <tr>
             <th>Socio</th>
@@ -48,7 +48,7 @@
                 <td>{$socio->curp}</td>
                 <td>{$socio->data->genero}</td>
                 <td>{$socio->fechanac}</td>
-                <td><div class=\"row\"><div class=\"col-6\">".( $socio->es_menor() ? "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">ACTA</a>" : "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">FRENTE</a></div><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">REVERSO</a>" )."</div></div></td>
+                <td><div class=\"row\"><div class=\"col-6\">".( $socio->es_menor() && ($socio->data->credencial->acta ?? $socio->data->credencial->acta = null ) ? "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">ACTA</a>" : "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">FRENTE</a></div><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">REVERSO</a>" )."</div></div></td>
                 <td class=\"text-end\"><button class=\"btn btn-xs btn-success aprueba\">APROBAR</button> <button class=\"btn btn-xs btn-danger rechaza\">RECHAZAR</button></td>
             </tr>";
 

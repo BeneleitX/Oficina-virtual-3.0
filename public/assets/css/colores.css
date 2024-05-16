@@ -3,7 +3,7 @@
 --bs-deep-purple : #673ab7;
 --bs-purple      : #9c27b0;
 --bs-violet      : #c0228c;
---bs-pink        : #e91e63;
+--bs-pink        : #ff2c73;
 --bs-red         : #f42326;
 --bs-deep-orange : #ff5722;
 --bs-orange      : #ff6d00;
@@ -29,7 +29,7 @@
 --bs-gray-400    : #ced4da;
 --bs-gray-500    : #adb5bd;
 --bs-gray-600    : #6c757d;
---bs-gray-700    : #495057;
+--bs-gray-700    : #4f555b;
 --bs-gray-800    : #343a40;
 --bs-gray-900    : #212529;
 
@@ -73,6 +73,39 @@
 .border-gray-700 { border-color: var(--bs-gray-700); }
 .border-gray-800 { border-color: var(--bs-gray-800); }
 .border-gray-900 { border-color: var(--bs-gray-900); }
+
+.stroke-indigo { stroke: var(--bs-indigo); }
+.stroke-deep-purple { stroke: var(--bs-deep-purple); }
+.stroke-purple { stroke: var(--bs-purple); }
+.stroke-violet { stroke: var(--bs-violet); }
+.stroke-pink { stroke: var(--bs-pink); }
+.stroke-red { stroke: var(--bs-red); }
+.stroke-deep-orange { stroke: var(--bs-deep-orange); }
+.stroke-orange { stroke: var(--bs-orange); }
+.stroke-mustard { stroke: var(--bs-mustard); }
+.stroke-amber { stroke: var(--bs-amber); }
+.stroke-yellow { stroke: var(--bs-yellow); }
+.stroke-lime { stroke: var(--bs-lime); }
+.stroke-light-green { stroke: var(--bs-light-green); }
+.stroke-green { stroke: var(--bs-green); }
+.stroke-teal { stroke: var(--bs-teal); }
+.stroke-cyan { stroke: var(--bs-cyan); }
+.stroke-light-blue { stroke: var(--bs-light-blue); }
+.stroke-blue { stroke: var(--bs-blue); }
+.stroke-marine { stroke: var(--bs-marine); }
+.stroke-black { stroke: var(--bs-black); }
+.stroke-white { stroke: var(--bs-white); }
+.stroke-light { stroke: var(--bs-light); }
+.stroke-brown { stroke: var(--bs-brown); }
+.stroke-gray-100 { stroke: var(--bs-gray-100); }
+.stroke-gray-200 { stroke: var(--bs-gray-200); }
+.stroke-gray-300 { stroke: var(--bs-gray-300); }
+.stroke-gray-400 { stroke: var(--bs-gray-400); }
+.stroke-gray-500 { stroke: var(--bs-gray-500); }
+.stroke-gray-600 { stroke: var(--bs-gray-600); }
+.stroke-gray-700 { stroke: var(--bs-gray-700); }
+.stroke-gray-800 { stroke: var(--bs-gray-800); }
+.stroke-gray-900 { stroke: var(--bs-gray-900); }
 
 .text-indigo { color: var(--bs-indigo); }
 .text-deep-purple { color: var(--bs-deep-purple); }

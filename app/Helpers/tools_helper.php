@@ -28,6 +28,16 @@ function id($n, $digitos = 0)
 }
 
 
+function getModeloPrincipal(){
+
+    foreach( MODELOS as $m ){
+        if( $m[ "settings" ][ "principal" ] ){
+            return $m[ "codigo" ];
+        }
+    }
+}
+
+
 function getIP(){
     if(!empty($_SERVER['HTTP_CLIENT_IP'])){
         //ip from share internet
@@ -96,4 +106,39 @@ function admin( $codigo ){
     }
 
     return $data->valor;
+}
+
+
+function estatus( $codigo, $bn = false ){
+    return "<span class=\"badge rounded-pill bg-".( $bn ? "black" : ESTATUS[ $codigo ][ "color" ] )."\"><i class=\"fa fa-circle\"></i> ".ESTATUS[ $codigo ][ "descripcion" ]."</span>";
+}
+
+
+function mes($mesnum, $ext = 0)
+{
+    if($mesnum < 1) $mesnum += 12;
+    if($mesnum > 12) $mesnum -= 12;
+
+    $mespal = "";
+
+    switch($mesnum)
+    {
+        case 1 : $mespal = "enero"; break;
+        case 2 : $mespal = "febrero"; break;
+        case 3 : $mespal = "marzo"; break;
+        case 4 : $mespal = "abril"; break;
+        case 5 : $mespal = "mayo"; break;
+        case 6 : $mespal = "junio"; break;
+        case 7 : $mespal = "julio"; break;
+        case 8 : $mespal = "agosto"; break;
+        case 9 : $mespal = "septiembre"; break;
+        case 10: $mespal = "octubre"; break;
+        case 11: $mespal = "noviembre"; break;
+        case 12: $mespal = "diciembre"; break;
+    }
+
+    if($ext)
+        $mespal = substr($mespal, 0, $ext);
+
+    return $mespal;
 }

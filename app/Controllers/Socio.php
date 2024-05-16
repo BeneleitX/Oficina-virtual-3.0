@@ -18,10 +18,15 @@ class Socio extends BaseController
 
             if( $k == true ){ 
                 $checked++;
+            }else{
+                if($j == "csf"){
+                    if( $this->data["socio"]->data->sat->estatus == 0 )
+                    $checked++;
+                }
             }
         }
         $this->data[ "avance" ] = number_format($checked * 100 / $total,0);
-
+        
         echo template( "socio/perfil", $this->data );
     }
 
@@ -295,5 +300,216 @@ class Socio extends BaseController
         $email->setMessage('Testing the email class. {unwrap}http://example.com/a_long_link_that_should_not_be_wrapped.html{/unwrap}');
 
         $email->send( false );
+
+
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $json = $this->data["socio"]->data;
+        $json->verificacion->correo = true;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        // BITACORA Enviar correo verificación
+        bitacora( 21, $this->data[ "socio" ]->id, [ 
+            "usuario"  => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se envió un correo de verificación" ] );   
+    }
+
+
+    public function valida_cp(){
+        $cp = $this->request->getPost( "cp" );
+
+        $respuesta = [
+            "total"      => 0,
+            "colonias"   => [],
+            "localidad"  => [],
+            "entidad"    => [],
+            "error"      => false
+        ];
+
+        $db = db_connect();
+        
+        $respuesta[ "colonias" ] = $db->query("select c.id, c.nombre, l.id AS l_id, l.nombre AS l_nombre, e.id AS e_id, e.nombre AS e_nombre
+        from t_colonias c 
+        JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
+        JOIN t_entidades e ON e.id = c.entidad_id
+        where c.codigopostal = '{$cp}' order BY c.nombre" )->getResultArray();
+
+        $respuesta[ "total" ] = sizeof( $respuesta[ "colonias" ] );
+
+        if( $respuesta[ "total" ] > 0 ){
+            $respuesta[ "localidad" ] = [
+                "id"     => $respuesta[ "colonias" ][ 0 ][ "l_id" ],
+                "nombre" => $respuesta[ "colonias" ][ 0 ][ "l_nombre" ]
+            ];
+            $respuesta[ "entidad" ] = [
+                "id"     => $respuesta[ "colonias" ][ 0 ][ "e_id" ],
+                "nombre" => $respuesta[ "colonias" ][ 0 ][ "e_nombre" ]
+            ];
+        }
+        else{
+            $cp = substr( $cp, 0, 4 )."0";
+
+            $base = $db->query("select c.id, c.nombre, l.id AS l_id, l.nombre AS l_nombre, e.id AS e_id, e.nombre AS e_nombre
+            from t_colonias c 
+            JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
+            JOIN t_entidades e ON e.id = c.entidad_id
+            where c.codigopostal = '{$cp}' order BY c.nombre" )->getResultArray();
+
+            if( sizeof( $base ) > 0 ){
+                $respuesta[ "localidad" ] = [
+                    "id"     => $base[ 0 ][ "l_id" ],
+                    "nombre" => $base[ 0 ][ "l_nombre" ]
+                ];
+                $respuesta[ "entidad" ] = [
+                    "id"     => $base[ 0 ][ "e_id" ],
+                    "nombre" => $base[ 0 ][ "e_nombre" ]
+                ];
+            }
+            else{
+                $respuesta[ "error" ] = true;
+            }
+        }
+
+        echo json_encode( $respuesta ); 
+    }
+
+
+    public function create_domicilio(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        extract( $this->request->getPost() );
+
+        // crear colonia nueva
+        if( $tipo_colonia == "nueva" ){
+            $nueva = [
+                "codigopostal" => $n_cp, 
+                "nombre" => $n_colonia_nueva, 
+                "localidad_id" => $n_localidad_id,
+                "entidad_id" => $n_entidad_id
+            ];
+
+            $coloniamodel = model( "ColoniaModel" );
+            $x = $coloniamodel->insert( $nueva );
+        }
+        else{
+            $x = $n_colonia;
+        }
+
+        $recibe = [
+            "estatus_codigo" => "201-ACTIVO", 
+            "usuario_id"     => $this->data[ "socio" ]->id,
+            "nombre"         => $n_nombre, 
+            "calleynumero"   => $n_calle,
+            "colonia_id"     => $x,
+            "referencias"    => $n_referencias
+        ];
+
+        $domiciliomodel = model( "DomicilioModel" );
+        $id = $domiciliomodel->insert( $recibe );
+
+        $json = $this->data["socio"]->data;
+        $json->verificacion->domicilio = true;
+        if( !isset($json->domicilio) || $json->domicilio == null ){
+            $json->domicilio = $id;
+        }
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        // BITACORA Creación de cuenta de usuario
+        bitacora( 20, $this->data[ "socio" ]->id, [ 
+            "domicilio_id" => $id,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        echo $id ?? 0;
+    }
+
+
+    public function check_csf(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $json = $this->data["socio"]->data;
+        $json->sat->estatus = $this->request->getPost( "check" ) == "true" ? 0 : 1;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );   
+
+        // BITACORA Cambio de estatus en check de impuestos
+        bitacora( $json->sat->estatus == 1 ? 25 : 24, $this->data[ "socio" ]->id, [ 
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+        
+        print_r( $json );
+    }
+
+    public function carga_csf(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $pdf = $this->request->getPost( "pdf" );
+
+        $path = "data/{$this->data["socio"]->id}/csf/";
+        $filename = $this->data["socio"]->id."_".time().".pdf";
+
+        $json = $this->data["socio"]->data;
+        $json->sat->csf = $filename;
+        $json->sat->estatus = 2;
+        $json->verificacion->csf = true;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        if( !is_dir( $path ) ){
+            mkdir( $path, 0644, true );
+        }
+
+        $fileTmpName = $_FILES[ "pdf" ][ "tmp_name" ];
+        move_uploaded_file( $fileTmpName, $path.$filename );
+
+        // BITACORA Carga de CSF
+        bitacora( 22, $this->data[ "socio" ]->id, [ 
+            "archivo" => $filename,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        session()->setFlashdata('msg', [ 
+            "clase"   => "success", 
+            "icono"   => "check", 
+            "texto"   => "Se ha recibido la Constancia de Situación Fiscal"]);
+
+        echo json_encode([
+            "frente"  => $this->data["socio"]->data->sat->csf,
+            "path"    => base_url().$path
+        ]);
+    } 
+
+
+    public function cancela_csf(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        // BITACORA Cancelar carga de CSF
+        bitacora( 23, $this->data[ "socio" ]->id, [ 
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+        
+        $json = $this->data["socio"]->data;
+        $json->sat->csf = null;
+        $json->sat->estatus = 1;
+        $json->verificacion->csf = false;
+        $this->data["socio"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "trash", 
+            "texto" => "Se eliminó la Constancia de Situación Fiscal"] );
     }
 }

@@ -1,7 +1,9 @@
 
 $(document).ready(function(){
 
-    new DataTable('#tabla_credenciales');
+    new DataTable('#tabla_credenciales', {
+        pageLength: 50
+    });
 
     $( '.aprueba' ).on( 'click', function(){
         var socio = $( this ).closest( 'tr' ).attr( 'socio' );

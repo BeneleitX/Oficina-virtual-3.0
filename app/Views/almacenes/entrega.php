@@ -1,0 +1,109 @@
+<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
+
+<h4 class="mt-1 mb-0"><?php echo $titulo." <span class=\"badge bg-marine\">".$almacen[ "nombre" ]; ?></span></h4>
+<p class="mb-3"><a href="<?php echo base_url( "pedido/".$pedido[ "referencia" ] ); ?>"><i class="fa fa-undo"></i> Regresar a detalles del pedido</a></p>
+
+<h5>Pedido <span class="badge bg-marine"><?php echo $pedido[ "referencia" ]; ?></span>
+                <?php echo  estatus( $pedido[ "estatus_codigo" ] ); ?></h5>
+
+<div class="row">
+    <div class="col-lg-6">
+        <form enctype="multipart/form-data" action="<?php echo base_url( "marca_entregado" ); ?>" method="post">
+
+        <div class="card">
+            <div class="card-body">
+                <h5>Socio <?php echo $cliente->id()." ".$cliente->avatar()." ".$cliente->nombre( 2 ); ?></h5>
+                <p>Fecha de pago: <?php echo $pedido[ "fechas" ][ "pagado" ]; ?></p>
+
+                <div class="alert alert-info">Completa la información del formulario y coloca los productos en el pedido marcando uno por uno en los cuadros de la derecha. Una vez colocados todos los propductos, se autorizará la entrega.</div>
+
+                <table class="w-100">
+                    <tr>
+                        <td valign="top">Entrega:</td>
+                        <td><select name="entrega" id="" class="form-select mb-3">
+                    <?php 
+                    foreach( $almacen[ "staff" ] as $u ){
+                        echo "\n<option ".( $u->id == $socio->id ? "selected" : "" )." value=\"{$u->id}\">{$u->nombre(2)}</option>";
+                    }
+                    ?>
+                </select></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Recibe:</td>
+                        <td><input name="recibe" id="" class="form-control mb-3"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Teléfono celular</td>
+                        <td><input name="celular" id="" class="form-control w-50 mb-3"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Fotografía de evidencia</td>
+                        <td><input  accept="image/jpeg" type="file" name="evidencia" id="" class="form-control mb-3"></td>
+                    </tr>
+                </table>
+                
+            </div>
+        </div>
+
+        <h1 class="text-center">
+            <button disabled class="btn btn-lg my-5 btn-danger" id="boton_entregado_no"><span id="productos_conteo">0</span> productos de <?php echo $pedido[ "data" ][ "productos" ]; ?></button>
+            
+            <div id="boton_entregado_si" style="display:none">
+                
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                <button class="btn btn-lg my-5 btn-success">Marcar pedido como entregado</button>
+                
+            </div>
+        </h1>
+
+        </form>
+    </div>
+
+    <div class="col-lg-6">
+
+        <?php foreach( $pedido[ "productos" ] as $p => $c ){ ?>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="float-end text-teal m-0"><?php echo $c; ?></h5>
+                <h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5>
+            </div>
+            <div class="card-body">
+                <?php for( $a = 1; $a <= $c; $a++ ){ ?>
+                    <input type="checkbox" class="btn-check" id="check_<?php echo $p."_".$a; ?>">
+                    <label producto="<?php echo $p; ?>" numero="<?php echo $a; ?>" class="btn btn-outline-yesno fs-1 px-3" for="check_<?php echo $p."_".$a; ?>"><i class="far fa-circle-down"></i></label>
+                <?php } ?>
+            </div>
+        </div>
+        <?php } ?>
+
+    </div>
+
+</div>
+
+<div class="modal" tabindex="-1" id="modal_confirma" producto="">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="modal-title me-3">
+                    <h5>Agregar producto</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body text-center">
+             <img style="width:200px">
+             <div class="nombre"></div>
+             <button class="btn btn-success my-2" id="confirma_agregar">AGREGAR</button>
+            </div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+var cat_productos   = <?php echo json_encode( $productos ); ?>,
+    total_productos = <?php echo $pedido[ "data" ][ "productos" ]; ?>;
+</script>

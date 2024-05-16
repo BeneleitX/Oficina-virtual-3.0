@@ -47,7 +47,8 @@ abstract class BaseController extends Controller
 
     protected $data = [
         "usuario"   => null,
-        "navbar"    => false
+        "navbar"    => false,
+        "menu"      => null
     ];
 
     /**
@@ -61,8 +62,6 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
-        catalogos();
-
         $this->session = session();
 
         // protección temporal para evitar objeto en cookie
@@ -72,7 +71,24 @@ abstract class BaseController extends Controller
             return redirect()->to( "login" );
         }
 
-        $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
+        $meses = [];
+        $dy    = date( "Y" );
+        $dm    = date( "m" );
+        for( $a = 0; $a < 12; $a++ ){
+            $meses[ $a ] = ( $dy * 100 ) + $dm;
+            if( --$dm < 1 ){
+                 $dm = 12;
+                 $dy--;
+            }
+        }
+        
+        if( !defined( "MESES" ) ) define( "MESES", $meses );
 
+        load_catalogo( "modelos", "estatus_codigo = '201-ACTIVO'" );
+        load_catalogo( "estatus" );
+        load_catalogo( "rangos" );
+        load_catalogo( "variables", null, true );
+
+        $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
 }

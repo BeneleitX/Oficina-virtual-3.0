@@ -10,7 +10,7 @@ class Auth implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        if(!session( "usuario" )){
+        if( !session( "usuario" )){
             return redirect()->route( "login" );
         }
     }

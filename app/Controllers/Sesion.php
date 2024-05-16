@@ -26,9 +26,8 @@ class Sesion extends BaseController
 
 
     public function procesa_login(){
-
         $validation = service("validation");
-
+       
         $validation->setRules([
             "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
             "socio_password" => "required"

@@ -42,7 +42,7 @@ class Registro extends BaseController
         // Creamos plantilla para crear la nueva entidad usuario
         $recibe = [
             "estatus_codigo" => "210-NUEVO",
-            "rol_codigo"     => "10-SOCIO",
+            "rol_codigos"    => [ "10-SOCIO" ],
             "data"           => [
                 "nombre"        => $data[ "nombre" ],
                 "apellidos"     => [ $data[ "apellido1" ], $data[ "apellido2" ]],
@@ -51,6 +51,7 @@ class Registro extends BaseController
                     "activo"        => null
                 ],
                 "verificacion"  => [],
+                "domicilio"     => null,
                 "credencial"    => [
                     "frente"        => null,
                     "reverso"       => null,
@@ -58,7 +59,13 @@ class Registro extends BaseController
                     "motivo"        => "",
                     "acta"          => null
                 ],
-                "clabe"         => ""
+                "clabe"         => "",
+                "saldo"         => [],
+                "sat"           => [
+                    "estatus"       => 0,
+                    "csf"           => null
+                ],
+                "rango"     => "00-SOCIO"
             ],
             "correo"        => $data[ "correo" ],
             "telefono"      => $data[ "celular" ],
@@ -71,48 +78,42 @@ class Registro extends BaseController
                 "registro"      => date( "Y-m-d" ),
                 "validacion"    => null,
                 "modelos"       => []
-            ],
-            "shoppingcart"     => [
-                "modelos"       => []
-            ]                
+            ]               
         ];
-
+    
         // Complementamos la plantilla con información inicial para cada modelo de negocio
         foreach( MODELOS as $m ){
             if( $m[ "settings" ][ "efectivo" ] ){
                 $recibe[ "historial" ][ "modelos" ][ $m[ "codigo" ] ] = [
-                    "primercompra" => null,
-                    "ultimacompra" => null,
+                    "primercompra"   => null,
+                    "ultimacompra"   => null,
+                    "fondeos" => [],
+                    "calificaciones" => {}
                 ];
+
+                $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = 0.00;
+                $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
 
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
                     "padre" => $data[ "patrocinador" ],
                     "hijos" => [],
-                ];    
-                
-                $recibe[ "shoppingcart" ][ "modelos" ][ $m[ "codigo" ] ] = [
-                    "peso" => 0,
-                    "total" => 0.00,
-                    "metodopago" => null,
-                    "comisionbanco" => 0.00,
-                    "entrega" => [
-                        "costo" => 0.00,
-                        "tipo" => "shipping",
-                        "codigo" => null
-                    ],
-                    "PTS" => [],
-                    "promos" => []
                 ];
             }
         }
 
         $puntos_verificacion = admin( "puntos_verificacion" );
         foreach( $puntos_verificacion as $codigo => $punto){
-            $recibe[ "data"][ "verificacion" ][ $codigo ] = false;
+
+            // temporal activamos el telefono al no existir verificación por ahora, el resto en false
+            $recibe[ "data"][ "verificacion" ][ $codigo ] = ($codigo == "telefono");
         }
 
         $usuariomodel = model( "UsuarioModel" );
-        $id = $usuariomodel->insert( new \App\Entities\E_usuario( $recibe ) );
+
+        $entidad = new \App\Entities\E_usuario();
+        $entidad->fill( $recibe );
+
+        $id = $usuariomodel->insert( $entidad );
         
         // BITACORA Creación de cuenta de usuario
         bitacora( 4, $id, [ 
