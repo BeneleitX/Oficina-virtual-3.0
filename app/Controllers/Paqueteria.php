@@ -39,8 +39,8 @@ class Paqueteria extends BaseController
         $db = db_connect();
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
             LEFT JOIN t_usuarios u ON u.id = p.usuario_id
-            WHERE p.data->>'$.entrega' = '{$paqueteria}' 
-            AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600";
+            WHERE p.metodoentrega_codigo = '{$paqueteria}' 
+            AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500";
 
         $this->data[ "pedidos" ] = $db->query( $sql )->getResultArray();
 
@@ -52,17 +52,13 @@ class Paqueteria extends BaseController
 
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
-        $this->data[ "titulo"  ] = "Entrega de productos en almacen";
+        $this->data[ "titulo"  ] = "Envío de productos por paquetería";
         $this->data[ "pedido"  ] = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-        $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $this->data[ "pedido" ][ "data" ][ "entrega" ] );
+        $this->data[ "paqueteria" ] = model( "MetodoentregaModel" )->find( $this->data[ "pedido" ][ "metodoentrega_codigo" ] );
         $this->data[ "cliente" ] = model( "UsuarioModel" )->find( $this->data[ "pedido"  ][ "usuario_id" ] );
-        $staff = model( "UsuarioModel" )->find( $this->data[ "almacen" ][ "settings" ][ "staff" ] );
 
-        $this->data[ "almacen" ][ "staff" ] = [];
-        foreach( $staff as $u ){
-            $this->data[ "almacen" ][ "staff" ][ $u->id ] = $u;
-        }
-
+        $d = $this->data[ "cliente" ]->getDomicilios();
+        $this->data[ "d" ] = $d[ $this->data[ "pedido"  ][ "data" ][ "entrega" ] ];
         $this->data[ "pedido" ][ "productos" ] = [];
         foreach( $this->data[ "pedido" ][ "promociones" ] as $promo ){
             foreach( $promo[ "productos" ] as $codigo => $producto ){
@@ -80,26 +76,32 @@ class Paqueteria extends BaseController
             $this->data[ "productos" ][ $p->codigo ] = $p;
         } 
 
-        echo template( "almacenes/entrega", $this->data );
+        echo template( "paqueteria/entrega", $this->data );
     }
 
 
-    public function marca_entregado(){
+    public function marca_enviado(){
         // aqui se marca como entregado el pedido
 
         extract( $this->request->getPost() );
         $pedido   = model( "PedidoModel" )->find( $pedido );
-        $entrega  = model( "UsuarioModel" )->find( $entrega );
-
-        $almacen  = model( "AlmacenModel" )->find( $pedido[ "data" ][ "entrega" ] );
-
+        $almacen  = model( "AlmacenModel" )->find( admin( "almacen_paqueteria" ) );
         $path     = "assets/img/evidencias/";
         $filename = $pedido[ "id" ]."_".time().".jpg";
         $tmpName  = $_FILES[ "evidencia" ][ "tmp_name" ];
         move_uploaded_file( $tmpName, $path.$filename );
 
-        $pedido[ "estatus_codigo" ] = "622-ENTREGADO";
-        $pedido[ "fechas" ][ "entregado" ] = date( "Y-m-d H:i:s" );
+        $db = db_connect();
+        $sql = "SELECT p.*, u.data AS socio from t_pedidos p
+            LEFT JOIN t_usuarios u ON u.id = p.usuario_id
+            WHERE p.metodoentrega_codigo = '{$paqueteria}' 
+            AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500";
+
+        $pedido[ "data" ][ "domicilio" ] = $db->query( $sql )->getRowArray();
+
+        $pedido[ "estatus_codigo" ] = "530-ENVIADO";
+        $pedido[ "data" ][ "guia" ] = $guia;
+        $pedido[ "fechas" ][ "enviado" ] = date( "Y-m-d H:i:s" );
         model( "PedidoModel" )->save( $pedido );
 
         foreach( $pedido[ "promociones" ] as $promo ){
@@ -110,17 +112,16 @@ class Paqueteria extends BaseController
         model( "AlmacenModel" )->save( $almacen );
 
         // BITACORA Entrega pedido en almacen
-        bitacora( 27, $entrega->id, [ 
-            "pedido"  => $pedido,
-            "recibe"  => $recibe,
-            "celular" => $celular,
-            "usuario" => $this->data[ "usuario" ]->id
+        bitacora( 29, $this->data[ "usuario" ]->id, [ 
+            "pedido"  => $pedido[ "id" ],
+            "recibe"  => $pedido[ "usuario_id" ],
+            "guia" => $guia
         ] );
 
-        return redirect()->to( "almacen/".$almacen[ "codigo" ] )->with( "msg", [ 
+        return redirect()->to( "paqueteria/".$pedido[ "metodoentrega_codigo" ] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
-            "texto" => "El pedido {$pedido[ "referencia" ]} fue marcado como entregado"] );        
+            "texto" => "El pedido {$pedido[ "referencia" ]} fue marcado como enviado"] );
     }
 }
 

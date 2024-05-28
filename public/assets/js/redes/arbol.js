@@ -200,7 +200,10 @@ function beneleit( data ){
                 + d.nombre
                 + '<br>'
                 + estatus[ d.estatus ].descripcion
-                + '</div>'; 
+                + '<br><br><a href="' + base_url + '/procesa_registro/' + d.id + '/' + modelo + '" class="btn btn-danger col-12 btn-xs"><i class="fa fa-user"></i> Agrega socio de pruebas</a><br>'
+                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_2 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_2 + '</a>'
+                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_1 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_1 + '</a>'
+                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_0 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_0 + '</a></div>'; 
             })
 
             // Colocar en posición
@@ -486,20 +489,17 @@ $( document ).ready(function()
         success: function( data ){
             $( canvas ).empty();
 
-            downline = JSON.parse( data, ( key, value, context ) => {
+            downline = JSON.parse( data , ( key, value, context ) => {
                 
                 switch( key ){
                     case "profundidad":
+                        return value ?? [0,0,0];
+
                     case "calificaciones":
-                        return JSON.parse( value );
-                        break;
-                    
                     case "id":
                     case "nivel":
                     case "padre":
                     case "patrocinador":
-                        return parseInt( value );
-
                     default:
                         return value;
                 }

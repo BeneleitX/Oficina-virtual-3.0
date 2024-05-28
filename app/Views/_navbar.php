@@ -22,9 +22,10 @@
         <a class="dropdown-item text-center" href="#">
 
 
-			<?php echo $usuario->avatar( 120); ?>
+			<?php echo $usuario->avatar( 120 ); ?>
 
-			<a class="btn btn-outline-info m-2"><?php echo $usuario->nombre(2); ?></a>
+			<a class="btn btn-outline-info m-2" style="white-space: nowrap;"><?php echo $usuario->nombre(2); ?></a>
+			<h1 class="text-center"><?php echo $usuario->id( null, null, "marine" ); ?></h1>
         </a>
     </li>
 	<li><hr class="dropdown-divider"></li>

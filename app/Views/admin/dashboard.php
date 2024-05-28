@@ -12,7 +12,7 @@ $menu = [
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ) ],
     [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ) ],
     [ "warning", "pasarelas/".getModeloPrincipal(), "credit-card", "Métodos de pago", sizeof( $pasarelas ) ],
-    [ "warning", "paqueterias/".getModeloPrincipal(), "truck-fast", "Proveedores de paquetería", sizeof( $paqueterias ) ],
+    [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Proveedores de paquetería", sizeof( $paqueterias ) ],
     [ "danger", "corte/".getModeloPrincipal(), "filter-circle-dollar", "Corte semanal" ],
     [ "warning", "productos/".getModeloPrincipal(), "spray-can-sparkles", "Productos", sizeof( $productos ) ],
     [ "secondary", "recompensas/".getModeloPrincipal(), "award", "Recompensas" ],
@@ -23,9 +23,10 @@ $menu = [
     [ "secondary", "reportes", "chart-pie", "Reportes" ],
     [ "secondary", "backups", "cloud-arrow-down", "Respaldos de BD" ],
     [ "secondary", "tickets", "ticket", "Tickets de soporte" ],  
-    [ "warning", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", sizeof( $almacenes ) ],    
+    [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", sizeof( $almacenes ) ],    
     [ "secondary", "bloques", "table-cells", "Bloques de inicio" ],    
     [ "secondary", "facturacion", "file-invoice-dollar", "Facturacion" ],    
+    [ "success", "estatus", "layer-group", "Estatus de socios" ],    
 ];
 
 foreach( $menu as $opcion ){

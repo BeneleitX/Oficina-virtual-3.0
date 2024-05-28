@@ -6,14 +6,15 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get( "login",                  "Sesion::login" );
-$routes->get( "logout",                 "Sesion::logout" );
-$routes->post( "oauth",                 "Sesion::procesa_login" );
+$routes->get( "login",                      "Sesion::login" );
+$routes->get( "logout",                     "Sesion::logout" );
+$routes->post( "oauth",                     "Sesion::procesa_login" );
 
-$routes->get( "formulario",             "Registro::formulario" );
-$routes->get( "registro_exito/(:num)",  "Registro::registro_exito/$1" );
-$routes->post( "valida_patrocinador",   "Registro::valida_patrocinador" );
-$routes->post( "procesa_registro",      "Registro::procesa_registro" );
+$routes->get( "formulario",                 "Registro::formulario" );
+$routes->get( "registro_exito/(:num)",      "Registro::registro_exito/$1" );
+$routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
+$routes->post( "procesa_registro",          "Registro::procesa_registro" );
+$routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "",                       "Dashboard::inicio" );
@@ -62,13 +63,14 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "paqueterias/(:any)",     "Paqueteria::listado/$1" ); 
     $routes->get( "paqueteria/(:any)",      "Paqueteria::detalle/$1" );
     $routes->post( "envia",                 "Paqueteria::entrega" );
-    $routes->post( "marca_eviado",          "Paqueteria::marca_entregado" );
+    $routes->post( "marca_enviado",          "Paqueteria::marca_enviado" );
 
     $routes->get( "roles",                  "Roles::listado" ); 
 
     $routes->get( "admin",                  "Admin::dashboard" ); 
     $routes->get( "variables",              "Admin::variables" ); 
     $routes->get( "rangos/(:any)",          "Admin::rangos/$1" ); 
+    $routes->get( "estatus",                "Admin::estatus" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 
     $routes->get( "promociones/(:any)",     "Admin::promociones/$1" ); 
     $routes->get( "productos/(:any)",       "Admin::productos/$1" ); 

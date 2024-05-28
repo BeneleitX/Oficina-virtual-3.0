@@ -2,7 +2,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo." <span class=\"badge bg-marine\">".$almacen[ "nombre" ]; ?></span></h4>
+<h4 class="mt-1 mb-0"><?php echo $titulo." <span class=\"badge bg-marine\">".$paqueteria[ "nombre" ]; ?></span></h4>
 <p class="mb-3"><a href="<?php echo base_url( "pedido/".$pedido[ "referencia" ] ); ?>"><i class="fa fa-undo"></i> Regresar a detalles del pedido</a></p>
 
 <h5>Pedido <span class="badge bg-marine"><?php echo $pedido[ "referencia" ]; ?></span>
@@ -10,33 +10,39 @@
 
 <div class="row">
     <div class="col-lg-6">
-        <form enctype="multipart/form-data" action="<?php echo base_url( "marca_entregado" ); ?>" method="post">
+        <form enctype="multipart/form-data" action="<?php echo base_url( "marca_enviado" ); ?>" method="post">
 
         <div class="card">
             <div class="card-body">
                 <h5>Socio <?php echo $cliente->id()." ".$cliente->avatar()." ".$cliente->nombre( 2 ); ?></h5>
                 <p>Fecha de pago: <?php echo $pedido[ "fechas" ][ "pagado" ]; ?></p>
 
-                <div class="alert alert-info">Completa la información del formulario y coloca los productos en el pedido marcando uno por uno en los cuadros de la derecha. Una vez colocados todos los productos, se autorizará la entrega.</div>
+                <div class="alert alert-info">Completa la información del formulario y coloca los productos en el pedido marcando uno por uno en los cuadros de la derecha. Una vez colocados todos los productos, podrás marcar el pedido como en proceso de envío.</div>
 
                 <table class="w-100">
                     <tr>
-                        <td valign="top">Entrega:</td>
-                        <td><input name="entrega" type="hidden" value="">
-                        <input class="form-control mb-3" disabled value="<?php echo $socio->nombre(2); ?>">
-                        </td>
-                    </tr>
-                    <tr>
                         <td valign="top">Recibe:</td>
-                        <td><input name="recibe" id="" class="form-control mb-3"></td>
+                        <td><input class="form-control mb-3" value="<?php echo $cliente->nombre( 2 ); ?>"></td>
                     </tr>
                     <tr>
-                        <td valign="top">Teléfono celular</td>
-                        <td><input name="celular" id="" class="form-control w-50 mb-3"></td>
+                        <td valign="top">Domicilio</td>
+                        <td><div class="card mb-3"><div class="card-body"><?php
+                        echo "\n
+                        {$d[ "calleynumero" ]}<br>
+                        Colonia {$d[ "colonia" ]}<br>
+                        {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+                        C.P. {$d[ "codigopostal" ]}
+                        </div>";
+                        ?></div></div></td>
                     </tr>
+
                     <tr>
                         <td valign="top">Fotografía de evidencia</td>
                         <td><input  accept="image/jpeg" type="file" name="evidencia" id="" class="form-control mb-3"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Guia de rastreo</td>
+                        <td><input name="guia" id="" class="form-control mb-3"></td>
                     </tr>
                 </table>
                 
@@ -50,7 +56,7 @@
                 
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                <button class="btn btn-lg my-5 btn-success">Marcar pedido como entregado</button>
+                <button class="btn btn-lg my-5 btn-success">Marcar pedido como enviado</button>
                 
             </div>
         </h1>

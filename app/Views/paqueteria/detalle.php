@@ -6,36 +6,6 @@
 <p><a href="<?php echo base_url( "paqueterías/".$paqueteria[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a almacenes</a></p>
 
 
-<div class="card mb-4">
-    <div class="card-header"><h5 class="m-0">Existencias</h5></div>
-    <div class="card-body">
-        <div class="row" id="inventario">
-            <?php  
-                foreach( PRODUCTOS as $p ){
-                    if( !isset( $almacen[ "productos" ][ $p[ "codigo" ] ] ) ){
-                        $almacen[ "productos" ][ $p[ "codigo" ] ]  = 0;
-                    } 
-                    
-                    $e = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
-                    $d = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
-
-                    $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
-
-                    $tabla = "<img class='img150 img-fluid p-2' src='".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png'><p class='m-0'><span class='d-inline-block w-60'>Existencia</span><span class='d-inline-block w-40 text-end'>".number_format( $e )."</span></p><div class='d-none'><p class='m-0'><span class='d-inline-block w-60'>Disponible</span><span class='d-inline-block w-40 text-end'>".number_format( $d )."</span></p><p class='m-0'><span class='d-inline-block w-60'>Por entregar</span><span class='d-inline-block w-40 text-end'>".number_format( $e- $d )."</span></p></div><a class='btn btn-info mt-3 col-12'>Agregar producto</a>";
-
-                    echo "
-                    <div class=\"col-6 text-center col-lg-2 small mb-2\">
-                        <div tabindex=\"0\" role=\"button\" avatar=\"{$avatar}\" producto=\"{$p[ "codigo" ]}\" data-bs-placement=\"bottom\" data-bs-sanitize=\"false\" data-bs-html=\"true\" data-bs-toggle=\"popover\" data-bs-trigger=\"focus\" data-bs-title=\"".mb_strtoupper( $p[ "data" ][ "nombre" ] )."\" data-bs-content=\"{$tabla}\" class=\"btn-group btn-group-sm pover col-12\" role=\"group\">
-                            <label style=\"font-size:10px\" class=\"btn col-12 btn-outline-".( $e ? "success" : "danger")."\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</label>
-                            <label class=\"btn btn-".( $e ? "success" : "danger")."\" style=\"width:60px\">".number_format( $e )."</label>
-                        </div>
-                    </div>";
-                }
-            ?>
-        </div>
-    </div>
-</div>
-
 <table class="table table-striped bg-white" id="tabla_pedidos">
     <thead>
         <tr>
@@ -50,7 +20,6 @@
 
     <tbody>
         <?php 
-        if(0)
              foreach( $pedidos as $p ){
                 $p[ "PTS"         ] = json_decode( $p[ "PTS"  ], true );
                 $p[ "data"        ] = json_decode( $p[ "data" ], true );
@@ -89,7 +58,7 @@
             <form action="<?php echo base_url( "addstock" ); ?>" method="post">
                 <?php echo csrf_field(); ?>
                 <input type="hidden" id="stock_producto" name="producto" value="">
-                <input type="hidden" name="almacen" value="<?php echo $almacen[ "codigo" ]; ?>">
+                <input type="hidden" name="almacen" value="<?php echo $paqueteria[ "codigo" ]; ?>">
                 <div class="modal-body">
                     <div class="row">
                     <div class="col-4">
@@ -115,5 +84,5 @@
 
 <script>
     var cat_productos   = <?php echo json_encode( PRODUCTOS ); ?>,
-        almacen = '<?php echo $almacen[ "codigo" ]; ?>';
+        paqueteria = '<?php echo $paqueteria[ "codigo" ]; ?>';
 </script>

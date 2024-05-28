@@ -1,6 +1,7 @@
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:13px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?></h4>
+<h4 class="mt-1 mb-0"><?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?></h4>
 
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
+<p><?php echo $socio->avatar()." ".$socio->id( $socio->data->estatus->modelos->{$modelo}, $modelo )." ".$socio->nombre( 2 ); ?></p>
 
 <?php if( !$pagado ){ ?>
     <div class="row">
@@ -40,7 +41,6 @@ else{
 			?>
 		</div>
 
-        
 	</div>
 
 	<div class="col-lg-6">
@@ -89,30 +89,66 @@ else{
 
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ) echo "style=\"display:none\""; ?>>
                     <?php 
+
+
                     $domicilios = $socio->getDomicilios();
 
-                    if( sizeof( $domicilios ) ){
-                        $d = $domicilios[ $usuario->data->domicilio ];
+                    if( $pagado && sizeof( $domicilios ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                        $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
+                        $dom = 0;
+                    }
+                    else{
+                        $dom = $usuario->data->domicilio ?? 0;
                         if( intval( $pedido[ "data" ][ "entrega" ] ) && substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ){
-                            $d = $domicilios[ $pedido[ "data" ][ "entrega" ] ];
+                            $d = $pedido[ "data" ][ "entrega" ];
                         }
+                    }
+
+
+                    if( sizeof( $domicilios ) ){
                         
+                        $d = $domicilios[ $dom ];
+                                 
                         echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-teal text-teal text-start mb-3 p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
                         {$d[ "calleynumero" ]}<br>
                         Colonia {$d[ "colonia" ]}<br>
                         {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
                         C.P. {$d[ "codigopostal" ]}
-                        </div>";
+                        </div>
+                        ";
                     }
                     else{
                         echo "<div domicilio_id=\"0\" class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.</div>";
                     }
                     ?>
-
-                    <p class="<?php echo $pagado ? "d-none" : ""; ?>"><button class="btn btn-secondary" onclick="$( '#modal_domicilios' ).modal( 'show' )">Ver mis domicilios</button></p>
+                    <div class="row">
+                        
+                            <?php if( $pagado){ 
+                                if( $entregado ){ ?>
+                                <div class="col-12">
+                                    <div class="alert alert-warning m-0">
+                                        Este pedido ha sido enviado por paquetería con fecha <?php echo substr( $pedido[ "fechas" ][ "enviado" ], 0, 10 ); ?>.<br>Guía de rastreo: <span class="badge bg-mustard"><?php echo $pedido[ "data" ][ "guia" ]; ?></span>
+                                    </div>
+                                </div>
+                                <?php }
+                                else{
+                                ?>
+                                <div class="col-lg-6">
+                                <form method="post" action="<?php echo base_url("envia"); ?>">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                                    <button type="submit" class="btn col-12 btn-warning">Enviar pedido por paquetería</button>
+                                </form>
+                                </div>
+                            <?php } 
+                                }
+                                else{ ?>
+                                <div class="col-lg-6"><button class="btn btn-secondary col-12" onclick="$( '#modal_domicilios' ).modal( 'show' )">Ver mis domicilios</button></div>
+                            <?php } ?>
+                    </div>
                 </div>
 
-                <div class="alert alert-danger mt-3" id="no_stock" style="display:none"><p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p><ul class="m-0"><li>BENEYUS</li></ul></div>
+                <div class="alert alert-danger mt-3" id="no_stock" style="display:none"><p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p><ul class="m-0"></ul></div>
 
                 <?php if( !$pagado ){ ?>
                 <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>><?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ], 2 ); ?></div>
@@ -143,16 +179,7 @@ else{
 
 
         
-            <div class="row mb-3 ">
-            <div class="col-lg-8">
-                <?php echo $socio->avatar()." ".$socio->id()." ".$socio->nombre( 2 ); ?>
-            </div>
-            <div class="col-lg-4">
-                <?php if( $pagado ){ ?>
-                <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="btn btn-warning col-12" id="imprime">Imprimir ticket</a>
-                <?php } ?>
-            </div>
-        </div>
+
 
         <div class="row">
             <div class="col-lg-6">
@@ -165,7 +192,7 @@ else{
                                 $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                             }
                             else{
-                                $saldo = $socio->data->saldo->{$modelo};
+                                $saldo = $socio->data->saldo->{$modelo} ?? 0;
                             }
                         ?>
                         <tr><td valign="middle" class="">Saldo a favor</td><td valign="middle" class="text-end"><h5 class="m-0 text-<?php echo $saldo > 0 ? "red" : "gray-500"; ?>" total_saldo="<?php echo $saldo; ?>">$<?php echo number_format(  $saldo, 2 ); ?></h5></td></tr>
@@ -197,6 +224,10 @@ else{
                                 <tr><td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td><td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end"><h5 class="m-0" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>"><?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?></h5></td></tr>
                             </table>
                         </div>
+
+                        <?php if( $pagado ){ ?>
+                <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="btn btn-light col-12" id="imprime">Imprimir ticket</a>
+                <?php } ?>                        
                         <?php
                     }
                     else{
@@ -223,7 +254,36 @@ else{
 	</div>
 </div>
 
-<?php if( !$pagado ){ ?>
+<?php if( $pagado ){
+    
+    echo "<div class=\"card\"><div class=\"card-header\"><h5 class=\"m-0\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
+    <th class=\"text-center\">Folio</th>
+    <th>Esquema</th>
+    <th>Nivel</th>
+    <th>Socio</th>
+    <th class=\"text-end\">Comisión</th>
+    <th>Estatus</th>
+    </tr></thead><tbody>"; 
+    $db = db_connect();
+    $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" );
+    $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
+
+    foreach( $comisiones as $c ){
+        $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
+
+        echo "<tr>
+        <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
+        <td>{$c->esquema_codigo}</td>
+        <td>{$c->nivel}</td>
+        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $u->data->estatus->modelos->{$modelo}, $modelo )." ".$u->nombre( 2 ) : $u )."</td>
+        <td class=\"text-end\">$".number_format( $c->cantidad, 2 )."</td>
+        <td>".estatus( $c->estatus_codigo )."</td>
+        </tr>"; 
+    }
+
+    echo "</tbody></table></div>"; 
+}
+else{ ?>
 <div class="modal" tabindex="-1" id="modal_domicilios">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -349,7 +409,7 @@ foreach( $productos as $p ){
 			pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
 			tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
             pagado 		    = <?php echo $pagado; ?>,
-            mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ];
-
+            mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
+            domicilios      = <?php echo json_encode( $domicilios ); ?>;
 	</script>
 

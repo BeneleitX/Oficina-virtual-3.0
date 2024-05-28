@@ -95,12 +95,14 @@ function update_pedido( flag = null ){
     $( '.card[promocion]' ).each( function(){
         var cuenta_productos = 0,
             total_promo      = 0,
+            total_comisionable = 0,
             promocion        = $( this ).attr( 'promocion' ),
             disponible       = eval( cat_promociones[ promocion ].formulas.disponible );
 
         pedido.promociones[ promocion ] = {
-            'productos' : {},
-            'precio'    : 0
+            'productos'    : {},
+            'precio'       : 0,
+            'comisionable' : 0
         };
 
         if( eval( cat_promociones[ promocion ].formulas.activacion ) ){
@@ -147,6 +149,7 @@ function update_pedido( flag = null ){
             };
 
             total_promo += ( cantidad * unitario );
+            total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
             $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
         });
       
@@ -172,6 +175,7 @@ function update_pedido( flag = null ){
 
         pedido.data.total += total_promo;
         pedido.promociones[ promocion ][ 'precio' ] = total_promo;
+        pedido.promociones[ promocion ][ 'comisionable' ] = total_comisionable;
         
         $( this ).find( '.total_promo' ).html( Moneda.format( total_promo ) );
 
@@ -382,6 +386,7 @@ $(document).ready(function()
         }
         else{
             $( '.me_formulario[mp=domicilio]' ).show();
+            pedido.data.domicilio = domicilios[ entrega ];
         }
 
         $( '[total_entrega]' ).attr( 'total_entrega', costo );
@@ -420,7 +425,8 @@ $(document).ready(function()
         $( 'div[domicilio_id]').html( html );
         $( '#modal_domicilios' ).modal( 'hide' );
 
-        pedido.data.entrega = domicilio;
+        pedido.data.entrega   = domicilio;
+        pedido.data.domicilio = domicilios[ domicilio ];
         
         update_pedido( "cambio domicilio" );
     } );

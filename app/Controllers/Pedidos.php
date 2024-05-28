@@ -57,7 +57,7 @@ class Pedidos extends BaseController
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pagado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400;
-            $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 600;
+            $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500;
             $this->data[ "titulo" ] = "Detalles de pedido";
         }
         else{

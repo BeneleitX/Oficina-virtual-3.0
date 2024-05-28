@@ -36,6 +36,6 @@ class BeneleitRules
 
     public function patrocinador_activo( $value ): bool
     {
-        return $this->db->query("select * from t_usuarios where id = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0;
+        return $value == 9999999 OR $this->db->query("select * from t_usuarios where id = '".strtoupper( $value )."' and substring(estatus_codigo, 1, 3) > 200" )->getNumRows() > 0;
     }
 }

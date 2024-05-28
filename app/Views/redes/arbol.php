@@ -112,5 +112,12 @@
 		socio          = <?php echo $socio->id; ?>,
 		canvas 	       = '#downline',
 		estatus        = <?php echo json_encode( ESTATUS )?>,
-		rangos         = <?php echo json_encode( RANGOS )?>;
+		rangos         = <?php echo json_encode( RANGOS )?>,
+		m_0 = <?php echo date('Ym'); ?>,
+		m_1 = <?php echo date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) ); ?>,
+		m_2 = <?php echo date('Ym', strtotime( date('Y-m').'-01'. ' -2 month' ) ); ?>;
 </script>
+<?php
+
+
+

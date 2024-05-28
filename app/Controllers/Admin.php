@@ -149,6 +149,18 @@ class Admin extends BaseController
 
         echo template( "admin/rangos", $this->data );
     } 
+
+
+
+    public function estatus(){
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Estatus de socio";
+
+        $db = db_connect();
+        $this->data[ "estatuses" ] = $db->query( "SELECT * from t_estatus" )->getResultArray();
+
+        echo template( "admin/estatus", $this->data );
+    } 
     
     
 

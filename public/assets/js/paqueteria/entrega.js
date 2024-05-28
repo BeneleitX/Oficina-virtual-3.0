@@ -1,6 +1,6 @@
-
+ 
 function update_conteo(){
-    var productos = $( 'input.btn-check:checked' ).length;
+    var productos = problema ? 0 : $( 'input.btn-check:checked' ).length;
 
     $( '#productos_conteo' ).text( productos );
 
@@ -10,7 +10,7 @@ function update_conteo(){
     }
     else{
         $( '#boton_entregado_no' ).show();
-        $( '#boton_entregado_si' ).hide();   
+        $( '#boton_entregado_si' ).hide();
     }
 }
 
@@ -27,7 +27,7 @@ $(document).ready(function(){
             e.stopPropagation();
         
             if( problema ) return;
-            
+
             imagen = cat_productos[ producto ].data.avatar ? producto : "NO-IMAGEN";
             $( '#modal_confirma' ).attr( 'producto', producto );
             $( '#modal_confirma' ).attr( 'numero', numero );
@@ -54,5 +54,5 @@ $(document).ready(function(){
 
     if( problema ){
         $( '#boton_entregado_no' ).html( 'hay un problema con la configuración de este pedido' );
-    }    
+    }
 });

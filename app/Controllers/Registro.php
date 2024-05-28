@@ -15,33 +15,48 @@ class Registro extends BaseController
 
     // recibe formulariod e registro y valida los datos
     // si todo sale bien, crea el nuevo socio
-    public function procesa_registro()
+    public function procesa_registro( $demo = 0, $modelo = 0 )
     {
-        $validation = service( "validation" );
+        if( $demo > 0 ){
+            $abc  = str_split("ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+            $data = [
+                "nombre" => random( "nombre" ),
+                "apellido1" => random( "apellido" ),
+                "apellido2" => random( "apellido" ),
+                "correo" => "demo".rand(10000,99999)."@demo.com",
+                "celular" => rand(10000,99999).rand(10000,99999),
+                "curp" => array_rand( $abc )."X".array_rand( $abc ).array_rand( $abc ).rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
+                "patrocinador" => $demo
+            ];
+        }
+        else{
 
-        $validation->setRules( [
-            "nombre"       => "required",
-            "apellido1"    => "required",
-            "curp"         => "required|curp|curp_existe",
-            "correo"       => "valid_email|correo_existe",
-            "celular"      => "numeric|exact_length[10]|celular_existe",
-            "patrocinador" => "required|patrocinador_activo",
-        ] );
+            $validation = service( "validation" );
 
-        // Si hay errores de validacióna utomática, regresar a formulario
-        if( !$validation->withRequest( $this->request )->run() ){
-            return redirect()
-                ->back()
-                ->with( "errors", $validation->getErrors() )
-                ->withInput();
-        } 
-        
-        // Obtenemos variables del formulario
-        $data = $this->request->getPost();
+            $validation->setRules( [
+                "nombre"       => "required",
+                "apellido1"    => "required",
+                "curp"         => "required|curp|curp_existe",
+                "correo"       => "valid_email|correo_existe",
+                "celular"      => "numeric|exact_length[10]|celular_existe",
+                "patrocinador" => "required|patrocinador_activo",
+            ] );
+
+            // Si hay errores de validacióna utomática, regresar a formulario
+            if( !$validation->withRequest( $this->request )->run() ){
+                return redirect()
+                    ->back()
+                    ->with( "errors", $validation->getErrors() )
+                    ->withInput();
+            } 
+            
+            // Obtenemos variables del formulario
+            $data = $this->request->getPost();
+        }
 
         // Creamos plantilla para crear la nueva entidad usuario
         $recibe = [
-            "estatus_codigo" => "210-NUEVO",
+            "estatus_codigo" => "201-ACTIVO",
             "rol_codigos"    => [ "10-SOCIO" ],
             "data"           => [
                 "nombre"        => $data[ "nombre" ],
@@ -61,6 +76,10 @@ class Registro extends BaseController
                 ],
                 "clabe"         => "",
                 "saldo"         => [],
+                "estatus"       => [
+                    "modelos"       => [],
+                    "updated"       => 0
+                ],
                 "sat"           => [
                     "estatus"       => 0,
                     "csf"           => null
@@ -70,7 +89,7 @@ class Registro extends BaseController
             "correo"        => $data[ "correo" ],
             "telefono"      => $data[ "celular" ],
             "curp"          => $data[ "curp" ],
-            "password"      => random_password(),
+            "password"      => $demo > 0 ? "1234" : random_password(),
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ]
             ],
@@ -88,7 +107,9 @@ class Registro extends BaseController
                     "primercompra"   => null,
                     "ultimacompra"   => null,
                     "fondeos" => [],
-                    "calificaciones" => {}
+                    "calificaciones" => [
+                        date( "Ym" ) => []
+                    ]
                 ];
 
                 $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = 0.00;
@@ -97,6 +118,10 @@ class Registro extends BaseController
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
                     "padre" => $data[ "patrocinador" ],
                     "hijos" => [],
+                    "profundidad" => [
+                        "activos" => [0,0,0],
+                        "calificados" => [0,0,0]
+                    ]
                 ];
             }
         }
@@ -114,6 +139,20 @@ class Registro extends BaseController
         $entidad->fill( $recibe );
 
         $id = $usuariomodel->insert( $entidad );
+
+        if( $data[ "patrocinador" ] != 9999999 ){
+            $padre = model( "UsuarioModel" )->find( $data[ "patrocinador" ] );
+            $redes = $padre->redes;
+
+            foreach( MODELOS as $m ){
+                if( $m[ "settings" ][ "efectivo" ] ){
+                    $redes->modelos->{$m[ "codigo"]}->hijos[] = $id;
+                }
+            }
+            
+            $padre->redes = $redes;
+            model( "UsuarioModel" )->save( $padre );
+        }
         
         // BITACORA Creación de cuenta de usuario
         bitacora( 4, $id, [ 
@@ -121,10 +160,15 @@ class Registro extends BaseController
             "password" => $recibe[ "password" ] 
         ] );
 
-        return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
-            "clase" => "success", 
-            "icono" => "user-check", 
-            "texto" => "Cuenta de nuevo socio creada con éxito"] );
+        if( $demo > 0 ){
+            return redirect()->to( "red/{$modelo}" );
+        }
+        else{
+            return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "user-check", 
+                "texto" => "Cuenta de nuevo socio creada con éxito"] );
+        }
     }
 
     public function valida_patrocinador(){
