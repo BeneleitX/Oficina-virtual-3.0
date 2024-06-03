@@ -10,7 +10,7 @@ class UsuarioModel extends Model
     protected $primaryKey = "id";
 
     protected $useAutoIncrement = true;
-   // protected $extras = ["estatus"=>"f_get_estatus"];
+    // protected $extras = ["estatus"=>"f_get_estatus"];
 
     protected $returnType     = \App\Entities\E_usuario::class;
     protected $useSoftDeletes = false;

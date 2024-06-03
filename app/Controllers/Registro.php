@@ -25,7 +25,7 @@ class Registro extends BaseController
                 "apellido2" => random( "apellido" ),
                 "correo" => "demo".rand(10000,99999)."@demo.com",
                 "celular" => rand(10000,99999).rand(10000,99999),
-                "curp" => array_rand( $abc )."X".array_rand( $abc ).array_rand( $abc ).rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
+                "curp" => $abc[ array_rand( $abc ) ]."X".$abc[ array_rand( $abc ) ].$abc[ array_rand( $abc ) ].rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
                 "patrocinador" => $demo
             ];
         }
@@ -107,6 +107,7 @@ class Registro extends BaseController
                     "primercompra"   => null,
                     "ultimacompra"   => null,
                     "fondeos" => [],
+                    "ingresos" => [],
                     "calificaciones" => [
                         date( "Ym" ) => []
                     ]
@@ -116,8 +117,9 @@ class Registro extends BaseController
                 $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
 
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
-                    "padre" => $data[ "patrocinador" ],
+                    "padre" => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ],
                     "hijos" => [],
+                    "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
                     "profundidad" => [
                         "activos" => [0,0,0],
                         "calificados" => [0,0,0]

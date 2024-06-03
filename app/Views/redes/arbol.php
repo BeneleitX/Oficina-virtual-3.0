@@ -117,7 +117,18 @@
 		m_1 = <?php echo date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) ); ?>,
 		m_2 = <?php echo date('Ym', strtotime( date('Y-m').'-01'. ' -2 month' ) ); ?>;
 </script>
-<?php
 
 
+<div class="modal" tabindex="-1" id="modal_userdata">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			</div>
+		</div>
+	</div>
+</div>
 

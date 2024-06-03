@@ -7,16 +7,19 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get( "login",                      "Sesion::login" );
-$routes->get( "logout",                     "Sesion::logout" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
+$routes->get( "oauth/(:num)/(:any)",               "Sesion::procesa_login/$1/$2" );
 
 $routes->get( "formulario",                 "Registro::formulario" );
 $routes->get( "registro_exito/(:num)",      "Registro::registro_exito/$1" );
-$routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
 $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
+    $routes->get( "logout",                     "Sesion::logout" );
+    $routes->get( "logout/(:num)/(:any)",              "Sesion::logout/$1/$2" );
+    $routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
+
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
 
@@ -28,6 +31,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pedido/(:num)",          "Pedidos::carrito/pedido/$1" ); 
     $routes->get( "tienda/(:any)",          "Pedidos::carrito/modelo/$1" ); 
     $routes->get( "pagoyenvio/(:any)",      "Pedidos::pagoyenvio/$1" ); 
+    $routes->get( "compra_demo/(:num)/(:any)/(:num)",    "Pedidos::compra_demo/$1/$2/$3" );
     $routes->post( "checkout",              "Pedidos::checkout" ); 
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
@@ -36,6 +40,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     
     $routes->get( "red/(:any)",             "Redes::arbol/$1" ); 
     $routes->post( "downlineJSON",          "Redes::downlineJSON" );
+    $routes->post( "userdata",              "Redes::userdata" );
     
     $routes->get( "perfil",                 "Socio::perfil" );
     $routes->get( "fotografia",             "Socio::fotografia" );
@@ -43,12 +48,13 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "cancela_csf",            "Socio::cancela_csf" );
     $routes->get( "valida_credencial",      "Socio::valida_credencial" );
     $routes->get( "valida_correo",          "Socio::valida_correo" ); 
+    $routes->get( "nuevo_password/(:num)/(:any)/(:any)",        "Socio::nuevo_password/$1/$2/$3" );
+    $routes->post( "nuevo_password",        "Socio::nuevo_password" );
     $routes->post( "credencial",            "Socio::credencial" );
     $routes->post( "guarda_avatar",         "Socio::guarda_avatar" );
     $routes->post( "add_beneficiario",      "Socio::add_beneficiario" );
     $routes->post( "cancela_beneficiario",  "Socio::cancela_beneficiario" );
     $routes->post( "guarda_clabe",          "Socio::guarda_clabe" );
-    $routes->post( "nuevo_password",        "Socio::nuevo_password" );
     $routes->post( "valida_cp",             "Socio::valida_cp" );
     $routes->post( "create_domicilio",      "Socio::create_domicilio" );
     $routes->post( "check_csf",             "Socio::check_csf" );

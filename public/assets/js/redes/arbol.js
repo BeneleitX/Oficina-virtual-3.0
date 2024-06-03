@@ -1,3 +1,35 @@
+function userdata( s ){
+    var formData = new FormData(),
+        modal    = $( '#modal_userdata' );
+
+    formData.append( 'socio', s );
+    formData.append( 'modelo', modelo );
+    formData.append( [csrf_token] , csrf_hash ),
+
+    modal.find( '.modal-title' ).html( 'Cargando datos...' );
+    modal.find( '.modal-body' ).html( loader );
+
+    modal.modal( 'show' );
+    $.ajax({
+        url: base_url + 'userdata',
+        data: formData,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        cache: false,        
+        async: true,
+        success: function( respuesta ){
+            modal.find( '.modal-title' ).html( 'Socio ' + s );
+            modal.find( '.modal-body' ).html( respuesta );
+
+            modal.find( '.modal-body a' ).on( 'click', function(){
+                modal.find( '.modal-body a' ).addClass( 'disabled' );
+            } );
+        }
+    });
+}
+
+
 function beneleit( data ){
 
     var dataMap = data.reduce( function( map, node ){
@@ -157,12 +189,13 @@ function beneleit( data ){
         childCount( 0, root );
         
         var ancho = d3.max( levelWidth ) * 120; 
-            tree  = tree.size( [ ancho , 500 ] ),
+            tree  = tree.size( [ ancho , 100 ] ), // 500
             nodes = tree.nodes( root ).reverse(),
             links = tree.links( nodes );
 
         nodes.forEach(function( d ){ 
-            d.y = 15 + d.depth * 150; 
+            d.y = 25 + d.depth * 150; // 150
+            
         });
 
         var node = svgGroup
@@ -187,38 +220,19 @@ function beneleit( data ){
         var nodeEnter = node
             .enter()
             .append( 'g' )
-            .attr( 'class', 'node')
+             .attr( 'class', 'node')
             .attr( 'socio', function( d ){ return d.id; } )
-            .attr( 'data-bs-toggle', function( d ){ return d.id > 0 ? 'popover' : ''; } )
-            .attr( 'data-bs-trigger', 'click' )
-            .attr( 'data-bs-container', 'body' )
-            .attr( 'data-bs-html', 'true' )
-            .attr( 'data-bs-template', function( d ){ return '<div class="popover" role="tooltip"><div class="popover-arrow"></div><div class="text-white display-6"><div class="popover-header bg-' + estatus[ d.estatus ].color + '"></div></div><div class="popover-body"></div></div>'; } )
-            .attr( 'title', function( d ){ return id( d.id, 6 ); } )
-            .attr( 'data-bs-content', function( d ){  
-                return '<div class="p-2 text-' + estatus[ d.estatus ].color + ' ">'
-                + d.nombre
-                + '<br>'
-                + estatus[ d.estatus ].descripcion
-                + '<br><br><a href="' + base_url + '/procesa_registro/' + d.id + '/' + modelo + '" class="btn btn-danger col-12 btn-xs"><i class="fa fa-user"></i> Agrega socio de pruebas</a><br>'
-                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_2 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_2 + '</a>'
-                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_1 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_1 + '</a>'
-                + '<a href="' + base_url + '/compra_demo/' + d.id + '/' + modelo + '/' + m_0 + '" class="btn btn-warning col-4 btn-xs"><i class="fa fa-cart-shopping"></i> ' + m_0 + '</a></div>'; 
-            })
-
+      
             // Colocar en posición
             .attr( 'transform', function( d ){
                 if( d.x > final_x ){ final_x = d.x; }
                 if( d.y > final_y ){ final_y = d.y; }
-
                 return 'translate(' + d.x + ',' + d.y + ')';
-            })
+            }) 
 
 
             .on( 'click', function( d ){
-                console.log( d );
-
-                
+                userdata( d.id );
             })
 
             // Cambiar color de linea upline al pasar el mouse por encima
@@ -273,7 +287,33 @@ function beneleit( data ){
         .attr( 'width', 60 )
         .attr( 'height', 60 );
 
+
+
+/*       nodeEnter.append( 'svg:pattern' )
+        .attr( 'id', function(d){ return '_nuevo_' + d.antiguedad; } )
+        .attr( 'patternUnits', 'userSpaceOnUse' )
+        .attr( 'x', -55 )
+        .attr( 'y', -20 )
+        .attr( 'width', 110 )
+        .attr( 'height', 110 )
+        .append( 'svg:image' )
+       .attr( 'xlink:href', function(d){ return base_url + '/assets/img/m' + d.antiguedad + '.png'; } ) // 42, 44
+        .attr( 'x', 0 )
+        .attr( 'y', 0 )
+        .attr( 'width', 110 )
+        .attr( 'height', 110 );  
+
         // Circulo exterior con el estatus
+        nodeEnter.append('svg:circle')
+            .attr( 'cy', 35 )
+            .attr( 'r', 55 )
+            .style( 'stroke-width', 0 )
+            .style( 'stroke', 'transparent' )
+            .attr( 'class', '' )
+            .style( 'fill', function( d ){ return d.antiguedad <3 ? 'url(#_nuevo_' +d.antiguedad+')' : 'transparent'; } );    */      
+
+
+
         nodeEnter.append('svg:circle')
             .attr( 'cy', 35 )
             .attr( 'r', 40 )
@@ -315,22 +355,6 @@ function beneleit( data ){
 /*         nodeEnter.append("svg:polygon")
             .attr('points', hexagono( 0, -5, 1, 25, 18, 20 ) )
             .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 1 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } ); */
-            nodeEnter.append('path')
-            .attr("d", roundedRect(0, -5, 26, 20, 5, 0, 0, 0, 1))
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 1 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } );
-
-
-            nodeEnter.append('path')
-            .attr("d", roundedRect(-26, -15, 17, 10, 5, 1, 0, 0, 0))
-            .style( 'fill', function( d ){ return d.profundidad[ 0 ] > 2 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );  
-
-            nodeEnter.append('path')
-            .attr("d", roundedRect(-9, -15, 18, 10, 5, 0, 0, 0, 0))
-            .style( 'fill', function( d ){ return d.profundidad[ 1 ] > 8 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );     
-
-            nodeEnter.append('path')
-            .attr("d", roundedRect(9, -15, 17, 10, 5, 0, 1, 0, 0))
-            .style( 'fill', function( d ){ return d.profundidad[ 2 ] > 26 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );            
 
                         
         //    .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')'; } );
@@ -356,18 +380,40 @@ function beneleit( data ){
 //            .style( 'fill', function( d ){ return 'var(--bs-'+ ( d.patrocinador != socio ? 'gray-700' : 'blue') + ')'; } );
 //            .style( 'fill', function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
 
+nodeEnter.append('path')
+.attr("d", roundedRect(0, -5, 26, 20, 5, 0, 0, 0, 1))
+.style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')' } );
+
+
+nodeEnter.append('path')
+.attr("d", roundedRect(-26, -17, 17, 12, 5, 1, 0, 0, 0))
+.style( 'fill', function( d ){ return d.profundidad[ 0 ] > 2 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );  
+
+nodeEnter.append('path')
+.attr("d", roundedRect(-9, -17, 18, 12, 5, 0, 0, 0, 0))
+.style( 'fill', function( d ){ return d.profundidad[ 1 ] > 8 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );     
+
+nodeEnter.append('path')
+.attr("d", roundedRect(9, -17, 17, 12, 5, 0, 1, 0, 0))
+.style( 'fill', function( d ){ return d.profundidad[ 2 ] > 26 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );            
+
+
+
+ 
+
+
 nodeEnter.append("rect")
 .attr("x", -26)
 .attr("y", 55)
 .attr("rx", 5)
-.attr("height", 30)
+.attr("height", 32)
 .attr("width", 52)
 .style("fill", function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
 nodeEnter.append("rect")
 .attr("x", -27)
 .attr("y", 74)
-.style( 'opacity', .4 )
-.attr("height", 11)
+.style( 'opacity', .3 )
+.attr("height", 13)
 .attr("width", 54)
 .style("fill", 'white');
 
@@ -382,12 +428,12 @@ nodeEnter.append("rect")
 
         // Texto rango
         nodeEnter.append( 'text' )
-            .attr( 'dy', 82 )
+            .attr( 'dy', 83 )
             .attr( 'text-anchor', 'middle')
             .style( 'font-size', '7px' )
             .style( 'font-weight', 'bold' )
             .style( 'fill', function( d ){ return d.rango == '90-DIAMANTE' || d.rango == '00-SOCIO' ? 'marine' : 'white' } )
-            .text( function( d ){ return d.rango.substring( 3); });            
+            .text( function( d ){ return d.rango.substring( 3 ); });            
 
         // Texto calificación mes anterior
         nodeEnter.append('text')
@@ -414,7 +460,7 @@ nodeEnter.append("rect")
         // -26, -15, 52, 10
         nodeEnter.append('text')
             .attr( 'dx', -17 )
-            .attr( 'dy', -7 )
+            .attr( 'dy', -8 )
             .attr( 'text-anchor', 'middle' )
             .style( 'fill', function( d ){ return d.profundidad[ 0 ] > 2 ? 'var(--bs-white)' : 'var(--bs-gray-600)'; } )
             .style( 'font-size', '7px' )
@@ -422,7 +468,7 @@ nodeEnter.append("rect")
             .text( function( d ){ return d.profundidad[ 0 ]; } );  
             nodeEnter.append('text')
             .attr( 'dx', 0 )
-            .attr( 'dy', -7 )
+            .attr( 'dy', -8 )
             .attr( 'text-anchor', 'middle' )
             .style( 'fill', function( d ){ return d.profundidad[ 1 ] > 8 ? 'var(--bs-white)' : 'var(--bs-gray-600)'; } )
             .style( 'font-size', '7px' )
@@ -430,12 +476,38 @@ nodeEnter.append("rect")
             .text( function( d ){ return d.profundidad[ 1 ]; } );  
             nodeEnter.append('text')
             .attr( 'dx', 17 )
-            .attr( 'dy', -7 )
+            .attr( 'dy', -8 )
             .attr( 'text-anchor', 'middle' )
             .style( 'fill', function( d ){ return d.profundidad[ 2 ] > 26 ? 'var(--bs-white)' : 'var(--bs-gray-600)'; } )
             .style( 'font-size', '7px' )
             .style( 'font-weight', function( d ){ return d.profundidad[ 2 ] > 26 ? 900 : 700; } )
             .text( function( d ){ return d.profundidad[ 2 ]; } );
+
+
+
+            nodeEnter.append( 'svg:pattern' )
+.attr( 'id', function(d){ return '_nuevo_' + d.antiguedad; } )
+.attr( 'patternUnits', 'userSpaceOnUse' )
+.attr( 'x', -20 )
+.attr( 'y', -10 )
+.attr( 'width', 30 )
+.attr( 'height', 30 )
+.append( 'svg:image' )
+.attr( 'xlink:href', function(d){ return base_url + '/assets/img/m' + d.antiguedad + '.png'; } ) // 42, 44
+.attr( 'x', 0 )
+.attr( 'y', 0 )
+.attr( 'width', 30 )
+.attr( 'height', 30 );  
+
+// Circulo exterior con el estatus
+nodeEnter.append('svg:circle')
+    .attr( 'cx', -35 )
+    .attr( 'cy', 35 )
+    .attr( 'r', 15 )
+    .style( 'stroke-width', 0 )
+    .style( 'stroke', 'red' )
+    .attr( 'class', '' )
+    .style( 'fill', function( d ){ return d.antiguedad <3 ? 'url(#_nuevo_' +d.antiguedad+')' : 'transparent'; } );  
 
 
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -474,11 +546,11 @@ nodeEnter.append("rect")
     update( root );  
 
     $( canvas + ' svg' ).attr( 'width', final_x + 60 ).attr( 'height', final_y + 100 ); 
-}  
+}
 
 $( document ).ready(function()
 {
-    $( canvas ).html( '<i class="fa-solid fa-circle-notch fa-spin"></i>' );
+    $( canvas ).html( loader );
     
     $.ajax({
         url: base_url + "downlineJSON",

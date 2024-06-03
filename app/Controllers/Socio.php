@@ -255,28 +255,32 @@ class Socio extends BaseController
     }
 
 
-    public function nuevo_password(){
-        $this->data[ "socio" ] = $this->data[ "usuario" ];
+    public function nuevo_password( $s = null, $m = null, $p = null ){
+        $socio = $s ? model( "UsuarioModel" )->find( $s ) : $this->data[ "usuario" ];
+        $nuevo = $p ?? $this->request->getPost( "nuevo" );
 
-        extract( $this->request->getPost() );
-
-        $json = $this->data["socio"]->data;
+        $json = $socio->data;
         $json->verificacion->password = true;
-        $this->data["socio"]->data = $json; 
-        $this->data["socio"]->password = $nuevo;
+        $socio->data = $json; 
+        $socio->password = $nuevo;
 
-        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+        model( "UsuarioModel" )->save( $socio );
 
         // BITACORA Eliminar beneficiario
-        bitacora( 14, $this->data[ "socio" ]->id, [ 
+        bitacora( 14, $socio->id, [ 
             "password" => $nuevo,
             "usuario"  => $this->data[ "usuario" ]->id
         ] );
 
-        return redirect()->to( "perfil" )->with( "msg", [ 
-            "clase" => "success", 
-            "icono" => "check", 
-            "texto" => "Se actualizó tu password" ] );        
+        if($m){
+            return redirect()->to( "red/{$m}" );
+        }
+        else{
+            return redirect()->to( "perfil" )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "check", 
+                "texto" => "Se actualizó tu password" ] );        
+        }
     }
 
 

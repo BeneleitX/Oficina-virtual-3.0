@@ -11,10 +11,11 @@
 
             const base_url = '<?php echo base_url(); ?>',
                 csrf_token = '<?php echo csrf_token() ?>',
-                csrf_hash = '<?php echo csrf_hash(); ?>',
+                csrf_hash  = '<?php echo csrf_hash(); ?>',
                 <?php if( isset( $usuario ) ) echo "usuario_id = {$usuario->id},"; ?>
                 <?php if( isset( $socio ) ) echo "socio_id = {$socio->id},"; ?>
-                meses = [<?php echo implode( ",", MESES ); ?>];
+                meses      = [<?php echo implode( ",", MESES ); ?>],
+                loader     = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
 
             // devuelve un número formateado con ceros a la izquierda
             function id( n, digitos = 0 )

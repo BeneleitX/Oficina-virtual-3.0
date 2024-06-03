@@ -386,7 +386,11 @@ class E_usuario extends Entity
                     "comisionbanco" => 0,
                     "comisionentrega" => 0,
                     "entrega" => null,
-                    "productos" => 0
+                    "productos" => 0,
+                    "tercernivel" => [
+                        "cantidad" => 0,
+                        "socio" => 0
+                    ]
                 ],
                 "promociones" => $promos,
                 "metodopago_codigo" => null,
@@ -405,7 +409,7 @@ class E_usuario extends Entity
         return $pedido;
     }
 
-    public function fondeo( $modelo, $metodo, $cantidad ){
+    public function fondeo( $modelo, $metodo, $cantidad, $mes = null ){
 
         $pedido         = $this->getPedido( $modelo );
         $saldo          = $this->data->saldo->{$modelo};
@@ -413,7 +417,7 @@ class E_usuario extends Entity
         $productos      = $pedido[ "data" ][ "total" ];
         $metodopago     = model( "MetodopagoModel" )->find( $metodo );
         $subtotal       = $productos + $pedido[ "data" ][ "comisionentrega" ];
-        $fecha          = date( "Y-m-d H:i:s" );
+        $fecha          = $mes ? substr($mes,0,4)."-".substr($mes,4,2)."-01 12:00:00" : date( "Y-m-d H:i:s" );
         $fecha_anterior = date( "Y-m-d H:i:s", mktime( 0, 0, 0, date( "m" ), 1, date( "Y" ) ) - 7200 );
         
         $data = $this->data;
@@ -449,18 +453,6 @@ class E_usuario extends Entity
             }
 
             $mesactual = substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ).substr( $pedido[ "fechas" ][ "califica" ], 5, 2 );
-            
-            
-/*             if( !isset( $historial->modelos->{$modelo}->calificaciones->$mesactual ) ){
-                $historial->modelos->{$modelo}->calificaciones->$mesactual = [];
-            }
-            foreach( $pedido[ "PTS" ] as $promo => $pts ){
-                if( !isset( $historial->modelos->{$modelo}->calificaciones->$mesactual[ $promo ] ) ){
-                    $historial->modelos->{$modelo}->calificaciones->$mesactual[ $promo ] = 0;
-                }
-
-                $historial->modelos->{$modelo}->calificaciones->$mesactual[ $promo ] += $pts;
-            }  */
           
             $mp = [];
             foreach( $pedido[ "PTS" ] as $promo => $pts ){
@@ -490,8 +482,11 @@ class E_usuario extends Entity
             $db = db_connect();
             $db->query( "select f_update_PTS( {$this->id}, '{$modelo}', '{$mescalifica}' )" );  
             $db->query( "select f_get_estatus( {$this->id} )" );
-            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" );
-            $db->query( "call p_update_niveles( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
+            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();
+            // $db->query( "call p_update_niveles( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
+            
+            
+            //$db->query( "call p_update_rango( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
         }
         else{
             $data->saldo->{$modelo} += $cantidad;

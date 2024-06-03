@@ -159,7 +159,7 @@ else{
         <div id="puntajes" class="mb-3"><?php
         if( $pagado){
             foreach( PROMOCIONES as $p ){
-                if( $pedido[ "PTS" ][ $p[ "codigo" ] ] ){
+                if( isset( $pedido[ "PTS" ][ $p[ "codigo" ] ] ) and $pedido[ "PTS" ][ $p[ "codigo" ] ] > 0 ){
 
                     echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$pedido[ "PTS" ][ $p[ "codigo" ] ]}</div></div>";
                 }
@@ -260,24 +260,27 @@ else{
     <th class=\"text-center\">Folio</th>
     <th>Esquema</th>
     <th>Nivel</th>
-    <th>Socio</th>
     <th class=\"text-end\">Comisión</th>
     <th>Estatus</th>
+    <th>Socio</th>
     </tr></thead><tbody>"; 
     $db = db_connect();
-    $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" );
+    
+    
+    $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} ) as afectados" );
+
     $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
 
     foreach( $comisiones as $c ){
         $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
-
+        $f = number_format( $c->cantidad, 2 );
         echo "<tr>
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
-        <td>{$c->esquema_codigo}</td>
+        <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
         <td>{$c->nivel}</td>
-        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $u->data->estatus->modelos->{$modelo}, $modelo )." ".$u->nombre( 2 ) : $u )."</td>
-        <td class=\"text-end\">$".number_format( $c->cantidad, 2 )."</td>
+        <td class=\"text-end\">".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] != "puntos" ? "$".$f : $f." Pts")."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
+        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $u->data->estatus->modelos->{$modelo}, $modelo )." ".$u->nombre( 2 ) : $u )."</td>
         </tr>"; 
     }
 

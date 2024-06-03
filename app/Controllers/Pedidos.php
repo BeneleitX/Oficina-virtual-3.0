@@ -51,10 +51,11 @@ class Pedidos extends BaseController
             $sql = "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
-            load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pagado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400;
             $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500;
@@ -99,7 +100,66 @@ class Pedidos extends BaseController
     }
 
 
-    public function pagoyenvio( $modelo ){
+    public function compra_demo( $usuario, $modelo, $mes ){
+        extract( $this->request->getPost() );
+        $cantidad = 3;
+        $socio = model( "UsuarioModel" )->find( $usuario );
+
+        load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
+
+        $pedido = $socio->getPedido( $modelo );
+        $data = $pedido[ "data" ];
+        $promociones = $pedido[ "promociones" ];
+        $PTS = $pedido[ "PTS" ];
+
+        $metodopago = METODOSPAGO[ MODELOS[ $modelo ][ "settings" ][ "metodopago_base" ] ];
+        $metodoentrega = METODOSENTREGA[ MODELOS[ $modelo ][ "settings" ][ "metodoentrega_base" ] ];
+
+        $pedido[ "metodoentrega_codigo" ] = $metodoentrega[ "codigo" ];
+        $data[ "entrega" ] = VARIABLES[ "almacen_paqueteria" ][ "valor" ];
+
+        $promocion_base = MODELOS[ $modelo ][ "settings" ][ "promocion_base" ][ 0 ];
+
+        $promociones[ $promocion_base ] = [];
+        $promociones[ $promocion_base ][ "productos" ] = [];
+
+        $producto = model( "ProductoModel" )->find( PROMOCIONES[ $promocion_base ][ "settings" ][ "producto_base" ] );
+
+        $promociones[ $promocion_base ][ "productos" ][ $producto->codigo ] = [
+            "nombre" => $producto->data->nombre,
+            "precio" => $producto->precio->total,
+            "cantidad" => $cantidad,
+            "descripcion" => $producto->data->descripcion
+        ];
+
+        $promociones[ $promocion_base ][ "precio" ] = $producto->precio->total * $cantidad;
+        $promociones[ $promocion_base ][ "comisionable" ] = $producto->precio->base * $cantidad;
+
+        $PTS[ $promocion_base ] = $producto->data->puntos->{$promocion_base} * $cantidad;
+
+        $data[ "peso" ]  = $producto->data->dimensiones->peso * $cantidad;
+        $data[ "total" ] = $producto->precio->total * $cantidad;
+        $data[ "productos" ] = $cantidad;
+        $data[ "pesoxbulto" ] = $metodoentrega[ "settings" ][ "gramaje" ];
+        $data[ "comisionbanco" ]  = $metodopago[ "settings" ][ "comision" ];
+        $data[ "comisionentrega" ] = $metodoentrega[ "settings" ][ "costo" ];
+
+        $pedido[ "data" ] = $data;
+        $pedido[ "promociones" ] = $promociones;
+        $pedido[ "PTS" ] = $PTS;
+
+        model( "PedidoModel" )->save( $pedido );
+
+        $fondeo = $data[ "total" ] + $metodopago[ "settings" ][ "comision" ];
+
+        $socio->fondeo( $modelo, $metodopago[ "codigo" ], $fondeo, $mes );
+        return redirect()->to( "red/{$modelo}" );
+    }
+    
+
+    public function xxxpagoyenvio( $modelo ){
         load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
         load_catalogo( "productos",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
         load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");

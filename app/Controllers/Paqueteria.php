@@ -85,7 +85,7 @@ class Paqueteria extends BaseController
 
         extract( $this->request->getPost() );
         $pedido   = model( "PedidoModel" )->find( $pedido );
-        $almacen  = model( "AlmacenModel" )->find( admin( "almacen_paqueteria" ) );
+        $almacen  = model( "AlmacenModel" )->find( VARIABLES[ "almacen_paqueteria" ][ "valor" ] );
         $path     = "assets/img/evidencias/";
         $filename = $pedido[ "id" ]."_".time().".jpg";
         $tmpName  = $_FILES[ "evidencia" ][ "tmp_name" ];
