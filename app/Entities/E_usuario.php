@@ -194,10 +194,21 @@ class E_usuario extends Entity
     }
 
 
-    public function id( $estatus = null, $modelo = null, $clase = null ): string 
+    public function id( $modelo = null, $clase = null ): string 
     {
-        if( $estatus ){
-            return "<span ".( $modelo ? "data-bs-toggle=\"tooltip\" title=\"".MODELOS[ $modelo ][ "nombre" ]." | ".ESTATUS[ $estatus ][ "descripcion" ]."\" " : "" )." class=\"badge bg-".ESTATUS[ $estatus ][ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>";
+        if( $modelo ){
+
+            $m_0 = date('Ym');
+            $m_1 = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
+
+            $db = db_connect();
+            $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
+            $calificaciones = $db->query($sql)->getRowArray();
+
+            $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
+            $modelo  = MODELOS[ $modelo ];
+
+            return "<span ".( $modelo ? "data-bs-toggle=\"tooltip\" title=\"".$modelo[ "nombre" ]."<hr class='m-1'>".$estatus[ "descripcion" ]."<hr class='m-1'>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" " : "" )." class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>";
         }
         elseif( $clase ){
             return "<span class=\"badge bg-{$clase}\">".id( $this->id, 6 )."</span>";
@@ -417,7 +428,7 @@ class E_usuario extends Entity
         $productos      = $pedido[ "data" ][ "total" ];
         $metodopago     = model( "MetodopagoModel" )->find( $metodo );
         $subtotal       = $productos + $pedido[ "data" ][ "comisionentrega" ];
-        $fecha          = $mes ? substr($mes,0,4)."-".substr($mes,4,2)."-01 12:00:00" : date( "Y-m-d H:i:s" );
+        $fecha          = /* $mes ? substr($mes,0,4)."-".substr($mes,4,2)."-01 12:00:00" : */ date( "Y-m-d H:i:s" );
         $fecha_anterior = date( "Y-m-d H:i:s", mktime( 0, 0, 0, date( "m" ), 1, date( "Y" ) ) - 7200 );
         
         $data = $this->data;
@@ -483,7 +494,7 @@ class E_usuario extends Entity
             $db->query( "select f_update_PTS( {$this->id}, '{$modelo}', '{$mescalifica}' )" );  
             $db->query( "select f_get_estatus( {$this->id} )" );
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();
-            // $db->query( "call p_update_niveles( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
+            // $db->query( "update t_usuario set historial = JSON_SET( historial, '$.modelos."{$modelo}".calificaciones."{$cc}"', p_get_calificacion( {$pedido[ "usuario_id" ]}, '{$cc}', '{$modelo}' ))" );
             
             
             //$db->query( "call p_update_rango( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
@@ -497,5 +508,48 @@ class E_usuario extends Entity
         }
 
         return $pedido[ "referencia" ];
+    }
+
+    public function getIngresosPorDia( $modelo ){
+        $resultado = [];
+
+        $sql = "SELECT SUM(comision.cantidad) as comisiones, 
+        DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
+        FROM t_comisiones comision
+        join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
+        WHERE esquema.modelo_codigo = '{$modelo}' 
+        and comision.usuario_id = {$this->id} 
+        AND esquema.settings->>'$.reparto' != 'puntos'
+        
+        and substring( comision.estatus_codigo, 1, 3 ) > 200
+        GROUP BY DATE_FORMAT(comision.fecha, '%Y-%m-%d')";
+
+
+        $db     = db_connect();
+        $result = $db->query($sql);
+
+        foreach($result->getResult() as $d){
+            $resultado[$d->dia] = $d->comisiones;
+        }
+
+        if(!sizeof($resultado)) $resultado = [0];
+        return $resultado;
+    }
+
+    public function getComisiones( $periodo ){
+        $resultado = [];
+
+        $sql = "SELECT comision.fecha, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id
+        FROM t_comisiones comision
+        join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
+        join t_periodos periodo on periodo.codigo = '{$periodo}'
+        join t_pedidos pedido on pedido.id = comision.pedido_id
+        WHERE comision.usuario_id = {$this->id} 
+        and substring( comision.estatus_codigo, 1, 3 ) > 200
+        AND esquema.settings->>'$.reparto' != 'puntos'
+        AND comision.fecha between periodo.inicia and periodo.termina
+        AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
+        $db = db_connect();
+        return $db->query($sql)->getResult();
     }
 }

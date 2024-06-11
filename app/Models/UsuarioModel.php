@@ -10,7 +10,7 @@ class UsuarioModel extends Model
     protected $primaryKey = "id";
 
     protected $useAutoIncrement = true;
-    // protected $extras = ["estatus"=>"f_get_estatus"];
+    // protected $extras = ["calificaciones"=>"f_get_calificaciones"];
 
     protected $returnType     = \App\Entities\E_usuario::class;
     protected $useSoftDeletes = false;
@@ -26,7 +26,8 @@ class UsuarioModel extends Model
         "curp",
         "redes",
         "historial",
-        "pedido"
+        "pedido",
+        "calificaciones"
     ];
 
     protected bool $allowEmptyInserts = false;

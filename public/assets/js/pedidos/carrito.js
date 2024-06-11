@@ -125,7 +125,8 @@ function update_pedido( flag = null ){
             var campo    = $( this ).find( 'input.cantidad' ),
                 cantidad = parseInt( campo.val() ),
                 producto = $( this ).attr( 'producto' ),
-                unitario = parseFloat( campo.attr( 'unitario' ) );
+                unitario = parseFloat( campo.attr( 'unitario' ) ),
+                orden    = parseInt( $( this ).attr( 'orden' ) );
 
             cuenta_productos += parseInt( cantidad );
             
@@ -143,6 +144,9 @@ function update_pedido( flag = null ){
 
             pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
                 "cantidad"    : cantidad,
+                "puntos"      : parseFloat( cat_productos[ producto ].data.puntos[ promocion ] ),
+                "comisionable": parseFloat( cat_productos[ producto ].precio.base ),
+                "orden"       : orden,
                 "nombre"      : cat_productos[ producto ].data.nombre.toUpperCase(),
                 "descripcion" : cat_productos[ producto ].data.descripcion,
                 "precio"      : unitario
@@ -216,7 +220,6 @@ function update_pedido( flag = null ){
     var subtotal = parseFloat( $( '[gran_total]' ).attr( 'gran_total' ) ),
         b = $( '[name=metodopago][value=00-SALDO]' );
 
-        console.log(total_saldo , total_productos + total_entrega);
     if( (total_productos + total_entrega) > 0 && total_saldo >= total_productos + total_entrega ){
         comision = 0;
         caption  = Moneda.format( total_productos + total_entrega );
@@ -297,9 +300,11 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         campo.val( parseInt( campo.val() ) + cantidad );
     }
     else{
+        orden  = get_orden_next( promocion );
+        
         precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
 
-        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '</p></div><div class="col-md-3 small">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( pagado ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5><p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p></td></tr>');
+        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( pagado ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5><p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p></td></tr>');
     }
         
     if( !auto ){
@@ -308,6 +313,20 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         update_pedido( "agrega pedido" );
     }
 }
+
+function get_orden_next( promocion ){
+    var next = 0;
+
+    $( '.card[promocion=' + promocion + '] table[productos] tr[producto]' ).each( function(){
+        var actual = parseInt( $( this ).attr( 'orden' ) );
+        if( actual > next ){
+            next = actual;
+        }
+    });
+
+    return next + 1;
+}
+
 
 
 $(document).ready(function()
@@ -359,9 +378,17 @@ $(document).ready(function()
     });
 
     $.each( pedido.promociones, function( promocion, data ){
+        var agregar = [];
+
         $.each( data.productos, function( producto, data2 ){
             if( cat_promociones[ promocion ] !== undefined ){
-                agrega_producto( producto, promocion, data2.cantidad, true );
+                agregar[ data2.orden ] = producto;
+            }
+        });
+
+        $.each( agregar, function( orden, producto ){
+            if( data.productos[ producto ] !== undefined ){
+                agrega_producto( producto, promocion, data.productos[ producto ].cantidad, true );
             }
         });
     });

@@ -61,15 +61,15 @@ abstract class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
-
         $this->session = session();
 
+
         // protección temporal para evitar objeto en cookie
-        if( is_object( session( "usuario" ) ) ){
+/*         if( is_object( session( "usuario" ) ) ){
             $u = session( "usuario" );
             $this->session->set( "usuario", null );
             return redirect()->to( "login" );
-        }
+        } */
 
         $meses = [];
         $dy    = date( "Y" );

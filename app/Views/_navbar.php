@@ -25,7 +25,7 @@
 			<?php echo $usuario->avatar( 120 ); ?>
 
 			<a class="btn btn-outline-info m-2" style="white-space: nowrap;"><?php echo $usuario->nombre(2); ?></a>
-			<h1 class="text-center"><?php echo $usuario->id( null, null, "marine" ); ?></h1>
+			<h1 class="text-center"><?php echo $usuario->id( null, "marine" ); ?></h1>
         </a>
     </li>
 	<li><hr class="dropdown-divider"></li>
@@ -38,7 +38,7 @@
 
     <a data-bs-toggle="tooltip" 
 		title="Balance" class="menu-opcion <?php echo $menu == "ingresos" ? "selected" : ""; ?>" 
-		href="<?php echo base_url( "balance" ); ?>">
+		href="<?php echo base_url( "balance/".getModeloPrincipal()."/".codigo_periodo( getModeloPrincipal(), date("Y-m-d") ) ); ?>">
 		<i class="fa fa-sack-dollar"></i>
 	</a>
 

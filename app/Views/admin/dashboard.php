@@ -6,17 +6,17 @@
 
 $menu = [
     [ "success", "variables", "gears", "Variables de entorno", sizeof( VARIABLES ) ],
-    [ "success", "roles", "user-shield", "Roles de usuario", sizeof( $productos ) ],
+    [ "success", "roles", "user-shield", "Roles de usuario", sizeof( $roles ) ],
     [ "secondary", "", "users", "Usuarios", sizeof( $usuarios )],
     [ "success", "valida_credenciales", "address-card", "Valida credenciales", sizeof( $credenciales ) ],
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ) ],
     [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ) ],
     [ "warning", "pasarelas/".getModeloPrincipal(), "credit-card", "Métodos de pago", sizeof( $pasarelas ) ],
     [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Proveedores de paquetería", sizeof( $paqueterias ) ],
-    [ "danger", "corte/".getModeloPrincipal(), "filter-circle-dollar", "Corte semanal" ],
+    [ "danger", "periodos/".getModeloPrincipal(), "calendar-days", "Periodos", sizeof( $periodos ) ],
     [ "warning", "productos/".getModeloPrincipal(), "spray-can-sparkles", "Productos", sizeof( $productos ) ],
-    [ "secondary", "recompensas/".getModeloPrincipal(), "award", "Recompensas" ],
-    [ "warning", "modelos/".getModeloPrincipal(), "shop", "Modelos de negocio" ],
+    [ "success", "recompensas/".getModeloPrincipal(), "award", "Recompensas", sizeof( $recompensas ) ],
+    [ "warning", "modelos", "shop", "Modelos de negocio", sizeof( MODELOS ) ],
     [ "secondary", "redes/".getModeloPrincipal(), "sitemap", "Redes" ],
     [ "secondary", "callcenter", "headset", "Call center" ],
     [ "secondary", "mensajeria", "envelope", "Mensajes masivos" ],
@@ -26,7 +26,9 @@ $menu = [
     [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", sizeof( $almacenes ) ],    
     [ "secondary", "bloques", "table-cells", "Bloques de inicio" ],    
     [ "secondary", "facturacion", "file-invoice-dollar", "Facturacion" ],    
-    [ "success", "estatus", "layer-group", "Estatus de socios" ],    
+    [ "success", "estatus", "layer-group", "Estatus de socios" ],  
+    [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Esquemas de comisiones", sizeof( $esquemas ) ], 
+    [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR" ],        
 ];
 
 foreach( $menu as $opcion ){

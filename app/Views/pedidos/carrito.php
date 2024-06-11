@@ -1,7 +1,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?></h4>
 
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
-<p><?php echo $socio->avatar()." ".$socio->id( $socio->data->estatus->modelos->{$modelo}, $modelo )." ".$socio->nombre( 2 ); ?></p>
+<p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
 
 <?php if( !$pagado ){ ?>
     <div class="row">
@@ -256,7 +256,7 @@ else{
 
 <?php if( $pagado ){
     
-    echo "<div class=\"card\"><div class=\"card-header\"><h5 class=\"m-0\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
+    echo "<div class=\"card\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
     <th class=\"text-center\">Folio</th>
     <th>Esquema</th>
     <th>Nivel</th>
@@ -273,14 +273,13 @@ else{
 
     foreach( $comisiones as $c ){
         $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
-        $f = number_format( $c->cantidad, 2 );
-        echo "<tr>
+        echo "<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
         <td>{$c->nivel}</td>
-        <td class=\"text-end\">".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] != "puntos" ? "$".$f : $f." Pts")."</td>
+        <td class=\"text-end\">".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] != "puntos" ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." Estrellas")."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
-        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $u->data->estatus->modelos->{$modelo}, $modelo )." ".$u->nombre( 2 ) : $u )."</td>
+        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
         </tr>"; 
     }
 
@@ -413,6 +412,7 @@ foreach( $productos as $p ){
 			tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
             pagado 		    = <?php echo $pagado; ?>,
             mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
-            domicilios      = <?php echo json_encode( $domicilios ); ?>;
+            domicilios      = <?php echo json_encode( $domicilios ); ?>,
+            hoy = new Date();
 	</script>
 

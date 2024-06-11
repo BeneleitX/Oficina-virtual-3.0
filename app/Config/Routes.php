@@ -36,8 +36,15 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
     
-    $routes->get( "balance",                "Ingresos::balance" ); 
-    
+    $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
+
+    $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
+    $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 
+    $routes->post( "corte",                 "Periodos::corte" ); 
+    $routes->get( "corte_check",           "Periodos::corte_check" ); 
+
+    $routes->get( "recompensas/(:any)",     "Recompensas::detalle/$1" );     
+
     $routes->get( "red/(:any)",             "Redes::arbol/$1" ); 
     $routes->post( "downlineJSON",          "Redes::downlineJSON" );
     $routes->post( "userdata",              "Redes::userdata" );

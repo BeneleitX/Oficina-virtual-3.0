@@ -160,3 +160,85 @@ function random( $tipo ){
             break;    
     }
 }
+
+
+function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
+    if( null == $fecha ){
+        $fecha = date( "Y-m-d" );
+    }
+    return substr( $modelo, 0, 2 ).substr( $tipo, 0, 1 ).substr( $fecha, 0, 4 ).str_pad( ( date( "W", strtotime( $fecha ) ) ), 2, "0", STR_PAD_LEFT );
+}
+
+
+
+function get_datos($month, $year, $day, $x = 1){
+    $a = mktime(0,0,0,$month, $day, $year);
+    return str_pad((date("W", $a)+$x),2,"0",STR_PAD_LEFT)."-".date("o", $a);
+}
+
+function calendario_semanas($month, $year, $comisiones){
+    $headings = ["L","M","M","J","V","S", "D"];
+
+    $max  = max($comisiones);
+    $min  = min($comisiones);
+    $dif  = $max - $min;
+    $paso = $dif / 8;
+
+    $calendar = "<div class=\"boxheader mt-5 mb-3\"><h3>".ucfirst(mes($month))." {$year}</h3></div><table class=\"calendar\">";
+
+    // $calendar.= "<tr><td>".implode("</td><td>",$headings)."</td><td></td></tr>";
+
+    $running_day       = date("N",mktime(0,0,0,$month,1,$year));
+    $days_in_month     = date("t",mktime(0,0,0,$month,1,$year));
+    $days_in_this_week = 1;
+    $day_counter       = 0;
+    $weeks             = [];
+    $semana            = 0;
+
+    $codigo_semana = get_datos($month, $year, 1,0);
+    $weeks[$semana] = "<tr periodo=\"{$codigo_semana}\">";
+
+    for($x = 1; $x < $running_day; $x++){
+        $weeks[$semana].= "<td></td>";
+        $days_in_this_week++;
+    }
+
+    $hoy = date("Ymd");
+    
+    for($list_day = 1; $list_day <= $days_in_month; $list_day++){
+        $fondo = 0;
+        $id    = ($year*10000)+($month*100)+$list_day;
+
+        if($paso && isset($comisiones[$id]) && $id <= $hoy){
+            $fondo = 1+floor(($comisiones[$id] - $min) / $paso);
+        }
+        else
+            if(in_array($running_day, [6,7])) $fondo.=" fsx";
+
+        $weeks[$semana].= "<td class=\"calendar-day ".($id > $hoy ? "muted" : "")."fondo{$fondo}\"><div class=\"number\" ".($id == $hoy ? "style=\"border:3px solid var(--light-blue-7)\"" :"").">{$list_day}</div></td>";
+
+        if($running_day == 7){
+            $weeks[$semana].= "<td class=\"data\"><span class=\"display-7 mx-3\">{$codigo_semana}</span></td></tr>";
+            $codigo_semana = get_datos($month, $year, $list_day);
+
+            if(($day_counter+1) != $days_in_month){ 
+                
+                $weeks[++$semana] = "<tr periodo=\"{$codigo_semana}\">";
+            }
+            $running_day = $days_in_this_week = 0;
+            
+        }
+        $days_in_this_week++; $running_day++; $day_counter++;
+        
+    }
+
+    if($days_in_this_week < 8 && $days_in_this_week > 1){
+        $codigo_semana = get_datos($month, $year, $list_day,0);
+        for($x = 1; $x <= (8 - $days_in_this_week); $x++)
+            $weeks[$semana].= "<td></td>";
+        $weeks[$semana].= "<td class=\"data\"><span class=\"display-7 mx-3\">{$codigo_semana}</span></td></tr>";
+    }
+
+    foreach(array_reverse($weeks) as $w)  $calendar .= $w;
+    return $calendar.= "</table>";
+}
