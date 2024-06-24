@@ -67,13 +67,16 @@ a.menu-opcion:not(:first-child).selected{
 .emoji{
     display: inline-block;
     vertical-align: middle;
+    text-align: center;
 }
 
 .avatar .emoji > div{
-    top: -3px;
+    top: 13px;
     /* left:17px; */
-    font-size:40px !important;
     position:absolute;
+    font-size:20px !important;
+     
+    font-weight:500;
 }
 
 
@@ -207,7 +210,7 @@ a.mini{
     
     .avatar .emoji > div{
         left: 0;
-        top: -20px;
+        top: -12px;
     }
 
     

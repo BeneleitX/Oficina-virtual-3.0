@@ -46,6 +46,7 @@ function revisa_stock(){
     }
 }
 
+
 function update_puntos( promocion ){
     pedido.data.peso = 0;
     pedido.PTS[ promocion ] = 0;
@@ -85,12 +86,17 @@ function cambia_cantidad( promocion, producto ){
     update_pedido( "cambia cantidad" );
 }
 
+
 function update_pedido( flag = null ){
     pedido.data.total     = 0;
     pedido.data.productos = 0;
     pedido.promociones    = {};
 
     $( '#puntajes' ).empty();
+
+    pendientes = 0;
+
+    var formula;
 
     $( '.card[promocion]' ).each( function(){
         var cuenta_productos = 0,
@@ -105,7 +111,8 @@ function update_pedido( flag = null ){
             'comisionable' : 0
         };
 
-        if( eval( cat_promociones[ promocion ].formulas.activacion ) ){
+        formula = eval( cat_promociones[ promocion ].formulas.activacion );
+        if( formula ){
             $( '.card[promocion=' + promocion + ']' ).show();
     
             if( cat_promociones[ promocion ].settings.forced == "true" ){
@@ -173,7 +180,7 @@ function update_pedido( flag = null ){
         }
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
-            pedido.PTS[ promocion ] = cuenta_productos ? 1 : 0;
+            // pedido.PTS[ promocion ] = cuenta_productos ? 1 : 0;
             total_promo = (cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
         }
 
@@ -188,8 +195,17 @@ function update_pedido( flag = null ){
         }
         
         // Si aun hay slots disponibles
-        if( disponible < 0 || disponible > cuenta_productos ){
+        if( disponible < 0 || disponible > cuenta_productos && formula ){
             $( '.card[promocion=' + promocion + '] .agrega_productos' ).show();
+
+
+            if( cat_promociones[ promocion ].settings.exacto == 'true' && ( cat_promociones[ promocion ].settings.obligatoria == "true" || ( cuenta_productos % 3 ) > 0 ) ){
+                pendientes = 1;
+                $( '.card[promocion=' + promocion + '] .agrega_productos' ).removeClass( 'btn-light' ).addClass( 'btn-warning' );
+            }
+            else{
+                $( '.card[promocion=' + promocion + '] .agrega_productos' ).addClass( 'btn-light' ).removeClass( 'btn-warning' );
+            }
         }
 
         // Si ya se llegó al límite
@@ -240,13 +256,13 @@ function update_pedido( flag = null ){
                     comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
                     caption  = subtotal > 0 ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', subtotal == 0 );
+                    $( this ).prop( 'disabled', subtotal == 0 || pendientes );
                     break;
                 case 'efectivo':
                     comision = parseFloat( metodospago[ metodopago ].settings.comision );
                     caption  = subtotal > 0 ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', subtotal == 0 );
+                    $( this ).prop( 'disabled', subtotal == 0 || pendientes );
                     break;                 
             }
     });
@@ -278,11 +294,13 @@ function show_modal_productos( promocion ){
     $( '#modal_productos' ).attr( 'promocion', promocion ).modal( 'show' );
 }
 
+
 function borra_producto( promocion, producto ){
     $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + producto + ']' ).remove();
 
     update_pedido( "borra producto" );
 }
+
 
 function agrega_producto( producto, promocion = null, cantidad = 1, auto = false ){
     if( !promocion ) promocion = $( '#modal_productos' ).attr( 'promocion' );
@@ -304,7 +322,9 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         
         precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
 
-        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( pagado ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5><p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p></td></tr>');
+        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
+
+        $( '.card[promocion=' + promocion + ']' ).show();
     }
         
     if( !auto ){
@@ -313,6 +333,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         update_pedido( "agrega pedido" );
     }
 }
+
 
 function get_orden_next( promocion ){
     var next = 0;
@@ -327,7 +348,7 @@ function get_orden_next( promocion ){
     return next + 1;
 }
 
-
+var pendientes = 0;
 
 $(document).ready(function()
 {
@@ -378,7 +399,7 @@ $(document).ready(function()
     });
 
     $.each( pedido.promociones, function( promocion, data ){
-        var agregar = [];
+        var agregar = [], conteo = 0;
 
         $.each( data.productos, function( producto, data2 ){
             if( cat_promociones[ promocion ] !== undefined ){
@@ -389,8 +410,11 @@ $(document).ready(function()
         $.each( agregar, function( orden, producto ){
             if( data.productos[ producto ] !== undefined ){
                 agrega_producto( producto, promocion, data.productos[ producto ].cantidad, true );
+                conteo += data.productos[ producto ].cantidad;
             }
         });
+
+        $( '.card[promocion=' + promocion + '] [conteo]' ).text( conteo + ' productos' );
     });
         
     // elige metodo de entrega
@@ -483,5 +507,5 @@ $(document).ready(function()
         update_pedido( "mesanterior" );
     });
 
-    if( !pagado ) update_pedido( "inicial" );
+    if( !( pagado || cancelado ) ) update_pedido( "inicial" );
 });

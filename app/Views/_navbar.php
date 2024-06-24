@@ -19,12 +19,15 @@
     </a>
   <ul class="dropdown-menu">
     <li>
-        <a class="dropdown-item text-center" href="#">
+        <a class="dropdown-item text-center" href="#" style="background:white !important">
 
+			<table><tr>
+				<td><?php echo $usuario->avatar( 120 ); ?></td>
+				<td><?php echo $usuario->rango( 150 ); ?></td>
+				</tr></table>
+			
 
-			<?php echo $usuario->avatar( 120 ); ?>
-
-			<a class="btn btn-outline-info m-2" style="white-space: nowrap;"><?php echo $usuario->nombre(2); ?></a>
+			<p class="m-0 mt-3 text-center"><?php echo $usuario->nombre(2); ?></p>
 			<h1 class="text-center"><?php echo $usuario->id( null, "marine" ); ?></h1>
         </a>
     </li>

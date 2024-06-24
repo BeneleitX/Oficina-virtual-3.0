@@ -1,35 +1,3 @@
-function userdata( s ){
-    var formData = new FormData(),
-        modal    = $( '#modal_userdata' );
-
-    formData.append( 'socio', s );
-    formData.append( 'modelo', modelo );
-    formData.append( [csrf_token] , csrf_hash ),
-
-    modal.find( '.modal-title' ).html( 'Cargando datos...' );
-    modal.find( '.modal-body' ).html( loader );
-
-    modal.modal( 'show' );
-    $.ajax({
-        url: base_url + 'userdata',
-        data: formData,
-        type: 'POST',
-        processData: false,
-        contentType: false,
-        cache: false,        
-        async: true,
-        success: function( respuesta ){
-            modal.find( '.modal-title' ).html( 'Socio ' + s );
-            modal.find( '.modal-body' ).html( respuesta );
-
-            modal.find( '.modal-body a' ).on( 'click', function(){
-                modal.find( '.modal-body a' ).addClass( 'disabled' );
-            } );
-        }
-    });
-}
-
-
 function beneleit( data ){
 
     var dataMap = data.reduce( function( map, node ){
@@ -351,71 +319,48 @@ function beneleit( data ){
             .style( 'fill', 'white' )
             .text( function( d ){ return d.avatar == null ? d.iniciales : ''; } );
 
-        // Poligono de calificacion en mes actual
-/*         nodeEnter.append("svg:polygon")
-            .attr('points', hexagono( 0, -5, 1, 25, 18, 20 ) )
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 1 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } ); */
+        // Poligono de calificacion en mes actual y anterior
 
-                        
-        //    .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')'; } );
+        nodeEnter.append('path')
+            .attr("d", roundedRect(-26, -5, 26, 20, 5, 0, 0, 1, 0))
+            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) >= 10 ? 'si' : 'no' ); } );
 
-        // Poligono de calificacion en mes anterior
-      /*   nodeEnter.append('svg:polygon')
-            .attr( 'points', hexagono( 0, -5, -1, 25, 18, 20 ) )
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } ); */
-/*             nodeEnter.append("rect")
+        nodeEnter.append('path')
+            .attr("d", roundedRect(0, -5, 26, 20, 5, 0, 0, 0, 1))
+            .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')' } );
+
+
+        // poligonos profundidad 3 9 27
+
+        nodeEnter.append('path')
+            .attr("d", roundedRect(-26, -17, 17, 12, 5, 1, 0, 0, 0))
+            .style( 'fill', function( d ){ return d.profundidad[ 0 ] > 2 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );  
+
+        nodeEnter.append('path')
+            .attr("d", roundedRect(-9, -17, 18, 12, 5, 0, 0, 0, 0))
+            .style( 'fill', function( d ){ return d.profundidad[ 1 ] > 8 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );     
+
+        nodeEnter.append('path')
+            .attr("d", roundedRect(9, -17, 17, 12, 5, 0, 1, 0, 0))
+            .style( 'fill', function( d ){ return d.profundidad[ 2 ] > 26 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );            
+
+
+
+        nodeEnter.append("rect")
             .attr("x", -26)
-            .attr("y", -5)
+            .attr("y", 55)
             .attr("rx", 5)
-            .attr("height", 20)
-            .attr("width", 26)
-            .style("fill", function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } ); */
-            nodeEnter.append('path')
-                .attr("d", roundedRect(-26, -5, 26, 20, 5, 0, 0, 1, 0))
-                .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } );
+            .attr("height", 32)
+            .attr("width", 52)
+            .style("fill", function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
 
-        // Poligono de fondo de numero de socio, color segun si es directo o no
-//        nodeEnter.append( 'svg:polygon' )
-//            .attr( 'points', poligono( 0, 55, 26, 19, 20 ) )
-//            .style( 'fill', function( d ){ return 'var(--bs-'+ ( d.patrocinador != socio ? 'gray-700' : 'blue') + ')'; } );
-//            .style( 'fill', function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
-
-nodeEnter.append('path')
-.attr("d", roundedRect(0, -5, 26, 20, 5, 0, 0, 0, 1))
-.style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')' } );
-
-
-nodeEnter.append('path')
-.attr("d", roundedRect(-26, -17, 17, 12, 5, 1, 0, 0, 0))
-.style( 'fill', function( d ){ return d.profundidad[ 0 ] > 2 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );  
-
-nodeEnter.append('path')
-.attr("d", roundedRect(-9, -17, 18, 12, 5, 0, 0, 0, 0))
-.style( 'fill', function( d ){ return d.profundidad[ 1 ] > 8 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );     
-
-nodeEnter.append('path')
-.attr("d", roundedRect(9, -17, 17, 12, 5, 0, 1, 0, 0))
-.style( 'fill', function( d ){ return d.profundidad[ 2 ] > 26 ? 'var(--bs-teal)' : 'var(--bs-gray-400)'; } );            
-
-
-
- 
-
-
-nodeEnter.append("rect")
-.attr("x", -26)
-.attr("y", 55)
-.attr("rx", 5)
-.attr("height", 32)
-.attr("width", 52)
-.style("fill", function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
-nodeEnter.append("rect")
-.attr("x", -27)
-.attr("y", 74)
-.style( 'opacity', .3 )
-.attr("height", 13)
-.attr("width", 54)
-.style("fill", 'white');
+        nodeEnter.append("rect")
+            .attr("x", -27)
+            .attr("y", 74)
+            .style( 'opacity', .3 )
+            .attr("height", 13)
+            .attr("width", 54)
+            .style("fill", 'white');
 
         // Texto numero de socio en parte inferior
         nodeEnter.append( 'text' )
@@ -515,11 +460,11 @@ nodeEnter.append('svg:circle')
         // mascara para atenuar socios cuando queden fuera de los filtros
 
         nodeEnter.append("rect")
-            .attr("x", -40)
-            .attr("y", -16)
+            .attr("x", -50)
+            .attr("y", -19)
             .style( 'opacity', .85 )
-            .attr("height", 102)
-            .attr("width", 80)
+            .attr("height", 106)
+            .attr("width", 100)
             .style("fill", 'white')
             .style("display", 'none')
             .attr( 'class', 'shadow');
@@ -547,159 +492,3 @@ nodeEnter.append('svg:circle')
 
     $( canvas + ' svg' ).attr( 'width', final_x + 60 ).attr( 'height', final_y + 100 ); 
 }
-
-$( document ).ready(function()
-{
-    $( canvas ).html( loader );
-    
-    $.ajax({
-        url: base_url + "downlineJSON",
-        async: true,
-        dataType: "text",
-        type  : 'POST',
-        data: { [csrf_token] : csrf_hash, modelo : modelo, socio : socio },
-        success: function( data ){
-            $( canvas ).empty();
-
-            downline = JSON.parse( data , ( key, value, context ) => {
-                
-                switch( key ){
-                    case "profundidad":
-                        return value ?? [0,0,0];
-
-                    case "calificaciones":
-                    case "id":
-                    case "nivel":
-                    case "padre":
-                    case "patrocinador":
-                    default:
-                        return value;
-                }
-            });
-
-            beneleit( downline );
-
-            var popoverTriggerList = [].slice.call( document.querySelectorAll( 'g[data-bs-toggle="popover"]' ) )
-            var popoverList = popoverTriggerList.map( function ( popoverTriggerEl ) {
-                return new bootstrap.Popover( popoverTriggerEl );
-            })
-        
-            $( 'g.node' ).on( 'show.bs.popover', function(){
-        
-                $( canvas ).on( 'mousedown', function(){
-                    $( '[data-bs-toggle="popover"]' ).popover( 'hide' );
-                });
-            });
-
-            osInstance2 = OverlayScrollbars( $( canvas ) , { });
-
-            $( '.filtro' ).on( 'change', function(){
-                var valor = $( this ).val(),
-                    tipo  = $( this ).attr( 'tipo' );
-
-                filtrar( tipo, valor );
-            });
-        },
-        error: function( r ){
-            console.log( 'error', r );
-        }
-    }); 
-});
-
-
-            // filtros
-
-            function filtrar( variable, valor ){
-
-                $.each( downline, function( indice, node ){
-                    go = true;
-
-                    switch( variable ){
-                        case "rango":
-                        case "estatus":
-                                go = ( node[ variable ] == valor );
-                            break;
-
-                        case "patrocinador":
-                                go = ( ( parseInt( valor ) == 1 && node[ variable ] == socio ) || ( parseInt( valor ) == 2 && node[ variable ] != socio ) );
-                            break;
-
-                        case "profundidad":
-                            switch( valor ){
-                                case 0 : 
-                                    go = ( node[ 'profundidad' ][ 0 ] > 2 );
-                                    break;
-                                case 1 : 
-                                    go = ( node[ 'profundidad' ][ 1 ] > 8 );
-                                    break;
-                                case 2 : 
-                                    go = ( node[ 'profundidad' ][ 2 ] > 26 );
-                                    break;
-                                case 3 : 
-                                    go = ( node[ 'profundidad' ][ 0 ] > 2 && node[ 'profundidad' ][ 1 ] > 8 && node[ 'profundidad' ][ 2 ] > 26 );
-                                    break;
-                            }
-                            break;
-
-                        case "califica_0":
-                                go = ( node[ 'calificaciones' ][ 0 ] == valor );
-                            break;
-
-                        case "califica_1":
-                                go = ( node[ 'calificaciones' ][ 1 ] == valor );
-                            break;                            
-                    }
-
-                    // activa y desactiva
-
-                    if( go ) 
-                        $( '.node[socio=' + node[ 'id' ] + '] > rect.shadow' ).fadeOut();
-                    else
-                        $( '.node[socio=' + node[ 'id' ] + '] > rect.shadow' ).fadeIn();
-                });
-            }
-
-
-            (function($bs) {
-                const CLASS_NAME = 'has-child-dropdown-show';
-                $bs.Dropdown.prototype.toggle = function(_orginal) {
-                    return function() {
-                        document.querySelectorAll('.' + CLASS_NAME).forEach(function(e) {
-                            e.classList.remove(CLASS_NAME);
-                        });
-                        let dd = this._element.closest('.dropdown').parentNode.closest('.dropdown');
-                        for (; dd && dd !== document; dd = dd.parentNode.closest('.dropdown')) {
-                            dd.classList.add(CLASS_NAME);
-                        }
-                        return _orginal.call(this);
-                    }
-                }($bs.Dropdown.prototype.toggle);
-            
-                document.querySelectorAll('.dropdown').forEach(function(dd) {
-                    dd.addEventListener('hide.bs.dropdown', function(e) {
-                        if (this.classList.contains(CLASS_NAME)) {
-                            this.classList.remove(CLASS_NAME);
-                            e.preventDefault();
-                        }
-                        e.stopPropagation(); // do not need pop in multi level mode
-                    });
-                });
-            
-                // for hover
-                document.querySelectorAll('.dropdown-hover, .dropdown-hover-all .dropdown').forEach(function(dd) {
-                    dd.addEventListener('mouseenter', function(e) {
-                        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-                        if (!toggle.classList.contains('show')) {
-                            $bs.Dropdown.getOrCreateInstance(toggle).toggle();
-                            dd.classList.add(CLASS_NAME);
-                            $bs.Dropdown.clearMenus();
-                        }
-                    });
-                    dd.addEventListener('mouseleave', function(e) {
-                        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-                        if (toggle.classList.contains('show')) {
-                            $bs.Dropdown.getOrCreateInstance(toggle).toggle();
-                        }
-                    });
-                });
-            })(bootstrap);

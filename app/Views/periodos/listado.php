@@ -34,7 +34,7 @@
     <?php 
         foreach( $periodos as $periodo ){
             echo "<tr>
-                <td><span class=\"badge bg-marine\">{$periodo[ "codigo" ]}</span></td>
+                <td><span class=\"badge bg-marine\">".periodo( $periodo[ "codigo" ] )."</span></td>
                 <td>{$periodo[ "inicia" ]}</td>
                 <td>{$periodo[ "termina" ]}</td>
                 <td>0</td>

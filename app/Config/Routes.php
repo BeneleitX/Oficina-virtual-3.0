@@ -33,20 +33,28 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pagoyenvio/(:any)",      "Pedidos::pagoyenvio/$1" ); 
     $routes->get( "compra_demo/(:num)/(:any)/(:num)",    "Pedidos::compra_demo/$1/$2/$3" );
     $routes->post( "checkout",              "Pedidos::checkout" ); 
+    $routes->post( "reparte",               "Pedidos::reparte" ); 
+    $routes->post( "cancela_pedido",        "Pedidos::cancela_pedido" ); 
+    $routes->post( "cambia_fecha",          "Pedidos::cambia_fecha" ); 
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
     
+    $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
 
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
     $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 
     $routes->post( "corte",                 "Periodos::corte" ); 
-    $routes->get( "corte_check",           "Periodos::corte_check" ); 
+    $routes->get( "corte_check",            "Periodos::corte_check" ); 
 
-    $routes->get( "recompensas/(:any)",     "Recompensas::detalle/$1" );     
+    $routes->get( "recompensas",            "Recompensas::detalle" );     
+    $routes->get( "switch_recompensa/(:any)", "Recompensas::switch/$1" );     
 
-    $routes->get( "red/(:any)",             "Redes::arbol/$1" ); 
+    $routes->get( "red",                    "Redes::downline" ); 
+    $routes->get( "red/(:any)",             "Redes::downline/$1" ); 
+    $routes->get( "upline/(:any)",          "Redes::upline/$1" ); 
     $routes->post( "downlineJSON",          "Redes::downlineJSON" );
+    $routes->post( "uplineJSON",            "Redes::uplineJSON" );
     $routes->post( "userdata",              "Redes::userdata" );
     
     $routes->get( "perfil",                 "Socio::perfil" );
@@ -79,6 +87,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "marca_enviado",          "Paqueteria::marca_enviado" );
 
     $routes->get( "roles",                  "Roles::listado" ); 
+
+    $routes->get( "esquemas/(:any)",        "Esquemas::listado/$1" );
 
     $routes->get( "admin",                  "Admin::dashboard" ); 
     $routes->get( "variables",              "Admin::variables" ); 

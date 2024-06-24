@@ -4,14 +4,36 @@ namespace App\Controllers;
 
 class Recompensas extends BaseController
 {
-    public function detalle( $modelo ){
+    public function detalle(){
 
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
-        $this->data[ "modelo"  ] = $modelo;
         $this->data[ "titulo"  ] = "Detalles de recompensas";
- 
+        load_catalogo( "recompensas");
         echo template( "recompensas/detalle", $this->data );
+    }
+
+
+    public function switch( $recompensa ){
+        $socio = $this->data[ "usuario" ];
+
+        $data = $socio->data;
+        $previa = $data->recompensas->activa;
+        $data->recompensas->activa = $recompensa;
+        $socio->data = $data;
+        model( "UsuarioModel" )->save( $socio );
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 30, $socio->id, [ 
+            "previa"     => $previa,
+            "recompensa" => $recompensa,
+            "usuario"    => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "recompensas" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó la recompensa activa" ] );         
     }
 }
 

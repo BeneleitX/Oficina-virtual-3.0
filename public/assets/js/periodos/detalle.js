@@ -1,28 +1,39 @@
 
-function getStatus() {
+function getStatus() { 
+    $( '#modal_corte .progress-bar' ).css( 'width', '100%' );
+    return;
     setTimeout(function() {
 
         fetch(base_url + 'assets/corte_check.php', {
+            Method: 'POST',
+            body: JSON.stringify({ periodo: periodo }),
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
               }
         })
         .then((resp) => resp.json())
-        .then(function( data ) {
-            $( '#modal_corte .progress-bar' ).css( 'width', data.porcentaje + '%' );
+        .then(function( respuesta ) {
+            $( '#modal_corte .progress-bar' ).css( 'width', respuesta.porcentaje + '%' );
             
-            if (data.porcentaje < 100) {
+            $( '#dato_pedidos' ).text( respuesta.pedidos );
+            $( '#dato_socios' ).text( respuesta.socios );
+            $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
+            $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
+            $( '#dato_deposito' ).text( Moneda.format( respuesta.total ) );
+            $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
+
+            if (respuesta.porcentaje < 100) {
                 getStatus();
             }
         })
-    }, 1500 );
+    }, Math.floor( Math.random() * 1000 ) );
 }
 
 
 $(document).ready(function(){
 
-    new DataTable('#tabla_pagos', {
+    new DataTable('#tabla_pagos, #tabla_anteriores', {
         pageLength: 50
     });
 
@@ -48,6 +59,13 @@ $(document).ready(function(){
                     $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-red' ).addClass( 'fa-check text-teal' );
                     $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
                 }
+
+                $( '#dato_pedidos' ).text( respuesta.pedidos );
+                $( '#dato_socios' ).text( respuesta.socios );
+                $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
+                $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
+                $( '#dato_deposito' ).text( Moneda.format( respuesta.total ) );
+                $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
             }
 		});
 

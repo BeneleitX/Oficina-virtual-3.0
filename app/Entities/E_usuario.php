@@ -48,89 +48,21 @@ class E_usuario extends Entity
     }
 
 
-    public function xxxestatus( $modelo ){
-
-        $estatus = "000-DESCONOCIDO";
-        $data = $this->historial->modelos->{$modelo};
-        
-        $mesactual    = date( "Ym" );
-        $primercompra = substr( $data->primercompra, 0, 4 ).substr( $data->primercompra, 5, 2 );
-        $puntos = [];
-
-        for( $mes = 0; $mes < 3; $mes++ ){
-            foreach( MODELOS[ $modelo ][ "settings" ][ "promocion_base" ] as $promo ){
-                $puntos[ MESES[ $mes ] ] = ( $puntos[ MESES[ $mes ] ] ?? 0 ) + ( $data->calificaciones->{MESES[ $mes ]}->{$promo} ?? 0 );
-            }
-        }
-        d($puntos);
-        if( in_array( "00-BLOQUEADO", $this->rol_codigos ) ){
-            // manualmente con rol de bloqueado 
-            return ESTATUS[ "120-BAJA" ];
-        }
-	
-        if( in_array( "42-PERMANENTE", $this->rol_codigos ) ){
-            // rol de staff
-            return ESTATUS[ "612-STAFF-PERMANENTE" ];
-        }
-
-        if( $primercompra ){
-	        if( $puntos[ MESES[ 0 ] ] ){
-                if( $primercompra == MESES[ 0 ] ){
-                    // registrado en los ultimos 30 días, con compras	
-                    return ESTATUS[ "510-NUEVO-CALIFICADO" ];
-                }
-                else{
-                    if( $puntos[ MESES[ 1 ] ] ){
-                        // con compras en mes actual 
-                        return ESTATUS[ "520-CALIFICADO-ACTUAL" ];
-                    }
-                    else{
-                        // con compras en mes actual sin compra en mes anterior
-                        return ESTATUS[ "320-NO-CALIFICADO-COMPRA" ];
-                    }
-                }
-            }
-        
-            if( $puntos[ MESES[ 1 ] ] ){
-                // con compras en el mes anterior, pero sin compras en mes actual
-                return ESTATUS[ "410-CALIFICADO" ];
-            }
-
-            if( $puntos[ MESES[ 2 ] ] ){
-                // sin compras en los ultimos 2 meses
-                return ESTATUS[ "310-NO-CALIFICADO" ];
-            }	
-        
-            // no tiene compras en los ultimos 3 meses
-            return ESTATUS[ "140-SUSPENDIDO" ];
-        }
-        else{
-            if( $data->registro > date("Y-m-d", strtotime( date("Y-m-d" )." - 1 days" ) ) ){
-                if( $data->validacion ){
-                    // registrado en los ultimos 30 días, aun sin compras pero verificado
-                    return ESTATUS[ "220-NUEVO-VERIFICADO" ];
-                }
-                else{
-                    // registrado en los ultimos 30 días, aun sin compras y sin verificar
-                    return ESTATUS[ "210-NUEVO" ];
-                }			
-
-                // nunca hizo compras y venció su periodo de nuevo (30 días)
-                return ESTATUS[ "130-NUEVO-SUSPENDIDO" ];
-            }
-        }
-
-        // return json_decode( $this->attributes['estatus'] )
-        // return ESTATUS[$e->{"10-NUTRI"}];
-    }
-
-
-    public function getCalificaciones(){
+    public function getCalificaciones( $modelo ){
         $PTS = [];
 
         foreach( PROMOCIONES as $promo ){
             foreach( MESES as $mes ){
-                $PTS[ $promo[ "codigo" ] ][ $mes ] = isset( $this->historial->modelos->{$promo[ "codigo" ]}->calificaciones[ $mes ] ) ? $this->historial->modelos->{$promo[ "codigo" ]}->calificaciones[ $mes ] : 0;
+                $PTS[ $promo[ "codigo" ] ][ "meses" ][ $mes ] = 0;
+            }
+            $PTS[ $promo[ "codigo" ] ][ "total" ] = 0;
+        } 
+
+        foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
+            if( $promos )
+            foreach( $promos as $promo => $pts ){
+                $PTS[ $promo ][ "meses" ][ $mes ] = $pts;
+                $PTS[ $promo ][ "total" ] = $PTS[ $promo ][ "total" ] + $pts;
             }
         }
 
@@ -201,7 +133,7 @@ class E_usuario extends Entity
             $m_0 = date('Ym');
             $m_1 = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
-            $db = db_connect();
+            $db  = db_connect();
             $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
             $calificaciones = $db->query($sql)->getRowArray();
 
@@ -230,16 +162,28 @@ class E_usuario extends Entity
     }
 
 
+    public function rango( int $size = 40 ): string 
+    {
+        return "<img style=\"width:{$size}px; height:{$size}px;\" src=\"".base_url()."assets/img/rangos/{$this->data->rango}.jpg\">";
+    }
+
+
     public function avatar( int $size = 40, string $id = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
             return "<img ".($id ?? "")." class=\"rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
         }
         else{
-            return "<div class=\"emoji\"><div><i style=\"font-size:{$size}px;\" class=\"text-".$this->data->avatarbg." fa fa-".$this->data->avatarface."\"></i></div></div>";
+            // return "<div class=\"emoji\"><div><i style=\"font-size:{$size}px;\" class=\"text-".$this->data->avatarbg." fa fa-".$this->data->avatarface."\"></i></div></div>";
+
+            return "<div class=\"emoji\"><div style=\"border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%\" class=\"text-teal bg-gray-400\">".$this->iniciales()."</div></div>";
         }
     }
 
+
+    public function iniciales(){
+        return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
+    }
 
     public function porcentaje_beneficiarios( $porcentaje = 0 ){
         foreach( $this->data->beneficiarios as $b ){
@@ -288,6 +232,16 @@ class E_usuario extends Entity
     }
 
 
+    public function getUplineJSON( $modelo ){
+
+        $db  = db_connect();
+        $sql = "select f_get_upline( {$this->id}, '{$modelo}', 1 ) as upline";
+        $r = $db->query( $sql )->getRow();
+
+        return $r->upline;
+    }
+
+
     public function getBitacora(){
         $db = db_connect();
         $respuesta = [];
@@ -322,6 +276,56 @@ class E_usuario extends Entity
         $fecha = new Time( $this->fechanac );
         return $fecha->getAge() < 18;
     }
+
+
+    public function getRecompensas( $activa = false ){
+
+        if( !isset( $this->data->recompensas ) ){
+            $data = $this->data;
+
+            $data->recompensas = [
+                "ciclo"  => 1,
+                "activa" => "010-CELULAR",
+                "inicia" => null,
+                "estrellas" => [
+                    date( "Ym" ) => 0
+                ],
+                "reclamados" => []
+            ];
+
+            $this->data = $data;
+            model( "UsuarioModel" )->save( $this );
+        }
+
+        $sql = "estatus_codigo = '201-ACTIVO' and ciclo = ".$this->data->recompensas->ciclo;
+        $recompensas = model( "RecompensaModel" )->where( $sql , null, false )->findAll();
+
+        if( $activa ){
+            foreach( $recompensas as $r ){
+                if( $r[ "codigo" ] == $this->data->recompensas->activa ){
+                    return $r;
+                }
+            }
+        }
+        return $recompensas;
+    }
+
+
+    public Function getEstrellas( $mes = null ){
+        $estrellas = 0;
+
+        foreach( ( $this->data->recompensas->estrellas ) as $k => $m ){
+            if( $mes == $k ){
+                return $m;
+            }
+            
+            if( date( "Ym", strtotime( $this->data->recompensas->inicia ) ) <= $k )
+            $estrellas += $m;
+        }
+        
+        return $estrellas;        
+    }
+
 
 
     public function getDomicilios(){
@@ -420,7 +424,10 @@ class E_usuario extends Entity
         return $pedido;
     }
 
+    
     public function fondeo( $modelo, $metodo, $cantidad, $mes = null ){
+
+        if( $mes && $mes == date( "Ym" ) ) $mes = null;
 
         $pedido         = $this->getPedido( $modelo );
         $saldo          = $this->data->saldo->{$modelo};
@@ -458,9 +465,14 @@ class E_usuario extends Entity
             $pedido[ "fechas" ][ "califica" ] = intval( $pedido[ "data" ][ "mesanterior" ] ) ? $fecha_anterior : $fecha;
             $pedido[ "estatus_codigo" ] = "420-PAGADO";
     
-            $historial->modelos->{$modelo}->ultimacompra = $fecha;
+            $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
             if( !$historial->modelos->{$modelo}->primercompra ){
-                $historial->modelos->{$modelo}->primercompra = $fecha;
+                $historial->modelos->{$modelo}->primercompra = $pedido[ "fechas" ][ "califica" ];
+
+                if( !isset( $data->recompensas ) ){
+                    $data->recompensas = json_decode( "{}" );
+                }
+                $data->recompensas->inicia = $pedido[ "fechas" ][ "califica" ];
             }
 
             $mesactual = substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ).substr( $pedido[ "fechas" ][ "califica" ], 5, 2 );
@@ -495,8 +507,6 @@ class E_usuario extends Entity
             $db->query( "select f_get_estatus( {$this->id} )" );
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();
             // $db->query( "update t_usuario set historial = JSON_SET( historial, '$.modelos."{$modelo}".calificaciones."{$cc}"', p_get_calificacion( {$pedido[ "usuario_id" ]}, '{$cc}', '{$modelo}' ))" );
-            
-            
             //$db->query( "call p_update_rango( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
         }
         else{
@@ -510,20 +520,42 @@ class E_usuario extends Entity
         return $pedido[ "referencia" ];
     }
 
+
+    public function getBono( $esquema ){
+        $a   = [
+            1 => 0.00,
+            2 => 0.00,
+            3 => 0.00
+        ];
+        $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
+                WHERE esquema_codigo = '116-ANIVERSARIO-24'
+                AND usuario_id = {$this->id}
+                GROUP BY nivel";
+
+        $db = db_connect();
+        $resultado = $db->query($sql)->getResultArray();
+
+        foreach( $resultado as $r ){
+            $a[ $r[ "nivel" ] ] = floatval( $r[ "cantidad" ] );
+        }
+
+        return $a;
+    }
+
+
     public function getIngresosPorDia( $modelo ){
         $resultado = [];
 
         $sql = "SELECT SUM(comision.cantidad) as comisiones, 
-        DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
-        FROM t_comisiones comision
-        join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
-        WHERE esquema.modelo_codigo = '{$modelo}' 
-        and comision.usuario_id = {$this->id} 
-        AND esquema.settings->>'$.reparto' != 'puntos'
-        
-        and substring( comision.estatus_codigo, 1, 3 ) > 200
-        GROUP BY DATE_FORMAT(comision.fecha, '%Y-%m-%d')";
-
+                DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
+                FROM t_comisiones comision
+                join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
+                WHERE esquema.modelo_codigo = '{$modelo}' 
+                and comision.usuario_id = {$this->id} 
+                AND esquema.settings->>'$.reparto' != 'puntos'
+                AND esquema.settings->>'$.periodo' = 'SEMANAL'
+                and substring( comision.estatus_codigo, 1, 3 ) > 200
+                GROUP BY DATE_FORMAT(comision.fecha, '%Y-%m-%d')";
 
         $db     = db_connect();
         $result = $db->query($sql);
@@ -536,19 +568,22 @@ class E_usuario extends Entity
         return $resultado;
     }
 
+
     public function getComisiones( $periodo ){
         $resultado = [];
 
         $sql = "SELECT comision.fecha, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id
-        FROM t_comisiones comision
-        join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
-        join t_periodos periodo on periodo.codigo = '{$periodo}'
-        join t_pedidos pedido on pedido.id = comision.pedido_id
-        WHERE comision.usuario_id = {$this->id} 
-        and substring( comision.estatus_codigo, 1, 3 ) > 200
-        AND esquema.settings->>'$.reparto' != 'puntos'
-        AND comision.fecha between periodo.inicia and periodo.termina
-        AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
+                FROM t_comisiones comision
+                join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
+                join t_periodos periodo on periodo.codigo = '{$periodo}'
+                join t_pedidos pedido on pedido.id = comision.pedido_id
+                WHERE comision.usuario_id = {$this->id} 
+                and substring( comision.estatus_codigo, 1, 3 ) > 200
+                AND esquema.settings->>'$.reparto' != 'puntos'
+                AND esquema.settings->>'$.periodo' = 'SEMANAL'
+                AND comision.fecha between periodo.inicia and periodo.termina
+                AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
+
         $db = db_connect();
         return $db->query($sql)->getResult();
     }

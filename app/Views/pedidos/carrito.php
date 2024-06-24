@@ -3,7 +3,7 @@
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
 <p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
 
-<?php if( !$pagado ){ ?>
+<?php if( !$pagado && !$cancelado ){ ?>
     <div class="row">
 	    <div class="col-md-6 mb-3">
 		    <ul class="nav nav-pills">
@@ -25,6 +25,9 @@ else{
     if( intval( $pedido[ "data" ][ "mesanterior" ] ) ){
         echo "<div class=\"alert alert-danger\"><i class=\"fa fa-circle-info\"></i> Los puntos generados por esta compra son abonados al mes anterior de la fecha de pago.</div>";
     }
+    if( $cancelado ){
+        echo "<div class=\"alert alert-danger\"><i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.</div>";
+    }    
 }
 ?>
 
@@ -34,9 +37,11 @@ else{
 			<?php
 
 			foreach( PROMOCIONES as $p ){
-                $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
-				echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\"><div class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\"><div class=\"row\"><div class=\"col-md-4\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-8\"><small conteo>{$cant_productos} productos</small>".( $pagado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."</div></div></div><table productos class=\"w-100\"></table><div class=\"card-footer bg-gray-300 text-end\"><table align=\"right\"><tr><td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td><td><h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5></td></tr>
-				</table></div></div>";
+                if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
+                    $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
+                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\"><div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\"><div class=\"row\"><div class=\"col-md-4\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-8\"><small conteo>{$cant_productos} productos</small>".( $pagado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."</div></div></div><table productos class=\"w-100\"></table><div class=\"card-footer bg-gray-300 text-end\"><table align=\"right\"><tr><td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td><td><h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5></td></tr>
+                    </table></div></div>";
+                }
 			}
 			?>
 		</div>
@@ -51,8 +56,8 @@ else{
                 <?php 
                 foreach( METODOSENTREGA as $me ){
 
-                    echo "\n<input type=\"radio\" class=\"".( $pagado && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "").">
-                    <label class=\"".( $pagado && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                    echo "\n<input type=\"radio\" class=\"".( ( $pagado  || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "").">
+                    <label class=\"".( ( $pagado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                 }
                 ?>
             </div>            
@@ -68,7 +73,7 @@ else{
                             <select class="form-select" name="select_almacen">
                             <?php
                                 foreach( ALMACENES as $a ){
-                                    if( !$pagado || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                                    if( ( !$pagado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
                                     echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                                 }
                             ?>
@@ -76,7 +81,7 @@ else{
                         
                         </div>
                         <div class="col-lg-6">
-                            <?php if( $pagado && !$entregado ){ ?>
+                            <?php if(  $pagado  && !$entregado ){ ?>
                                 <form method="post" action="<?php echo base_url("entrega"); ?>">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
@@ -93,7 +98,7 @@ else{
 
                     $domicilios = $socio->getDomicilios();
 
-                    if( $pagado && sizeof( $domicilios ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                    if( ( $pagado || $cancelado ) && sizeof( $domicilios ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
                         $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
                         $dom = 0;
                     }
@@ -123,7 +128,7 @@ else{
                     ?>
                     <div class="row">
                         
-                            <?php if( $pagado){ 
+                            <?php if( ( $pagado || $cancelado ) ){ 
                                 if( $entregado ){ ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">
@@ -150,14 +155,14 @@ else{
 
                 <div class="alert alert-danger mt-3" id="no_stock" style="display:none"><p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p><ul class="m-0"></ul></div>
 
-                <?php if( !$pagado ){ ?>
+                <?php if( !( $pagado || $cancelado ) ){ ?>
                 <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>><?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ], 2 ); ?></div>
                 <?php } ?>
             </div>
         </div>
 
         <div id="puntajes" class="mb-3"><?php
-        if( $pagado){
+        if( ( $pagado || $cancelado ) ){
             foreach( PROMOCIONES as $p ){
                 if( isset( $pedido[ "PTS" ][ $p[ "codigo" ] ] ) and $pedido[ "PTS" ][ $p[ "codigo" ] ] > 0 ){
 
@@ -168,7 +173,7 @@ else{
         }
         ?></div>
 
-        <?php if( !$pagado ){ ?>
+        <?php if( !( $pagado || $cancelado ) ){ ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
                 <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
@@ -188,7 +193,7 @@ else{
                         <tr><td valign="middle" class="">Total de productos</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_productos="<?php echo $pedido[ "data" ][ "total" ]; ?>">$<?php echo number_format( $pedido[ "data" ][ "total" ], 2 ); ?></h5></td></tr>
                         <tr><td valign="middle" class="">Gastos de entrega</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_entrega="<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr>
                         <?php
-                            if( $pagado ){
+                            if( ( $pagado || $cancelado ) ){
                                 $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                             }
                             else{
@@ -198,8 +203,8 @@ else{
                         <tr><td valign="middle" class="">Saldo a favor</td><td valign="middle" class="text-end"><h5 class="m-0 text-<?php echo $saldo > 0 ? "red" : "gray-500"; ?>" total_saldo="<?php echo $saldo; ?>">$<?php echo number_format(  $saldo, 2 ); ?></h5></td></tr>
                         
                         <?php 
-                        $comisionbanco = $pagado ? $pedido[ "data"][ "comisionbanco" ] : 0;
-                        if( $pagado ){ ?>
+                        $comisionbanco = !( $pagado || $cancelado ) ? $pedido[ "data"][ "comisionbanco" ] : 0;
+                        if( ( $pagado || $cancelado ) ){ ?>
 
                             <tr><td valign="middle" class="">Comision bancaria</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5></td></tr>
 
@@ -216,7 +221,7 @@ else{
                     <input type="hidden" name="modelo" value="<?php echo $pedido[ "modelo_codigo" ]; ?>">
 
                     <?php 
-                    if( $pagado ){
+                    if( ( $pagado || $cancelado ) ){
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
@@ -225,15 +230,14 @@ else{
                             </table>
                         </div>
 
-                        <?php if( $pagado ){ ?>
-                <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="btn btn-light col-12" id="imprime">Imprimir ticket</a>
-                <?php } ?>                        
-                        <?php
+                        <?php if( ( $pagado || $cancelado ) ){ ?>
+                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-success col-12" id="imprime">Imprimir ticket</a>
+                        <?php }
                     }
                     else{
                         foreach( METODOSPAGO as $mp ){
                             echo "\n<button class=\"btn col-12 mb-3 ";
-                            if($mp[ "settings" ][ "tipocomision" ] == "saldo"){
+                            if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
                                 echo " btn-warning ";
 
                                 if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
@@ -255,8 +259,8 @@ else{
 </div>
 
 <?php if( $pagado ){
-    
-    echo "<div class=\"card\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
+
+    echo "<div class=\"card mb-5\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
     <th class=\"text-center\">Folio</th>
     <th>Esquema</th>
     <th>Nivel</th>
@@ -265,9 +269,6 @@ else{
     <th>Socio</th>
     </tr></thead><tbody>"; 
     $db = db_connect();
-    
-    
-    $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} ) as afectados" );
 
     $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
 
@@ -277,13 +278,116 @@ else{
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
         <td>{$c->nivel}</td>
-        <td class=\"text-end\">".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] != "puntos" ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." Estrellas")."</td>
+        <td class=\"text-end\">".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] != "puntos" ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." <i class=\"fa fa-star text-amber\"></i>Estrellas")."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
         </tr>"; 
     }
 
     echo "</tbody></table></div>"; 
+
+?>
+
+    <div class="alert alert-danger">
+    <table><tr><td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td><td><ul class="m-0"><li>Modificar los siguientes parámetros puede ocasionar que las calificaciones y comisiones generadas por este pedido sufran cambios permanentes.</li><li>Una vez cerrado el periodo al que pertenece la fecha de compra, estas opciones serán bloqueadas.</li></ul></td></tr></table>
+    </div>  
+    <div class="card border-red my-3">
+        <div class="card-header">
+            <h5 class="text-red mb-0">Administración</h5>
+        </div>
+        <div class="card-body">
+        
+            <div class="row">
+            <div class="col-lg-4 m-0">
+                <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
+                </div>
+
+                <div class="col-lg-4 m-0">
+                <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
+                </div>
+
+                <div class="col-lg-4 m-0">
+                    <form method="post" action="<?php echo base_url( "reparte" ); ?>">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="btn btn-danger col-12"><i class="fa fa-cog"></i> Recalcular comisiones</button>
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="cambia_fecha">
+	    <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "cambia_fecha" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+                    <input type="hidden" name="old_beneficiario"  value="">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-clock-rotate-left"></i> Cambiar fecha de compra</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-3"><ul class="m-0">
+                            <li>La fecha de pago no se modifica, solo la de calificación y reparto de comisiones.</li>
+                            <li>Los beneficios generados por este pedido, aplicarán para las calificaciones del mes al que corresponde la fecha que se aplique.</li>
+                            <li>Un cambio de fecha de compra altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
+                        </ul></div>
+
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                        <label class="form-label">Actualiza la fecha y guarda los cambios usando el botón</label>
+                        <div class="row">
+                            <div class="col-6">
+                                
+                                <input class="form-control col-6" type="date" name="nueva" value="<?php echo substr( $pedido[ "fechas" ][ "califica" ], 0, 10 ) ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-<?php echo $pedido[ "data" ][ "mesanterior" ] == "1" ? "info" : "danger"; ?>">Aplicar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="cancela_pedido">
+	    <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "cancela_pedido" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+                    <input type="hidden" name="old_beneficiario"  value="">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-xmark"></i> Cancelar pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger m-0"><ul class="m-0">
+                            <li>Al cancelar el pedido se eliminarán todas las comisiones y puntos generados para calificación y recompensas.</li>
+                            <li>Cancelar un pedido altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
+                        </ul></div>
+
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-<?php echo $pedido[ "data" ][ "mesanterior" ] == "1" ? "info" : "danger"; ?>">Cancelar pedido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<?php
 }
 else{ ?>
 <div class="modal" tabindex="-1" id="modal_domicilios">
@@ -411,6 +515,7 @@ foreach( $productos as $p ){
 			pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
 			tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
             pagado 		    = <?php echo $pagado; ?>,
+            cancelado 	    = <?php echo $cancelado; ?>,
             mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
             domicilios      = <?php echo json_encode( $domicilios ); ?>,
             hoy = new Date();

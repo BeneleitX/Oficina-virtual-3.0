@@ -18,7 +18,9 @@ class RecompensaModel extends Model
         "codigo", 
         "estatus_codigo",
         "modelo_codigo",
-        "settings"
+        "nombre",
+        "estrellas",
+        "ciclo"
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -37,35 +39,13 @@ class RecompensaModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = [ "JSONencode" ];
+    protected $beforeInsert   = [];
     protected $afterInsert    = [];
-    protected $beforeUpdate   = [ "JSONencode" ];
+    protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = [ "JSONdecode" ];
+    protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected function JSONdecode(array $data)
-    {
-        if($data[ "data" ]){
-            if( $data[ "singleton" ]){
-                $data[ "data" ][ "settings" ] = json_decode( $data[ "data" ][ "settings" ], true );
-            }
-            else{
-                foreach( $data[ "data" ] as $k => $d ){
-                    $data[ "data" ][ $k ][ "settings" ] = json_decode( $data[ "data" ][ $k ][ "settings" ], true );
-                    }
-            }
-        }
-
-        return $data;
-    } 
-    
-    protected function JSONencode(array $data)
-    {
-        $data[ "data" ][ "settings" ] = json_encode( $data[ "data" ][ "settings" ], true );
-        return $data;
-    }  
 
 }

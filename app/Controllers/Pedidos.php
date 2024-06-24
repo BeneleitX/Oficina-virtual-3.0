@@ -37,11 +37,12 @@ class Pedidos extends BaseController
 
         if( $tipo == "pedido" ){
             $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
-            $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
             if( !$this->data[ "pedido" ] ){ 
                 return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
             }
+
+            $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
             $encrypter = service( "encrypter" );
             $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $encrypter->encrypt( $this->data[ "pedido" ][ "id" ] , [ "key" => $this->data[ "usuario" ]->curp ] ) ) ) );
@@ -57,15 +58,17 @@ class Pedidos extends BaseController
             load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
-            $this->data[ "pagado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400;
-            $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500;
-            $this->data[ "titulo" ] = "Detalles de pedido";
+            $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
+            $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
+            $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500 ? 1 : 0;
+            $this->data[ "titulo" ]    = "Detalles de pedido";
         }
         else{
             $this->data[ "socio" ] = $this->data[ "usuario" ];
 
             $this->data[ "modelo" ] = $data;
             $this->data[ "pagado" ]    = 0;
+            $this->data[ "cancelado" ]    = 0;
             $this->data[ "entregado" ] = 0;
 
             $sql = "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'";
@@ -77,7 +80,7 @@ class Pedidos extends BaseController
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ] );
-            $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones();
+            $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "modelo" ] );
             $this->data[ "titulo" ] = "Tienda en línea";
             $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $this->data[ "modelo" ] ][ "settings" ][ "pesoxbulto" ];
         }
@@ -92,6 +95,90 @@ class Pedidos extends BaseController
         model( "PedidoModel" )->save( $pedido );
     }
 
+
+    public function reparte(){
+        $db = db_connect();
+        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} ) as afectados" );
+
+        // BITACORA Actualizar reparto de comisiones
+        bitacora( 31, $this->data[ "usuario" ]->id, [ 
+            "pedido" => $pedido[ "id" ]
+        ] );
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se recalcularon comisiones de pedido" ] );      
+    }
+
+
+    public function cambia_fecha(){
+
+        if( validafecha( $this->request->getPost( "nueva" ) ) ){
+
+            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+            $fechas = $pedido[ "fechas" ];
+
+            // BITACORA Cambiar fecha de calificacion en pedido
+            bitacora( 32, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $pedido[ "id" ],
+                "anterior" => $fechas[ "califica" ],
+                "nueva" => $this->request->getPost( "nueva" )
+            ] );
+
+            $mesprevio = date( "Ym", strtotime( $fechas[ "califica" ] ) );
+
+            $fechas[ "califica" ] = $this->request->getPost( "nueva" );
+            $pedido[ "fechas" ] = $fechas;
+
+            model( "PedidoModel" )->save( $pedido );
+
+            $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
+
+            $db = db_connect();
+
+            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );  
+            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
+            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]} )" );
+            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();            
+        }
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó la fecha de compra del pedido" ] );      
+    }
+
+
+    public function cancela_pedido(){
+
+        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $fechas = $pedido[ "fechas" ];
+        $fechas[ "cancela" ]  = date( "Y-m-d H:i:s" );
+        $pedido[ "fechas" ]   = $fechas;
+        $pedido[ "estatus_codigo" ] = "150-CANCELADO";
+
+        model( "PedidoModel" )->save( $pedido );
+
+        $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
+
+        $db = db_connect();
+        $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
+        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]} )" );
+
+        // BITACORA Cancelar pedido
+        bitacora( 33, $this->data[ "usuario" ]->id, [ 
+            "pedido" => $pedido[ "id" ]
+        ] );
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se ha cancelado el pedido" ] );      
+    }    
+
+
     public function fondeo(){
         extract( $this->request->getPost() );
 
@@ -102,7 +189,6 @@ class Pedidos extends BaseController
 
     public function compra_demo( $usuario, $modelo, $mes ){
         extract( $this->request->getPost() );
-        $cantidad = 3;
         $socio = model( "UsuarioModel" )->find( $usuario );
 
         load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
@@ -113,6 +199,7 @@ class Pedidos extends BaseController
         $data = $pedido[ "data" ];
         $promociones = $pedido[ "promociones" ];
         $PTS = $pedido[ "PTS" ];
+        $fechas = $pedido[ "fechas" ];
 
         $metodopago = METODOSPAGO[ MODELOS[ $modelo ][ "settings" ][ "metodopago_base" ] ];
         $metodoentrega = METODOSENTREGA[ MODELOS[ $modelo ][ "settings" ][ "metodoentrega_base" ] ];
@@ -126,12 +213,16 @@ class Pedidos extends BaseController
         $promociones[ $promocion_base ][ "productos" ] = [];
 
         $producto = model( "ProductoModel" )->find( PROMOCIONES[ $promocion_base ][ "settings" ][ "producto_base" ] );
+        $cantidad = PROMOCIONES[ $promocion_base ][ "settings" ][ "cantidad_base" ];
 
         $promociones[ $promocion_base ][ "productos" ][ $producto->codigo ] = [
             "nombre" => $producto->data->nombre,
             "precio" => $producto->precio->total,
             "cantidad" => $cantidad,
-            "descripcion" => $producto->data->descripcion
+            "puntos" => $producto->data->puntos->{$promocion_base},
+            "comisionable" => $producto->precio->base,
+            "descripcion" => $producto->data->descripcion,
+            "orden" => 1
         ];
 
         $promociones[ $promocion_base ][ "precio" ] = $producto->precio->total * $cantidad;
@@ -146,9 +237,12 @@ class Pedidos extends BaseController
         $data[ "comisionbanco" ]  = $metodopago[ "settings" ][ "comision" ];
         $data[ "comisionentrega" ] = $metodoentrega[ "settings" ][ "costo" ];
 
+        $fechas[ "creado" ] = date( "Y-m-d" );
+
         $pedido[ "data" ] = $data;
         $pedido[ "promociones" ] = $promociones;
         $pedido[ "PTS" ] = $PTS;
+        $pedido[ "fechas" ] = $fechas;
 
         model( "PedidoModel" )->save( $pedido );
 

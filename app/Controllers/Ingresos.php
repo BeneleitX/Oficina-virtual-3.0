@@ -8,7 +8,16 @@ class Ingresos extends BaseController
         $this->data[ "menu" ] = "ingresos";
     }
 
-    public function balance( $modelo, $periodo ){
+    public function balance( $modelo = null, $periodo = null ){
+
+        if( !$modelo ){
+            $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
+        }
+
+        if( !$periodo ){
+            $periodo = codigo_periodo( $modelo );
+        }
+
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
 
         if( null == $this->data[ "periodo" ] ){

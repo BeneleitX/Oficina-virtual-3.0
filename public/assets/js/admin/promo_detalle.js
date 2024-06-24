@@ -50,6 +50,7 @@ $(document).ready(function(){
             "settings": {
                 "clase": $( '[name=n_clase]' ).val(),
                 "exacto": $( '[name=n_exacto]' ).is( ':checked' ),
+                "obligatoria": $( '[name=n_obligatoria]' ).is( ':checked' ),
                 "forced": $( '[name=n_forced]' ).is( ':checked' ),
                 "nombre": $( '[name=n_nombre]' ).val(),
                 "siglas": $( '[name=n_siglas]' ).val(),

@@ -97,7 +97,7 @@
 </div>
 
 <div class="row mb-1">
-<div class="col-lg-4 mb-3">
+    <div class="col-lg-3 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -109,7 +109,19 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mb-3">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-teal">
+            <div class="card-body">
+            <div class="form-check form-switch">
+                <input name="n_obligatoria" class="form-check-input" type="checkbox" role="switch" <?php echo $promocion[ "settings" ][ "obligatoria" ] == "true" ? "checked" : ""; ?>>
+                    <h5 class="text-teal">Compra obligatoria</h5>
+                </div>                
+                
+                <p>Define si la compra de esta promoción debe ser oblihatoria. En caso de apagarse, se considerará opcional y no afectará el proceso de compra el que no se incluyan productos en ella.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -121,7 +133,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mb-3">
+    <div class="col-lg-3 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">

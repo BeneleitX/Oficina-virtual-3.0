@@ -7,11 +7,11 @@
     
 }
 </style>
-<pre style="overflow:inherit"><div class="row"><div class="col-6"><h4 class="mt-1">Pedido # <span style="border:1px solid black" class="badge bg-white text-black"><?php echo $pedido[ "referencia" ]; ?></span></h4></div><div class="col-6 text-end">
-    <img src="<?php echo base_url(); ?>assets/img/logo_color.png" style="width:80px;"></div></div>
+<pre style="overflow:inherit"><div class="row"><div class="col-6"><h4 class="mt-4">Pedido # <span style="border:1px solid black" class="badge bg-white text-black"><?php echo $pedido[ "referencia" ]; ?></span></h4></div><div class="col-6 text-end">
+    <img src="<?php echo base_url(); ?>assets/img/logo_color.png" style="width:120px;"></div></div>
 <div class="card mb-3" style="overflow:hidden"><table class="table rounded-3 m-0">
 
-        <tr><td valign="middle" class="">Socio</td><td valign="middle"><h5 class="m-0"><?php echo $socio->nombre( 2 )." <span class=\"badge bg-black text-white\">".$socio->id( false )."</span>"; ?></h5></td></tr>   
+        <tr><td valign="middle" class="">Socio</td><td valign="middle"><h5 class="m-0"><?php echo $socio->nombre( 2 )." <span style=\"border:1px solid black\" class=\"badge bg-white text-black\">".$socio->id( false )."</span>"; ?></h5></td></tr>   
     
         <tr><td valign="middle" class="">Fecha de pago</td><td valign="middle"><h5 class="m-0"><?php echo substr( $pedido[ "fechas" ][ "pagado" ], 0, 10 ); ?></h5></td></tr>           
         
@@ -21,13 +21,16 @@
 
         foreach( PROMOCIONES as $p ){
             if( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ){
-                $cant_productos = sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] );
+                $cant_productos = 0;
+                
+                foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $k ){
+                    $cant_productos += $k[ "cantidad" ];
+                }
 
                 if( $cant_productos ){
-                    echo "<div class=\"card\"><div class=\"card-header bg-gray-300\"><div class=\"row\"><div class=\"col-md-4\"><h5 class=\"m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-8\">{$cant_productos} productos</div></div></div><table productos class=\"w-100\">";
+                    echo "<div class=\"card mb-3\"><div class=\"card-header bg-gray-300\"><div class=\"row\"><div class=\"col-md-4\"><h5 class=\"m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-8\">{$cant_productos} productos</div></div></div><table productos class=\"w-100\">";
 
                     foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $k ){
-
                         echo "<tr><td class=\"w-100\"><div class=\"row\"><div class=\"col-1\"><h5>{$k[ "cantidad" ]}</h5></div><div class=\"col-md-9\"><h5 class=\"m-0\">{$k[ "nombre" ]}</h5><p class=\"small mb-3\">{$k[ "descripcion" ]}</p></div></div></td><td valign=\"top\" class=\"text-end\" nowrap><small>P. unitario</small><h5>$".number_format( $k[ "precio" ], 2 )."</h5></td><td valign=\"top\" class=\"text-end\" nowrap><small>Subtotal</small><h5 subtotal>$".number_format( $k[ "precio" ] * $k[ "cantidad" ], 2 )."</h5></td></tr>";
                     }
                     

@@ -52,6 +52,12 @@ function getIP(){
 }
 
 
+function validafecha($date, $format = "Y-m-d" ){ 
+    $d = DateTime::createFromFormat($format, $date); 
+    return $d && $d->format($format) === $date; 
+} 
+
+
 function getReferencia( string $p ){
     // Inicializamos variable para acumular la sumatoria de dígitos
     $s = 0;
@@ -169,6 +175,9 @@ function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
     return substr( $modelo, 0, 2 ).substr( $tipo, 0, 1 ).substr( $fecha, 0, 4 ).str_pad( ( date( "W", strtotime( $fecha ) ) ), 2, "0", STR_PAD_LEFT );
 }
 
+function periodo( $periodo ){
+    return substr( $periodo, 3, 4 )."-".substr( $periodo, 7, 2 );
+}
 
 
 function get_datos($month, $year, $day, $x = 1){

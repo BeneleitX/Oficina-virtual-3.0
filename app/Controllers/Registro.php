@@ -84,14 +84,23 @@ class Registro extends BaseController
                     "estatus"       => 0,
                     "csf"           => null
                 ],
-                "rango"     => "00-SOCIO"
+                "rango"     => "00-SOCIO",
+                "recompensas"    => [
+                    "activa" => "010-CELULAR",
+                    "ciclo"  => 1,
+                    "inicia" => null,
+                    "estrellas" => [
+                        date( "Ym" ) => 0
+                    ],
+                    "reclamados" => []
+                ]
             ],
             "correo"        => $data[ "correo" ],
             "telefono"      => $data[ "celular" ],
             "curp"          => $data[ "curp" ],
             "password"      => $demo > 0 ? "1234" : random_password(),
             "redes"         => [
-                "patrocinador"  => $data[ "patrocinador" ]
+                "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
             ],
             "historial"     => [
                 "registro"      => date( "Y-m-d" ),

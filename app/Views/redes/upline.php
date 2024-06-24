@@ -120,7 +120,7 @@
 
 
 <div class="modal" tabindex="-1" id="modal_userdata">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title"></h5>
