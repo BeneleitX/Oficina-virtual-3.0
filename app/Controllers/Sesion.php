@@ -184,6 +184,6 @@ mail($to, $subject, $message, implode("\r\n", $headers ) );
         // BITACORA envío de correo de recuperación de password
         bitacora( 35, $usuario->id );
 
-        return redirect()->to( "recover/success" );         
+      //  return redirect()->to( "recover/success" );         
     }
 }
