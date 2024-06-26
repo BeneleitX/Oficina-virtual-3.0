@@ -1,5 +1,8 @@
-            </div>        
-        <script src="<?php echo base_url(); ?>assets/js/popper.js"></script>
+
+</div>        
+
+
+            <script src="<?php echo base_url(); ?>assets/js/popper.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/bootstrap.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/OverlayScrollbars.js"></script>
 
@@ -16,6 +19,25 @@
                 <?php if( isset( $socio ) ) echo "socio_id = {$socio->id},"; ?>
                 meses      = [<?php echo implode( ",", MESES ); ?>],
                 loader     = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+
+
+            function modal_splash( tipo, parametros ){
+                switch( tipo ){
+                    case 'rango' :
+                        $( '#modal_splash' ).modal( 'show' );
+
+                        $.ajax({
+                            url: base_url + "splash", 
+                            type: "POST",
+                            data: { [csrf_token] : csrf_hash, tipo : tipo, parametros : parametros },
+                            success: function( result ){
+                                $( '#modal_splash .modal-body' ).html( result );
+                            }
+                        });
+                        break;
+                }
+            }
+
 
             // devuelve un número formateado con ceros a la izquierda
             function id( n, digitos = 0 )

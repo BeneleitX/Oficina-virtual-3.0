@@ -7,11 +7,13 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get( "login",                      "Sesion::login" );
+$routes->get( "recover",                    "Sesion::recover" );
+$routes->get( "login/(:num)",               "Sesion::login/$1" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
-$routes->get( "oauth/(:num)/(:any)",               "Sesion::procesa_login/$1/$2" );
+$routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
 
 $routes->get( "formulario",                 "Registro::formulario" );
-$routes->get( "registro_exito/(:num)",      "Registro::registro_exito/$1" );
+$routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
 $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
@@ -22,6 +24,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
+    $routes->post( "splash",                "Dashboard::splash" );
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 

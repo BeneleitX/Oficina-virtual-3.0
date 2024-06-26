@@ -41,11 +41,10 @@ echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 te
             $total = "???";
             $porc  = 0;
         }
-
         ?>
 
         <div class="col-7 pt-2" id="chart" style="position:relative"><div style="position:absolute; width:100%; text-align:center; top:10px"><?php echo $porcentaje."% <i class=\"fa fa-star text-amber\"></i> {$total_estrellas} de {$r[ "estrellas" ]}"; ?></div></div>
-        <div class="col-5 small text-center" style="padding-top:40px; padding-right:25px"><p class="m-0 px-5"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"></p><p class="fs-6 text-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></p><p>La recompensa <?php echo $r[ "nombre" ]; ?> requiere como mínimo el rango de <?php echo $rango[ "nombre" ]; ?></p><p><?php echo estatus( "155-NO-ALCANZADO" ) ?></p></div>
+        <div class="col-5 small text-center" style="padding-top:40px; padding-right:25px"><p class="m-0 px-5"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="width:60px"><br><span class="badge bg-<?php echo $rango[ "color" ]; ?>" style="font-size:13px"><?php echo $rango[ "nombre" ]; ?></span></p><p>La recompensa <?php echo $r[ "nombre" ]; ?> requiere como mínimo el rango de <?php echo $rango[ "nombre" ]; ?></p><p><?php echo estatus( substr( $usuario->data->rango, 0, 2 ) < substr( $rango[ "codigo" ], 0, 2)  ? "155-NO-ALCANZADO" : "225-ALCANZADO" ) ?></p></div>
 
         <p class="text-center m-0"><?php echo "Día {$resta} de {$total}"; ?></p>
         <div class="px-3 mb-3">

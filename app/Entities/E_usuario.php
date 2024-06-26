@@ -311,6 +311,10 @@ class E_usuario extends Entity
     }
 
 
+    public function password_original(){
+        return $this->attributes[ "password"];
+    }
+
     public Function getEstrellas( $mes = null ){
         $estrellas = 0;
 

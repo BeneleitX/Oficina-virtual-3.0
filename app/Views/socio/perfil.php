@@ -183,8 +183,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 					</div>
 					
 					<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
-						<input type="file" class="d-none upload" tipo="frente" accept="image/jpeg">
-						<input type="file" class="d-none upload" tipo="reverso" accept="image/jpeg">
+						<input type="file" class="d-none upload" tipo="frente"  Xaccept="image/jpeg">
+						<input type="file" class="d-none upload" tipo="reverso" xaccept="image/jpeg">
 
 						<h5 class="mt-4">1. Carga de fotografías</h5>
 						<p>Click en los botones para carga fotografías de tu credencial del INE vigente por ambos lados. Cancelala si deseas repetir el proceso con una nueva foto.</p>

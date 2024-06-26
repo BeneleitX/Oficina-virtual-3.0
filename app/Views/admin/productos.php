@@ -22,6 +22,7 @@
             <th></th>
             <th>Nombre</th>
             <th>Descripcion</th>
+            <th>Peso</th>
             <th>Estatus</th>
             <th class="text-end">Precio</th>
             <th></th>
@@ -33,12 +34,14 @@
             foreach( $productos as $producto ){
 
                 echo "\n<tr producto=\"{$producto->codigo}\">
-                    <td class=\"text-center\"><img style=\"width:30px; height:30px; \" src=\"".base_url()."assets/img/productos/".($producto->data->avatar ? $producto->codigo : "NO-IMAGEN").".png\"></td>
-                    <td>".strtoupper( $producto->data->nombre )."</td>
-                    <td>{$producto->data->descripcion}</td>
-                    <td>".estatus( $producto->estatus_codigo )."</td>
-                    <td class=\"text-end\">$".number_format( $producto->precio->total, 2 )."</td>
-                    <td class=\"text-end\"><a href=\"".base_url( "promo_detalle/".$producto->codigo )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
+                    <td valign=\"middle\" class=\"text-center\"><img style=\"width:60px; height:60px; \" src=\"".base_url()."assets/img/productos/".($producto->data->avatar ? $producto->codigo : "NO-IMAGEN").".png\"></td>
+                    <td valign=\"middle\">".strtoupper( $producto->data->nombre )."<br><span class=\"badge bg-marine\">{$producto->codigo}</span></td>
+                    <td valign=\"middle\">{$producto->data->descripcion}</td>
+                    <td valign=\"middle\">".number_format( $producto->data->dimensiones->peso, 1 )."g</td>
+                    <td valign=\"middle\">".estatus( $producto->estatus_codigo )."</td>
+                    <td valign=\"middle\" class=\"text-end\">$".number_format( $producto->precio->total, 2 )."<br>
+                    <span class=\"small text-teal\">Comisionable $<strong>".number_format( $producto->precio->base ?? 0, 2 )."</strong></span></td>
+                    <td valign=\"middle\" class=\"text-end\"><a href=\"".base_url( "promo_detalle/".$producto->codigo )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }
         ?>

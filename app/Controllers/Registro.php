@@ -66,6 +66,12 @@ class Registro extends BaseController
                     "activo"        => null
                 ],
                 "verificacion"  => [],
+                "splash" => [
+                    [
+                        "tipo" => "BIENVENIDA",
+                        "parametros" => []
+                    ]
+                ],
                 "domicilio"     => null,
                 "credencial"    => [
                     "frente"        => null,
@@ -103,9 +109,10 @@ class Registro extends BaseController
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
             ],
             "historial"     => [
-                "registro"      => date( "Y-m-d" ),
+                "registro"      => date( "Y-m-d H:i:s" ),
                 "validacion"    => null,
-                "modelos"       => []
+                "modelos"       => [],
+                "rangos"        => []
             ]               
         ];
     
@@ -175,7 +182,7 @@ class Registro extends BaseController
             return redirect()->to( "red/{$modelo}" );
         }
         else{
-            return redirect()->to( "registro_exito/".$id )->with( "msg", [ 
+            return redirect()->to( "registro_exito/".base64_encode( $entidad->password_original() ) )->with( "msg", [ 
                 "clase" => "success", 
                 "icono" => "user-check", 
                 "texto" => "Cuenta de nuevo socio creada con éxito"] );
@@ -206,8 +213,13 @@ class Registro extends BaseController
     public function registro_exito( $nuevo_id ){
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Nuevo socio creado";
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $nuevo_id );
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first();
 
-        echo template( "registro/exito", $this->data );
+        if($this->data[ "nuevo" ] ){
+            echo template( "registro/exito", $this->data );
+        }
+        else{
+            return redirect()->to( "login" );
+        }
     }
 }

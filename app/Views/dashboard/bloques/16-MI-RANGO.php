@@ -14,10 +14,10 @@ echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 te
         $new_rango = model( "RangoModel" )->where( "SUBSTRING(codigo,1,2) = ".( substr( $rango[ "codigo" ], 0, 2) + 10 ) )->first();
         ?>
         
-        <div class="col-6 small text-center" style="padding-top:20px;"><p class="m-0 px-4"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"></p><p class="fs-3 text-<?php echo $rango[ "color" ]; ?> m-0"><?php echo $rango[ "nombre" ]; ?></p></div>
+        <div class="col-6 small text-center" style="padding-top:10px;"><p class="m-0 px-4"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"><br><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span></p></div>
         
         <div class="col-6 small text-center" style="padding-top:15px;">
-        <p class="">Siguiente rango:</p><p><span class="badge fs-6 bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
+        <p class="">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.jpg"; ?>" style="width:60px; opacity:.4" ><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
         <i class="fa fa-square-xmark text-gray-300"></i>
         <i class="fa fa-square-xmark text-gray-300"></i>
         <i class="fa fa-square-xmark text-gray-300"></i>

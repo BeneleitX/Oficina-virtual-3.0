@@ -75,7 +75,7 @@ class UsuarioModel extends Model
     private function upper( $d ){
         $d->nombre = mb_strtoupper( $d->nombre );
         $d->apellidos[0] = mb_strtoupper( $d->apellidos[0] );
-        $d->apellidos[1] = mb_strtoupper( $d->apellidos[1] );
+        $d->apellidos[1] = mb_strtoupper( $d->apellidos[1] ?? "" );
         
         return $d;
     }

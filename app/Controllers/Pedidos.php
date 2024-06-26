@@ -19,9 +19,9 @@ class Pedidos extends BaseController
 
     public function historial( $modelo ){
 
-        load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}'");
+        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
         
         $this->data[ "socio" ]   = $this->data[ "usuario" ];
         $this->data[ "navbar" ]  = true;

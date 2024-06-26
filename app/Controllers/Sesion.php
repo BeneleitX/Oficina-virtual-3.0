@@ -5,14 +5,15 @@ use App\Entities\Usuario;
 
 class Sesion extends BaseController
 {
-    public function login(){
+    public function login( $id = null ){
         $request = service('request');
 
         if( $this->request->isAJAX() ){
-            echo "<script> window.location.href = '".base_url( "login" )."'; </script>";
+            echo "<script> top.location.href = '".base_url( "login" )."'; </script>";
         }
         else{
             $this->data[ "navbar" ] = false;
+            $this->data[ "id" ] = $id;
             echo template( "sesion/login", $this->data );
         }
     }
