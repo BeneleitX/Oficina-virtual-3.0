@@ -158,9 +158,9 @@ $message = 'hello';
             "smtp_user" => "xxxx@xxxx",
             "smtp_pass" => "xxxxxxxx",
             "smtp_port" => 587, // 465
-            $config['mailtype']  = 'html';
-            $config['newline']   = "\r\n";             
-            );
+            "mailtype"  => "html",
+            "newline"   => "\r\n"
+        );
 
 $email = service('email');
 $email->initialize($config);
