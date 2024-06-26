@@ -160,7 +160,7 @@ $message = 'hello';
             "smtp_port" => 587, //465,
             "mailtype"  => "html",
             "newline"   => "\r\n",
-            "wordwrap"  => TRUE;
+            "wordwrap"  => TRUE
         );
 
 $email = service('email');
