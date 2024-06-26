@@ -146,18 +146,40 @@ class Sesion extends BaseController
         // todo bien
         // ENVIAR CORREO
 
+$from    = "scabbia@gmail.com";
+$to      = 'nobody@example.com';
+$subject = 'the subject';
+$message = 'hello';
+
+
+        $config = array(
+            "protocol"  => "smtp",
+            "smtp_host" => "smtp.gmail.com",
+            "smtp_user" => "xxxx@xxxx",
+            "smtp_pass" => "xxxxxxxx",
+            "smtp_port" => 587, // 465
+            $config['mailtype']  = 'html';
+            $config['newline']   = "\r\n";             
+            );
+
 $email = service('email');
+$email->initialize($config);
+$email->setFrom($from, 'App Beneleit');
+$email->setTo($to);
+$email->setSubject($subject);
+$email->setMessage($message);
+$email->send( false );
+$email->printDebugger(['headers']);
 
-$email->setFrom('app@beneleit.mx', 'App Beneleit');
-$email->setTo('scabbia@gmail.com');
+$headers = [
+    "MIME-Version: 1.0",
+    "Content-type: text/html; charset=iso-8859-1",
+    "To: {$to}",
+    "From: {$from}"
+];
 
-$email->setSubject('Email Test');
-$email->setMessage('Testing the email class.');
 
-$email->send();
-
-
-mail("scabbia@gmail.com","My subject", "First line of text\nSecond line of text");
+mail($to, $subject, $message, implode("\r\n", $headers ) );
         
         // BITACORA envío de correo de recuperación de password
         bitacora( 35, $usuario->id );
