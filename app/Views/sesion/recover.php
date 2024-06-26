@@ -11,6 +11,16 @@
                 <div class="col-8 offset-2">
                     <div class="card mb-3">
                         <div class="card-body"> 
+
+                        <?php if( $accion == "success" ){ ?>
+                            <p class="text-center p-3 m-0">
+                                <i class="far fa-circle-check text-teal" style="font-size:100px"></i>
+                            </p>
+                            <p class="text-center">El correo electrónico se ha enviado</p>
+                            <p class="text-center"><a href="<?php echo base_url( "login" ); ?>" class="btn btn-primary"><i class="fa fa-undo"></i> Regresar</a></p>
+                            
+                        <?php }else{ ?>
+
                             <form method="post" action="<?php echo base_url( "pass_request" ); ?>">
                                 <?php echo csrf_field() ?>
 
@@ -24,6 +34,7 @@
 
                                 <p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary rounded-pill col-12">Enviar correo</button></p>
                             </form>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>

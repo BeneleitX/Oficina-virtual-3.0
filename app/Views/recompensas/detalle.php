@@ -68,7 +68,7 @@
                 </div>
                 <?php
                 if( $r[ "estrellas" ] <= $total_estrellas ){
-                    echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4><p class=\"text-center\"><button class=\"btn btn-success\">Reclama tu recompensa aquí</button></p>";
+                    echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4><p class=\"text-center\"><button class=\"btn btn-primary\">Reclama tu recompensa aquí</button></p>";
                 }
                 ?>
             </td></tr>
@@ -201,7 +201,7 @@ $(document).ready(function(){
                 <div class="row">
                 <?php
                 foreach( RECOMPENSAS as $r ){
-                    echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-success\" style=\"height:100px\"><i class=\"fa fs-1 fa-{$r[ "icono" ]}\"></i><br>{$r[ "nombre" ]}</a></div>";
+                    echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-primary\" style=\"height:100px\"><i class=\"fa fs-1 fa-{$r[ "icono" ]}\"></i><br>{$r[ "nombre" ]}</a></div>";
                 }
                 ?>
                 </div>

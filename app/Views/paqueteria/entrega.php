@@ -56,7 +56,7 @@
                 
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                <button class="btn btn-lg my-5 btn-success">Marcar pedido como enviado</button>
+                <button class="btn btn-lg my-5 btn-primary">Marcar pedido como enviado</button>
                 
             </div>
         </h1>
@@ -98,7 +98,7 @@
 			<div class="modal-body text-center">
              <img style="width:200px">
              <div class="nombre"></div>
-             <button class="btn btn-success my-2" id="confirma_agregar">AGREGAR</button>
+             <button class="btn btn-primary my-2" id="confirma_agregar">AGREGAR</button>
             </div>
 		</div>
 	</div>

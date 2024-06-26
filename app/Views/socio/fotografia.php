@@ -15,18 +15,18 @@
     <div class="col-md-4">
         <h5>1. Selecciona una imagen</h5>
         <p>Click en el botón para cargar una nueva fotografía.</p>
-        <button class="btn btn-success" onclick="$('#foto_upload').click()">Cargar nueva foto</button>
+        <button class="btn btn-primary" onclick="$('#foto_upload').click()">Cargar nueva foto</button>
     </div>
     <div class="col-md-4">
         <h5>2. Ajustala a tu gusto</h5>
         <p>Utiliza las herramientas en pantalla para dimensionar y centrar la imagen hasta que su posición sea de tu agrado. Incluso puedes rotarla si lo necesitas.</p>
-        <button class="vanilla-rotate btn btn-success" data-deg="90"><i class="fa fa-undo"></i></button>
-        <button class="vanilla-rotate btn btn-success" data-deg="-90"><i class="fa fa-redo"></i></button>
+        <button class="vanilla-rotate btn btn-primary" data-deg="90"><i class="fa fa-undo"></i></button>
+        <button class="vanilla-rotate btn btn-primary" data-deg="-90"><i class="fa fa-redo"></i></button>
     </div>
     <div class="col-md-4">
         <h5>3. Guarda los cambios</h5>
         <p>Al finalizar, haz click en el botón para gaurdar los cambios y actualizar tu perfil.</p>
-        <button class="btn btn-success upload-result">Guardar</button>
+        <button class="btn btn-primary upload-result">Guardar</button>
     </div>
 </div>
     

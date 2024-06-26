@@ -12,6 +12,7 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );
+$routes->get( "recover/(:any)",             "Sesion::recover/$1" );
 $routes->get( "login/(:num)",               "Sesion::login/$1" );
 $routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );

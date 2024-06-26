@@ -220,7 +220,7 @@
         </ul>    
 </div>
 
-<p class="text-end"><button class="btn btn-success" id="guarda_cambios">Guardar cambios</button></p>
+<p class="text-end"><button class="btn btn-primary" id="guarda_cambios">Guardar cambios</button></p>
 
 <div class="modal" tabindex="-1" id="modal_productos" promocion="">
 	<div class="modal-dialog modal-lg">

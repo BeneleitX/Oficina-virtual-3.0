@@ -103,7 +103,7 @@
                     <div class="nombre"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success my-2" id="confirma_agregar">Agregar productos</button>
+                    <button class="btn btn-primary my-2" id="confirma_agregar">Agregar productos</button>
                 </div>
             </form>
 		</div>

@@ -16,7 +16,7 @@
             <button onclick="$( '#modal_cierra' ).modal( 'show' )" class="btn btn-warning col-12"><i class="fa fa-lock"></i> Cerrar periodo</button>
         </div>
         <div class="col-md-3">
-            <button xonclick="$( '#modal_corte' ).modal( 'show' )" disabled class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
+            <button xonclick="$( '#modal_corte' ).modal( 'show' )" disabled class="btn btn-primary col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
     </div>
 </div>

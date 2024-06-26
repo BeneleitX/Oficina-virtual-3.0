@@ -231,7 +231,7 @@ else{
                         </div>
 
                         <?php if( ( $pagado || $cancelado ) ){ ?>
-                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-success col-12" id="imprime">Imprimir ticket</a>
+                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12" id="imprime">Imprimir ticket</a>
                         <?php }
                     }
                     else{
@@ -244,7 +244,7 @@ else{
                                     echo " d-none ";
                                 }
                             }else{
-                                echo " btn-success ";
+                                echo " btn-primary ";
                             } 
                             
                             echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\">{$mp[ "nombre" ]}<h4 class=\"cantidad m-0 text-white\"></h4></button>";

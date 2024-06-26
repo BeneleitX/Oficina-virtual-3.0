@@ -117,7 +117,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 							<h5>2. Envíala a revisión</h5>
 							<p>Click en el botón para enviarla. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-							<a class="btn btn-success <?php echo $socio->data->credencial->acta ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+							<a class="btn btn-primary <?php echo $socio->data->credencial->acta ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
 						<?php } ?>
 
 
@@ -191,7 +191,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 						<h5>2. Envíalas a revisión</h5>
 						<p>Click en el botón para enviarlas. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-						<a class="btn btn-success <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+						<a class="btn btn-primary <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
 					<?php } ?>
 			</div>
         </div>
@@ -225,7 +225,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<label>Confirma el password</label>
 					<input type="password" name="nuevo_bis" class="form-control mb-3" value="">
 
-					<button type="submit" class="btn btn-success">Asignar nuevo password</button>
+					<button type="submit" class="btn btn-primary">Asignar nuevo password</button>
 				</form>
 			</div>
 		</div>
@@ -250,7 +250,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<div id="nota_clabe" style="display:none" class="mt-3">
 						<h5>Actualizar CLABE interbancaria</h5>
 						<p>Proporciona tu clabe interbancaria a 18 dígitos. Esta CLABE debe pertenecer a una cuenta bancaria de la que seas titular y se encuentre activa. Al terminar haz click en el botón.</p>
-						<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar cambios</button>
+						<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar cambios</button>
 					</div>
 				</form>
 			</div>
@@ -317,7 +317,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					?>
 				</div>
 
-				<button class="btn btn-success" id="nuevo_domicilio"><i class="fa fa-plus"></i> Agregar domicilio</button>
+				<button class="btn btn-primary" id="nuevo_domicilio"><i class="fa fa-plus"></i> Agregar domicilio</button>
 			</div>
 		</div>	
 		
@@ -340,7 +340,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 				?>
 			</table>
 			<div class="card-body <?php if( $porc == 100 ) echo "d-none"; ?>">	
-			<button class="btn btn-success" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
+			<button class="btn btn-primary" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
 			</div></div>
 			
 			<small><i class="fa fa-circle-info"></i> Un <strong>beneficiario</strong> es una persona designada por el socio titular, que heredaría los derechos (o un porcentaje de ellos) sobre su cuenta, su red y sus ingresos pasivos, en dado caso de que el titular llegue a fallecer.</small>
@@ -429,7 +429,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success">Agregar</button>
+					<button type="submit" class="btn btn-primary">Agregar</button>
 				</div>
 			</form>
 		</div>
@@ -536,7 +536,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 				
 			</div>
 			<div class="modal-footer">
-				<button id="submit_domicilio" class="btn btn-success"><i class="fa fa-check"></i> Guardar</button>
+				<button id="submit_domicilio" class="btn btn-primary"><i class="fa fa-check"></i> Guardar</button>
 			</div>
 			
 		</div>

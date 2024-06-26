@@ -95,8 +95,10 @@ class Sesion extends BaseController
     }
 
 
-    public function recover(){
+    public function recover( $accion = null ){
         $this->data[ "navbar" ] = false;
+        $this->data[ "accion" ] = $accion;
+
         echo template( "sesion/recover", $this->data );
     }
 
@@ -126,15 +128,37 @@ class Sesion extends BaseController
                 ->withInput();
         }
         
-        $data = $this->request->getPost();
-        $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
+        extract( $this->request->getPost() );
+        $usuario = model( "UsuarioModel" )->find( $socio_id );
+
+        if( $socio_telefono != $usuario->telefono ){
+                // BITACORA solicitar recuperación de password fallido
+                bitacora( 34, $usuario->id, [ 
+                    "telefono" => $socio_telefono 
+                ] );
+
+                return redirect()
+                    ->back()
+                    ->with( "errors", [ "socio_telefono" => "El telefono es incorrecto" ] )
+                    ->withInput();
+        }
+
+        // todo bien
+        // ENVIAR CORREO
+
+$email = service('email');
+
+$email->setFrom('app@beneleit.mx', 'App Beneleit');
+$email->setTo('scabbia@gmail.com');
+
+$email->setSubject('Email Test');
+$email->setMessage('Testing the email class.');
+
+$email->send();
         
         // BITACORA envío de correo de recuperación de password
-        bitacora( 1, $usuario->id );
+        bitacora( 35, $usuario->id );
 
-        return redirect()->route( "inicio" )->with('msg', [ 
-            "clase" => "success", 
-            "icono" => "user-check", 
-            "texto" => "Sesión de usuario iniciada con éxito"]);         
+        return redirect()->to( "recover/success" );         
     }
 }

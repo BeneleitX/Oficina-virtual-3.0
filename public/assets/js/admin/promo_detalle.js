@@ -15,12 +15,12 @@ function modal_productos(){
 function agrega_producto( producto ){
     p = cat_productos[ producto ];
 
-    $( '#precargados' ).append( '<div class="col-6 text-center col-lg-2 small mb-2" producto="' + p.codigo + '"><label data-bs-toggle="tooltip" title="Click para quitar" style="padding:0;" class="btn col-12 btn-success">' + p.data.nombre.toUpperCase() + '</label></div>' );
+    $( '#precargados' ).append( '<div class="col-6 text-center col-lg-2 small mb-2" producto="' + p.codigo + '"><label data-bs-toggle="tooltip" title="Click para quitar" style="padding:0;" class="btn col-12 btn-primary">' + p.data.nombre.toUpperCase() + '</label></div>' );
 
     $( '#precargados div[producto] label' ).on( 'mouseover', function(){
-        $( this ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
+        $( this ).removeClass( 'btn-primary' ).addClass( 'btn-danger' );
     }).on( 'mouseout', function(){
-        $( this ).addClass( 'btn-success' ).removeClass( 'btn-danger' );
+        $( this ).addClass( 'btn-primary' ).removeClass( 'btn-danger' );
     }).on( 'click', function(){
         $( this ).closest( 'div[producto]' ).remove();
     } );
