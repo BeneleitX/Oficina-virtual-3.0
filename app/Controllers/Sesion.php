@@ -159,7 +159,8 @@ $message = 'hello';
             "smtp_pass" => "B3n3l31t**",
             "smtp_port" => 587, //465,
             "mailtype"  => "html",
-            "newline"   => "\r\n"
+            "newline"   => "\r\n",
+            "wordwrap"  => TRUE;
         );
 
 $email = service('email');
