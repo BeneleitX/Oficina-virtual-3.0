@@ -169,7 +169,7 @@ $email->setTo($to);
 $email->setSubject($subject);
 $email->setMessage($message);
 $email->send( false );
-$email->printDebugger(['headers']);
+d ($email->printDebugger(['headers']) );
 
 $headers = [
     "MIME-Version: 1.0",
