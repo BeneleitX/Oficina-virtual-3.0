@@ -93,4 +93,48 @@ class Sesion extends BaseController
                 "texto" => "Sesión de usuario iniciada con éxito"]); 
         }
     }
+
+
+    public function recover(){
+        $this->data[ "navbar" ] = false;
+        echo template( "sesion/recover", $this->data );
+    }
+
+
+    public function pass_request(){
+        $validation = service("validation");
+        $validation->setRules([
+            "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
+            "socio_telefono" => "required|exact_length[10]|numeric"
+        ],[
+            "socio_id" => [
+                "required" => "No has escrito un No. de socio",
+                "is_natural_no_zero" => "No es un No. de socio válido",
+                "is_not_unique" => "El socio no existe"
+            ],
+            "socio_telefono" => [
+                "required" => "No has escrito un número telefónico",
+                "exact_length" => "El número debe ser a 10 dígitos",
+                "numeric" => "El número no es válido"
+            ]
+        ]);
+
+        if( !$validation->withRequest( $this->request )->run()){
+            return redirect()
+                ->back()
+                ->with( "errors", $validation->getErrors())
+                ->withInput();
+        }
+        
+        $data = $this->request->getPost();
+        $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
+        
+        // BITACORA envío de correo de recuperación de password
+        bitacora( 1, $usuario->id );
+
+        return redirect()->route( "inicio" )->with('msg', [ 
+            "clase" => "success", 
+            "icono" => "user-check", 
+            "texto" => "Sesión de usuario iniciada con éxito"]);         
+    }
 }

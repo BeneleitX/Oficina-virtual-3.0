@@ -4,13 +4,18 @@ use CodeIgniter\Router\RouteCollection;
 
 /**
  * @var RouteCollection $routes
+
+ git stash push --include-untracked
+ git stash drop
+
  */
 
 $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );
 $routes->get( "login/(:num)",               "Sesion::login/$1" );
-$routes->post( "oauth",                     "Sesion::procesa_login" );
 $routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
+$routes->post( "oauth",                     "Sesion::procesa_login" );
+$routes->post( "pass_request",              "Sesion::pass_request" );
 
 $routes->get( "formulario",                 "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
