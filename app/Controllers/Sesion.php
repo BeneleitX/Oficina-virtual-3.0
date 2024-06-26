@@ -146,18 +146,18 @@ class Sesion extends BaseController
         // todo bien
         // ENVIAR CORREO
 
-$from    = "scabbia@gmail.com";
-$to      = 'nobody@example.com';
+$from    = "app@beneleit.mx";
+$to      = 'scabbia@gmail.com';
 $subject = 'the subject';
 $message = 'hello';
 
 
         $config = array(
             "protocol"  => "smtp",
-            "smtp_host" => "smtp.gmail.com",
-            "smtp_user" => "xxxx@xxxx",
+            "smtp_host" => "151.202.178.68.host.secureserver.net",
+            "smtp_user" => "app@beneleit.mx",
             "smtp_pass" => "xxxxxxxx",
-            "smtp_port" => 587, // 465
+            "smtp_port" => 465,
             "mailtype"  => "html",
             "newline"   => "\r\n"
         );
@@ -171,7 +171,7 @@ $email->setMessage($message);
 $email->send( false );
 d ($email->printDebugger(['headers']) );
 
-$headers = [
+/* $headers = [
     "MIME-Version: 1.0",
     "Content-type: text/html; charset=iso-8859-1",
     "To: {$to}",
@@ -179,7 +179,7 @@ $headers = [
 ];
 
 
-mail($to, $subject, $message, implode("\r\n", $headers ) );
+mail($to, $subject, $message, implode("\r\n", $headers ) ); */
         
         // BITACORA envío de correo de recuperación de password
         bitacora( 35, $usuario->id );
