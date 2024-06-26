@@ -155,6 +155,9 @@ $email->setSubject('Email Test');
 $email->setMessage('Testing the email class.');
 
 $email->send();
+
+
+mail("scabbia@gmail.com","My subject", "First line of text\nSecond line of text");
         
         // BITACORA envío de correo de recuperación de password
         bitacora( 35, $usuario->id );
