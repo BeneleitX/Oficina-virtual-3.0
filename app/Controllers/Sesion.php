@@ -157,7 +157,7 @@ $message = 'hello';
             "smtp_host" => "151.202.178.68.host.secureserver.net",
             "smtp_user" => "app@beneleit.mx",
             "smtp_pass" => "B3n3l31t**",
-            "smtp_port" => 465,
+            "smtp_port" => 587, //465,
             "mailtype"  => "html",
             "newline"   => "\r\n"
         );
