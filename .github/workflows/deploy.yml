@@ -11,6 +11,6 @@ jobs:
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        server: ${{secrets.FTP_ADDRESS }}
-        username: ${{secrets.FTP_USER }}
+        server: 68.178.202.151
+        username: github@tester.beneleit.mx
         password: ${{secrets.FTP_PASSWORD }}
