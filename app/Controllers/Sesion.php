@@ -163,13 +163,14 @@ $message = 'hello';
             "wordwrap"  => TRUE
         );
 
-$email = service('email');
-$email->initialize($config);
+$email = service("email", $config );
+
 $email->setFrom($from, 'App Beneleit');
 $email->setTo($to);
 $email->setSubject($subject);
 $email->setMessage($message);
 $email->send( false );
+
 d ($email->printDebugger(['headers']) );
 
 /* $headers = [
