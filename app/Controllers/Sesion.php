@@ -147,11 +147,18 @@ class Sesion extends BaseController
         // ENVIAR CORREO
 
 $from    = "app@beneleit.mx";
-$to      = 'scabbia@gmail.com';
-$subject = 'the subject';
-$message = '<hr>hello<hr>';
+$to      = "scabbia@gmail.com";
+$subject = "the subject";
+$message = "
+    <h3 style=\"text-align:center\">Asignación de un nuevo password temporal para el socio ".$usuario->id()."</h3>
+    <p style=\"text-align:center\"><form method=\"post\" action=\"".base_url( "pass_catch" )."\">
+        ".csrf_field()."
+        <input type=\"hidden\" name=\"nuevo_id\" value=\"".base64_encode( $usuario->password_original() )."\">
+        <p style=\"text-align:center\"><button type=\"submit\" value=\"reset password\">RESET PASSWORD</button></p>
+    </form></p>
+";
 
-
+/*
 $config = array(
     "protocol"  => "smtp",
     "smtp_host" => "151.202.178.68.host.secureserver.net",
@@ -164,7 +171,7 @@ $config = array(
     "validate"  => FALSE
 );
 
-/* $config = array(
+ $config = array(
     "protocol"  => "mail",
     "smtp_host" => "151.202.178.68.host.secureserver.net",
     "smtp_user" => "app@beneleit.mx",
@@ -175,7 +182,7 @@ $config = array(
     "wordwrap"  => TRUE,
     "validate"  => FALSE
 );
- */
+ 
 $email = service("email", $config );
 
 $email->setFrom($from, 'App Beneleit');
@@ -195,10 +202,33 @@ d ($email->printDebugger(['headers']) );
 
 
 mail($to, $subject, $message, implode("\r\n", $headers ) ); 
-        
+       */ 
         // BITACORA envío de correo de recuperación de password
+
+        echo "
+        <div style=\"border:2px solid red;background:#ffeeee; border-radius:6px;margin:20px 300px\">{$message}</div>
+        ";
         bitacora( 35, $usuario->id );
 
       //  return redirect()->to( "recover/success" );         
+    }
+
+
+    public function pass_catch(){
+        extract( $this->request->getPost() );
+
+        $this->data[ "navbar" ] = false;
+        $this->data[ "titulo" ] = "Password temporal generado";
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first();
+
+        if( $this->data[ "nuevo" ] ){
+            $this->data[ "nuevo" ]->resetPassword();
+            model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
+
+            echo template( "sesion/reset", $this->data );
+        }
+        else{
+            return redirect()->to( "login" );
+        }
     }
 }

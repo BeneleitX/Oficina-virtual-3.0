@@ -41,6 +41,19 @@ class E_usuario extends Entity
     }
 
 
+    public function resetPassword()
+    {
+        $encrypter = service( "encrypter" );
+        $password  = random_password();
+
+        $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "curp" ] ] ) );
+
+        $historial = $this->historial;
+        $historial->reset = date( "Y-m-d H:i:s" );
+        $this->historial = $historial;
+    }
+
+
     public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );

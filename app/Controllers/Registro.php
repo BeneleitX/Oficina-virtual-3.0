@@ -55,6 +55,7 @@ class Registro extends BaseController
         }
 
         // Creamos plantilla para crear la nueva entidad usuario
+        $fecha  = date( "Y-m-d H:i:s" );
         $recibe = [
             "estatus_codigo" => "201-ACTIVO",
             "rol_codigos"    => [ "10-SOCIO" ],
@@ -109,10 +110,11 @@ class Registro extends BaseController
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
             ],
             "historial"     => [
-                "registro"      => date( "Y-m-d H:i:s" ),
+                "registro"      => $fecha,
                 "validacion"    => null,
                 "modelos"       => [],
-                "rangos"        => []
+                "rangos"        => [],
+                "reset"         => $fecha
             ]               
         ];
     

@@ -17,6 +17,7 @@ $routes->get( "login/(:num)",               "Sesion::login/$1" );
 $routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
 $routes->post( "pass_request",              "Sesion::pass_request" );
+$routes->post( "pass_catch",                "Sesion::pass_catch" );
 
 $routes->get( "formulario",                 "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
