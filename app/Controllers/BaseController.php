@@ -48,7 +48,8 @@ abstract class BaseController extends Controller
     protected $data = [
         "usuario"   => null,
         "navbar"    => false,
-        "menu"      => null
+        "menu"      => null,
+        "fondo"     => "light"
     ];
 
     /**

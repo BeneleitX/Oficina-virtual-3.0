@@ -2,7 +2,7 @@
 echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
 
 ?>
-<div class="position-relative mx-4 mt-4 mb-3"><div class="text-center position-absolute bg-<?php echo $usuario->verificado->estatus ? "teal" : "red";  ?> fs-2 rounded-circle d-block" style="width:50px;height:50px; top:-11px; left:-5px"><i class="far fa-circle-<?php echo $usuario->verificado->estatus ? "check" : "xmark"; ?> text-white"></i></div>
+<div class="position-relative mx-4 mt-4 mb-3"><div class="text-center position-absolute bg-<?php echo $usuario->verificado->estatus ? "teal" : ( $usuario->verificado->porcentaje ? "red" : "gray-500" );  ?> fs-2 rounded-circle d-block" style="width:3rem;height:3rem; line-height:3rem; top:-11px; left:-5px"><i class="far fa-circle-<?php echo $usuario->verificado->estatus ? "check" : "xmark"; ?> text-white"></i></div>
     <div class="progress" aria-valuenow="<?php echo $usuario->verificado->porcentaje; ?>" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
     <div class="progress-bar bg-<?php echo $usuario->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated"; ?>" style="width: <?php echo $usuario->verificado->porcentaje; ?>%"><?php echo $usuario->verificado->estatus ? "SOCIO VERIFICADO" : "VERIFICACION AL ".$usuario->verificado->porcentaje."%"; ?></div>
     </div>

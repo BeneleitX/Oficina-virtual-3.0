@@ -202,6 +202,11 @@ class E_usuario extends Entity
     }
 
 
+    public function permiso( $rol ){
+        return in_array( $rol, $this->rol_codigos ) OR in_array( "50-ROOT", $this->rol_codigos ); 
+    }
+
+
     public function iniciales(){
         return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
     }
@@ -597,7 +602,7 @@ class E_usuario extends Entity
     public function getComisiones( $periodo ){
         $resultado = [];
 
-        $sql = "SELECT comision.fecha, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id
+        $sql = "SELECT comision.fecha, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
                 FROM t_comisiones comision
                 join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                 join t_periodos periodo on periodo.codigo = '{$periodo}'

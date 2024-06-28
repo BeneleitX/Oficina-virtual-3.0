@@ -1,7 +1,7 @@
 <?php 
 
 $datetime1 = new DateTime( $nuevo->historial->registro );
-$datetime1->add(date_interval_create_from_date_string('5 minutes'));
+$datetime1->add(date_interval_create_from_date_string('3 minutes'));
 $datetime2 = new DateTime( date( "Y-m-d H:i:s" ) );
 
 $visible = $datetime1->format("Y-m-d H:i") > $datetime2->format("Y-m-d H:i") ? true : false;
@@ -17,7 +17,7 @@ $visible = $datetime1->format("Y-m-d H:i") > $datetime2->format("Y-m-d H:i") ? t
     <p class="mt-3">¡Felicidades!, tu nueva cuenta de socio BENELEIT ha sido creada</p>
     <h3 class="text-center text-teal"><?php echo $nuevo->nombre(2, !$visible); ?></h3>
     <p class="mb-0"><strong>Tu número de socio es:</strong></p>
-    <p class="display-4"><?php echo $nuevo->id( null, "marine"); ?></p>
+    <p class="display-4"><?php echo $nuevo->id( null, "marine", false); ?></p>
 
     <p class="m-0">Ingresa ahora a tu oficina virtual para complementar tu información de socio</p>
     <p>Hemos generado un password temporal para ti.</p>

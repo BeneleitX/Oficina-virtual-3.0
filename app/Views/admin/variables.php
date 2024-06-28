@@ -18,7 +18,8 @@
                     echo "<p class=\"small text-mustard\"><i class=\"fa fa-warning\"></i> Mantener formato JSON</p></td><td width=\"70%\"><textarea rows=\"6\"class=\"form-control\">".json_encode( $v[ "valor" ] )."</textarea>";
                 }
                 else{
-                    echo "</td><td width=\"70%\"><input type=\"".( $v[ "tipo" ] == "TEXTO" ? "text" : "number" )."\" value=\"{$v[ "valor" ]}\" class=\"form-control\">";
+                    $valor = is_array( $v[ "valor" ] ) ? json_encode( $v[ "valor" ] ) : $v[ "valor" ];
+                    echo "</td><td width=\"70%\"><input type=\"".( $v[ "tipo" ] == "TEXTO" ? "text" : "number" )."\" value=\"{$valor}\" class=\"form-control\">";
                 }
 
                 echo "</td></tr>";

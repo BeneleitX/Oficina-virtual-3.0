@@ -12,7 +12,7 @@ $menu = [
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ) ],
     [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ) ],
     [ "warning", "pasarelas/".getModeloPrincipal(), "credit-card", "Métodos de pago", sizeof( $pasarelas ) ],
-    [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Proveedores de paquetería", sizeof( $paqueterias ) ],
+    [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Tipos de paquetería", sizeof( $paqueterias ) ],
     [ "danger", "periodos/".getModeloPrincipal(), "calendar-days", "Periodos", sizeof( $periodos ) ],
     [ "warning", "productos/".getModeloPrincipal(), "spray-can-sparkles", "Productos", sizeof( $productos ) ],
     [ "success", "recompensas/".getModeloPrincipal(), "award", "Recompensas", sizeof( $recompensas ) ],
@@ -27,7 +27,7 @@ $menu = [
     [ "secondary", "bloques", "table-cells", "Bloques de inicio" ],    
     [ "secondary", "facturacion", "file-invoice-dollar", "Facturacion" ],    
     [ "success", "estatus", "layer-group", "Estatus de socios" ],  
-    [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Esquemas de comisiones", sizeof( $esquemas ) ], 
+    [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ) ], 
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR" ],        
 ];
 

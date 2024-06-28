@@ -19,7 +19,7 @@
     </a>
   <ul class="dropdown-menu">
     <li>
-        <a class="dropdown-item text-center" href="#" style="background:white !important">
+        <a class="dropdown-item text-center" href="<?php echo base_url( "perfil"); ?>" style="background:white !important">
 
 			<table><tr>
 				<td><?php echo $usuario->avatar( 120 ); ?></td>
@@ -63,9 +63,11 @@
 		<i class="fa fa-comment-dots"></i>
 	</a> -->
 
+	<?php if( $usuario->permiso( "20-ALMACEN") ){ ?>
     <a data-bs-toggle="tooltip" 
 		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "admin" ); ?>">
 		<i class="fa fa-gear"></i>
 	</a>
+	<?php } ?>
 

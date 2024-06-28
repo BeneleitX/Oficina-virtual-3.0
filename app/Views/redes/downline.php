@@ -2,16 +2,8 @@
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
 
 <div class="row">
-	<div class="col-md-9 mb-3">
-		<ul class="nav nav-pills">
-			<?php 
-			foreach( MODELOS as $m ){
-				if( $m[ "settings" ][ "efectivo" ] ){
-					echo "\n<li class=\"nav-item\"><a class=\"nav-link ".( $modelo == $m[ "codigo" ] ? "active" : "")."\" aria-current=\"page\" href=\"".base_url( "red/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-				}
-			}
-			?>
-		</ul>
+	<div class="col-md-9">
+	<?php echo pills( "red", $modelo ); ?>
 	</div>
 	<div class="col-md-3 mb-3 text-end">
 

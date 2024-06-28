@@ -9,6 +9,13 @@ class Admin extends BaseController
     }
 
     public function dashboard(){
+
+        if( !$this->data[ "usuario" ]->permiso( "20-ALMACEN") ){
+            return redirect()->to( "inicio" ); 
+        }
+
+
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Administración de sistema";
 

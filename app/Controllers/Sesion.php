@@ -13,6 +13,7 @@ class Sesion extends BaseController
         }
         else{
             $this->data[ "navbar" ] = false;
+            $this->data[ "fondo" ] = "marine";
             $this->data[ "id" ] = $id;
             echo template( "sesion/login", $this->data );
         }

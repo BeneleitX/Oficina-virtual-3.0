@@ -3,15 +3,9 @@
 
 <div class="row">
 	<div class="col-md-9 mb-3">
-		<ul class="nav nav-pills">
-			<?php 
-			foreach( MODELOS as $m ){
-				if( $m[ "settings" ][ "efectivo" ] ){
-					echo "\n<li class=\"nav-item\"><a class=\"nav-link ".( $modelo == $m[ "codigo" ] ? "active" : "")."\" aria-current=\"page\" href=\"".base_url( "red/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-				}
-			}
-			?>
-		</ul>
+
+	<?php echo pills( "upline", $modelo ); ?>
+
 	</div>
 	<div class="col-md-3 mb-3 text-end">
 

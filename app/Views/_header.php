@@ -21,6 +21,6 @@
 
     </head>
     
-    <body class="bg-light">
+    <body class="bg-<?php echo $fondo; ?>">
         <div class="p-3 <?php echo $navbar ? "con-navbar" : ""; ?>" id="contenedor-body">
             

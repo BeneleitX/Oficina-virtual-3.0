@@ -17,8 +17,12 @@ class Pedidos extends BaseController
         echo template( "pedidos/dashboard", $this->data );
     }
 
-    public function historial( $modelo ){
+    public function historial( $modelo = null ){
 
+        if( !$modelo ){
+            $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
+        }
+        
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
         load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}'");
         load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");

@@ -351,34 +351,10 @@ function beneleit( data ){
             .style( 'fill', 'white' )
             .text( function( d ){ return d.avatar == null ? d.iniciales : ''; } );
 
-        // Poligono de calificacion en mes actual
-/*         nodeEnter.append("svg:polygon")
-            .attr('points', hexagono( 0, -5, 1, 25, 18, 20 ) )
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 1 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } ); */
+nodeEnter.append('path')
+    .attr("d", roundedRect(-26, -5, 26, 20, 5, 0, 0, 1, 0))
+    .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) >= 10 ? 'si' : 'no' ); } );
 
-                        
-        //    .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')'; } );
-
-        // Poligono de calificacion en mes anterior
-      /*   nodeEnter.append('svg:polygon')
-            .attr( 'points', hexagono( 0, -5, -1, 25, 18, 20 ) )
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } ); */
-/*             nodeEnter.append("rect")
-            .attr("x", -26)
-            .attr("y", -5)
-            .attr("rx", 5)
-            .attr("height", 20)
-            .attr("width", 26)
-            .style("fill", function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } ); */
-            nodeEnter.append('path')
-                .attr("d", roundedRect(-26, -5, 26, 20, 5, 0, 0, 1, 0))
-                .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) ? 'si' : 'no' ); } );
-
-        // Poligono de fondo de numero de socio, color segun si es directo o no
-//        nodeEnter.append( 'svg:polygon' )
-//            .attr( 'points', poligono( 0, 55, 26, 19, 20 ) )
-//            .style( 'fill', function( d ){ return 'var(--bs-'+ ( d.patrocinador != socio ? 'gray-700' : 'blue') + ')'; } );
-//            .style( 'fill', function( d ){ return 'var(--bs-'+ rangos[ d.rango ].color + ')'; } );
 
 nodeEnter.append('path')
 .attr("d", roundedRect(0, -5, 26, 20, 5, 0, 0, 0, 1))

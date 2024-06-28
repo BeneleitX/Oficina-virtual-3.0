@@ -14,10 +14,10 @@ echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 te
         $new_rango = model( "RangoModel" )->where( "SUBSTRING(codigo,1,2) = ".( substr( $rango[ "codigo" ], 0, 2) + 10 ) )->first();
         ?>
         
-        <div class="col-6 small text-center" style="padding-top:10px;"><p class="m-0 px-4"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"><br><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span></p></div>
+        <div class="col-6 small text-center" style="padding-top:10px;"><p class="mb-0 px-0"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"></p><p><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span></p></div>
         
         <div class="col-6 small text-center" style="padding-top:15px;">
-        <p class="">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.jpg"; ?>" style="width:60px; opacity:.4" ><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
+        <p class="mt-3">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.jpg"; ?>" style="width:60px; opacity:.4" class="mb-1"><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
         <i class="fa fa-square-xmark text-gray-300"></i>
         <i class="fa fa-square-xmark text-gray-300"></i>
         <i class="fa fa-square-xmark text-gray-300"></i>
@@ -33,9 +33,9 @@ echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 te
 
 <table class="px-2 p-0 w-100" style="border-spacing: 10px;border-collapse: separate; ">
     <tr style="line-height:1.1">
-        <th class="text-center" valign="top">Ingresos del mes actual</td>
-        <th class="text-center" valign="top">Para rango<br><?php echo $new_rango[ "nombre" ]; ?></td>
-        <th class="text-center" valign="top">Diferencia</td>
+        <th class="text-center text-marine" valign="top">Ingresos del mes actual</td>
+        <th class="text-center text-marine" valign="top">Para rango<br><?php echo $new_rango[ "nombre" ]; ?></td>
+        <th class="text-center text-marine" valign="top">Diferencia</td>
     </tr>
 
     <tr>
