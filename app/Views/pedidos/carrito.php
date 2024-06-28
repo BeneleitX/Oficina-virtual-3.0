@@ -35,6 +35,8 @@ else{
                     </table></div></div>";
                 }
 			}
+
+            $domicilios = $socio->getDomicilios();
 			?>
 		</div>
 
@@ -48,6 +50,7 @@ else{
                 <?php 
                 foreach( METODOSENTREGA as $me ){
 
+                    if( $me[ "settings" ][ "tipocosto" ] == "almacen" || sizeof( $domicilios ) )
                     echo "\n<input type=\"radio\" class=\"".( ( $pagado  || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "").">
                     <label class=\"".( ( $pagado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                 }
@@ -86,9 +89,6 @@ else{
 
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ) echo "style=\"display:none\""; ?>>
                     <?php 
-
-
-                    $domicilios = $socio->getDomicilios();
 
                     if( ( $pagado || $cancelado ) && sizeof( $domicilios ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
                         $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
