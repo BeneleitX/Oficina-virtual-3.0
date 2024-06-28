@@ -1,7 +1,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?></h4>
 
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
-<p><?php echo $socio->avatar()." ".$socio->id( $modelo, null, true )." ".$socio->nombre( 2 ); ?></p>
+<p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
 
 <?php if( !$pagado && !$cancelado ){ ?>
     <div class="row">
