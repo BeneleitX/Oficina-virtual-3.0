@@ -20,7 +20,7 @@
 
         if( $mostrar ){
             $html = "\n<div class=\"card mt-3\" style=\"overflow:hidden\">";
-            $file = "../app/views/dashboard/bloques/{$b[ "codigo" ]}.php";
+            $file = "../app/Views/dashboard/bloques/{$b[ "codigo" ]}.php";
 
             if( file_exists( $file ) ){
                 ob_start();

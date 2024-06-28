@@ -165,7 +165,7 @@
         $_method = $router->methodName();
         $_controller = explode("\\", $router->controllerName()); 
 
-        $includescript = "assets/js/{$_controller[3]}/{$_method}.js";
+        $includescript = "assets/js/".strtolower( $_controller[3] )."/".strtolower( $_method ).".js";
         
         if(file_exists( $includescript )) echo "<script src=\"".base_url()."assets/js/".strtolower( $_controller[3] )."/{$_method}.js?".filemtime( $includescript )."\"></script>"; ?>
 

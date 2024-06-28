@@ -8,3 +8,4 @@ debugbar*
 !*/cache/index.html
 !*/cache/.htaccess
 .env
+public/data/
