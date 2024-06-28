@@ -149,6 +149,17 @@ a.mini{
     font-size: 10px;
 }
 
+#mascara{
+    border:2px dotted red;
+    position:absolute;
+    width:140px;
+    top:60px;
+    height:160px;
+    border-radius:50%;
+    z-index:2;
+    margin-left: calc( 50% - 70px );
+}
+
 .foto_producto{
     width:100px; 
     height:100px; 
