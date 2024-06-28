@@ -251,3 +251,18 @@ function calendario_semanas($month, $year, $comisiones){
     foreach(array_reverse($weeks) as $w)  $calendar .= $w;
     return $calendar.= "</table>";
 }
+
+
+function pills( $ruta, $activo, $callback = null ){
+    $html = "\n<ul class=\"nav nav-pills my-4\">";
+            
+    foreach( MODELOS as $m ){
+        if( $m[ "settings" ][ "efectivo" ] ){
+            $html .= "\n<li class=\"nav-item\"><a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $activo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( $ruta."/".$m[ "codigo" ].( $callback ? "/".eval( "return ".$callback."(\"{$m[ "codigo" ]}\");" ) : "" ) )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
+        }
+    }
+    
+    $html .= "</ul>";
+
+    return $html;
+}

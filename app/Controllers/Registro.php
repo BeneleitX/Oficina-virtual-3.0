@@ -150,7 +150,7 @@ class Registro extends BaseController
         foreach( $puntos_verificacion as $codigo => $punto){
 
             // temporal activamos el telefono al no existir verificación por ahora, el resto en false
-            $recibe[ "data"][ "verificacion" ][ $codigo ] = ($codigo == "telefono");
+            $recibe[ "data"][ "verificacion" ][ $codigo ] = false;
         }
 
         $usuariomodel = model( "UsuarioModel" );

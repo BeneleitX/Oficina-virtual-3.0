@@ -20,7 +20,8 @@ class E_usuario extends Entity
         "curp"           => "string",
         "redes"          => "json",
         "historial"      => "json",
-        "pedido"         => "json"
+        "pedido"         => "json",
+        "verificado"     => "json"
     ];
 
     protected $dates = [ "created_at", "updated_at" ];  
@@ -47,6 +48,10 @@ class E_usuario extends Entity
         $password  = random_password();
 
         $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "curp" ] ] ) );
+
+        $data = $this->data;
+        $data->verificacion->password = false;
+        $this->data = $data;
 
         $historial = $this->historial;
         $historial->reset = date( "Y-m-d H:i:s" );
@@ -139,7 +144,7 @@ class E_usuario extends Entity
     }
 
 
-    public function id( $modelo = null, $clase = null ): string 
+    public function id( $modelo = null, $clase = null, $verificado = true ): string 
     {
         if( $modelo ){
 
@@ -153,15 +158,18 @@ class E_usuario extends Entity
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];
 
-            return "<span ".( $modelo ? "data-bs-toggle=\"tooltip\" title=\"".$modelo[ "nombre" ]."<hr class='m-1'>".$estatus[ "descripcion" ]."<hr class='m-1'>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" " : "" )." class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>";
+            return "<span data-bs-toggle=\"tooltip\" title=\"".$modelo[ "nombre" ]."<hr class='m-1'>".$estatus[ "descripcion" ]."<hr class='m-1'>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span> <span class=\"small\" data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\">".$this->verified()."</span>";
         }
         elseif( $clase ){
-            return "<span class=\"badge bg-{$clase}\">".id( $this->id, 6 )."</span>";
+            return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
         }
 
         return id( $this->id, 6 );
     }
 
+    public function verified(){
+        return "<i class=\"far fa-circle-".( $this->verificado->estatus ? "check text-teal" : "xmark text-red" )."\"></i>";
+    }
 
     public function nombre( $apellidos = 0, $mask = false ): string
     {

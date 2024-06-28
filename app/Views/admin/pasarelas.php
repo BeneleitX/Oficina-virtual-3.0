@@ -5,16 +5,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
 
-
-		<ul class="nav nav-pills mb-3">
-			<?php 
-			foreach( MODELOS as $m ){
-				if( $m[ "settings" ][ "efectivo" ] ){
-					echo "\n<li class=\"nav-item\"><a class=\"nav-link ".( $modelo == $m[ "codigo" ] ? "active" : "")."\" aria-current=\"page\" href=\"".base_url( "pasarelas/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-				}
-			}
-			?>
-		</ul>
+<?php echo pills( "pasarelas", $modelo ); ?>
 
 <table class="table table-striped bg-white" id="tabla_pasarelas">
     <thead>

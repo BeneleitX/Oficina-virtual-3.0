@@ -80,7 +80,7 @@ class Redes extends BaseController
 
                 <div class=\"row mb-1\">
                     <div class=\"col-4\"><a href=\"".base_url()."oauth/".$d->id."/{$modelo}\" class=\"btn btn-prinary col-12 btn-sm\"><i class=\"fa fa-key\"></i> Switch login</a></div>
-                    <div class=\"col-4\"><a href=\"".base_url()."logout/1117/{$modelo}\" class=\"btn btn-prinary col-12 btn-sm\"><i class=\"fa fa-key\"></i> Toda la red</a></div>
+                    <div class=\"col-4\"><a href=\"".base_url()."logout/1/{$modelo}\" class=\"btn btn-prinary col-12 btn-sm\"><i class=\"fa fa-key\"></i> Toda la red</a></div>
                     <div class=\"col-4\"><a href=\"".base_url()."upline/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-diagram-project\"></i> ver Upline</a></div>
                 </div>
             

@@ -5,7 +5,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a href="<?php echo base_url( "perfil" ); ?>"><i class="fa fa-undo"></i> Regresar al perfil de socio</a></p>
 
-<table class="table table-striped" id="tabla_bitacora">
+<table class="table bg-white table-striped" id="tabla_bitacora">
     <thead>
         <tr>
             <th>Id movimiento</th>
@@ -23,7 +23,7 @@
         foreach( $movimientos as $m ){
             echo "\n<tr>
                 <td>{$m->indice}</td>
-                <td>{$m->codigo}</td>
+                <td><span class=\"badge bg-marine\">{$m->codigo}</span></td>
                 <td>{$m->ip}</td>
                 <td>".substr( $m->fecha, 0, 10)."</td>
                 <td>".substr( $m->fecha, 11, 8)."</td>

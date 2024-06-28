@@ -5,16 +5,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
 
-
-		<ul class="nav nav-pills mb-3">
-			<?php 
-			foreach( MODELOS as $m ){
-				if( $m[ "settings" ][ "efectivo" ] ){
-					echo "\n<li class=\"nav-item\"><a class=\"nav-link ".( $modelo == $m[ "codigo" ] ? "active" : "")."\" aria-current=\"page\" href=\"".base_url( "almacenes/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-				}
-			}
-			?>
-		</ul>
+<?php echo pills( "almacenes", $modelo ); ?>
 
 <table class="table table-striped bg-white" id="tabla_almacenes">
     <thead>
@@ -31,17 +22,22 @@
 
     <tbody>
         <?php 
+            $socios = [];
+
             foreach( $almacenes as $a ){
                 $a[ "settings"  ] = json_decode( $a[ "settings"  ], true );
                 $a[ "productos" ] = json_decode( $a[ "productos" ], true );
 
-                $a[ "socio" ] = new \App\Entities\E_usuario( $a[ "settings" ][ "socio" ], $a[ "socio" ] );
+                if( !isset( $socios[ $a[ "settings" ][ "socio" ] ] )){
+                    $socios[ $a[ "settings" ][ "socio" ] ] = $a[ "socio" ] = model( "UsuarioModel" )->find( $a[ "settings" ][ "socio" ] );
+                }
+                $socio = $socios[ $a[ "settings" ][ "socio" ] ];
 
                 echo "\n<tr almacen=\"{$a[ "codigo" ]}\">
                     <td>{$a[ "codigo" ]}</td>
                     <td>{$a[ "nombre" ]}</td>
                     <td>".estatus( $a[ "estatus_codigo" ] )."</td>
-                    <td>".$a[ "socio" ]->avatar(24)." ".$a[ "socio" ]->nombre(2)."</td>
+                    <td>".( $socio ? $socio->avatar(24)." ".$socio->id( null, "marine" )." ".$socio->nombre(2) : "" )."</td>
                     <td class=\"text-center\">".( $a[ "pedidos" ] > 0 ? "<strong>{$a[ "pedidos" ]}</strong>" : "-")."</td>
                     <td class=\"text-center\">{$a[ "settings" ][ "tipo" ]}</td>
                     <td class=\"text-end\"><a href=\"".base_url( "almacen/".$a[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>

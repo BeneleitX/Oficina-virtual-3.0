@@ -10,10 +10,9 @@ class Almacenes extends BaseController
         $this->data[ "modelo" ] = $modelo;
 
         $db = db_connect();
-        $sql = "SELECT a.*, u.data AS socio, COUNT(p.id) AS pedidos 
+        $sql = "SELECT a.*, COUNT(p.id) AS pedidos 
             FROM t_almacenes a 
             LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
-            LEFT JOIN t_usuarios u ON u.id = a.settings->>'$.socio'
             WHERE a.modelo_codigo = '{$modelo}'
             GROUP BY a.codigo";
 

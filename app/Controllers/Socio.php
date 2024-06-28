@@ -9,8 +9,8 @@ class Socio extends BaseController
         $checked = $total = 0;
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Perfil de socio";
         $this->data[ "socio"  ] = $this->data[ "usuario" ];
+        $this->data[ "titulo" ] = "Perfil de socio ".$this->data[ "socio"  ]->id( null, "marine" );
         $this->data[ "porc" ]   = $this->data[ "socio"  ]->porcentaje_beneficiarios();
         
         foreach( $this->data["socio"]->data->verificacion as $j => $k){

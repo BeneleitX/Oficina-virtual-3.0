@@ -140,6 +140,9 @@
 .text-gray-800 { color: var(--bs-gray-800); }
 .text-gray-900 { color: var(--bs-gray-900); }
 
+.tooltip-teal { --bs-tooltip-bg: var(--bs-teal); }
+.tooltip-red { --bs-tooltip-bg: var(--bs-red); }
+
 .bg-indigo { background-color: var(--bs-indigo); }
 .bg-deep-purple { background-color: var(--bs-deep-purple); }
 .bg-purple { background-color: var(--bs-purple); }

@@ -17,7 +17,7 @@ $visible = $datetime1->format("Y-m-d H:i") > $datetime2->format("Y-m-d H:i") ? t
     <p class="mt-3">Se ha generado un nuevo password temporal</p>
     <h3 class="text-center text-teal"><?php echo $nuevo->nombre(2, !$visible); ?></h3>
     <p class="mb-0"><strong>Tu número de socio es:</strong></p>
-    <p class="display-4"><?php echo $nuevo->id( null, "marine"); ?></p>
+    <p class="display-4"><?php echo $nuevo->id( null, "marine", false); ?></p>
 
     <p class="m-0">Ingresa ahora a tu oficina virtual para intercambiar</p>
     <p>el password temporal por uno que tu elijas.</p>

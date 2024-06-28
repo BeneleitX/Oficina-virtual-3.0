@@ -6,15 +6,7 @@
 <?php if( !$pagado && !$cancelado ){ ?>
     <div class="row">
 	    <div class="col-md-6 mb-3">
-		    <ul class="nav nav-pills">
-                <?php 
-                foreach( MODELOS as $m ){
-                    if( $m[ "settings" ][ "efectivo" ] ){
-                        echo "\n<li class=\"nav-item\"><a class=\"nav-link ".( $modelo == $m[ "codigo" ] ? "active" : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-                    }
-                }
-                ?>
-            </ul>
+		   <?php echo pills( "tienda", $modelo ); ?>
         </div>
         <div class="col-md-6 mb-3 text-end">
                 <button id="borra_todo" class="btn btn-outline-danger xd-none"><i class="fa fa-xmark"></i> Reiniciar pedido</button>

@@ -9,8 +9,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 		<a href="javascript:$( '#verificacion').modal( 'show' )" data-bs-toggle="tooltip" title="Click para ver detalles de verificación" class="col-12">
 		
-			<div class="progress bg-white mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $avance; ?>" aria-valuemin="0" aria-valuemax="100">
-				<div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $avance; ?>%"><?php echo $avance; ?>%</div>
+			<div class="progress bg-white mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $socio->verificado->porcentaje; ?>" aria-valuemin="0" aria-valuemax="100">
+				<div class="progress-bar bg-<?php echo $socio->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated"; ?>" style="width: <?php echo $socio->verificado->porcentaje; ?>%"><?php echo $socio->verificado->estatus ? "SOCIO VERIFICADO" : $socio->verificado->porcentaje."%"; ?></div>
 			</div>
 			
 		</a>
@@ -370,26 +370,28 @@ if( !$socio->data->verificacion->correo ){ ?>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<div class="progress mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $avance; ?>" aria-valuemin="0" aria-valuemax="100">
-					<div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $avance; ?>%"><?php echo $avance; ?>%</div>
+				<div class="progress mb-3" aria-valuenow="<?php echo $socio->verificado->porcentaje; ?>" aria-valuemin="0" aria-valuemax="100">
+					<div class="progress-bar bg-<?php echo $socio->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated"; ?>" style="width: <?php echo $socio->verificado->porcentaje; ?>%"><?php echo $socio->verificado->estatus ? "SOCIO VERIFICADO" : $socio->verificado->porcentaje."%"; ?></div>
 				</div>
 
 
 				<?php
-					$puntos_verificacion = admin( "puntos_verificacion" );
-	 				
+
+				$puntos_verificacion = admin( "puntos_verificacion" );	
 					foreach( $puntos_verificacion as $codigo => $punto){
 
-						if( $codigo == "csf" && $socio->data->sat->estatus == 0){
-							echo "<p class=\"text-gray-500\"><i class=\"fas fa-square-xmark text-gray\"></i> {$punto} <span class=\"badge bg-red\">no aplica</span></p> ";
-						}
-						else{
-							if( $socio->data->verificacion->{$codigo} ){
-								echo "<p class=\"\"><i class=\"fas fa-square-check text-teal\"></i> {$punto}</p>";
+						$p = $socio->verificado->puntos->{$codigo};
+
+						if( $p->requerido ){ 
+							if( $p->checked ){
+								echo "<p class=\"\"><i class=\"fas fa-square-check text-teal\"></i> {$punto->nombre}</p>";
 							}
 							else{
-								echo "<p class=\"text-gray-500\"><i class=\"far fa-square\"></i> {$punto}</p>"; // $socio->data->verificacion
+								echo "<p class=\"text-red\"><i class=\"far fa-square\"></i> {$punto->nombre}</p>"; 
 							}
+						}
+						else{
+							echo "<p class=\"text-gray-500\"><i class=\"fas fa-square-xmark text-gray\"></i> {$punto->nombre} <span class=\"badge bg-red\">no aplica</span></p> ";
 						}
 					} 
 				?>
