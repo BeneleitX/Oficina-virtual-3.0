@@ -5,6 +5,8 @@ function userdata( s ){
     formData.append( 'socio', s );
     formData.append( 'modelo', modelo );
     formData.append( [csrf_token] , csrf_hash ),
+    
+    $( 'g.vaciado' ).empty();
 
     modal.find( '.modal-title' ).html( 'Cargando datos...' );
     modal.find( '.modal-body' ).html( loader );
@@ -19,12 +21,22 @@ function userdata( s ){
         cache: false,        
         async: true,
         success: function( respuesta ){
-            modal.find( '.modal-title' ).html( 'Socio ' + s );
-            modal.find( '.modal-body' ).html( respuesta );
+            // modal.find( '.modal-title' ).html( 'Socio ' + s );
+            modal.find( '.modal-body' ).html( '<button type="button" class="btn-close" data-bs-dismiss="modal" style="float:right"></button>' + respuesta );
 
             modal.find( '.modal-body a' ).on( 'click', function(){
                 modal.find( '.modal-body a' ).addClass( 'disabled' );
             } );
+
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                container: 'body',
+                html: true,
+                placement : 'top'
+            });
+
+            clon = $( 'g.node[socio=' + s + ']' ).clone( true )[0];
+            $( 'g.vaciado' ).html( clon );
+            $( 'g.vaciado > g.node[socio=' + s + ']' ).attr( 'transform', 'translate(60,25)' );
         }
     });
 }

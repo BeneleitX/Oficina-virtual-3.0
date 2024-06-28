@@ -25,6 +25,16 @@ function userdata( s ){
             modal.find( '.modal-body a' ).on( 'click', function(){
                 modal.find( '.modal-body a' ).addClass( 'disabled' );
             } );
+
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                container: 'body',
+                html: true,
+                placement : 'top'
+            });
+
+            clon = $( 'g.node[socio=' + s + ']' ).clone( true )[0];
+            $( 'g.vaciado' ).html( clon );
+            $( 'g.vaciado > g.node[socio=' + s + ']' ).attr( 'transform', 'translate(60,25)' );            
         }
     });
 }

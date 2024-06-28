@@ -55,11 +55,23 @@ class Redes extends BaseController
 		$m_1 = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 		$m_2 = date('Ym', strtotime( date('Y-m').'-01'. ' -2 month' ) );
 
+        $db  = db_connect();
+        $sql = "select 
+            f_get_calificacion( {$d->id}, '{$m_2}', '{$modelo}' ) as '{$m_2}', 
+            f_get_calificacion( {$d->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', 
+            f_get_calificacion( {$d->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
+        $calificaciones = $db->query($sql)->getRowArray();
+
         $html = "\n
             <div>
-                <h5>".$d->avatar()." ".$d->id( null, "marine" )." ".$d->nombre(2)."</h5>
+                <table class=\"w-100 m-0\"><tr><td><svg width=\"120\" style=\"zoom:2\" height=\"125\"><g class=\"vaciado\"></g></svg></td><td class=\"text-center w-100\"><h5>".$d->nombre(2)."<br>".$d->id( null, "marine" )."</h5>
                 <p class=\"text-".$e[ "color" ]." \">".$e[ "descripcion" ]."</p>
-
+                <h5>
+                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_2 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_2 ], 3, 2 )."</span>
+                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_1 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_1 ], 3, 2 )."</span>
+                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_0 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_0 ], 3, 2 )."</span>
+                </h5>
+                </tr></table>
                 <table class=\"table small\">
                 <tr><td>Registro</td><td>".( $d->historial->registro )."</td></tr>
                 <tr><td>Activación</td><td>".( $d->historial->validacion )."</td></tr>
