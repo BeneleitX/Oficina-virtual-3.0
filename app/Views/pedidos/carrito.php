@@ -163,20 +163,20 @@ else{
             }
 
         }
+
+        
+
         ?></div>
 
-        <?php if( !( $pagado || $cancelado ) ){ ?>
+        <?php if( !( $pagado || $cancelado ) && $socio->historial->modelos->{$modelo}->primercompra && date( "Ym" ) > date( "Ym", strtotime( $socio->historial->modelos->{$modelo}->primercompra ) ) ){ ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
                 <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
                 <button onclick="$( '#mes_califica' ).modal( 'show' )" class="btn btn-outline-info btn-sm">Cambiar</buttn>
                 </div> 
             </div>
-        <?php } ?>
-
-
-        
-
+        <?php } 
+        ?>
 
         <div class="row">
             <div class="col-lg-6">
