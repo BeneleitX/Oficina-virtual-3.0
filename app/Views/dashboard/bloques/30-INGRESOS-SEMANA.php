@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div><p class=\"text-center mb-0 mt-3\">Periodo actual: <span class=\"badge fs-6 bg-teal\">".date( "Y-W" )."</span></p>";
+echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]} ".date( "W-Y" )."</h5></div>";
 
 $total    = [];
 $t_actual = 0;
@@ -44,6 +44,17 @@ foreach( MODELOS as $m ){
     ];
 }
 
+$date1 = new DateTime( "last monday" );
+$date2 = new DateTime( $date1->format('Y-m-d H:i:s')." + 7 days" );
+
+$interval   = $date1->diff( $date2 );
+$total_dias = $interval->d;
+$date2 = new DateTime( date( "Y-m-d H:i:s" ) );
+$interval = $date1->diff( $date2 );
+
+$transcurridos = ( $interval->d * 24 * 60 ) + ( $interval->h * 60 ) + $interval->i;
+$porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
+
 ?>
 
 <div id="chart_ingresos"></div>
@@ -56,6 +67,12 @@ foreach( MODELOS as $m ){
     <div class="mt-3 badge col-12 bg-<?php echo $t_actual ? "teal" : "gray-400" ?> text-white">
         <div class="mt-2">Total acumulado SEMANA <?php echo date( "Y-W" ); ?><h1 class="my-1 text-white">$<?php echo number_format( $t_actual, 2 ); ?></h1></div>
     </div>
+
+    <p class="text-center mt-3 mb-0"><?php echo "Día ".ceil( $transcurridos / 24 / 60 )." de ".$total_dias; ?></p>
+
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
+        <div class="progress-bar bg-teal" style="width: <?php echo $porc_bono; ?>%"><?php echo $porc_bono."%"; ?></div>
+    </div>  
 </div>
 
 

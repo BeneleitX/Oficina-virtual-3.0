@@ -12,22 +12,37 @@ if( sizeof( $socios ) > 1 ){
     for($a = 0; $a < 3; $a++){
         $mes = date( "Ym", strtotime( date( "Y-m" )."-01 -{$a} month" ) );
 
-        echo "\n<div class=\"row\">";
+        echo "\n<table class=\"w-100\"><tr>";
+        $cols = 0;
+
         foreach( $socios as $s ){
             $registro = date( "Ym", strtotime( $s->registro ) );
+            
             if( $s->id != $usuario->id && $mes == $registro ){
                 $u = model( "UsuarioModel" )->find( $s->id );
 
                 $estatuses = "";
                 foreach( MODELOS as $m ){
                     $estatus = ESTATUS[ $u->data->estatus->modelos->{$m[ "codigo" ]} ];
-                    $estatuses .="<td class=\"col-4 rounded p-1 text-center xsmall bg-{$estatus[ "color" ]} text-white\" style=\"line-height:0\">&nbsp;</td>";
+                    $estatuses .="<td class=\"col-4 rounded p-1 text-center small bg-{$estatus[ "color" ]} text-white\" style=\"line-height:0\"><i class=\"fa small fa-".$m[ "settings" ][ "icono" ]."\"></i></td>";
                 }
 
-                echo "\n<div class=\"col-3 text-center\">".$u->avatar(60)."<br>".$u->id()."<table style=\"margin: 0 auto; border-spacing: 5px;border-collapse: separate; \"><tr>{$estatuses}</tr></table></div>";
+                echo "\n<td width=\"20%\" class=\"text-center\">".$u->avatar(60)."<br>".$u->id( null, "marine" )."<table style=\"margin: 0 auto; border-spacing: 5px;border-collapse: separate; \"><tr>{$estatuses}</tr></table></td>";
+
+                if( ++$cols == 5){
+                    echo "</tr><tr><td colspan=\"5\" class=\"p-1\"></td></tr><tr>";
+                    $cols = 0;
+                }
             }
         }
-        echo "</div>";
+
+        while( $cols < 5 ){
+            echo "<td width=\"20%\"></td>";
+
+            $cols++;
+        }
+
+        echo "</tr></table>";
     }
 }
 else{

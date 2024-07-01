@@ -291,6 +291,13 @@ function show_modal_productos( promocion ){
             $( this ).prop( 'activo', true ).show();
     } ); 
 
+    if( promocion == '010-DISTRIBUIDOR' ){
+        $( '#modal_productos .puntos' ).show();
+    }
+    else{
+        $( '#modal_productos .puntos' ).hide();
+    }
+    
     $( '#modal_productos' ).attr( 'promocion', promocion ).modal( 'show' );
 }
 

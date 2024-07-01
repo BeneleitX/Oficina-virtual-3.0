@@ -80,10 +80,10 @@ for( $d = 0; $d < 7; $d++ ){
                     echo "\n<tr\">
                         <td width=\"10%\" class=\"text-center d-none d-lg-table-cell\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
                         <td width=\"20%\" class=\"text-center d-none d-lg-table-cell\">{$c->fecha}</td>
-                        <td width=\"10%\" class=\"d-none d-lg-table-cell\">{$c->nivel}</td>
+                        <td width=\"10%\" class=\"text-center d-none d-lg-table-cell\">{$c->nivel}</td>
                         <td width=\"20%\">".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
                         <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c->cantidad, 2 )."</strong></td>
-                        <td>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
+                        <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
                     </tr>";
                 }
             }

@@ -54,7 +54,13 @@ else{
                     echo "\n<input type=\"radio\" class=\"".( ( $pagado  || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "").">
                     <label class=\"".( ( $pagado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                 }
+
+                if( !sizeof( $domicilios ) ){
+                    echo "<div domicilio_id=\"0\" class=\"alert alert-danger mt-3 mb-0\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio. Puedes editar tus domicilios o agregar uno nuevo desde tu perfil de socio.<p class=\"mt-3 mb-0\"><a class=\"btn btn-outline-danger btn-sm\" href=\"".base_url( "perfil" )."\">Ir a perfil de socio</a></p></div>";
+                }
                 ?>
+
+
             </div>            
 
             <div class="card-body me_respuesta" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
@@ -443,13 +449,14 @@ else{ ?>
 					foreach( $productos as $p ){
 						echo "
 						<div class=\"col-lg-6\" producto=\"{$p->codigo}\">
-							<div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\">
+							<div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\">
+                            <div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:20px\">".$p->data->puntos->{"010-DISTRIBUIDOR"}." pts</div>
 								<div class=\"row g-0\">
-									<div class=\"col-2\">
+									<div class=\"col-2 pt-2 ps-1\">
 										<img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded-start\">
 									</div>
 									<div class=\"col-10\">
-										<div class=\"card-body\">
+										<div class=\"card-body pt-3\">
 											<h5>".strtoupper( $p->data->nombre )."</h5>
 										<p class=\"small m-0\">{$p->data->descripcion}</p>
 										</div>

@@ -40,6 +40,10 @@
         }
     }
 
+    if( !$usuario->data->sat->estatus ){
+        $columnas[ 0 ] .= "<div class=\"mt-3 alert alert-warning text-mustard\"><i class=\"fa fa-warning\"></i> Las cantidades totales acumuladas que se muestran son antes de impuestos, En el corte del periodo se aplicará al pago final la retención de ISR correspondiente. </div>";
+    }
+
     foreach( $columnas as $c ){
         echo "\n<div class=\"col-12 col-md-6 col-lg-4\">{$c}</div>";
     }
