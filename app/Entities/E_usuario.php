@@ -144,6 +144,23 @@ class E_usuario extends Entity
     }
 
 
+    public function getPremieres(){
+
+    $sql = "SELECT 
+            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"202407\".\"010-DISTRIBUIDOR\"' AS biex,
+            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"202407\".\"030-PLUS\"' AS plus,
+            redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
+            id
+            FROM t_usuarios
+            WHERE 
+            redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
+            HAVING biex >= 6 AND plus >= 3";  
+            
+            $db  = db_connect();
+            return $db->query($sql)->getResultArray();
+    }
+
+
     public function id( $modelo = null, $clase = null, $verificado = true ): string 
     {
         if( $modelo ){
@@ -571,6 +588,36 @@ class E_usuario extends Entity
 
         return $a;
     }
+
+    public function getBonoPromos( $mes = null ){
+        if( !$mes ){
+            $mes = date( "Ym" );
+        }
+
+        $a   = [
+            1 => 0,
+            2 => 0,
+            3 => 0
+        ];
+
+        $inicia  = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01";
+        $termina = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-31";
+
+        $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
+                WHERE esquema_codigo = '118-PROMOS-50'
+                and fecha between '{$inicia}' and '{$termina}'
+                AND usuario_id = {$this->id}
+                GROUP BY nivel";
+
+        $db = db_connect();
+        $resultado = $db->query($sql)->getResultArray();
+
+        foreach( $resultado as $r ){
+            $a[ $r[ "nivel" ] ] = floatval( $r[ "cantidad" ] );
+        }
+
+        return $a;
+    }    
 
 
     public function getIngresosPorDia( $modelo ){

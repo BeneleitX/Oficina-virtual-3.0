@@ -141,6 +141,7 @@
 .text-gray-900 { color: var(--bs-gray-900); }
 
 .tooltip-teal { --bs-tooltip-bg: var(--bs-teal); }
+.tooltip-mustard { --bs-tooltip-bg: var(--bs-mustard); }
 .tooltip-red { --bs-tooltip-bg: var(--bs-red); }
 
 .bg-indigo { background-color: var(--bs-indigo); }

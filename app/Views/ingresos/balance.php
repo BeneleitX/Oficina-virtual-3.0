@@ -17,7 +17,7 @@ echo pills( "balance", $modelo, "codigo_periodo" ); ?>
     $inicia = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
 
 
-    while( $inicia < date( "Y-m-d") ){
+    while( $inicia <= date( "Y-m-d") ){
         $fecha = $inicia;
         $mes = substr( $fecha, 5, 2 );
         $semana = date("W",  strtotime( $fecha ) );
