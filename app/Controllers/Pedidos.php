@@ -26,7 +26,11 @@ class Pedidos extends BaseController
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
         load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}'");
         load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
-        
+
+        if( $this->data[ "usuario" ] === null ){
+            return redirect()->to( "logout" );
+        }
+
         $this->data[ "socio" ]   = $this->data[ "usuario" ];
         $this->data[ "navbar" ]  = true;
         $this->data[ "modelo" ] = $modelo;
