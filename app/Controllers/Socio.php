@@ -92,7 +92,7 @@ class Socio extends BaseController
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
         if( !is_dir( $path ) ){
-            mkdir( $path, 0644, true );
+            mkdir( $path, 0755, true );
         }
 
         $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];
@@ -471,7 +471,7 @@ class Socio extends BaseController
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
         if( !is_dir( $path ) ){
-            mkdir( $path, 0644, true );
+            mkdir( $path, 0755, true );
         }
 
         $fileTmpName = $_FILES[ "pdf" ][ "tmp_name" ];
