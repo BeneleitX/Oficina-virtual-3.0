@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Pedidos extends BaseController
+class Pedidos extends BaseController 
 {
     function __construct() {
         $this->data[ "menu" ] = "tienda";
