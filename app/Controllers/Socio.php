@@ -59,7 +59,7 @@ class Socio extends BaseController
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
 
-        if(!is_dir($path)) mkdir($path, 0644, true);
+        if(!is_dir($path)) mkdir($path, 0755, true);
 
         file_put_contents($path.$filename, $data);
 
