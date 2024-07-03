@@ -57,7 +57,7 @@ class Periodos extends BaseController
             $sql = "SELECT f_reparte_comisiones( pd.id )
                     FROM t_pedidos pd
                     WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
-                    AND pd.modelo_codigo = '{$periodo[ "modelo_codigo" ]} COLLATE utf8mb4_0900_ai_ci'
+                    AND '{$periodo[ "modelo_codigo" ]}' = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
                     AND fechas->>'$.califica' between '{$periodo[ "inicia" ]}' AND '{$periodo[ "termina" ]}';";
             $db->query( $sql );
             $res = $db->query( "SELECT f_genera_pagos( '{$periodo[ "codigo" ]}' ) as resultado;" )->getRow();
