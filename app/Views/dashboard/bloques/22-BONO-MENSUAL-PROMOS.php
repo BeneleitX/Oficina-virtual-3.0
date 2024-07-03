@@ -71,9 +71,9 @@ elseif( sizeof( $premieres ) > 2 ){
     </tr>
 
     <tr>
-        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[1] ? "300" : "100"; ?>">$<?php echo number_format( $bono[1] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[1] ); ?> productos</span></td>
-        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[2] ? "300" : "100"; ?>">$<?php echo number_format( $bono[2] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[2] ); ?> productos</span></td>
-        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[3] ? "300" : "100"; ?>">$<?php echo number_format( $bono[3] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[3] ); ?> productos</span></td>
+        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[1] ? "300" : "100"; ?>">$<?php echo number_format( $bono[1] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[1] ); ?> <i class="fa fa-tag text-light-pink"></i>Promos</span></td>
+        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[2] ? "300" : "100"; ?>">$<?php echo number_format( $bono[2] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[2] ); ?> <i class="fa fa-tag text-light-pink"></i>Promos</span></td>
+        <td style="line-height:1" class="col-4 rounded p-2 text-center bg-gray-<?php echo $bono[3] ? "300" : "100"; ?>">$<?php echo number_format( $bono[3] * $p_factor, 2); ?><br><span class="small"><?php echo number_format( $bono[3] ); ?> <i class="fa fa-tag text-light-pink"></i>Promos</span></td>
     </tr>
 </table>
 

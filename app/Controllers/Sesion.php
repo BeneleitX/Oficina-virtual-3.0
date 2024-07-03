@@ -84,7 +84,11 @@ class Sesion extends BaseController
             }
 
             $this->session->set( "usuario", $usuario->id );
-            
+
+            $db = db_connect();
+            $db->query( "select f_update_PTS( {$usuario->id}, '{$modelo}', '{$mescalifica}' )" );  
+            $db->query( "select f_get_estatus( {$usuario->id} )" );
+
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
