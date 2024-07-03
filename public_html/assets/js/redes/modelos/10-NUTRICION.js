@@ -256,32 +256,6 @@ function beneleit( data ){
         .attr( 'height', 60 );
 
 
-
-/*       nodeEnter.append( 'svg:pattern' )
-        .attr( 'id', function(d){ return '_nuevo_' + d.antiguedad; } )
-        .attr( 'patternUnits', 'userSpaceOnUse' )
-        .attr( 'x', -55 )
-        .attr( 'y', -20 )
-        .attr( 'width', 110 )
-        .attr( 'height', 110 )
-        .append( 'svg:image' )
-       .attr( 'xlink:href', function(d){ return base_url + '/assets/img/m' + d.antiguedad + '.png'; } ) // 42, 44
-        .attr( 'x', 0 )
-        .attr( 'y', 0 )
-        .attr( 'width', 110 )
-        .attr( 'height', 110 );  
-
-        // Circulo exterior con el estatus
-        nodeEnter.append('svg:circle')
-            .attr( 'cy', 35 )
-            .attr( 'r', 55 )
-            .style( 'stroke-width', 0 )
-            .style( 'stroke', 'transparent' )
-            .attr( 'class', '' )
-            .style( 'fill', function( d ){ return d.antiguedad <3 ? 'url(#_nuevo_' +d.antiguedad+')' : 'transparent'; } );    */      
-
-
-
         nodeEnter.append('svg:circle')
             .attr( 'cy', 35 )
             .attr( 'r', 40 )
@@ -429,8 +403,9 @@ function beneleit( data ){
             .text( function( d ){ return d.profundidad[ 2 ]; } );
 
 
+// Antiguedad
 
-            nodeEnter.append( 'svg:pattern' )
+nodeEnter.append( 'svg:pattern' )
 .attr( 'id', function(d){ return '_nuevo_' + d.antiguedad; } )
 .attr( 'patternUnits', 'userSpaceOnUse' )
 .attr( 'x', -20 )
@@ -444,7 +419,7 @@ function beneleit( data ){
 .attr( 'width', 30 )
 .attr( 'height', 30 );  
 
-// Circulo exterior con el estatus
+
 nodeEnter.append('svg:circle')
     .attr( 'cx', -35 )
     .attr( 'cy', 35 )
@@ -454,6 +429,25 @@ nodeEnter.append('svg:circle')
     .attr( 'class', '' )
     .style( 'fill', function( d ){ return d.antiguedad <3 ? 'url(#_nuevo_' +d.antiguedad+')' : 'transparent'; } );  
 
+// verificado
+
+    nodeEnter.append('svg:circle')
+    .attr( 'cx', 35 )
+    .attr( 'cy', 18 )
+    .attr( 'r', 6 )
+    .style( 'stroke-width', 1 )
+    .style( 'stroke', 'white' )
+    .attr( 'class', '' )
+    .style( 'fill', function( d ){ return d.verificado ? 'teal' : 'red'; } );  
+
+    nodeEnter.append('text')
+    .attr( 'dx', 35 )
+    .attr( 'dy', 20 )
+    .attr( 'text-anchor', 'middle' )
+    .style( 'fill', 'white' )
+    .style( 'font-size', '7px' )
+    .style( 'font-weight', '700' )
+    .text( 'v' );
 
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
