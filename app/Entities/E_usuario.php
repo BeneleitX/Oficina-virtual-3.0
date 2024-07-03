@@ -553,8 +553,6 @@ class E_usuario extends Entity
             $db->query( "select f_update_PTS( {$this->id}, '{$modelo}', '{$mescalifica}' )" );  
             $db->query( "select f_get_estatus( {$this->id} )" );
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();
-            // $db->query( "update t_usuario set historial = JSON_SET( historial, '$.modelos."{$modelo}".calificaciones."{$cc}"', p_get_calificacion( {$pedido[ "usuario_id" ]}, '{$cc}', '{$modelo}' ))" );
-            //$db->query( "call p_update_rango( {$pedido[ "usuario_id" ]}, '{$modelo}' )" );
         }
         else{
             $data->saldo->{$modelo} += $cantidad;

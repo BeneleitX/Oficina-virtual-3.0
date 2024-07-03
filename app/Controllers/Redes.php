@@ -85,18 +85,19 @@ class Redes extends BaseController
                 $html .= "<br><div class=\"card border-red\"><div class=\"card-header\"><h5 class=\"m-0 text-red\">Admin tools</h5><small>Usar con cuidado</small></div><div class=\"card-body\">
                 
                     <div class=\"row mb-1\">
-                        <div class=\"col-4\"><a href=\"".base_url()."procesa_registro/".$d->id."/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-user\"></i> Agrega socio</a></div>
-                        <div class=\"col-4\"><a href=\"".base_url()."nuevo_password/".$d->id."/{$modelo}/1234\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Reset password</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."procesa_registro/{$d->id}/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-user\"></i> Agrega socio</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."nuevo_password/{$d->id}/{$modelo}/1234\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Reset password</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."update_estatus/{$d->id}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-repeat\"></i> Update estatus</a></div>
                     </div>
 
                     <div class=\"row mb-1\">
-                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/".$d->id."/{$modelo}/{$m_2}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_2}</a></div>
-                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/".$d->id."/{$modelo}/{$m_1}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_1}</a></div>
-                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/".$d->id."/{$modelo}/{$m_0}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_0}</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/{$d->id}/{$modelo}/{$m_2}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_2}</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/{$d->id}/{$modelo}/{$m_1}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_1}</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."compra_demo/{$d->id}/{$modelo}/{$m_0}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-cart-shopping\"></i> {$m_0}</a></div>
                     </div>
 
                     <div class=\"row\">
-                        <div class=\"col-4\"><a href=\"".base_url()."oauth/".$d->id."/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Switch login</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."oauth/{$d->id}/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Switch login</a></div>
                         <div class=\"col-4\"><a href=\"".base_url()."logout/1/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Toda la red</a></div>
                         <div class=\"col-4\"><a href=\"".base_url()."upline/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-diagram-project\"></i> ver Upline</a></div>
                     </div>

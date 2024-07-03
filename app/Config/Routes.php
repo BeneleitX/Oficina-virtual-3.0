@@ -25,7 +25,7 @@ $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
-    $routes->get( "logout",                     "Sesion::logout" );
+    $routes->get( "logout",                 "Sesion::logout" );
     $routes->get( "logout/(:num)/(:any)",              "Sesion::logout/$1/$2" );
     $routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
 
@@ -74,6 +74,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "cancela_csf",            "Socio::cancela_csf" );
     $routes->get( "valida_credencial",      "Socio::valida_credencial" );
     $routes->get( "valida_correo",          "Socio::valida_correo" ); 
+    $routes->get( "update_estatus/(:num)",  "Socio::update_estatus/$1" );
     $routes->get( "nuevo_password/(:num)/(:any)/(:any)",        "Socio::nuevo_password/$1/$2/$3" );
     $routes->post( "nuevo_password",        "Socio::nuevo_password" );
     $routes->post( "credencial",            "Socio::credencial" );
