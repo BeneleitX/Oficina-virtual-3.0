@@ -359,18 +359,16 @@ class E_usuario extends Entity
     }
 
     public Function getEstrellas( $mes = null ){
-        $estrellas = 0;
-
-        foreach( ( $this->data->recompensas->estrellas ) as $k => $m ){
-            if( $mes == $k ){
-                return $m;
-            }
-            
-            if( date( "Ym", strtotime( $this->data->recompensas->inicia ) ) <= $k )
-            $estrellas += $m;
-        }
         
-        return $estrellas;        
+        $db  = db_connect();
+        $sql = "SELECT SUM(cantidad) as estrellas
+                FROM t_comisiones 
+                WHERE usuario_id = {$this->id}
+                AND esquema_codigo = '120-BIEX-3ER-NIVEL'
+                AND estatus_codigo = '255-PENDIENTE'";
+
+        $estrellas = $db->query( $sql )->getRow();
+        return intval( $estrellas->estrellas ); 
     }
 
 
@@ -411,8 +409,6 @@ class E_usuario extends Entity
 
 
     public function getPedido( $modelo, $create = true ){
-        $db     = db_connect();
-
         $sql    = "modelo_codigo = '{$modelo}' and estatus_codigo = '250-EN-PROCESO' and usuario_id = '{$this->id}'";
         $pedido = model( "PedidoModel" )->where( $sql , null, false )->first();
 
