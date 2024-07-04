@@ -39,6 +39,7 @@ class Pedidos extends BaseController
 
         echo template( "pedidos/historial", $this->data );
     }
+    
 
     public function carrito( $tipo, $data ){
         $this->data[ "navbar" ] = true;

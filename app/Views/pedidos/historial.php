@@ -36,7 +36,14 @@
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
                     <td class=\"text-center\"><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
                     <td>".estatus( $p[ "estatus_codigo" ] )."</td>
-                    <td>{$PTS}</td>
+                    <td>{$PTS} &nbsp; ";
+                    
+                
+                for( $b = 0; $b < $p[ "estrellas" ]; $b++ ){ 
+                    echo "<i class=\"fa fa-star text-amber\"></i>";
+                }
+                
+                echo "</td>
                     <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
                     <td class=\"text-end\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 400 ? "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
                     <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? substr( $p[ "fechas" ][ "pagado" ], 0, 10) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>

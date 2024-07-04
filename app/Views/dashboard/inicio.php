@@ -54,36 +54,3 @@
 
 
 
-<div class="modal fade" id="modal_splash" tabindex="-1" aria-labelledby="add_rolLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p class="text-center p-5"><i class="fa-solid fa-circle-notch fa-spin"></i></p>
-                <button type="button" class="d-none btn bg-secondary" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div> 
-
-<?php 
-foreach( (array)$usuario->data->splash as $k => $splash ){
-    switch( $splash->tipo ){
-        case "rango": 
-            echo "<script>$(document).ready(function(){ modal_splash( 'rango', '".json_encode( $splash->parametros )."' ) });</script>";
-            
-            $data = $usuario->data;
-            if( is_array($data->splash) ) unset( $data->splash[$k] );
-            $usuario->data = $data;
-            model( "UsuarioModel" )->save( $usuario );
-            
-            $db = db_connect();
-            $db->query( "CALL p_update_rango( {$usuario->id}, '10-NUTRICION', '".date("Ym")."' );" );
-            break;
-    }
-    
-    
-} 
-?>
-
-
-

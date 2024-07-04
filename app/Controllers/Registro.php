@@ -69,7 +69,7 @@ class Registro extends BaseController
                 "verificacion"  => [],
                 "splash" => [
                     [
-                        "tipo" => "BIENVENIDA",
+                        "tipo" => "bienvenida",
                         "parametros" => []
                     ]
                 ],

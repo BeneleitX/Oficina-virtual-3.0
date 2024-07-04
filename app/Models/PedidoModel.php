@@ -52,14 +52,19 @@ class PedidoModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    protected function JSONdecode(array $data)
+    protected function JSONdecode( array $data )
     {
-        if($data[ "data" ]){
-            if( $data[ "singleton" ]){
+        $db = db_connect();
+        $sql = "select count(*) as estrellas from t_comisiones where pedido_id = {}";
+        
+        if( $data[ "data" ] ){
+            if( $data[ "singleton" ] ){
                 $data[ "data" ][ "data" ] = json_decode( $data[ "data" ][ "data" ], true );
                 $data[ "data" ][ "promociones" ] = json_decode( $data[ "data" ][ "promociones" ], true );
                 $data[ "data" ][ "PTS" ] = json_decode( $data[ "data" ][ "PTS" ], true );
                 $data[ "data" ][ "fechas" ] = json_decode( $data[ "data" ][ "fechas" ], true );
+
+                $data[ "data" ][ "estrellas" ] = $db->query( "select f_estrellas_en_pedido({$data[ "data" ][ "id" ]}) as estrellas" )->getRow()->estrellas;
             }
             else{
                 foreach( $data[ "data" ] as $k => $d ){
@@ -67,7 +72,8 @@ class PedidoModel extends Model
                     $data[ "data" ][ $k ][ "promociones" ] = json_decode( $data[ "data" ][ $k ][ "promociones" ], true );
                     $data[ "data" ][ $k ][ "PTS" ] = json_decode( $data[ "data" ][ $k ][ "PTS" ], true );
                     $data[ "data" ][ $k ][ "fechas" ] = json_decode( $data[ "data" ][ $k ][ "fechas" ], true );
-                    }
+                    $data[ "data" ][ $k ][ "estrellas" ] = $db->query( "select f_estrellas_en_pedido({$data[ "data" ][ $k ][ "id" ]}) as estrellas" )->getRow()->estrellas;
+                }
             }
         }
 

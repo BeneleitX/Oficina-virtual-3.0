@@ -27,12 +27,224 @@ class Dashboard extends BaseController
             case "rango":
                 $rango = model( "RangoModel" )->find( $parametros[0] );
                 $html .= "
-                    <div class=\"row g-0\"><div class=\"col-6 text-center\"><p class=\"m-0 px-4\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg\" class=\"img-fluid\"></p></div>       
-                    <div class=\"col-6 small text-center\" style=\"padding-top:35px;\"><p>
-                    <span class=\"fs-3 badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></p><h3>¡FELICIDADES!</h3><p>¡Has alcanzado un nuevo rango!</p>
-                    </div></div>";
+                
+                    <div class=\"row g-0\"><div class=\"col-6 text-center\"><p class=\"m-0 p-4\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg\" class=\"img-fluid\"></p></div>       
+                    <div class=\"col-6 small text-center pt-5\"><p>
+                    <span class=\"fs-3 mt-4 badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></p><h3>¡FELICIDADES!</h3><p>¡Has alcanzado un nuevo rango!</p></div>
+                    <p class=\"my-4 text-center\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
+                    </div>
+                    
+                        <script>
+
+                        $( document ).ready(function(){
+                            var colors = ['#{$rango[ "hex" ]}', '#1A2542'];
+
+                            ( function call_confetti() {
+                                confetti({
+                                    particleCount: 2,
+                                    angle: 45,
+                                    spread: 85,
+                                    origin: { x: 0, y:0.5 },
+                                    colors: colors
+                                });
+                                confetti({
+                                    particleCount: 2,
+                                    angle: 135,
+                                    spread: 85,
+                                    origin: { x: 1, y:0.5 },
+                                    colors: colors
+                                });
+                            
+                                timeout = setTimeout(call_confetti, 20);
+                            }() );
+
+                            //call_confetti();
+                        
+                            });
+                        </script>                    
+                    ";
 
                 break;
+
+            case "cumple":
+                $html .= "
+                    <div class=\"text-center\">
+
+                    <img src=\"".base_url()."assets/img/welcome.png\" class=\"img-fluid\">
+                    <h3 class=\"mt-4\">¡BIENVENIDO!</h3>
+                    <p class=\"mb-4\">¡a tu nueva oficina virtual Beneleit!</p>
+                    <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Comenzar</button></p>
+                    </div>
+
+                    <script>
+
+                    $( document ).ready(function(){
+                        ( function call_confetti() {
+                            confetti({
+                                spread: 360,
+                                ticks: 50,
+                                gravity: 0,
+                                decay: 0.94,
+                                startVelocity: 30,
+                                particleCount: randomInRange(10, 300), 
+                                origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0,0.5)} 
+                            });
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(10, 500));
+                        }() );
+
+                    });
+                    </script>
+                    ";
+
+                break; 
+
+            case "bienvenida":
+                $html .= "
+                    <div class=\"text-center\">
+
+                    <img src=\"".base_url()."assets/img/ov2.png\" class=\"img-fluid p-4\">
+                    <h2 class=\"mt-4\">¡BIENVENIDO!</h2>
+                    <h5 class=\"mb-4\">¡a tu nueva oficina virtual Beneleit!</h5>
+                    <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
+                    </div>
+
+                    <script>
+
+                    $( document ).ready(function(){
+                        ( function call_confetti() {
+                            confetti({
+                                spread: 360,
+                                ticks: 50,
+                                gravity: 0,
+                                decay: 0.94,
+                                startVelocity: 10,
+                                particleCount: randomInRange(10, 300), 
+                                origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0,0.5)} 
+                            });
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(10, 500));
+                        }() );
+
+                    });
+                    </script>
+                    ";
+
+                break; 
+
+
+            case "estrellas":
+                $html .= "
+                    <div class=\"text-center\">
+                    <h2 class=\"mt-3\">!Felicidades!</h2>
+                    <p><img src=\"".base_url()."assets/img/estrella.png\" class=\"img-fluid col-10 col-sm-6 col-md-4 px-5\"></p>
+                    
+                    <h4 class=\"fs-2 mb-3\">Has conseguido <span class=\"text-mustard\">{$parametros[0]}</span> estrellas<h4><h5>Total acumulado: <span class=\"text-mustard\">34</span></h5>
+                    <p class=\"mt-5\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
+                    </div>
+
+                    <script>
+
+                    $( document ).ready(function(){
+
+
+                        ( function call_confetti() {
+                            confetti({
+                                spread: 360,
+                                ticks: 150,
+                                gravity: 0,
+                                decay: 0.93,
+                                startVelocity: 10,
+                                colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8'],
+                                particleCount: 10,
+                                scalar: 1.2,
+                                shapes: ['star'],
+                                origin: { y: 0.35 } 
+                            });
+
+                            setTimeout(function(){
+                            confetti({
+                                spread: 360,
+                                ticks: 100,
+                                gravity: 0,
+                                decay: 0.94,
+                                startVelocity: 20,
+                                colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8'],
+                                particleCount: 5,
+                                scalar: 2,
+                                shapes: ['star'],
+                                origin: { y: 0.35 } 
+                            });
+
+                            }, 400);
+
+                            confetti({
+                                spread: 360,
+                                ticks: 70,
+                                gravity: 0,
+                                decay: 0.95,
+                                startVelocity: 0,
+                                colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8'],
+                                particleCount: 5,
+                                scalar: 0.75,
+                                shapes: ['circle'],
+                                origin: { y: 0.35 } 
+                            });
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(100, 1000));
+                        }() ); 
+
+                    });
+                    </script>
+                    ";
+
+                break; 
+                
+            case "cash":
+                $html .= "
+                    <div class=\"text-center\">
+
+                    <img src=\"".base_url()."assets/img/welcome.png\" class=\"img-fluid\">
+                    <h3 class=\"mt-4\">¡BIENVENIDO!</h3>
+                    <p class=\"mb-4\">¡a tu nueva oficina virtual Beneleit!</p>
+                    <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Comenzar</button></p>
+                    </div>
+
+                    <script>
+
+                    $( document ).ready(function(){
+                        ( function call_confetti() {
+
+                            confetti({
+                                scalar: 2,
+                                decay: 0.95,
+                                spread: 180,
+                                particleCount: 10,
+                                origin: { y: -0.3 },
+                                startVelocity: -25,
+                                shapes: ['square'],
+                                colors: ['#009779', '#47c24c', '#8bc34a']
+                            });
+
+                            confetti({
+                                scalar: 3,
+                                decay: 0.95,
+                                spread: 180,
+                                particleCount: 10,
+                                origin: { y: -0.3 },
+                                startVelocity: -25,
+                                shapes: ['square'],
+                                colors: ['#009779', '#47c24c', '#8bc34a']
+                            });                            
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(10, 1000));
+                        }() ); 
+
+                    });
+                    </script>
+                    ";
+
+                break;                 
         }
 
         return $html;

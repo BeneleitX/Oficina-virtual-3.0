@@ -277,7 +277,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
         <td>{$c->nivel}</td>
-        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? "<i class=\"fa fa-star text-amber\"></i>Estrellas" : "<i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
+        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
         </tr>"; 
