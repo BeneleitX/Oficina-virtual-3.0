@@ -20,10 +20,45 @@ class Periodos extends BaseController
     public function detalle( $periodo ){
         $this->data[ "navbar" ]  = true;
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
+        $estatus = ESTATUS[ $this->data[ "periodo" ][ "estatus_codigo" ] ];
 
-        $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo($this->data[ "periodo" ][ "codigo" ])."</span>";
 
-        $this->data[ "pagos" ]   = model( "PagoModel" )->where( "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$periodo}'" )->findAll();
+        $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
+
+        $sql = $this->data[ "periodo" ][ "estatus_codigo" ] == "250-EN-PROCESO" ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
+
+        $this->data[ "pagos" ]   = model( "PagoModel" )->where( $sql )->findAll();
+
+        $this->data[ "t" ] = [
+            "previos"   => [],
+            "actual"    => [],
+            "siguiente" => [],
+            "extras"    => []
+        ];
+
+        foreach( $this->data[ "pagos" ] as $p ){
+            $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
+
+            // previos
+            if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus ){
+                $this->data[ "t" ][ "previos" ][] = $p;
+            }
+
+            // actual
+            elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && $p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ){
+                $this->data[ "t" ][ "actual" ][] = $p;
+            }
+
+            // siguiente
+            elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && !$p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] > $this->data[ "periodo" ][ "codigo" ] ){
+                $this->data[ "t" ][ "siguiente" ][] = $p;
+            }
+
+            // extras
+            else{
+                $this->data[ "t" ][ "extras" ][] = $p;
+            }
+        }
 
         echo template( "periodos/detalle", $this->data );
     }
@@ -66,5 +101,48 @@ class Periodos extends BaseController
             $periodo[ "data" ] = json_decode( $res->resultado );
             model( "PeriodoModel" )->save( $periodo );
         }
+    } 
+    
+    
+    public function cierra_periodo(){
+        extract( $this->request->getPost() );
+
+        $periodo = model( "PeriodoModel" )->find( $periodo );
+
+        if( $periodo[ "estatus_codigo" ] == '250-EN-PROCESO' ){
+            $db  = db_connect();
+            $sql = "UPDATE t_pagos p
+                    JOIN t_usuarios u ON u.id = p.usuario_id
+                    SET p.data = JSON_SET( p.data, '$.periodos.deposito', '{$periodo[ "codigo" ]}' ), 
+                        p.estatus_codigo  = '420-PAGADO'
+                    WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
+                    AND p.estatus_codigo  = '255-PENDIENTE' 
+                    AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
+                    AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) ";
+            $db->query( $sql );
+
+            $periodo[ "estatus_codigo" ] = "305-CERRADO";
+            model( "PeriodoModel" )->save( $periodo );
+        }
     }    
+    
+    public function abre_periodo(){
+        extract( $this->request->getPost() );
+
+        $periodo = model( "PeriodoModel" )->find( $periodo );
+
+        if( $periodo[ "estatus_codigo" ] == '305-CERRADO' ){
+            $db  = db_connect();
+            $sql = "UPDATE t_pagos p
+                    SET p.data = JSON_SET( p.data, '$.periodos.deposito', '' ), 
+                        p.estatus_codigo  = '255-PENDIENTE'
+                    WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
+                    AND p.estatus_codigo  = '420-PAGADO' 
+                    AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
+            $db->query( $sql );
+
+            $periodo[ "estatus_codigo" ] = "250-EN-PROCESO";
+            model( "PeriodoModel" )->save( $periodo );
+        }
+    }
 }

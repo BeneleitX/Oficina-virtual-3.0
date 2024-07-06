@@ -176,7 +176,7 @@ function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
 }
 
 function periodo( $periodo ){
-    return substr( $periodo, 3, 4 )."-".substr( $periodo, 7, 2 );
+    return substr( $periodo, 7, 2 )."-".substr( $periodo, 3, 4 );
 }
 
 
@@ -251,6 +251,34 @@ function calendario_semanas($month, $year, $comisiones){
     foreach(array_reverse($weeks) as $w)  $calendar .= $w;
     return $calendar.= "</table>";
 }
+
+
+function dia($dianum, $ext = 0)
+{
+    if($dianum < 1) $dianum += 7;
+    if($dianum > 7) $dianum -= 7;
+
+    $diapal = "";
+
+    switch($dianum)
+    {
+        case 1 : $diapal = "lunes"; break;
+        case 2 : $diapal = "martes"; break;
+        case 3 : $diapal = "miercoles"; break;
+        case 4 : $diapal = "jueves"; break;
+        case 5 : $diapal = "viernes"; break;
+        case 6 : $diapal = "sábado"; break;
+        case 7 : $diapal = "domingo"; break;
+    }
+
+    if($ext)
+    {
+        $diapal = substr($diapal, 0, $ext);
+    }
+
+    return $diapal;
+}
+
 
 
 function pills( $ruta, $activo, $callback = null ){

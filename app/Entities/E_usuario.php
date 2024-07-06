@@ -175,7 +175,7 @@ class E_usuario extends Entity
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];
 
-            return "<span data-bs-toggle=\"tooltip\" title=\"<i class='fa fa-".$modelo[ "settings" ][ "icono" ]."'></i> ".( $modelo[ "nombre" ] )."<br><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>";
+            return "<span data-bs-toggle=\"tooltip\" title=\"<i class='fa fa-".$modelo[ "settings" ][ "icono" ]."'></i> ".( $modelo[ "nombre" ] )."<br><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
         elseif( $clase ){
             return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
@@ -367,8 +367,25 @@ class E_usuario extends Entity
                 AND esquema_codigo = '120-BIEX-3ER-NIVEL'
                 AND estatus_codigo = '255-PENDIENTE'";
 
-        $estrellas = $db->query( $sql )->getRow();
-        return intval( $estrellas->estrellas ); 
+        $estrellas = $db->query( $sql )->getRow()->estrellas;
+        $data = $this->data;
+
+        if( $estrellas > $data->recompensas->estrellas ){
+            
+            // notificación flash
+            $data->splash[] = [
+                "tipo" => "estrellas",
+                "parametros" => [ intval( $estrellas - $data->recompensas->estrellas ) ]
+            ];
+
+            // update conteo
+            $data->recompensas->estrellas = intval( $estrellas );
+
+            $this->data = $data;
+            model( "UsuarioModel" )->save( $this );
+        }
+
+        return intval( $estrellas ); 
     }
 
 
@@ -643,7 +660,7 @@ class E_usuario extends Entity
     public function getComisiones( $periodo ){
         $resultado = [];
 
-        $sql = "SELECT comision.fecha, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
+        $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
                 FROM t_comisiones comision
                 join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                 join t_periodos periodo on periodo.codigo = '{$periodo}'

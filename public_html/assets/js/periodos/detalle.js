@@ -1,4 +1,23 @@
 
+function lanza_corte(){
+    $( '#modal_corte .modal-footer' ).hide();
+    $( '#modal_corte .progress-bar' ).css( 'width', '0%' );
+    $( '#dato_pedidos' ).text( '' );
+    $( '#dato_socios' ).text( '' );
+    $( '#dato_comisiones' ).text( '' );
+    $( '#dato_isr' ).text( '' );
+    $( '#dato_deposito' ).text( '' );
+    $( '#dato_bolsa' ).text( '' );
+    $( '.icon_gira' ).addClass( 'fa-repeat text-red' ).removeClass( 'fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
+    $( '.corte_aviso' ).removeClass( 'text-teal tetx-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios segundos' );
+    $( '.pe1' ).show();
+    $( '.pe2' ).hide();
+    
+    $( '#modal_corte' ).modal( 'show' );
+
+}
+
+
 function getStatus() { 
     $( '#modal_corte .progress-bar' ).css( 'width', '100%' );
     return;
@@ -38,8 +57,37 @@ $(document).ready(function(){
     });
 
 
+    $( '#cierra_start' ).on( 'click', function(){
+
+		$.ajax({
+			url: base_url + 'cierra_periodo',
+			data: { periodo: periodo, [csrf_token] : csrf_hash },
+			type: 'POST',
+			success: function(){
+                // reload
+                window.location.href = base_url + "periodo/" + periodo;
+            }
+		});        
+    });
+
+
+    $( '#abre_start' ).on( 'click', function(){
+
+		$.ajax({
+			url: base_url + 'abre_periodo',
+			data: { periodo: periodo, [csrf_token] : csrf_hash },
+			type: 'POST',
+			success: function(){
+                // reload
+                window.location.href = base_url + "periodo/" + periodo;
+            }
+		});        
+    });    
+
+
     $( '#corte_start' ).on( 'click', function(){
         $( '.icon_gira' ).addClass( 'fa-spin' );
+
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
 
@@ -66,6 +114,9 @@ $(document).ready(function(){
                 $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
                 $( '#dato_deposito' ).text( Moneda.format( respuesta.total ) );
                 $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
+
+                $( '#modal_corte .modal-footer' ).show();
+                $( 'button[disabled]' ).prop( 'disabled', false);
             }
 		});
 

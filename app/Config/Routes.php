@@ -55,8 +55,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
     $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 
-    $routes->post( "corte",                 "Periodos::corte" ); 
     $routes->get( "corte_check",            "Periodos::corte_check" ); 
+    $routes->post( "corte",                 "Periodos::corte" ); 
+    $routes->post( "cierra_periodo",        "Periodos::cierra_periodo" ); 
+    $routes->post( "abre_periodo",          "Periodos::abre_periodo" ); 
 
     $routes->get( "recompensas",            "Recompensas::detalle" );     
     $routes->get( "switch_recompensa/(:any)", "Recompensas::switch/$1" );     

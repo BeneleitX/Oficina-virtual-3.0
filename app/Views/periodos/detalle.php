@@ -5,18 +5,30 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p class="mb-5"><a href="<?php echo base_url( "periodos/".$periodo[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a periodos</a></p>
 
+<?php
+
+if( sizeof( $t[ "extras" ] ) ){
+    echo "<div class=\"alert alert-danger mb-3\"><i class=\"fa fa-warning\"></i> Este periodo contiene pagos con inconsistencias. Favor de notificar a sistemas antes de cerrar la semana</div>";
+}
+
+?>
+
+
 <div class="alert alert-info mb-5">
     <div class="row">
         <div class="col-md-3">
         </div>
         <div class="col-md-3">
-            <button onclick="$( '#modal_corte' ).modal( 'show' )" class="btn btn-danger col-12"><i class="fa fa-repeat"></i> Generar pagos</button>
+            <button onclick="lanza_corte()" class="btn btn-danger col-12 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 300 ? "d-none" : ""; ?>"><i class="fa fa-repeat"></i> Generar pagos</button>
         </div>        
-        <div class="col-md-3">
+        <div class="col-md-3 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 300 ? "d-none" : ""; ?>">
             <button onclick="$( '#modal_cierra' ).modal( 'show' )" class="btn btn-warning col-12"><i class="fa fa-lock"></i> Cerrar periodo</button>
         </div>
+        <div class="col-md-3 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ? "d-none" : ""; ?>">
+            <button onclick="$( '#modal_abre' ).modal( 'show' )" class="btn btn-secondary col-12"><i class="fa fa-lock"></i> Abrir periodo</button>
+        </div>        
         <div class="col-md-3">
-            <button xonclick="$( '#modal_corte' ).modal( 'show' )" disabled class="btn btn-primary col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
+            <button onclick="excel_corte()" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ? "disabled" : ""; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
     </div>
 </div>
@@ -25,22 +37,31 @@
 <table class="table table-striped bg-white" id="tabla_anteriores">
     <thead>
         <tr>
-            <th>Periodo</th>
-            <th>Inicia</th>
-            <th>Termina</th>
-            <th>Pedidos</th>
-            <th>Socios</th>
-            <th>Venta</th>
-            <th>Comisiones</th>
-            <th>Pagado</th>
-            <th></th>
+            <th width="8%">Creado</th>
+            <th width="8%" class="text-start">Pagado</th>
+            <th width="12%">Estatus</th>
+            <th width="28%">Socio</th>
+            <th width="14%">CLABE Interbancaria</th>
+            <th width="10%">Sub total</th>
+            <th width="10%">I.S.R.</th>
+            <th width="10%">Total</th>
         </tr>
     </thead>
 
     <tbody>
     <?php 
 
-        
+    foreach( $t[ "previos" ] as $g ){
+        echo "<tr>
+            <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
+            <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
+            <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
+            <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
+            <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
+    }
     ?>
     </tbody>
 </table>
@@ -50,71 +71,65 @@
 <table class="table table-striped bg-white" id="tabla_pagos">
     <thead>
         <tr>
-            <th>Creado</th>
-            <th>Pagado</th>
-            <th>Estatus</th>
-            <th>Socio</th>
-            <th>CLABE Interbancaria</th>
-            <th>Sub total</th>
-            <th>I.S.R.</th>
-            <th>Total</th>
+            <th width="8%">Creado</th>
+            <th width="8%" class="text-start">Pagado</th>
+            <th width="12%">Estatus</th>
+            <th width="28%">Socio</th>
+            <th width="14%">CLABE Interbancaria</th>
+            <th width="10%">Sub total</th>
+            <th width="10%">I.S.R.</th>
+            <th width="10%">Total</th>
         </tr>
     </thead>
 
     <tbody>
     <?php 
 
-    foreach( $pagos as $p ){
-        if( $p[ "clabe" ] && strlen( $p[ "clabe" ] ) == 18 ){
-            $s = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
-            echo "<tr>
-                <td><span class=\"badge bg-marine\">".periodo( $p[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
-                <td><span class=\"badge bg-teal\">".periodo( $p[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
-                <td>".estatus( $p[ "estatus_codigo" ] )."</td>
-                <td>".$s->avatar( 24 )." ".$s->id( $p[ "modelo_codigo" ] )." ".$s->nombre( 2 )."</td>
-                <td>".( $p[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $p[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$p[ "clabe" ]}</td>
-                <td>$".number_format($p[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
-                <td>$".number_format($p[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
-                <td>$".number_format($p[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
-        }
+    foreach( $t[ "actual" ] as $g ){
+        echo "<tr>
+            <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
+            <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
+            <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
+            <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
+            <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
+            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
     }
         
     ?>
     </tbody>
 </table>
 
-<h5 class="mt-5 text-teal">Pagos de periodo pagados en periodos posteriores</h5>
+<h5 class="mt-5 text-teal">Pagos de periodo a pagar en periodos posteriores</h5>
 <table class="table table-striped bg-white" id="tabla_pagos">
     <thead>
         <tr>
-            <th>Creado</th>
-            <th>Pagado</th>
-            <th>Estatus</th>
-            <th>Socio</th>
-            <th>CLABE Interbancaria</th>
-            <th>Sub total</th>
-            <th>I.S.R.</th>
-            <th>Total</th>
+        <th width="8%">Creado</th>
+            <th width="8%" class="text-start">Pagado</th>
+            <th width="12%">Estatus</th>
+            <th width="28%">Socio</th>
+            <th width="14%">CLABE Interbancaria</th>
+            <th width="10%">Sub total</th>
+            <th width="10%">I.S.R.</th>
+            <th width="10%">Total</th>
         </tr>
     </thead>
 
     <tbody>
     <?php 
 
-    foreach( $pagos as $p ){
-            if( !$p[ "clabe" ] || strlen( $p[ "clabe" ] ) != 18 ){
-                $s = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
-                echo "<tr>
-                <td><span class=\"badge bg-marine\">".periodo( $p[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
-                <td><span class=\"badge bg-teal\">".periodo( $p[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
-                    <td>".estatus( $p[ "estatus_codigo" ] )."</td>
-                    <td>".$s->avatar( 24 )." ".$s->id( $p[ "modelo_codigo" ] )." ".$s->nombre( 2 )."</td>
-                    <td>".( $p[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$p[ "clabe" ]}</td>
-                    <td>$".number_format($p[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
-                    <td>$".number_format($p[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
-                    <td>$".number_format($p[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
-            }
-    }
+foreach( $t[ "siguiente" ] as $g ){
+    echo "<tr>
+        <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
+        <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
+        <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
+        <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
+        <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
+        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
+        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
+        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
+}
         
     ?>
     </tbody>
@@ -130,7 +145,7 @@
             </div>
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
-                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-red icon_gira fa fa-repeat"></i></p>
+                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class="text-red icon_gira fa fa-repeat"></i></p>
                     <p class="text-red text-center corte_aviso">El proceso puede durar varios segundos</p>
 
                     <p>
@@ -154,9 +169,8 @@
                 </div>
             </div>
             
-            <div class="modal-footer d-none">
-            <button type="button" class="btn bg-secondary d-none" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Cerrar</button>
-            
+            <div class="modal-footer" style="display:none">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Continuar</button>
             </div>
         </div>
     </div>
@@ -168,16 +182,34 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-teal"><?php echo $periodo[ "codigo" ]; ?></span> <span class="periodo_codigo"></span></h5>
+                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-mustard fa fa-lock"></i></p>
-                    <p class="text-mustard text-center">El proceso puede durar varios segundos</p>
-
                     <p>
-                        <div class="pe1 mt-4 mb-3"><button class="btn btn-info" id="cierra_periodo">Click para cerrar ahora</button></div>
+                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="cierra_start">Click para cerrar</button></div>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+<div class="modal" id="modal_abre" tabindex="-1" aria-labelledby="add_rolLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="periodo_detalle">
+                <div class="text-center">
+                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-marine fa fa-lock-open"></i></p>
+                    <p>
+                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="abre_start">Click para abrir</button></div>
                     </p>
                 </div>
             </div>

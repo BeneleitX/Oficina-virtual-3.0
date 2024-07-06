@@ -66,6 +66,7 @@ class Dashboard extends BaseController
 
                 break;
 
+
             case "cumple":
                 $html .= "
                     <div class=\"text-center\">
@@ -98,6 +99,7 @@ class Dashboard extends BaseController
                     ";
 
                 break; 
+
 
             case "bienvenida":
                 $html .= "
@@ -137,9 +139,9 @@ class Dashboard extends BaseController
                 $html .= "
                     <div class=\"text-center\">
                     <h2 class=\"mt-3\">!Felicidades!</h2>
-                    <p><img src=\"".base_url()."assets/img/estrella.png\" class=\"img-fluid col-10 col-sm-6 col-md-4 px-5\"></p>
+                    <p><img src=\"".base_url()."assets/img/estrella.png\" class=\"img-fluid col-10 col-sm-6 col-md-4 col-lg-3 px-5\"></p>
                     
-                    <h4 class=\"fs-2 mb-3\">Has conseguido <span class=\"text-mustard\">{$parametros[0]}</span> estrellas<h4><h5>Total acumulado: <span class=\"text-mustard\">34</span></h5>
+                    <h4 class=\"fs-2 mb-3\">Has conseguido <span class=\"text-mustard\">{$parametros[0]}</span> estrella".( $parametros[0] - 1 ? "s" : "" )."<h4><h5>Total acumulado: <span class=\"text-mustard\">{$this->data[ "usuario" ]->data->recompensas->estrellas}</span></h5>
                     <p class=\"mt-5\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>
 
@@ -200,6 +202,7 @@ class Dashboard extends BaseController
 
                 break; 
                 
+
             case "cash":
                 $html .= "
                     <div class=\"text-center\">

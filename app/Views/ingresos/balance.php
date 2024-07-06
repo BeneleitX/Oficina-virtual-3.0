@@ -4,7 +4,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p class="mb-3">Hoy es lunes 11 de marzo, 2024</p>
+<p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
 
 <?php  
 
@@ -12,7 +12,7 @@ echo pills( "balance", $modelo, "codigo_periodo" ); ?>
     
 <div id="heatmap" class="mb-5">
 <?php 
-    $ingresosxdia = $socio->getIngresosPorDia("10-NUTRICION");
+    $ingresosxdia = $socio->getIngresosPorDia( $modelo );
 
     $inicia = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
 
@@ -52,14 +52,14 @@ for( $d = 0; $d < 7; $d++ ){
     if( $cantidad ){
     ?>
     <div class="card mb-3">
-        <div class="card-header bg-teal"><h5 class="m-0 text-white"><?php echo $hoy; ?></h5></div>
+        <div class="card-header bg-marine"><h5 class="m-0 text-white"><?php echo date( "d-m-Y", strtotime( $hoy ) ); ?></h5></div>
 <div class="card-body">
         <table class="mb-0 table table-striped bg-white tabla_comisiones" id="t_<?php echo date("Y-m-d"); ?>">
     <thead>
         <tr>
-            <th class="d-none d-lg-table-cell">Compra</th>
-            <th class="d-none d-lg-table-cell">Fecha</th>
-            <th class="d-none d-lg-table-cell">Nivel</th>
+            <th class="text-center">Compra</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-start">Nivel</th>
             <th>Esquema</th>
             <th>Cantidad</th>
             <th>Socio</th>
@@ -78,10 +78,10 @@ for( $d = 0; $d < 7; $d++ ){
 
                     $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
                     echo "\n<tr\">
-                        <td width=\"10%\" class=\"text-center d-none d-lg-table-cell\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
-                        <td width=\"20%\" class=\"text-center d-none d-lg-table-cell\">{$c->fecha}</td>
-                        <td width=\"10%\" class=\"text-center d-none d-lg-table-cell\">{$c->nivel}</td>
-                        <td width=\"20%\">".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
+                        <td width=\"10%\" class=\"text-center\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
+                        <td width=\"20%\" class=\"text-center\">{$c->fecha}</td>
+                        <td width=\"10%\" class=\"text-start\"><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge bg-mustard\">Compresion</span>" : "")."</td>
+                        <td width=\"20%\"><span class=\"text-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> ".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
                         <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c->cantidad, 2 )."</strong></td>
                         <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
                     </tr>";

@@ -35,7 +35,7 @@ class Ingresos extends BaseController
 
         $this->data[ "navbar" ]  = true;
         $this->data[ "modelo" ]  = $modelo;
-        $this->data[ "titulo" ]  = "Ingresos por periodo <span class=\"badge bg-marine\">".substr($periodo, 3, 4)."-".substr($periodo, 7, 2)."</span> <span style=\"font-size:16px\">".estatus( $this->data[ "periodo" ][ "estatus_codigo" ] )."</span>";
+        $this->data[ "titulo" ]  = "Ingresos por periodo <span class=\"badge bg-marine\">".substr($periodo, 7, 2)."-".substr($periodo, 3, 4)."</span> <span style=\"font-size:16px\">".estatus( $this->data[ "periodo" ][ "estatus_codigo" ] )."</span>";
         $this->data[ "socio"  ]  = $this->data[ "usuario" ];
         $this->data[ "comisiones" ] = $this->data[ "socio" ]->getComisiones( $periodo );
         load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
