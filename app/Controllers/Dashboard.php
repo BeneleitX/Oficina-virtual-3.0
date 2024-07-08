@@ -23,6 +23,11 @@ class Dashboard extends BaseController
         $bloque = $this->request->getPost( "bloque" );
 
         $json = $this->data["usuario"]->data;
+
+        if( !isset( $json->layout ) ){
+            $json->layout = json_decode( "{}" );
+        }
+
         $json->layout->{$bloque} = $this->request->getPost( "valor" );
         $this->data["usuario"]->data = $json; 
 
