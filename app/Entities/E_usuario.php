@@ -73,6 +73,10 @@ class E_usuario extends Entity
     public function getCalificaciones( $modelo ){
         $PTS = [];
 
+        if( !defined( "PROMOCIONES" ) ) {
+            load_catalogo( "promociones", "modelo_codigo = '{$modelo}'");
+        }
+
         foreach( PROMOCIONES as $promo ){
             foreach( MESES as $mes ){
                 $PTS[ $promo[ "codigo" ] ][ "meses" ][ $mes ] = 0;
@@ -148,11 +152,14 @@ class E_usuario extends Entity
     }
 
 
-    public function getPremieres(){
+    public function getPremieres( $mes = null ){
+    if( !$mes ){
+        $mes = date( "Ym" );
+    }
 
     $sql = "SELECT 
-            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"202407\".\"010-DISTRIBUIDOR\"' AS biex,
-            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"202407\".\"030-PLUS\"' AS plus,
+            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"010-DISTRIBUIDOR\"' AS biex,
+            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"030-PLUS\"' AS plus,
             redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
             id
             FROM t_usuarios

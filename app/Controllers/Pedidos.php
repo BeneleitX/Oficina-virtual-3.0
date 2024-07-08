@@ -79,6 +79,8 @@ class Pedidos extends BaseController
             $this->data[ "pagado" ]    = 0;
             $this->data[ "cancelado" ]    = 0;
             $this->data[ "entregado" ] = 0;
+            $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
+
 
             $sql = "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();

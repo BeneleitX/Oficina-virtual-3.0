@@ -1,9 +1,13 @@
 <?php
+$es_bx = intval( substr( $cx[ "10-NUTRICION" ][ "m_0" ], 0, 2 ) ) >= 20;
 
+if( !$es_bx ){
+    echo "<div class=\"m-3 text-center alert alert-light\"><i class=\"fa fa-warning text-red\"></i> Necesitas calificación BIEX en el mes actual para participar en esta promoción</div>";
+}
 ?>
 
 
-<table class="px-2 w-100" style="border-spacing: 10px;border-collapse: separate; ">
+<table class="px-2 mt-3 mb-0 w-100" style="border-spacing: 10px;border-collapse: separate; ">
     <tr>
 
     <?php
@@ -44,23 +48,23 @@
 
             $dto->modify('+1 month');
         }
-
-        $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
-        $ps = [];
 ?>
     </tr>
 </table>
 
-<div class="m-3  text-<?php echo $ganado == 3 ? "success" : "gray-500"; ?> text-center"><?php echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos de regalo" : "<h4>¡6 productos de regalo!</h4>Completa 3 meses consecutivos con una calificación BIEX"; ?></div>
+<div class="m-3  text-<?php echo $ganado == 3 ? "success" : "gray-500"; ?> text-center"><?php echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos de regalo" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Completa 3 meses consecutivos con una calificación BIEX"; ?></div>
         
         <div class="card-body"><table class="w-100"><tr>
 
 <?php
+    $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
+    $ps = [];
+
     $contador = 1;
     foreach( $promo[ "productos" ][ "precarga" ] as $p ){
         $ps = model( "ProductoModel" )->find( $p );
     
-        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-marine\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
+        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-marine\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"".( !$es_bx ? "filter: grayscale(1);opacity:.5;" : "" )."width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
     }
 
     echo "</tr></table></div>";
