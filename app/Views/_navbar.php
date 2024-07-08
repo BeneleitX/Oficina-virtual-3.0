@@ -11,7 +11,7 @@
 		conic-gradient(
 			#2e2e2e 0,
 			#2e2e2e 38%,
-			#57595e 0,
+			#57595e 0, 
 			#57595e 100%
 	); "></div>   -->
   <?php echo $usuario->avatar(); ?>
