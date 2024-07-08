@@ -48,6 +48,8 @@ if( !$es_bx ){
 
             $dto->modify('+1 month');
         }
+
+        $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
 ?>
     </tr>
 </table>
@@ -57,7 +59,7 @@ if( !$es_bx ){
         <div class="card-body"><table class="w-100"><tr>
 
 <?php
-    $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
+    
     $ps = [];
 
     $contador = 1;
