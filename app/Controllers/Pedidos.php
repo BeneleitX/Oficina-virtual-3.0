@@ -108,7 +108,7 @@ class Pedidos extends BaseController
     public function reparte(){
         $db = db_connect();
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-        $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} ) as afectados" );
+        $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 ) as afectados" );
 
         // BITACORA Actualizar reparto de comisiones
         bitacora( 31, $this->data[ "usuario" ]->id, [ 
@@ -150,7 +150,7 @@ class Pedidos extends BaseController
             $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );  
             $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
             $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]} )" );
-            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();            
+            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();            
         }
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 

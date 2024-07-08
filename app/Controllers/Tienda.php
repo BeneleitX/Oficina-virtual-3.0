@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Tienda extends BaseController
+class xxxTienda extends BaseController
 {
     public function carrito( $modelo = null ){
         $this->data[ "navbar" ] = true;

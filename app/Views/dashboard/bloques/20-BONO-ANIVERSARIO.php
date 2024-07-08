@@ -1,6 +1,4 @@
 <?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
-
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
 $bono = $usuario->getBono( $esquema[ "codigo" ] );

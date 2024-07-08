@@ -89,7 +89,7 @@ class Periodos extends BaseController
             CICLO DE PHP. QUEDA PENDIENTE TODO ESTO POR AHORA
             */
 
-            $sql = "SELECT f_reparte_comisiones( pd.id )
+            $sql = "SELECT f_reparte_comisiones( pd.id, 1 )
                     FROM t_pedidos pd
                     WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
                     AND '{$periodo[ "modelo_codigo" ]}' = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci

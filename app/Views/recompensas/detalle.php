@@ -1,5 +1,9 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
+
 <?php
     $recompensa = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
     $total_estrellas = $usuario->getEstrellas();
@@ -30,7 +34,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row mb-5">
     <div class="mb-3 col-lg-4">
         <div class="card">
         <?php 
@@ -52,29 +56,31 @@
 
     <div class="mb-3 col-lg-4">
         <div class="card" style="overflow:hidden">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-8">
-                    <h5 class="m-0">Recompensa activa</h5>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-8">
+                        <h5 class="m-0">Recompensa activa</h5>
+                    </div>
+                    <div class="col-4 text-end"><button class="btn btn-info btn-sm" onclick="$( '#modal_recompensas' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar</button></div>
                 </div>
-                <div class="col-4 text-end"><button class="btn btn-info btn-sm" onclick="$( '#modal_recompensas' ).modal( 'show' );"><i class="fa fa-cog"></i></button></div>
             </div>
-        </div>
-        <table class="m-0 table">
-            <tr><td style="border:none">Recompensa:</td><td style="border:none"><?php echo "<i class=\"fa fa-{$r[ "icono" ]}\"></i> {$r[ "nombre" ]}"; ?></td></tr>
-            <tr><td colspan="2">
-                <div class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porcentaje; ?>%"></div>
-                </div>
-                <?php
-                if( $r[ "estrellas" ] <= $total_estrellas ){
-                    echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4><p class=\"text-center\"><button class=\"btn btn-primary\">Reclama tu recompensa aquí</button></p>";
-                }
-                ?>
-            </td></tr>
-            <tr><td>Estrellas requeridas:</td><td><?php echo $r[ "estrellas" ]; ?></td></tr>
-            <tr><td>Estrellas faltantes:</td><td><?php echo ( $r[ "estrellas" ] > $total_estrellas ? $r[ "estrellas" ] - $total_estrellas : 0 ); ?></td></tr>
-        </table>
+            <div class="card-body">
+                <table class="m-0 table">
+                    <tr><td style="border:none">Recompensa:</td><td style="border:none"><?php echo "<i class=\"fa fa-{$r[ "icono" ]}\"></i> {$r[ "nombre" ]}"; ?></td></tr>
+                    <tr><td colspan="2">
+                        <div style="height:24px; border-radius:10px" class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porcentaje; ?>%"></div>
+                        </div>
+                        <?php
+                        if( $r[ "estrellas" ] <= $total_estrellas ){
+                            echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4><p class=\"text-center\"><button class=\"btn btn-primary\">Reclama tu recompensa aquí</button></p>";
+                        }
+                        ?>
+                    </td></tr>
+                    <tr><td>Estrellas requeridas:</td><td><?php echo $r[ "estrellas" ]; ?></td></tr>
+                    <tr><td>Estrellas faltantes:</td><td><?php echo ( $r[ "estrellas" ] > $total_estrellas ? $r[ "estrellas" ] - $total_estrellas : 0 ); ?></td></tr>
+                </table>
+            </div>
         </div>
     </div>
     
@@ -104,22 +110,59 @@ else{
 ?>
 
 
-    <div class="mb-3 col-lg-4">
+    <div class="col-lg-4">
         <div class="card" style="overflow:hidden">
-        <div class="card-header"><h5 class="m-0">Ciclo de recompensas <span class="badge bg-<?php echo $usuario->data->recompensas->inicia ? "teal" : "red" ?>">1</span> <span class="badge bg-gray-500"><?php echo $usuario->data->recompensas->inicia ? "Activo" : "No activo" ?></span></h5></div>
-        <table class="m-0 table">
-            <tr><td>Inicio de ciclo:</td><td><?php echo $inicia; ?></td></tr>
-            <tr><td>Fin de ciclo:</td><td><?php echo $termina; ?></td></tr>
-            <tr><td style="border:none">Días restantes:</td><td style="border:none"><?php echo $resta." de ".$total; ?></td></tr>
-            <tr><td colspan="2">
-                <div class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porc; ?>%"></div>
-                </div>
-            </td></tr>
-        </table>
+            <div class="card-header"><h5 class="m-0">Ciclo de recompensas <span class="badge bg-marine">1</span> <span class="badge bg-<?php echo $usuario->data->recompensas->inicia ? "teal" : "red" ?>"><?php echo $usuario->data->recompensas->inicia ? "Activo" : "No activo" ?></span></h5></div>
+            <div class="card-body">
+                <table class="m-0 table">
+                    <tr><td>Inicio de ciclo:</td><td><?php echo $inicia; ?></td></tr>
+                    <tr><td>Fin de ciclo:</td><td><?php echo $termina; ?></td></tr>
+                    <tr><td style="border:none">Días restantes:</td><td style="border:none"><?php echo $resta." de ".$total; ?></td></tr>
+                    <tr><td colspan="2">
+                        <div style="height:24px; border-radius:10px" class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porc; ?>%"></div>
+                        </div>
+                    </td></tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+
+        <table class="mb-0 table table-striped bg-white tabla_estrellas" id="t_<?php echo date("Y-m-d"); ?>">
+            <thead>
+                <tr>
+                    <th class="text-center">Compra</th>
+                    <th class="text-center">Fecha</th>
+                    <th>Cantidad</th>
+                    <th>Socio</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php 
+                    $socios = [];
+                    foreach( $comisiones as $c ){
+
+                        if( !isset( $socios[ $c->usuario_id ] ) ){
+                            $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
+                        }
+
+                        $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
+                        echo "\n<tr\">
+                            <td width=\"10%\" class=\"text-center\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
+                            <td width=\"20%\" class=\"text-center\">".date( "d-m-Y", strtotime( $c->fecha ) )."</td>
+                          
+                            <td width=\"10%\" class=\"text-end\"><strong> ".number_format( $c->cantidad )."</strong><i class=\"fa fa-star text-amber\"></i></td>
+                            <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( "10-NUTRICION" )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
+                        </tr>";
+                    }
+                ?>
+            
+            </tbody>
+        </table>
+
 
 <script>
 

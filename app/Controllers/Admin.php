@@ -140,25 +140,6 @@ class Admin extends BaseController
 
         echo template( "admin/productos", $this->data );
     }   
-    
-  
-    public function rangos( $modelo ){
-        $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Rangos de socio";
-        $this->data[ "modelo" ] = $modelo;
-
-        $sql = "modelo_codigo = '{$modelo}'";
-        $this->data[ "rangos" ] = model( "rangoModel" )->where( $sql , null, false )->findAll();
-
-        $db = db_connect();
-        $socios = $db->query( "SELECT if( SUBSTRING( u.estatus_codigo, 1,3 ) > 200, \"activos\", \"inactivos\") AS estatus, u.data->>\"$.rango\" AS rango_codigo, COUNT(*) AS cantidad FROM t_usuarios u GROUP BY if( SUBSTRING( u.estatus_codigo, 1,3 ) > 200, \"ACTIVO\", \"INACTIVO\"), u.data->>\"$.rango\"" );
-
-        foreach( $socios->getResult() as $s ){
-            $this->data[ "socios" ][ $s->rango_codigo ][ $s->estatus ] = $s->cantidad;
-        }
-
-        echo template( "admin/rangos", $this->data );
-    } 
 
 
 

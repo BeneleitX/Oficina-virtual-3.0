@@ -66,6 +66,10 @@ class E_usuario extends Entity
     }
 
 
+    public function updateCalificaciones( $modelo ){
+
+    }
+
     public function getCalificaciones( $modelo ){
         $PTS = [];
 
@@ -175,7 +179,7 @@ class E_usuario extends Entity
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];
 
-            return "<span data-bs-toggle=\"tooltip\" title=\"<i class='fa fa-".$modelo[ "settings" ][ "icono" ]."'></i> ".( $modelo[ "nombre" ] )."<br><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
+            return "<span data-bs-toggle=\"tooltip\" title=\"<h3 class='m-0'><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
         elseif( $clase ){
             return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
@@ -537,12 +541,12 @@ class E_usuario extends Entity
 
             $mesactual = substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ).substr( $pedido[ "fechas" ][ "califica" ], 5, 2 );
           
-            $mp = [];
+/*             $mp = [];
             foreach( $pedido[ "PTS" ] as $promo => $pts ){
                 $mp[ $promo ] = ( $mp[ $promo ] ?? 0 ) + $pts;
             } 
 
-            $historial->modelos->{$modelo}->calificaciones->{$mesactual} = $mp;
+            $historial->modelos->{$modelo}->calificaciones->{$mesactual} = $mp; */
 
             if( $saldo >= $total && $metodopago[ "settings" ][ "tipocomision" ] == "saldo" ){
                 $data->saldo->{$modelo} -= $total;
@@ -565,7 +569,7 @@ class E_usuario extends Entity
             $db = db_connect();
             $db->query( "select f_update_PTS( {$this->id}, '{$modelo}', '{$mescalifica}' )" );  
             $db->query( "select f_get_estatus( {$this->id} )" );
-            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]} )" )->getRow();
+            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();
         }
         else{
             $data->saldo->{$modelo} += $cantidad;
@@ -576,6 +580,15 @@ class E_usuario extends Entity
         }
 
         return $pedido[ "referencia" ];
+    }
+
+
+    public function getChecks( $fecha, $modelo ){
+        $db = db_connect();
+        $sql = "SELECT f_checks_rango( {$this->id}, '{$fecha}', '{$modelo}' ) as checks;";
+        $checks = $db->query($sql)->getRowArray();
+        $a = $checks[ "checks" ];
+        return json_decode( $a, 1 );
     }
 
 
@@ -657,20 +670,31 @@ class E_usuario extends Entity
     }
 
 
-    public function getComisiones( $periodo ){
+    public function getComisiones( $periodo = null, $esquema = null ){
         $resultado = [];
 
-        $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
-                FROM t_comisiones comision
-                join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
-                join t_periodos periodo on periodo.codigo = '{$periodo}'
-                join t_pedidos pedido on pedido.id = comision.pedido_id
-                WHERE comision.usuario_id = {$this->id} 
-                and substring( comision.estatus_codigo, 1, 3 ) > 200
-                AND esquema.settings->>'$.reparto' != 'puntos'
-                AND esquema.settings->>'$.periodo' = 'SEMANAL'
-                AND comision.fecha between periodo.inicia and periodo.termina
-                AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
+        if( $periodo ){
+            $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
+                    FROM t_comisiones comision
+                    join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
+                    join t_periodos periodo on periodo.codigo = '{$periodo}'
+                    join t_pedidos pedido on pedido.id = comision.pedido_id
+                    WHERE comision.usuario_id = {$this->id} 
+                    and substring( comision.estatus_codigo, 1, 3 ) > 200
+                    AND esquema.settings->>'$.reparto' != 'puntos'
+                    AND esquema.settings->>'$.periodo' = 'SEMANAL'
+                    AND comision.fecha between periodo.inicia and periodo.termina
+                    AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
+        }
+        else{
+            $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
+                    FROM t_comisiones comision
+                    join t_pedidos pedido on pedido.id = comision.pedido_id
+                    WHERE comision.usuario_id = {$this->id} 
+                    and comision.esquema_codigo = '{$esquema}'
+                    and substring( comision.estatus_codigo, 1, 3 ) > 200";
+
+        }
 
         $db = db_connect();
         return $db->query($sql)->getResult();

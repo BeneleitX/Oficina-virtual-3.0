@@ -55,7 +55,6 @@ class PedidoModel extends Model
     protected function JSONdecode( array $data )
     {
         $db = db_connect();
-        $sql = "select count(*) as estrellas from t_comisiones where pedido_id = {}";
         
         if( $data[ "data" ] ){
             if( $data[ "singleton" ] ){

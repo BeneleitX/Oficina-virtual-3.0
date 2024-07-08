@@ -1,7 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
 
 echo "<div class=\"card-body\">";
 

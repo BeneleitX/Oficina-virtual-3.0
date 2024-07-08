@@ -189,7 +189,14 @@ foreach( $t[ "siguiente" ] as $g ){
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-mustard fa fa-lock"></i></p>
                     <p>
-                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="cierra_start">Click para cerrar</button></div>
+                    <?php 
+                    if( 1 ){
+                        echo "<div class=\"alert alert-danger\">No se puede cerrar un periodo cuando aun está en curso</div>";
+                    }
+                    else{
+                        echo "<div class=\"mt-4 mb-3\"><button class=\"btn btn-danger\" id=\"cierra_start\">Click para cerrar el periodo</button></div>";
+                    }
+                    ?>
                     </p>
                 </div>
             </div>
@@ -209,7 +216,7 @@ foreach( $t[ "siguiente" ] as $g ){
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-marine fa fa-lock-open"></i></p>
                     <p>
-                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="abre_start">Click para abrir</button></div>
+                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="abre_start">Click para abrir el pertiodo</button></div>
                     </p>
                 </div>
             </div>

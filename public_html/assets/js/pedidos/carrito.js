@@ -96,7 +96,8 @@ function update_pedido( flag = null ){
 
     pendientes = 0;
 
-    var formula;
+    var formula,
+        total_productos_pedido = 0;
 
     $( '.card[promocion]' ).each( function(){
         var cuenta_productos = 0,
@@ -218,6 +219,8 @@ function update_pedido( flag = null ){
         }
 
         $( this ).find( '[conteo]' ).html( cuenta_productos + ' productos' + ( disponible > 0 ? ' de ' + disponible + ' disponibles' + ( cat_promociones[ promocion ].settings.paquete == "true" ? ' (Paquete) ' : '') : '' ) );
+
+        total_productos_pedido += cuenta_productos;
     });
 
     revisa_stock();
@@ -234,12 +237,11 @@ function update_pedido( flag = null ){
     $( '[gran_total]' ).attr( 'gran_total', gran_total ).html( Moneda.format( gran_total ) );
 
     var subtotal = parseFloat( $( '[gran_total]' ).attr( 'gran_total' ) ),
-        b = $( '[name=metodopago][value=00-SALDO]' );
+        b = $( '[name=metodopago][value=0' + modelo.substring(0,1) + '-SALDO]' );
 
-    if( (total_productos + total_entrega) > 0 && total_saldo >= total_productos + total_entrega ){
+    if( (total_productos + total_entrega + total_productos_pedido) > 0 && total_saldo >= total_productos + total_entrega ){
         comision = 0;
         caption  = Moneda.format( total_productos + total_entrega );
-        b.show();
         b.find( '.cantidad' ).html( caption );
         b.show();
     }
@@ -254,15 +256,15 @@ function update_pedido( flag = null ){
             switch( metodospago[ metodopago ].settings.tipocomision ){
                 case 'porcentaje':
                     comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
-                    caption  = subtotal > 0 ? ( Moneda.format( comision + subtotal ) ) : '--';
+                    caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', subtotal == 0 || pendientes );
+                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes );
                     break;
                 case 'efectivo':
                     comision = parseFloat( metodospago[ metodopago ].settings.comision );
-                    caption  = subtotal > 0 ? ( Moneda.format( comision + subtotal ) ) : '--';
+                    caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', subtotal == 0 || pendientes );
+                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes );
                     break;                 
             }
     });

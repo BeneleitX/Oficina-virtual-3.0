@@ -86,11 +86,13 @@ class Sesion extends BaseController
             $this->session->set( "usuario", $usuario->id );
 
             $db = db_connect();
-            $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-            $db->query( "select f_get_estatus( {$usuario->id} )" );
+            $db->query( "select f_update_PTS(   {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "select f_get_estatus(  {$usuario->id} )" );
+            $db->query( "select f_checks_rango( {$usuario->id}, '".date( "Y-m-d" )."', '10-NUTRICION' );" );
 
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
+
 
             return redirect()->route( "inicio" )->with('msg', [ 
                 "clase" => "success", 

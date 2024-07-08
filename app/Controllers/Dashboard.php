@@ -19,6 +19,16 @@ class Dashboard extends BaseController
     }
 
 
+    public function save_layout(){
+        $bloque = $this->request->getPost( "bloque" );
+
+        $json = $this->data["usuario"]->data;
+        $json->layout->{$bloque} = $this->request->getPost( "valor" );
+        $this->data["usuario"]->data = $json; 
+
+        model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+    }
+
     public function splash(){
         $html = "";
         extract( $this->request->getPost() );
@@ -27,11 +37,15 @@ class Dashboard extends BaseController
             case "rango":
                 $rango = model( "RangoModel" )->find( $parametros[0] );
                 $html .= "
-                
-                    <div class=\"row g-0\"><div class=\"col-6 text-center\"><p class=\"m-0 p-4\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg\" class=\"img-fluid\"></p></div>       
-                    <div class=\"col-6 small text-center pt-5\"><p>
-                    <span class=\"fs-3 mt-4 badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></p><h3>¡FELICIDADES!</h3><p>¡Has alcanzado un nuevo rango!</p></div>
-                    <p class=\"my-4 text-center\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
+                <div class=\"text-center\">
+                    <h2 class=\"mt-3\">!Felicidades!</h2>
+                    <p>¡Has alcanzado un nuevo rango!</p>
+                    <p><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg\" class=\"img-fluid col-10 col-sm-6 col-md-4 col-lg-3 px-5\"></p>
+
+                    <p><span class=\"fs-3 mb-5 badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></p>
+
+                    
+                    <p class=\"my-5 text-center\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>
                     
                         <script>

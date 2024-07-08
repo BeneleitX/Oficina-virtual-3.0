@@ -1,6 +1,4 @@
 <?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">Bono de promociones ".strtoupper( mes( date( "m" ) ) )." ".date( "Y" )."</h5></div>";
-
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
 $bono = $usuario->getBonoPromos();
@@ -22,28 +20,27 @@ $premieres = $usuario->getPremieres();
 $p_factor = 2.5;
 $p_clase  = "red";
 
-if( sizeof( $premieres ) > 1 ){
-    $p_factor = 10;
-    $p_clase  = "mustard";
-}
-elseif( sizeof( $premieres ) > 2 ){
+if( sizeof( $premieres ) > 2 ){
     $p_factor = 15;
     $p_clase  = "blue";
 }
+elseif( sizeof( $premieres ) > 1 ){
+    $p_factor = 10;
+    $p_clase  = "mustard";
+}
 ?>
-
 
 
 <table class="px-2 w-100" style="border-spacing: 10px;border-collapse: separate; ">
     <tr>
         <td colspan="2" class="text-center"><p>Socios nuevos PREMIERE: <span class="badge bg-<?php echo $p_clase; ?>"><?php echo sizeof( $premieres ); ?></span></p>
-            <table align="center" class="w-75"><tr>
+            <table align="center" class="w-75 mb-3"><tr>
                 <?php
                     $re = 0;
                     foreach( $premieres as $pr){
                         if( $re < 3 ){
                             $pr = model( "usuarioModel" )->find( $pr[ "id" ] );
-                            echo "\n<td class=\"px-2 text-center\">".$pr->avatar(60)."<br>".$pr->id( "10-NUTRICION" )."</td>";
+                            echo "\n<td class=\"px-2 text-center\">".$pr->avatar(60)."<br>".$pr->id( "10-NUTRICION", false, false )."</td>";
 
                             $re++;
                         }
@@ -58,9 +55,10 @@ elseif( sizeof( $premieres ) > 2 ){
             </tr></table>
 
         </td>
-        <td class="text-center small pt-4">
-            <p>Factor de multiplicación<br>de bono</p>
-            <h1><span class="badge bg-<?php echo $p_clase; ?>">x<?php echo number_format( $p_factor, 2 ); ?></span></h1>
+        <td class="text-center bg-gray-200" style="border-radius:6px">
+            <p class="text-light-pink fs-1 m-0"><i class="fa fa-tag"></i> <?php echo array_sum( $bono ); ?></p>
+            <p class="small m-0">Factor de multiplicación<br>de bono</p>
+            <h4><span class="badge bg-<?php echo $p_clase; ?>">x<?php echo number_format( $p_factor, 2 ); ?></span></h4>
         </td>
     </tr>
 

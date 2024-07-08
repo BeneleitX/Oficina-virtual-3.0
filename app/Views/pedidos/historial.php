@@ -3,9 +3,15 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "tienda/".$modelo ); ?>"><i class="fa fa-store"></i> Ir a tienda en línea</a></p>
 
-<?php echo pills( "historial", $modelo ); ?>
+<div class="row">
+    <div class="col-lg-8">
+        <?php echo pills( "historial", $modelo ); ?>
+    </div>
+    <div class="col-lg-4">
+        <a class="btn btn-lg mt-4 col-12 btn-secondary" href="<?php echo base_url( "tienda/".$modelo ); ?>"><i class="fa fa-shopping-cart"></i> Nuevos pedidos</a>
+    </div>
+</div>
 
 <table class="table table-striped bg-white" id="tabla_pedidos">
     <thead>
@@ -38,7 +44,6 @@
                     <td>".estatus( $p[ "estatus_codigo" ] )."</td>
                     <td>{$PTS} &nbsp; ";
                     
-                
                 for( $b = 0; $b < $p[ "estrellas" ]; $b++ ){ 
                     echo "<i class=\"fa fa-star text-amber\"></i>";
                 }
@@ -57,8 +62,3 @@
      
     </tbody>
 </table>
-
-
-7121110112
-7221586702
-3327911690

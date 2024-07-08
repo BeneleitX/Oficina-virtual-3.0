@@ -32,10 +32,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
     $routes->post( "splash",                "Dashboard::splash" );
+    $routes->post( "save_layout",           "Dashboard::save_layout" );
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 
-    $routes->get( "compras",                "Pedidos::compras" ); 
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
     $routes->get( "historial/(:any)",       "Pedidos::historial/$1" ); 
@@ -106,7 +106,6 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "admin",                  "Admin::dashboard" ); 
     $routes->get( "variables",              "Admin::variables" ); 
-    $routes->get( "rangos/(:any)",          "Admin::rangos/$1" ); 
     $routes->get( "estatus",                "Admin::estatus" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 
     $routes->get( "promociones/(:any)",     "Admin::promociones/$1" ); 
@@ -116,6 +115,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "resolucion_ine",        "Admin::resolucion_ine" );
     $routes->post( "save_variable",         "Admin::save_variable" );
     $routes->post( "save_promo",            "Admin::save_promo" );
+
+    $routes->get( "rangos/(:any)",          "Rangos::catalogo/$1" ); 
+    $routes->get( "pines/(:any)",           "Rangos::pines/$1" ); 
+
 });
 
 $routes->set404Override('App\Controllers\Errors::error_404'); 

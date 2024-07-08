@@ -117,7 +117,7 @@
                     <h5 class="text-teal">Compra obligatoria</h5>
                 </div>                
                 
-                <p>Define si la compra de esta promoción debe ser oblihatoria. En caso de apagarse, se considerará opcional y no afectará el proceso de compra el que no se incluyan productos en ella.</p>
+                <p>Define si la compra de esta promoción debe ser obligatoria. En caso de apagarse, se considerará opcional y no afectará el proceso de compra el que no se incluyan productos en ella.</p>
             </div>
         </div>
     </div>

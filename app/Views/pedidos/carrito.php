@@ -9,7 +9,7 @@
 		   <?php echo pills( "tienda", $modelo ); ?>
         </div>
         <div class="col-md-6 mb-3 text-end">
-                <button id="borra_todo" class="btn btn-outline-danger xd-none"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
+                <button id="borra_todo" class="btn btn-outline-danger mt-4"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
         </div>
     </div>
 <?php }
@@ -239,7 +239,7 @@ else{
                                 echo " btn-warning ";
 
                                 if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
-                                    echo " d-none ";
+                                    // echo " d-none ";
                                 }
                             }else{
                                 echo " btn-primary ";
@@ -277,7 +277,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
         <td>{$c->nivel}</td>
-        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : number_format( $c->cantidad )." ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
+        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
         </tr>"; 
@@ -434,10 +434,10 @@ else{ ?>
 
 			<div class="modal-header">
 				<div class="modal-title me-3">
-							<div class="input-group">
-								<span class="input-group-text"><i class="fa fa-magnifying-glass"></i></span>
-								<input type="text" class="form-control" placeholder="Buscar productos" id="busca_producto">
-							</div>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-magnifying-glass"></i></span>
+                        <input type="text" class="form-control" placeholder="Buscar productos" id="busca_producto">
+                    </div>
 				</div>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
@@ -448,22 +448,7 @@ else{ ?>
                   
 					foreach( $productos as $p ){
 						echo "
-						<div class=\"col-lg-6\" producto=\"{$p->codigo}\">
-							<div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\">
-                            <div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:20px\">".$p->data->puntos->{"010-DISTRIBUIDOR"}." pts</div>
-								<div class=\"row g-0\">
-									<div class=\"col-2 pt-2 ps-1\">
-										<img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded-start\">
-									</div>
-									<div class=\"col-10\">
-										<div class=\"card-body pt-3\">
-											<h5>".strtoupper( $p->data->nombre )."</h5>
-										<p class=\"small m-0\">{$p->data->descripcion}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>";
+						<div class=\"col-lg-6\" producto=\"{$p->codigo}\"><div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\"><div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:20px\">".$p->data->puntos->{"010-DISTRIBUIDOR"}." pts</div><div class=\"row g-0\"><div class=\"col-2 pt-2 ps-1\"><img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded-start\"></div><div class=\"col-10\"><div class=\"card-body pt-3\"><h5>".strtoupper( $p->data->nombre )."</h5><p class=\"small m-0\">{$p->data->descripcion}</p></div></div></div></div></div>";
 					}
 					?>
 				</div>

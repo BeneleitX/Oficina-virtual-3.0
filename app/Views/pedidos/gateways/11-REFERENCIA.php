@@ -3,6 +3,7 @@
         <div class="col-lg-4">
             <h5>1. Elige tu banco</h5>
             <p>Este método de pago sólo aplica en los bancos BBVA (Convenio CIE 1589881) y Banco AZTECA y se ingresa como PAGO DE SERVICIOS.</p>
+            <img src="<?php echo base_url(); ?>assets/img/referenciado.png" class="w-50 rounded">
         </div>
         <div class="col-lg-4">
             <h5>2. Elige tu forma de depósito</h5>
@@ -19,7 +20,7 @@
 <div class="card mb-3">
     <div class="card-body text-center">
         <div class="row">
-            <div class="col-lg-4 display-4 mb-3">
+            <div class="col-lg-4 offset-lg-2 display-4 mb-3">
             <h5>Referencia para pago de servicios</h5>
                     <span class="py-3 badge bg-pink col-12"><?php echo getReferencia( $pedido[ "id" ] ); ?></span>
             </div>

@@ -1,9 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
-?>
-
 <a href="<?php echo base_url( "recompensas" ); ?>">
 <div class="card-body p-0">
     <div class="row g-0">

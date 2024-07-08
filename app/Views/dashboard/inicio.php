@@ -20,6 +20,28 @@
 
         if( $mostrar ){
             $html = "\n<div class=\"card mt-3\" style=\"overflow:hidden\">";
+
+            switch( $b[ "codigo" ] ){
+                case "30-INGRESOS-SEMANA" : 
+                    $b[ "data" ][ "titulo" ] .= " ".date( "W-Y" );
+                    break;
+
+                case "22-BONO-MENSUAL-PROMOS":
+                    $b[ "data" ][ "titulo" ] .= " ".strtoupper( mes( date( "m" ) ) )." ".date( "Y" );
+                    break;
+            }
+
+            $html .= "<div style=\"cursor:pointer\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
+
+
+            $html .= "<div id=\"div_{$b[ "codigo" ]}\" class=\"accordion-collapse collapse ".( ( $usuario->data->layout->{$b[ "codigo" ]} ?? true ) == "true" ? "show" : "" )."\"><a ";
+            
+            if( $b[ "data" ][ "link" ] ){
+                $html .= "href=\"".base_url()."{$b[ "data" ][ "link" ]}\"";
+            }
+            
+            $html .= ">";
+
             $file = "../app/Views/dashboard/bloques/{$b[ "codigo" ]}.php";
 
             if( file_exists( $file ) ){
@@ -30,11 +52,7 @@
             else{
                 $html.= "<div class=\"card-body bg-gray-500 text-white\">No se encuentra bloque ".$b[ "codigo" ]."</div>";
             }
-            $html .= "</div>";
-
-            if( $b[ "data" ][ "link" ] ){
-                $html = "<a href=\"".base_url()."{$b[ "data" ][ "link" ]}\">{$html}</a>";
-            }
+            $html .= "</a></div></div>";
 
             $columnas[ $b[ "columna" ] - 1 ] .= $html;
         }
@@ -51,6 +69,5 @@
 
 
 </div>
-
 
 

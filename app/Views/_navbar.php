@@ -47,7 +47,7 @@
 
     <a data-bs-toggle="tooltip" 
 		title="Tienda" class="menu-opcion <?php echo $menu == "tienda" ? "selected" : ""; ?>" 
-		href="<?php echo base_url( "compras" ); ?>">
+		href="<?php echo base_url( "historial/".getModeloPrincipal() ); ?>">
 		<i class="fa fa-cart-shopping"></i>
 	</a>
 

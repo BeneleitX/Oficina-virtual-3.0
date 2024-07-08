@@ -1,30 +1,34 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<?php
-echo "<div class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
-?>
-
 <a href="<?php echo base_url( "recompensas" ); ?>">
 
 <div class="card-body py-0">
     <div class="row g-0">
 
         <?php 
+
+        $checks    = $usuario->getChecks( date( "Y-m-d" ), "10-NUTRICION" );
         $rango     = model( "RangoModel" )->find( $usuario->data->rango );
-        $new_rango = model( "RangoModel" )->where( "SUBSTRING(codigo,1,2) = ".( substr( $rango[ "codigo" ], 0, 2) + 10 ) )->first();
+        $new_rango = model( "RangoModel" )->find( $checks[ date( "Ym" ) ][ "nuevo" ] );
+
         ?>
         
-        <div class="col-6 small text-center" style="padding-top:10px;"><p class="mb-0 px-0"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"></p><p><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span></p></div>
+        <div class="col-6 small text-center" style="padding-top:10px;"><p class="mb-0 px-0"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg"; ?>" style="" class="img-fluid"></p><p class="mt-2"><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span></p></div>
         
         <div class="col-6 small text-center" style="padding-top:15px;">
         <p class="mt-3">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.jpg"; ?>" style="width:60px; opacity:.4" class="mb-1"><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
-        <i class="fa fa-square-xmark text-gray-300"></i>
-        <i class="fa fa-square-xmark text-gray-300"></i>
-        <i class="fa fa-square-xmark text-gray-300"></i>
+
+        <?php 
+            foreach( $checks as $ch ){
+                echo "\n<i class=\"fa fa-square-".( $ch[ "check" ] ? "check" : "xmark" )." text-".( $ch[ "check" ] ? "teal" : "gray-300" )."\"></i>";
+            }
+        ?>
+
         </p></div>
 
         <?php
-        $ingresos_mes = $total[ "10-NUTRICION" ][ 0 ];
+
+        $ingresos_mes = $checks[ date( "Ym" ) ][ "ingresos" ]; // $total[ "10-NUTRICION" ][ 0 ];
         $porc_rango = ceil( $ingresos_mes * 100 / $new_rango[ "cantidades" ][ 0 ] );
 
         ?>

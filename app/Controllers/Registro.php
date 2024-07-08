@@ -61,6 +61,7 @@ class Registro extends BaseController
             "rol_codigos"    => [ "10-SOCIO" ],
             "data"           => [
                 "nombre"        => $data[ "nombre" ],
+                "layout"        => [],
                 "apellidos"     => [ $data[ "apellido1" ], $data[ "apellido2" ]],
                 "avatar"        => [
                     "imagenes"      => [],
@@ -125,7 +126,9 @@ class Registro extends BaseController
                     "primercompra"   => null,
                     "ultimacompra"   => null,
                     "fondeos" => [],
-                    "ingresos" => [],
+                    "ingresos" => [
+                        date( "Ym" ) => []
+                    ],
                     "calificaciones" => [
                         date( "Ym" ) => []
                     ]
