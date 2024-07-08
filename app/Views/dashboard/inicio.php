@@ -19,7 +19,7 @@
         }
 
         if( $mostrar ){
-            $html = "\n<div class=\"card mt-3\" style=\"overflow:hidden\">";
+            $html = "\n<div class=\"card my-4\" style=\"overflow:hidden\">";
 
             switch( $b[ "codigo" ] ){
                 case "30-INGRESOS-SEMANA" : 
