@@ -14,7 +14,7 @@
 
         <div class="card">
             <div class="card-body">
-                <h5>Socio <?php echo $cliente->id()." ".$cliente->avatar()." ".$cliente->nombre( 2 ); ?></h5>
+                <h5>Socio <?php echo $cliente->id( null, "marine")." ".$cliente->avatar()." ".$cliente->nombre( 2 ); ?></h5>
                 <p>Fecha de pago: <?php echo $pedido[ "fechas" ][ "pagado" ]; ?></p>
 
                 <div class="alert alert-info">Completa la información del formulario y coloca los productos en el pedido marcando uno por uno en los cuadros de la derecha. Una vez colocados todos los productos, se autorizará la entrega.</div>
@@ -42,7 +42,7 @@
                 
             </div>
         </div>
-
+        
         <h1 class="text-center">
             <button disabled class="btn btn-lg my-5 btn-danger" id="boton_entregado_no"><span id="productos_conteo">0</span> productos de <?php echo $pedido[ "data" ][ "productos" ]; ?></button>
             

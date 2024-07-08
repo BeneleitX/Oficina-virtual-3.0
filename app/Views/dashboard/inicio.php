@@ -1,8 +1,7 @@
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-
-<p class="mb-3">Hoy es lunes 11 de marzo, 2024</p>
+<p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
 
 <div class="row">
 
