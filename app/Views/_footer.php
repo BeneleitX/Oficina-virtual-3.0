@@ -78,7 +78,7 @@ if( $data && sizeof( $data[ "splash" ] )  > 0 ){
                 currency: 'USD',
             });
 
-            <?php if( session( "msg" ) !== null ) echo alertas( session('msg') ); ?>
+            <?php if( session( "msg" ) !== null ) echo "$(document).ready(function(){ ".alertas( session('msg') )." });"; ?>
 
         </script>
 
