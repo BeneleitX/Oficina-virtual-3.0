@@ -30,7 +30,7 @@
         
         for( $a = 0; $a < 3; $a++ ){
 
-            $PTS        = $historial->calificaciones->{$dto->format('Ym')};
+            $PTS        = $historial->calificaciones->{$dto->format('Ym')} ?? json_decode( "{}" );
             $es_biex    = ( $PTS->{"010-DISTRIBUIDOR"} ?? 0 ) >= 3;
             $es_lealtad = ( $PTS->{"210-LEALTAD"} ?? 0 ) > 0;
 
