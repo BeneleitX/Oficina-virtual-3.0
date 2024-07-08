@@ -32,12 +32,18 @@
         </a>
     </li>
 	<li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="<?php echo base_url( "inicio"); ?>"><i class="fa fa-house"></i> Inicio</a></li>
+    <li class="d-none"><a class="dropdown-item" href="<?php echo base_url( "inicio"); ?>"><i class="fa fa-house"></i> Inicio</a></li>
     <li><a class="dropdown-item" href="<?php echo base_url( "perfil"); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="<?php echo base_url( "logout" ); ?>"><i class="fa fa-right-from-bracket"></i> Cerrar sesión</a></li>
   </ul>
 </div>
+
+	<a data-bs-toggle="tooltip" 
+		title="Comunicación" class="menu-opcion <?php echo $menu == "inicio" ? "selected" : ""; ?>" 
+		href="<?php echo base_url( "inicio" ); ?>">
+		<i class="fa fa-home"></i>
+	</a>
 
     <a data-bs-toggle="tooltip" 
 		title="Balance" class="menu-opcion <?php echo $menu == "ingresos" ? "selected" : ""; ?>" 
