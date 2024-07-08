@@ -110,8 +110,13 @@ else{
 
                     if( sizeof( $domicilios ) ){
                         
-                        $d = $domicilios[ $dom ];
-                                 
+                        if( isset($domicilios[ $dom ]) ){
+                            $d = $domicilios[ $dom ];
+                        }
+                        else{
+                            $d = array_values( $domicilios )[ 0 ];
+                        }
+                            
                         echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-teal text-teal text-start mb-3 p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
                         {$d[ "calleynumero" ]}<br>
                         Colonia {$d[ "colonia" ]}<br>
