@@ -22,7 +22,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 				<div id="imagencontenedor">
 					<div id="imagen_avatar"><?php echo $socio->avatar( 200 ); ?></div>
 				</div>
-				<div id="cambia_avatar" style="display:none" class="position-absolute top-50 start-50 text-center translate-middle"><a class="btn btn-sm btn-primary" href="<?php echo base_url()."fotografia"; ?>"><i class="fa fa-edit"></i> Cambiar foto</a></div>
+				<div id="cambia_avatar" style="display:none" class="position-absolute top-50 start-50 text-center translate-middle"><a class="btn btn-sm btn-secondary btn-lg" href="<?php echo base_url()."fotografia"; ?>"><i class="fa fa-cog"></i> Cambiar foto</a></div>
 			</div>
 			<div class="col-md-8">
 				<div class="row mb-3">
