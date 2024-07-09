@@ -113,7 +113,7 @@
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
-                <input name="n_obligatoria" class="form-check-input" type="checkbox" role="switch" <?php echo $promocion[ "settings" ][ "obligatoria" ] == "true" ? "checked" : ""; ?>>
+                <input name="n_obligatoria" class="form-check-input" type="checkbox" role="switch" <?php echo isset( $promocion[ "settings" ][ "obligatoria" ] ) && $promocion[ "settings" ][ "obligatoria" ] == "true" ? "checked" : ""; ?>>
                     <h5 class="text-teal">Compra obligatoria</h5>
                 </div>                
                 
