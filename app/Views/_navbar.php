@@ -42,7 +42,7 @@
 	<a data-bs-toggle="tooltip" 
 		title="Comunicación" class="menu-opcion <?php echo $menu == "inicio" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "inicio" ); ?>">
-		<i class="fa fa-home"></i>
+		<i class="fa fa-house-chimney-user"></i>
 	</a>
 
     <a data-bs-toggle="tooltip" 
@@ -63,11 +63,11 @@
 		<i class="fa fa-diagram-project"></i>
 	</a>
 
-<!--     <a data-bs-toggle="tooltip" 
-		title="Comunicación" class="menu-opcion <?php echo $menu == "comunicacion" ? "selected" : ""; ?>" 
-		href="#">
-		<i class="fa fa-comment-dots"></i>
-	</a> -->
+	<a data-bs-toggle="tooltip" 
+		title="Ayuda y soporte" class="menu-opcion <?php echo $menu == "soporte" ? "selected" : ""; ?>" 
+		href="<?php echo base_url( "soporte" ); ?>">
+		<i class="fa fa-circle-question"></i>
+	</a>
 
 	<?php if( $usuario->permiso( "20-ALMACEN") ){ ?>
     <a data-bs-toggle="tooltip" 

@@ -6,9 +6,15 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
 
-<?php  
+<div class="row">
+    <div class="col-lg-8">
+        <?php echo pills( "balance", $modelo, "codigo_periodo" ); ?>
+    </div>
+    <div class="col-lg-4 text-end">
+        <button class="btn btn-success"><i class="fa fa-file-excel"></i> Descargar Excel</button>
+    </div>
+</div>
 
-echo pills( "balance", $modelo, "codigo_periodo" ); ?>
     
 <div id="heatmap" class="mb-5">
 <?php 

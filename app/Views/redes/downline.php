@@ -7,11 +7,11 @@
 	</div>
 	<div class="col-md-3 mb-3 text-end">
 
-
+		
 		<div class="btn-group " role="group" aria-label="Button group with nested dropdown">
 
 		<div class="btn-group dropdown" role="group">
-			<a class="btn btn-light  col-12 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			<a class="btn btn-outline-danger  col-12 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 				Filtros
 		</a>
 			
@@ -88,6 +88,8 @@
 		</div>
 			<a type="button" onclick="filtrar( 'ninguno', '' )" class="btn btn-danger"><i class="fa fa-xmark"></i></a>
 		</div>
+
+		<button class="btn btn-success"><i class="fa fa-file-excel"></i> Descargar Excel</button>
 
 	</div>
 </div>

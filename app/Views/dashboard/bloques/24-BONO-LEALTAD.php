@@ -66,7 +66,7 @@ if( !$es_bx ){
     foreach( $promo[ "productos" ][ "precarga" ] as $p ){
         $ps = model( "ProductoModel" )->find( $p );
     
-        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-marine\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"".( !$es_bx ? "filter: grayscale(1);opacity:.5;" : "" )."width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
+        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-".( $es_bx ? "marine" : "gray-500")."\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"".( !$es_bx ? "filter: grayscale(1);opacity:.5;" : "" )."width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
     }
 
     echo "</tr></table></div>";

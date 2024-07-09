@@ -36,6 +36,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 
+    $routes->get( "soporte",                "Soporte::inicio" );    
+    $routes->get( "tickets",                "Soporte::tickets" );    
+
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
     $routes->get( "historial/(:any)",       "Pedidos::historial/$1" ); 

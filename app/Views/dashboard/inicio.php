@@ -36,7 +36,12 @@
             $html .= "<div id=\"div_{$b[ "codigo" ]}\" class=\"accordion-collapse collapse ".( ( $usuario->data->layout->{$b[ "codigo" ]} ?? true ) == "true" ? "show" : "" )."\"><a ";
             
             if( $b[ "data" ][ "link" ] ){
-                $html .= "href=\"".base_url()."{$b[ "data" ][ "link" ]}\"";
+                if( str_contains( $b[ "data" ][ "link" ], "http" ) ){
+                    $html .= "target=\"_blank\" href=\"{$b[ "data" ][ "link" ]}\"";
+                }
+                else{
+                    $html .= "href=\"".base_url()."{$b[ "data" ][ "link" ]}\"";
+                }
             }
             
             $html .= ">";

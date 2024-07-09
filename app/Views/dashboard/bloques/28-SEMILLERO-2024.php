@@ -1,0 +1,1 @@
+<img src="<?php echo base_url(); ?>assets/img/banner_semillero.png" class="img-fluid">

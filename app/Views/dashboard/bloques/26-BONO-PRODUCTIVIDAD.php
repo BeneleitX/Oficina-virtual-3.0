@@ -1,6 +1,17 @@
 <?php
 $es_premiere = intval( substr( $cx[ "10-NUTRICION" ][ "m_0" ], 0, 2 ) ) >= 40;
 
+$date1 = new DateTime( date( "Y-m-01" ) );
+$date2 = new DateTime( date( "Y-m-01" )." + 1 month" );
+$interval   = $date1->diff( $date2 );
+
+$total_dias = $interval->days;
+$date2 = new DateTime( date( "Y-m-d H:i:s" ) );
+$interval = $date1->diff( $date2 );
+
+$transcurridos = ( ($interval->days ) * 24 * 60 ) + ( $interval->h * 60 ) + $interval->i;
+$porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
+
 if( !$es_premiere ){
     echo "<div class=\"m-3 text-center alert alert-light\"><i class=\"fa fa-warning text-red\"></i> Necesitas calificación PREMIERE en el mes actual para participar en esta promoción</div>";
 }
@@ -49,7 +60,7 @@ if( !$es_premiere ){
     foreach( $promo[ "productos" ][ "precarga" ] as $p ){
         $ps = model( "ProductoModel" )->find( $p );
     
-        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-marine\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"".( !$es_premiere ? "filter: grayscale(1);opacity:.5;" : "" )."width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
+        echo "\n<td style=\"width:16.6%; position:relative\" class=\"text-center\"><div style=\"position:absolute; top:-10px;\"><span class=\"badge bg-".( $es_premiere ? "marine" : "gray-500")."\">".($contador++)."</span></div><img src=\"".base_url()."assets/img/productos/{$p}.png\" class=\"\" style=\"".( !$es_premiere ? "filter: grayscale(1);opacity:.5;" : "" )."width:50px\" data-bs-toggle=\"tooltip\" title=\"{$ps->data->nombre}\" ></td>";
     }
 
     echo "</tr></table>";
@@ -57,9 +68,9 @@ if( !$es_premiere ){
 
 
     
-    <p class="text-center mt-3 mb-0"><?php echo "Día ".ceil( $transcurridos / 24 / 60 )." de ".$total_dias; ?></p>
+<p class="text-center mt-3 mb-0"><?php echo "Día ".ceil( $transcurridos / 24 / 60 )." de ".$total_dias; ?></p>
 
-    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
-        <div class="progress-bar bg-teal" style="width: <?php echo $porc_bono; ?>%"><?php echo $porc_bono."%"; ?></div>
-    </div>  
+<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
+    <div class="progress-bar bg-teal" style="width: <?php echo $porc_bono; ?>%"><?php echo $porc_bono."%"; ?></div>
+</div>  
 </div>
