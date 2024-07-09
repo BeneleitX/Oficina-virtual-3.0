@@ -56,7 +56,7 @@ elseif( sizeof( $premieres ) > 1 ){
 
         </td>
         <td class="text-center bg-gray-200" style="border-radius:6px">
-            <p class="text-light-pink fs-1 m-0"><i class="fa fa-tag"></i> <?php echo array_sum( $bono ); ?></p>
+            <p class="text-gray-600 fs-1 m-0"><i class="fa fa-tag"></i> <?php echo array_sum( $bono ); ?></p>
             <p class="small m-0">Factor de multiplicación<br>de bono</p>
             <h4><span class="badge bg-<?php echo $p_clase; ?>">x<?php echo number_format( $p_factor, 2 ); ?></span></h4>
         </td>
