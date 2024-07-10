@@ -271,7 +271,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
     <th class=\"text-end\">Comisión</th>
     <th>Estatus</th>
     <th>Socio</th>
-    </tr></thead><tbody>"; 
+    </tr></thead><tbody>";  
     $db = db_connect();
 
     $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
