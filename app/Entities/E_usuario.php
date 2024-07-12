@@ -88,6 +88,11 @@ class E_usuario extends Entity
             if( $promos )
             foreach( $promos as $promo => $pts ){
                 $PTS[ $promo ][ "meses" ][ $mes ] = $pts;
+
+                if( !isset( $PTS[ $promo ][ "total" ] ) ){
+                    $PTS[ $promo ][ "total" ] = 0;
+                }
+
                 $PTS[ $promo ][ "total" ] = $PTS[ $promo ][ "total" ] + $pts;
             }
         }
@@ -145,8 +150,8 @@ class E_usuario extends Entity
         $data = json_decode( $this->attributes[ "data" ] );
         $data->genero =  substr( $curp, 10, 1) == "H" ? "MASCULINO" : "FEMENINO";
         $data->nacionalidad = substr( $this->attributes[ "curp" ], 11, 2) != "NE" ? "MEXICANA" : "EXTRANJERA";
-        $data->avatarface = $caras[ rand( 0, sizeof( $caras ) - 1 ) ];
-        $data->avatarbg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
+        $data->avatar->face = $caras[ rand( 0, sizeof( $caras ) - 1 ) ];
+        $data->avatar->bg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
         $data->beneficiarios = [];
         $this->attributes[ "data" ] = json_encode( $data );
     }

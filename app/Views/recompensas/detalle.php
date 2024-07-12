@@ -93,7 +93,7 @@ if( $usuario->data->recompensas->inicia ){
     $date1 = new DateTime( $inicia );
     $date2 = new DateTime( $termina );
     $interval = $date1->diff( $date2 );
-    $total = $interval->days;
+    $total = $interval->days ?? 0;
  
     $date1 = new DateTime( date( "Y-m-d" ) );
     $interval = $date1->diff( $date2 );
@@ -106,6 +106,7 @@ else{
     $termina = "???";
     $resta = "???";
     $porc  = 0;
+    $total =  0;
 }
 ?>
 

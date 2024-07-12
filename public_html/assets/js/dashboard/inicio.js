@@ -17,6 +17,10 @@ function save_layout( bloque ){
 }
 
 
+
+
 $(document).ready(function(){
+
+    
 
 });

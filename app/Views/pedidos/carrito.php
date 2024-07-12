@@ -135,7 +135,7 @@ else{
                                 if( $entregado ){ ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">
-                                        Este pedido ha sido enviado por paquetería con fecha <?php echo substr( $pedido[ "fechas" ][ "enviado" ], 0, 10 ); ?>.<br>Guía de rastreo: <span class="badge bg-mustard"><?php echo $pedido[ "data" ][ "guia" ]; ?></span>
+                                        Este pedido ha sido enviado por paquetería con fecha <?php echo substr( $pedido[ "fechas" ][ "enviado" ] ?? "", 0, 10 ); ?>.<br>Guía de rastreo: <span class="badge bg-mustard"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
                                     </div>
                                 </div>
                                 <?php }
