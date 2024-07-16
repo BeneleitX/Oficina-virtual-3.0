@@ -297,14 +297,15 @@ if( !$socio->data->verificacion->correo ){ ?>
 							foreach( $domicilios as $d ){
 								echo "
 									<div class=\"col-xl-12  mb-3\">
-										<div class=\"alert alert-info mb-0\">
+										<div class=\"alert alert-".( $d[ "colonia" ] ? "info" : "danger")." mb-0\">
 											<h5>{$d[ "nombre" ]} <a style=\"float:right\" class=\"text-teal\" href=\"#\"><i class=\"fa fa-edit\"></i></a></h5>
 											
 											<p class=\"mb-0\">
 												{$d[ "calleynumero" ]}<br>
-												Colonia {$d[ "colonia" ]}<br>
+												Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Editar para corregir errores" )."<br>
+												".( $d[ "colonia" ] ? "
 												{$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-												C.P. {$d[ "codigopostal" ]}
+												C.P. {$d[ "codigopostal" ]} " : "" )."
 											</p>
 										</div>
 									</div>

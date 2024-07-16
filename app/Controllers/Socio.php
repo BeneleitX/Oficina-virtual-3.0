@@ -48,9 +48,10 @@ class Socio extends BaseController
         $filename = $this->data["socio"]->id."_".time().".jpg";
 
         $json = $this->data["socio"]->data;
-        $json->avatar->imagenes[] = $filename;
-        $json->avatar->activo = sizeof( $json->avatar->imagenes ) -1;
-        $json->verificacion->foto = true;
+        $json->avatar->imagenes[]  = $filename;
+        $json->avatar->activo      = sizeof( $json->avatar->imagenes ) -1;
+        $json->avatar->updated     = time();
+        $json->verificacion->foto  = true;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );

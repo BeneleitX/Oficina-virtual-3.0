@@ -6,12 +6,12 @@
         </div>
         
         <div class="col-lg-4 text-center">
-                <p class="my-3"><i class="fa fa-ticket text-teal" style="font-size:50px"></i></p>
+                <p class="my-3"><i class="fa fa-ticket text-deep-purple" style="font-size:50px"></i></p>
                 <p class="mb-3">2. Levanta un ticket de soporte</p>
         </div>
 
         <div class="col-lg-4 text-center">
-                <p class="my-3"><i class="fa fa-headset text-teal" style="font-size:50px"></i></p>
+                <p class="my-3"><i class="fab fa-square-whatsapp text-green" style="font-size:50px"></i></p>
                 <p class="mb-3">3. Comunicate a nuestro call center</p>
         </div>    
 

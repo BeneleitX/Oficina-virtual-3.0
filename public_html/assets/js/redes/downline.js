@@ -43,8 +43,6 @@ function userdata( s ){
 
 $( document ).ready(function()
 {
-    $( canvas ).html( loader );
-    
     $.ajax({
         url: base_url + "downlineJSON",
         async: true,

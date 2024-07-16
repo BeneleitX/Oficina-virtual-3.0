@@ -32,6 +32,7 @@ class DotEnv
      */
     public function __construct(string $path, string $file = '.env')
     {
+        $file .= "_".$_SERVER['HTTP_HOST'];
         $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
     }
 

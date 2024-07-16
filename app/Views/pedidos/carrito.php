@@ -28,6 +28,11 @@ else{
 		<div id="shoppingcart">
 			<?php
 
+if( !sizeof( $pedido[ "promociones" ] ) ){
+    echo "<div class=\"alert alert-light text-center text-mustard\"><p><i class=\"fa fa-triangle-exclamation\" style=\"font-size:200px\"></i></p><p>Hay un problema con este pedido, parece estar vacío.<br>porfavor reportalo a soporte técnico</p></div>";
+}
+
+
 			foreach( PROMOCIONES as $p ){
                 if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
@@ -36,7 +41,7 @@ else{
                 }
 			}
 
-            $domicilios = $socio->getDomicilios();
+            $domicilios = $socio->getDomicilios(  );
 			?>
 		</div>
 
@@ -47,7 +52,13 @@ else{
             <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
 
             <div class="card-body m-0 ">
+                
                 <?php 
+
+if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
+    echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
+}
+
                 foreach( METODOSENTREGA as $me ){
 
                     if( $me[ "settings" ][ "tipocosto" ] == "almacen" || sizeof( $domicilios ) )
@@ -55,9 +66,7 @@ else{
                     <label class=\"".( ( $pagado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                 }
 
-                if( !sizeof( $domicilios ) ){
-                    echo "<div domicilio_id=\"0\" class=\"alert alert-danger mt-3 mb-0\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio. Puedes editar tus domicilios o agregar uno nuevo desde tu perfil de socio.<p class=\"mt-3 mb-0\"><a class=\"btn btn-outline-danger btn-sm\" href=\"".base_url( "perfil" )."\">Ir a perfil de socio</a></p></div>";
-                }
+
                 ?>
 
 
@@ -73,7 +82,13 @@ else{
 
                             <select class="form-select" name="select_almacen">
                             <?php
+                            $existe_almacen = 0;
+
                                 foreach( ALMACENES as $a ){
+                                    if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                        $existe_almacen = 1;
+                                    }
+                                    
                                     if( ( !$pagado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
                                     echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                                 }
@@ -82,11 +97,13 @@ else{
                         
                         </div>
                         <div class="col-lg-6">
-                            <?php if(  $pagado  && !$entregado ){ ?>
+                            <?php 
+                            
+                            if(  $pagado  && !$entregado ){ ?>
                                 <form method="post" action="<?php echo base_url("entrega"); ?>">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                                    <button type="submit" class="btn col-12 btn-warning">Entregar Pedido en Almacen</button>
+                                    <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?> class="btn col-12 btn-warning">Entregar Pedido en Almacen</button>
                                 </form>
                             <?php } ?>
                         </div>
@@ -96,9 +113,15 @@ else{
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ) echo "style=\"display:none\""; ?>>
                     <?php 
 
-                    if( ( $pagado || $cancelado ) && sizeof( $domicilios ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
-                        $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
-                        $dom = 0;
+                    if( ( $pagado || $cancelado ) && sizeof( $domicilios ) ){
+
+                        if( isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                            $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
+                            $dom = 0;
+                        }
+                        elseif( $pedido[ "data" ][ "entrega_xpace" ] > 0 ){
+                            echo $dom = $pedido[ "data" ][ "entrega" ];
+                        }
                     }
                     else{
                         $dom = $usuario->data->domicilio ?? 0;
@@ -117,16 +140,17 @@ else{
                             $d = array_values( $domicilios )[ 0 ];
                         }
                             
-                        echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-teal text-teal text-start mb-3 p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
+                        echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
                         {$d[ "calleynumero" ]}<br>
-                        Colonia {$d[ "colonia" ]}<br>
-                        {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                        C.P. {$d[ "codigopostal" ]}
+												Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Domicilio con errores" )."<br>
+												".( $d[ "colonia" ] ? "
+												{$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+												C.P. {$d[ "codigopostal" ]} " : "" )."
                         </div>
                         ";
                     }
                     else{
-                        echo "<div domicilio_id=\"0\" class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.</div>";
+                     //   echo "<div domicilio_id=\"0\" class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.</div>";
                     }
                     ?>
                     <div class="row">
@@ -139,13 +163,13 @@ else{
                                     </div>
                                 </div>
                                 <?php }
-                                else{
+                                elseif( $d[ "colonia" ] ) {
                                 ?>
                                 <div class="col-lg-6">
                                 <form method="post" action="<?php echo base_url("envia"); ?>">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                                    <button type="submit" class="btn col-12 btn-warning">Enviar pedido por paquetería</button>
+                                    <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?>  class="btn col-12 btn-warning">Enviar pedido por paquetería</button>
                                 </form>
                                 </div>
                             <?php } 
@@ -160,8 +184,19 @@ else{
 
                 <?php if( !( $pagado || $cancelado ) ){ ?>
                 <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>><?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ], 2 ); ?></div>
-                <?php } ?>
+                <?php } 
+                
+
+?>
             </div>
+
+<?php
+
+if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
+    echo "<div domicilio_id=\"0\" class=\"alert alert-danger m-3 mt-0\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio. Puedes editar tus domicilios o agregar uno nuevo desde tu perfil de socio.<p class=\"mt-3 mb-0\"><a class=\"btn btn-danger btn-sm\" href=\"".base_url( "perfil" )."\">Ir a perfil de socio</a></p></div>";
+}
+?>
+
         </div>
 
         <div id="puntajes" class="mb-3"><?php
@@ -206,7 +241,7 @@ else{
                         <tr><td valign="middle" class="">Saldo a favor</td><td valign="middle" class="text-end"><h5 class="m-0 text-<?php echo $saldo > 0 ? "red" : "gray-500"; ?>" total_saldo="<?php echo $saldo; ?>">$<?php echo number_format(  $saldo, 2 ); ?></h5></td></tr>
                         
                         <?php 
-                        $comisionbanco = !( $pagado || $cancelado ) ? $pedido[ "data"][ "comisionbanco" ] : 0;
+                        $comisionbanco = floatval( $pedido[ "data"][ "comisionbanco" ] ); //!( $pagado || $cancelado ) ? $pedido[ "data"][ "comisionbanco" ] : 0;
                         if( ( $pagado || $cancelado ) ){ ?>
 
                             <tr><td valign="middle" class="">Comision bancaria</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5></td></tr>
@@ -234,7 +269,7 @@ else{
                         </div>
 
                         <?php if( ( $pagado || $cancelado ) ){ ?>
-                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12" id="imprime">Imprimir ticket</a>
+                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
                         <?php }
                     }
                     else{
@@ -409,9 +444,7 @@ else{ ?>
             </div>
             <div class="modal-body">
                 <?php 
-                if( !sizeof( $domicilios ) ){
-                    echo "<h5 class=\"mb-4\">:</h5>";
-                }
+                if( sizeof( $domicilios ) ){
 
                 foreach( $domicilios as $d ){
                     echo "\n<button domicilio_id=\"{$d[ "id" ]}\" class=\"w-100 btn btn-outline-success text-start mb-3\"><p><strong>{$d[ "nombre" ]}</strong></p>
@@ -421,7 +454,8 @@ else{ ?>
                         C.P. {$d[ "codigopostal" ]}
                         </button>";
                 }
-                
+            }
+
                 ?>
 
                 <div class="alert alert-info">

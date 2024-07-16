@@ -7,5 +7,5 @@ writable/*
 debugbar*
 !*/cache/index.html
 !*/cache/.htaccess
-.env
+.en*
 public/data/

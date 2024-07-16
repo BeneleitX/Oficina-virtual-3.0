@@ -94,10 +94,7 @@ class Sesion extends BaseController
             bitacora( 1, $usuario->id );
 
 
-            return redirect()->route( "inicio" )->with('msg', [ 
-                "clase" => "success", 
-                "icono" => "user-check", 
-                "texto" => "Sesión de usuario iniciada con éxito"]); 
+            return redirect()->route( "inicio" ); 
         }
     }
 
@@ -114,7 +111,9 @@ class Sesion extends BaseController
         $validation = service("validation");
         $validation->setRules([
             "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
-            "socio_telefono" => "required|exact_length[10]|numeric"
+            "socio_telefono" => "required|exact_length[10]|numeric",
+            "socio_curp" => "required|curp",
+            "socio_correo" => "required|valid_email"
         ],[
             "socio_id" => [
                 "required" => "No has escrito un No. de socio",
@@ -125,6 +124,14 @@ class Sesion extends BaseController
                 "required" => "No has escrito un número telefónico",
                 "exact_length" => "El número debe ser a 10 dígitos",
                 "numeric" => "El número no es válido"
+            ],
+            "socio_curp" => [
+                "required" => "No has escrito CURP",
+                "curp" => "La CURP no es válida"
+            ],
+            "socio_correo" => [
+                "required" => "No has escrito un correo electrónico",
+                "valid_email" => "El correo electrónico no es válido"
             ]
         ]);
 
@@ -139,15 +146,45 @@ class Sesion extends BaseController
         $usuario = model( "UsuarioModel" )->find( $socio_id );
 
         if( $socio_telefono != $usuario->telefono ){
-                // BITACORA solicitar recuperación de password fallido
-                bitacora( 34, $usuario->id, [ 
-                    "telefono" => $socio_telefono 
-                ] );
+            // BITACORA solicitar recuperación de password fallido
+            bitacora( 34, $usuario->id, [ 
+                "telefono" => $socio_telefono,
+                "curp" => $socio_curp,
+                "correo" => $socio_correo
+            ] );
 
-                return redirect()
-                    ->back()
-                    ->with( "errors", [ "socio_telefono" => "El telefono es incorrecto" ] )
-                    ->withInput();
+            return redirect()
+                ->back()
+                ->with( "errors", [ "socio_telefono" => "El telefono es incorrecto" ] )
+                ->withInput();
+        }
+
+        if( $socio_curp != $usuario->curp ){
+            // BITACORA solicitar recuperación de password fallido
+            bitacora( 34, $usuario->id, [ 
+                "telefono" => $socio_telefono,
+                "curp" => $socio_curp,
+                "correo" => $socio_correo
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", [ "socio_curp" => "la CURP es incorrecta" ] )
+                ->withInput();
+        }
+
+        if( $socio_correo != $usuario->correo ){
+            // BITACORA solicitar recuperación de password fallido
+            bitacora( 34, $usuario->id, [ 
+                "telefono" => $socio_telefono,
+                "curp" => $socio_curp,
+                "correo" => $socio_correo
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", [ "socio_correo" => "El correo es incorrecto" ] )
+                ->withInput();
         }
 
         // todo bien

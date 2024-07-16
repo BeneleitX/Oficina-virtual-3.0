@@ -1,11 +1,10 @@
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
 <?php
 
 echo "<div class=\"card-body\">";
 
-$socios = array_reverse( json_decode( $usuario->getDownlineJSON( '10-NUTRICION' ) ) );
+// $socios = array_reverse( json_decode( $usuario->getDownlineJSON( '10-NUTRICION' ) ) );
 
+/* 
 if( sizeof( $socios ) > 1 ){
 
     for($a = 0; $a < 3; $a++){
@@ -46,7 +45,7 @@ if( sizeof( $socios ) > 1 ){
 }
 else{
     echo "<div class=\"row mx-3\"><div class=\"col-4 display-1 py-2 text-gray-300 text-center ps-5\"><i class=\"fa fa-user-xmark\"></i></div><div class=\"col-8 pt-4 text-gray-500 text-center\">No hay socios nuevos<br>en tus redes</div></div>";    
-}
+} */
 
 ?>
 </div>

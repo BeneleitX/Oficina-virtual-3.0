@@ -2,8 +2,9 @@
     <img src="<?php echo base_url(); ?>assets/img/logo_color.png" style="width:200px" class="my-4">
     <br>
 
-    Para generar un nuevo password, proporciona la información que se te solicita
+    Para generar un nuevo password, <strong>proporciona la información que se te solicita</strong>
     <br>
+
     Recibirás un correo electrónico con las instrucciones necesarias para continuar el proceso.
     <div class="row mt-5">
         <div class="col-md-4 offset-md-4">
@@ -29,6 +30,12 @@
                                 
                                 <input class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_telefono" ) ? "is-invalid" : ""; ?>" name="socio_telefono" value="<?php echo old( "socio_telefono" ); ?>" placeholder="Teléfono a 10 dígitos">
                                 <p class="small text-danger"><?php echo session( "errors.socio_telefono" ); ?></p>
+
+                                <input class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_curp" ) ? "is-invalid" : ""; ?>" name="socio_curp" value="<?php echo old( "socio_curp" ); ?>" placeholder="CURP">
+                                <p class="small text-danger"><?php echo session( "errors.socio_curp" ); ?></p>
+
+                                <input class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_correo" ) ? "is-invalid" : ""; ?>" name="socio_correo" value="<?php echo old( "socio_correo" ); ?>" placeholder="Correo electrónico">
+                                <p class="small text-danger"><?php echo session( "errors.socio_correo" ); ?></p>
 
                                 <hr class="b-primary">
 

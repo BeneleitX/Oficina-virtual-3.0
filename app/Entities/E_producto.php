@@ -14,6 +14,5 @@ class E_producto extends Entity
         "precio"         => "json",
     ];
 
-    protected $dates = [ "created_at", "updated_at" ];
 
 }

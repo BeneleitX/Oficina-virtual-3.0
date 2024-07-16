@@ -24,6 +24,7 @@
             <th>Fecha pago</th>
             <th>Califica</th>
             <th>pago</th>
+            <th>entrega</th>
             <th></th>
         </tr>
     </thead>
@@ -54,7 +55,7 @@
                     <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? substr( $p[ "fechas" ][ "pagado" ], 0, 10) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
                     <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "marine" )."\">".substr( $p[ "fechas" ][ "califica" ], 0, 7 )."</span>" : "" )."</td>
                     <td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
-
+<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
                     <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }

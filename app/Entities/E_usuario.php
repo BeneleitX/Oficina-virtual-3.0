@@ -24,7 +24,6 @@ class E_usuario extends Entity
         "verificado"     => "json"
     ];
 
-    protected $dates = [ "created_at", "updated_at" ];  
 
     function __construct( $id = null, $data = null ){
         if( $id ){
@@ -38,7 +37,7 @@ class E_usuario extends Entity
     protected function setPassword( string $password ): string
     {
         $encrypter = service( "encrypter" );
-        return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "curp" ] ] ) );
+        return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
     }
 
 
@@ -47,9 +46,10 @@ class E_usuario extends Entity
         $encrypter = service( "encrypter" );
         $password  = random_password();
 
-        $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "curp" ] ] ) );
+        $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
 
         $data = $this->data;
+        
         $data->verificacion->password = false;
         $this->data = $data;
 
@@ -62,7 +62,7 @@ class E_usuario extends Entity
     public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );
-        return $encrypter->decrypt( base64_decode( $this->attributes[ "password" ] ), [ "key" => $this->attributes[ "curp" ] ] );
+        return $encrypter->decrypt( base64_decode( $this->attributes[ "password" ] ), [ "key" => $this->attributes[ "id" ] ] );
     }
 
 
@@ -406,7 +406,7 @@ class E_usuario extends Entity
 
 
 
-    public function getDomicilios(){
+    public function getDomicilios( $con_colonia = false ){
         $db = db_connect();
         $respuesta = [];
         $existe = false;
@@ -414,10 +414,12 @@ class E_usuario extends Entity
         $sql = "SELECT 
                     d.id as id, d.nombre as nombre, d.referencias, d.calleynumero, c.nombre as colonia, l.nombre as localidad, e.nombre as entidad, c.codigopostal
                 from t_domicilios d
-                JOIN t_colonias c ON c.id = d.colonia_id
-                JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
-                JOIN t_entidades e ON e.id = c.entidad_id
-                WHERE d.estatus_codigo = '201-ACTIVO' AND d.usuario_id = {$this->id} order by d.created_at";
+                left JOIN t_colonias c ON c.id = d.colonia_id
+                left JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
+                left JOIN t_entidades e ON e.id = c.entidad_id
+                WHERE d.estatus_codigo = '201-ACTIVO' 
+                ".( $con_colonia ? "and d.colonia_id is not null" : "" )."
+                AND d.usuario_id = {$this->id} order by d.created_at";
 
         $temp = $db->query( $sql )->getResultArray();
 
@@ -492,6 +494,7 @@ class E_usuario extends Entity
             ];
     
             $pedido = $nuevo;
+
             model( "PedidoModel" )->save( $nuevo );
 
             $pedido = $this->getPedido( $modelo );

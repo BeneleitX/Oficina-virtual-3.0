@@ -95,7 +95,7 @@
 </div>
 
 
-<div id="downline"></div>
+<div id="downline"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
 
 <script src= "<?php echo base_url() ?>/assets/js/d3.js"></script>
 
