@@ -62,7 +62,7 @@ class RangoModel extends Model
     
     protected function JSONencode(array $data)
     {
-        $data[ "data" ][ "cantidades"  ] = json_encode( isset( $data[ "data" ][ "cantidades"  ] ) ? $data[ "data" ][ "settings"  ] : [] );
+        $data[ "data" ][ "cantidades"  ] = json_encode( $data[ "data" ][ "cantidades"  ] );
 
         return $data;
     }     

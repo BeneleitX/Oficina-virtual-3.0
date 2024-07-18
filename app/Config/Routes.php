@@ -10,6 +10,10 @@ use CodeIgniter\Router\RouteCollection;
 
  */
 
+ $routes->post( "API/insert_order",         "API::insert_order" );
+ $routes->post( "API/validate_login",       "API::validate_login" );
+
+
 $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );
 $routes->get( "recover/(:any)",             "Sesion::recover/$1" );
@@ -38,6 +42,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "soporte",                "Soporte::inicio" );    
     $routes->get( "tickets",                "Soporte::tickets" );    
+
+    $routes->get( "layout_bancos",          "Bancos::layout" );    
+    $routes->post( "analiza_layout",        "Bancos::analiza_layout" );    
 
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
