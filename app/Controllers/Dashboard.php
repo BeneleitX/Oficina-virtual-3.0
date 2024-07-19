@@ -124,9 +124,9 @@ class Dashboard extends BaseController
                 $html .= "
                     <div class=\"text-center\">
 
-                    <p class=\"\"><img src=\"".base_url()."assets/img/ov2.png\" class=\"img-fluid p-5\"></p>
-                    <h2 class=\"mt-4\">¡BIENVENIDO!</h2>
-                    <h5 class=\"mb-4\">¡a tu nueva oficina virtual Beneleit!</h5>
+                    <p class=\"\"><img src=\"".base_url()."assets/img/ov2.png\" class=\"img-fluid px-5\"></p>
+                    <h2 class=\"mt-3\">¡BIENVENIDO!</h2>
+                    <h5 class=\"mb-3\">¡a tu nueva oficina virtual Beneleit!</h5>
                     <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>
 

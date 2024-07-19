@@ -70,6 +70,13 @@ class Sesion extends BaseController
             $data = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
 
+            if( strlen( $usuario->password_original() ) != 72 ){
+                return redirect()
+                    ->back()
+                    ->with( "errors", [ "socio_password" => "<div class=\"alert alert-danger small\">Tu cuenta ha sido actualizada con éxito, sin embargo por cuestiones de seguridad y protección a tus datos personales, para ingresar a ella necesitas solicitar un nuevo password en el enlace siguiente:</div>" ] )
+                    ->withInput();
+            }
+
             if( $usuario->getPassword() != $data[ "socio_password" ] ){
 
                 // BITACORA inicio de sesión fallido
