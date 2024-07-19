@@ -113,6 +113,8 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ) echo "style=\"display:none\""; ?>>
                     <?php 
 
+$dom = $usuario->data->domicilio ?? 0;
+
                     if( ( $pagado || $cancelado ) && sizeof( $domicilios ) ){
 
                         if( isset( $pedido[ "data" ][ "domicilio" ] ) ){
@@ -124,7 +126,7 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                         }
                     }
                     else{
-                        $dom = $usuario->data->domicilio ?? 0;
+                        
                         if( intval( $pedido[ "data" ][ "entrega" ] ) && substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ){
                             $d = $pedido[ "data" ][ "entrega" ];
                         }
