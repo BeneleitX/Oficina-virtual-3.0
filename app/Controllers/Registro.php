@@ -106,7 +106,6 @@ class Registro extends BaseController
             "correo"        => $data[ "correo" ],
             "telefono"      => $data[ "celular" ],
             "curp"          => $data[ "curp" ],
-            "password"      => $demo > 0 ? "1234" : random_password(),
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
             ],
@@ -162,6 +161,10 @@ class Registro extends BaseController
         $entidad->fill( $recibe );
 
         $id = $usuariomodel->insert( $entidad );
+
+        $entidad->id = $id;
+        $entidad->password = $demo > 0 ? "1234" : random_password();
+        $usuariomodel->insert( $entidad );
 
         if( $data[ "patrocinador" ] != 9999999 ){
             $padre = model( "UsuarioModel" )->find( $data[ "patrocinador" ] );
