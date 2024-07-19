@@ -163,7 +163,7 @@ class Registro extends BaseController
         $id = $usuariomodel->insert( $entidad );
 
         $entidad->id = $id;
-        $entidad->password = $demo > 0 ? "1234" : random_password();
+        $recibe[ "password" ] = $entidad->password = $demo > 0 ? "1234" : random_password();
         $usuariomodel->insert( $entidad );
 
         if( $data[ "patrocinador" ] != 9999999 ){
@@ -190,7 +190,7 @@ class Registro extends BaseController
             return redirect()->to( "red/{$modelo}" );
         }
         else{
-            return redirect()->to( "registro_exito/".base64_encode( $entidad->password_original() ) )->with( "msg", [ 
+            return redirect()->to( "registro_exito/".base64_encode( $recibe[ "password" ] ) )->with( "msg", [ 
                 "clase" => "success", 
                 "icono" => "user-check", 
                 "texto" => "Cuenta de nuevo socio creada con éxito"] );
