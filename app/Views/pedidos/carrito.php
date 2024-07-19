@@ -163,7 +163,7 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                                     </div>
                                 </div>
                                 <?php }
-                                elseif( $d[ "colonia" ] ) {
+                                elseif( $d[ "colonia" ] ?? 0 ) {
                                 ?>
                                 <div class="col-lg-6">
                                 <form method="post" action="<?php echo base_url("envia"); ?>">
