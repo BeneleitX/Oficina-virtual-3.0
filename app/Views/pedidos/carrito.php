@@ -119,7 +119,7 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                             $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
                             $dom = 0;
                         }
-                        elseif( $pedido[ "data" ][ "entrega_xpace" ] > 0 ){
+                        elseif( ( $pedido[ "data" ][ "entrega_xpace" ] ?? 0 ) > 0 ){
                             echo $dom = $pedido[ "data" ][ "entrega" ];
                         }
                     }

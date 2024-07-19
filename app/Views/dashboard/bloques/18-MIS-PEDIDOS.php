@@ -47,3 +47,7 @@ load_catalogo( "promociones" );
     </tbody>
 </table>
 
+<div class="card-body">
+        <a class="btn btn-lg mt-4 col-12 btn-primary" href="<?php echo base_url( "tienda/10-NUTRICION" ); ?>"><i class="fa fa-shopping-cart"></i> Hacer un nuevo pedido</a>
+</div>
+

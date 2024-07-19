@@ -16,7 +16,8 @@
         "ext-mbstring": "*",
         "laminas/laminas-escaper": "^2.9",
         "phpoffice/phpspreadsheet": "^2.1",
-        "psr/log": "^1.1"
+        "psr/log": "^1.1",
+        "conekta/conekta-php": "*@dev"
     },
     "require-dev": {
         "codeigniter/coding-standard": "^1.7",

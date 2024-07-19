@@ -58,7 +58,7 @@ class Pedidos extends BaseController
 
             $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
-            $sql = "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'";
+            $sql = "/* estatus_codigo = '201-ACTIVO' AND  */modelo_codigo = '{$this->data[ "modelo" ]}'";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
             load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
