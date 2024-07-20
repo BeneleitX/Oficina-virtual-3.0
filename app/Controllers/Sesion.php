@@ -114,12 +114,19 @@ class Sesion extends BaseController
     }
 
 
+    public function recover_success( $accion = null ){
+        $this->data[ "navbar" ] = false;
+        $this->data[ "accion" ] = $accion;
+
+        echo template( "sesion/recover_success", $this->data );
+    }
+
+
     public function pass_request(){
         $validation = service("validation");
         $validation->setRules([
             "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
             "socio_telefono" => "required|exact_length[10]|numeric",
-            "socio_curp" => "required|curp",
             "socio_correo" => "required|valid_email"
         ],[
             "socio_id" => [
@@ -131,10 +138,6 @@ class Sesion extends BaseController
                 "required" => "No has escrito un número telefónico",
                 "exact_length" => "El número debe ser a 10 dígitos",
                 "numeric" => "El número no es válido"
-            ],
-            "socio_curp" => [
-                "required" => "No has escrito CURP",
-                "curp" => "La CURP no es válida"
             ],
             "socio_correo" => [
                 "required" => "No has escrito un correo electrónico",
@@ -156,7 +159,6 @@ class Sesion extends BaseController
             // BITACORA solicitar recuperación de password fallido
             bitacora( 34, $usuario->id, [ 
                 "telefono" => $socio_telefono,
-                "curp" => $socio_curp,
                 "correo" => $socio_correo
             ] );
 
@@ -166,25 +168,10 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-        if( $socio_curp != $usuario->curp ){
+        if( strtoupper( $socio_correo ) != strtoupper( $usuario->correo ) ){
             // BITACORA solicitar recuperación de password fallido
             bitacora( 34, $usuario->id, [ 
                 "telefono" => $socio_telefono,
-                "curp" => $socio_curp,
-                "correo" => $socio_correo
-            ] );
-
-            return redirect()
-                ->back()
-                ->with( "errors", [ "socio_curp" => "la CURP es incorrecta" ] )
-                ->withInput();
-        }
-
-        if( $socio_correo != $usuario->correo ){
-            // BITACORA solicitar recuperación de password fallido
-            bitacora( 34, $usuario->id, [ 
-                "telefono" => $socio_telefono,
-                "curp" => $socio_curp,
                 "correo" => $socio_correo
             ] );
 
@@ -198,16 +185,17 @@ class Sesion extends BaseController
         // ENVIAR CORREO
 
 $from    = "app@beneleit.mx";
-$to      = "scabbia@gmail.com";
-$subject = "the subject";
+$subject = "Solicitud de nuevo password";
 $message = "
-    <h3 style=\"text-align:center\">Asignación de un nuevo password temporal para el socio ".$usuario->id()."</h3>
-    <p style=\"text-align:center\"><form method=\"post\" action=\"".base_url( "pass_catch" )."\">
-        ".csrf_field()."
-        <input type=\"hidden\" name=\"nuevo_id\" value=\"".base64_encode( $usuario->password_original() )."\">
-        <p style=\"text-align:center\"><button type=\"submit\" value=\"reset password\">RESET PASSWORD</button></p>
-    </form></p>
+    <p>¡Hola ".$usuario->nombre()."! </p>
+    <p>Te enviamos este mensaje porque recibimos una solicitud para generar un nuevo password de acceso a tu cuenta.</p>
+    <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar.</p>
+    <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
+    <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
 ";
+
+$message = plantilla_correo( $usuario, $subject, $message );
+
 
 /*
 $config = array(
@@ -243,30 +231,27 @@ $email->setMessage($message);
 $email->send( false );
 
 d ($email->printDebugger(['headers']) );
-
+*/ 
  $headers = [
     "MIME-Version: 1.0",
     "Content-type: text/html; charset=iso-8859-1",
-    "To: {$to}",
+    "To: {$usuario->correo}",
     "From: {$from}"
 ];
 
-
-mail($to, $subject, $message, implode("\r\n", $headers ) ); 
-       */ 
+mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
+       
         // BITACORA envío de correo de recuperación de password
 
-        echo "
-        <div style=\"border:2px solid red;background:#ffeeee; border-radius:6px;margin:20px 300px\">{$message}</div>
-        ";
+        echo $message;
         bitacora( 35, $usuario->id );
 
-      //  return redirect()->to( "recover/success" );         
+        return redirect()->to( "recover/success" );
     }
 
 
-    public function pass_catch(){
-        extract( $this->request->getPost() );
+
+    public function pass_catch( $nuevo_id ){
 
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Password temporal generado";
