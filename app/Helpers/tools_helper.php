@@ -304,7 +304,7 @@ function base64_png( $file ){
 function plantilla_correo( $usuario, $subject, $message, $margin = 60, $width = 600, $avatar = 80 ){
     
     $avatar = $usuario->data->avatar->activo !== null ?
-        "<img style=\"width:{$size}px; height: {$size}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base64_png( "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ] )."\" alt=\"avatar\" width=\"{$size}\" height=\"{$size}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
+        "<img style=\"width:{$avatar}px; height: {$avatar}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base64_png( "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ] )."\" alt=\"avatar\" width=\"{$avatar}\" height=\"{$avatar}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
     
     $html = "
     
