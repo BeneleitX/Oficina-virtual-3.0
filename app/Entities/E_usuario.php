@@ -228,13 +228,10 @@ class E_usuario extends Entity
     public function avatar( int $size = 40, string $id = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
-            return "<img ".($id ?? "")." class=\"beneleit_avatar rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
+            return "<img ".($id ?? "")." class=\"rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
         }
-        else{
-            // return "<div class=\"emoji\"><div><i style=\"font-size:{$size}px;\" class=\"text-".$this->data->avatarbg." fa fa-".$this->data->avatarface."\"></i></div></div>";
 
-            return "<div class=\"beneleit_emoji emoji\"><div style=\"border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%\" class=\"text-teal bg-gray-400\">".$this->iniciales()."</div></div>";
-        }
+        return "<div class=\"emoji\"><div style=\"border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%\" class=\"text-teal bg-gray-400\">".$this->iniciales()."</div></div>";
     }
 
 
