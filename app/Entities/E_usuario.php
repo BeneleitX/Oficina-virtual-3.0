@@ -40,7 +40,7 @@ class E_usuario extends Entity
         return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
     }
 
-
+    
     public function resetPassword()
     {
         $encrypter = service( "encrypter" );

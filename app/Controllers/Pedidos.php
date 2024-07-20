@@ -42,6 +42,7 @@ class Pedidos extends BaseController
     
 
     public function carrito( $tipo, $data ){
+
         $this->data[ "navbar" ] = true;
 
         if( $tipo == "pedido" ){

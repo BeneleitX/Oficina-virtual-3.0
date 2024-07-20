@@ -113,6 +113,7 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ) echo "style=\"display:none\""; ?>>
                     <?php 
 
+
 $dom = $usuario->data->domicilio ?? 0;
 
                     if( ( $pagado || $cancelado ) && sizeof( $domicilios ) ){
@@ -153,6 +154,7 @@ $dom = $usuario->data->domicilio ?? 0;
                     }
                     else{
                      //   echo "<div domicilio_id=\"0\" class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.</div>";
+
                     }
                     ?>
                     <div class="row">
@@ -298,7 +300,9 @@ if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
 	</div>
 </div>
 
-<?php if( $pagado ){
+<?php 
+
+if( $pagado ){
 
 if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
     echo "<div class=\"card mb-5\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
@@ -318,7 +322,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
         echo "<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
-        <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge bg-mustard\">Compresion</span>" : "")."</td>
+        <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
         <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
         <td>".estatus( $c->estatus_codigo )."</td>
         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
@@ -533,7 +537,6 @@ foreach( $productos as $p ){
 
 	<script>
 		var modelo 			= '<?php echo $modelo; ?>',
-			usuario 		= <?php echo json_encode( $socio ) ?>,
 			cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
 			cat_productos   = <?php echo json_encode( $prods ); ?>,
 			metodosentrega	= <?php echo json_encode( METODOSENTREGA ) ?>,
