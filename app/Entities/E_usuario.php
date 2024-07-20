@@ -104,7 +104,8 @@ class E_usuario extends Entity
     
     protected function setCurp( string $curp ){
         $this->attributes[ "curp" ]     = strtoupper( $curp );
-        $this->attributes[ "fechanac" ] = implode("-", [ substr( $curp, 4, 2), substr( $curp, 6, 2), substr( $curp, 8, 2) ] );
+        $yn = substr( $curp, 4, 2) ;
+        $this->attributes[ "fechanac" ] = implode("-", [ ( intval( $yn ) >= date("y") ? "19" : "20").$yn, substr( $curp, 6, 2), substr( $curp, 8, 2) ] );
 
         $caras = [
             "face-smile",

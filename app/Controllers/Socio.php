@@ -257,8 +257,49 @@ class Socio extends BaseController
 
 
     public function nuevo_password( $s = null, $m = null, $p = null ){
-        $socio = $s ? model( "UsuarioModel" )->find( $s ) : $this->data[ "usuario" ];
-        $nuevo = $p ?? $this->request->getPost( "nuevo" );
+        $socio  = $s ? model( "UsuarioModel" )->find( $s ) : $this->data[ "usuario" ];
+        $actual = $this->request->getPost( "actual" ) ?? null;
+        $nuevo  = $p ?? $this->request->getPost( "nuevo" );
+        $nuevo_bis  = $p ?? $this->request->getPost( "nuevo_bis" );
+
+        $validation = service( "validation" );
+
+        $validation->setRules( [
+            "actual"    => "required",
+            "nuevo"     => "required|differs[actual]|min_length[6]",
+            "nuevo_bis" => "required|matches[nuevo]",
+        ] );
+
+        if( $actual != $socio->password ){
+            // BITACORA Error al crear nuevo password
+            bitacora( 36, $socio->id, [ 
+                "actual"  => $actual,
+                "nuevo"   => $nuevo,
+                "nuevo_bis"   => $nuevo_bis,
+                "usuario"  => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->to( "perfil#password" )
+                ->with( "errors", [ "actual" => "El password actual no es correcto" ] )
+                ->withInput();
+        }
+
+        // Si hay errores de validacióna utomática, regresar a formulario
+        if( !$validation->withRequest( $this->request )->run() ){
+            // BITACORA Error al crear nuevo password
+            bitacora( 36, $socio->id, [ 
+                "actual"  => $actual,
+                "nuevo"   => $nuevo,
+                "nuevo_bis"   => $nuevo_bis,
+                "usuario"  => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->to( "perfil#password" )
+                ->with( "errors", $validation->getErrors() )
+                ->withInput();
+        } 
 
         $json = $socio->data;
         $json->verificacion->password = true;
@@ -267,10 +308,12 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $socio );
 
-        // BITACORA Eliminar beneficiario
+        // BITACORA Crear nuevo password
         bitacora( 14, $socio->id, [ 
-            "password" => $nuevo,
-            "usuario"  => $this->data[ "usuario" ]->id
+            "actual"  => $actual,
+            "nuevo"   => $nuevo,
+            "nuevo_bis"   => $nuevo_bis,
+            "usuario" => $this->data[ "usuario" ]->id
         ] );
 
         if($m){
@@ -282,6 +325,7 @@ class Socio extends BaseController
                 "icono" => "check", 
                 "texto" => "Se actualizó tu password" ] );        
         }
+
     }
 
 

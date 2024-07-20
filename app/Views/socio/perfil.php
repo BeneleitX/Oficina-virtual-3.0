@@ -199,6 +199,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 
 		<div class="card mb-4">
+			<a name="password"></a>
             <div class="card-header"><h5 class="mb-0">Password</h5></div>
             <div class="card-body">	
 				<?php
@@ -210,7 +211,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<?php echo csrf_field() ?>
 
 					<label>Password actual</label>
-					<input type="password" name="actual" class="form-control mb-3" value="">
+					<input type="password" name="actual" class="form-control mb-0 <?php echo session( "errors.actual" ) ? "is-invalid" : ""; ?>" value="<?php echo old( "actual" ); ?>">
+					<p class="small text-red"><?php echo session( "errors.actual" ); ?></p>
 
 					<ul class="small">
 						<li>Debe tener un mínimo de 6 caracteres</li>
@@ -220,10 +222,12 @@ if( !$socio->data->verificacion->correo ){ ?>
 					</ul>
 
 					<label>Escribe tu nuevo password</label>
-					<input type="password" name="nuevo" class="form-control mb-3" value="">
+					<input type="password" name="nuevo" class="form-control mb-0 <?php echo session( "errors.nuevo" ) ? "is-invalid" : ""; ?>" value="<?php echo old( "nuevo" ); ?>">
+					<p class="small text-red"><?php echo session( "errors.nuevo" ); ?></p>
 
 					<label>Confirma el password</label>
-					<input type="password" name="nuevo_bis" class="form-control mb-3" value="">
+					<input type="password" name="nuevo_bis" class="form-control mb-0 <?php echo session( "errors.nuevo_bis" ) ? "is-invalid" : ""; ?>" value="<?php echo old( "nuevo_bis" ); ?>">
+					<p class="small text-red"><?php echo session( "errors.nuevo_bis" ); ?></p>
 
 					<button type="submit" class="btn btn-primary">Asignar nuevo password</button>
 				</form>
