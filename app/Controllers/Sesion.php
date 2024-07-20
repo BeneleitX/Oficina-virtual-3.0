@@ -211,18 +211,19 @@ $config = array(
 */
  $config = array(
     "protocol"  => "mail",
-    "smtp_host" => "151.202.178.68.host.secureserver.net",
+    "smtp_host" => "mail.beneleit.mx",
     "smtp_user" => "app@beneleit.mx",
     "smtp_pass" => "B3n3l31t**",
     "smtp_port" => 587, //465,
     "mailtype"  => "html",
     "newline"   => "\r\n",
-    "wordwrap"  => TRUE,
-    "validate"  => FALSE
+    "wordwrap"  => false,
+    "validate"  => false
 );
  
 $email = service("email", $config );
 
+$email->setMailType('html');  
 $email->setFrom($from, 'App Beneleit');
 $email->setTo($usuario->correo);
 $email->setSubject($subject);
