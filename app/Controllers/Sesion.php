@@ -232,6 +232,13 @@ $email->send( false );
 
  */
 
+
+ // BITACORA envío de correo de recuperación de password        
+bitacora( 35, $usuario->id );
+
+
+if( $usuario->id == 666 ){
+
   $headers = [
     "MIME-Version: 1.0",
     "Content-type: text/html; charset=UTF-8",
@@ -241,12 +248,15 @@ $email->send( false );
 mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
 mail( "sistemas@beneleit.mx", $subject, $message, implode("\r\n", $headers ) ); 
     
-        // BITACORA envío de correo de recuperación de password
-
-//        echo $message;
-        bitacora( 35, $usuario->id );
+        
 
         return redirect()->to( "recover/success" );
+    }
+    else{
+        echo $message;
+    }
+
+    
     }
 
 
