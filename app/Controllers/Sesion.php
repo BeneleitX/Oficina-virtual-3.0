@@ -196,7 +196,6 @@ $message = "
 
 $message = plantilla_correo( $usuario, $subject, $message );
 
-
 /*
 $config = array(
     "protocol"  => "smtp",
@@ -209,7 +208,7 @@ $config = array(
     "wordwrap"  => TRUE,
     "validate"  => FALSE
 );
-
+*/
  $config = array(
     "protocol"  => "mail",
     "smtp_host" => "151.202.178.68.host.secureserver.net",
@@ -225,13 +224,14 @@ $config = array(
 $email = service("email", $config );
 
 $email->setFrom($from, 'App Beneleit');
-$email->setTo($to);
+$email->setTo($usuario->correo);
 $email->setSubject($subject);
 $email->setMessage($message);
 $email->send( false );
 
-d ($email->printDebugger(['headers']) );
-*/ 
+
+ 
+/*
  $headers = [
     "MIME-Version: 1.0",
     "Content-type: text/html; charset=iso-8859-1",
@@ -240,7 +240,7 @@ d ($email->printDebugger(['headers']) );
 ];
 
 mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
-       
+  */     
         // BITACORA envío de correo de recuperación de password
 
         echo $message;
