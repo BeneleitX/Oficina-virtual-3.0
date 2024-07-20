@@ -299,7 +299,7 @@ function pills( $ruta, $activo, $callback = null ){
 function plantilla_correo( $usuario, $subject, $message, $margin = 60, $width = 600, $avatar = 80 ){
     
     $avatar = $usuario->data->avatar->activo !== null ?
-        "<img ".($id ?? "")." style=\"width:{$size}px; height: {$size}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base_url()."data/{$usuario->id}/avatar/{$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ]}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
+        "<img style=\"width:{$size}px; height: {$size}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base_url()."data/{$usuario->id}/avatar/{$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ]}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
     
     $html = "
     
@@ -308,7 +308,7 @@ function plantilla_correo( $usuario, $subject, $message, $margin = 60, $width = 
             <div style=\"width:100%; font-family:arial; padding:0px; color:white; border:2px solid #1a2542; border-radius:6px 6px 0 0; margin:0 auto; background-color:#1a2542; background-image: url(".base_url()."assets/img/icon_beneleit3.png); background-repeat:no-repeat; background-position:-100px -50px;\">
                 <table style=\"width:100%\"><tr>
                     <td><img style=\"margin:0 {$margin}px;\" src=\"".base_url()."assets/img/logo_blanco.png\" alt=\"Beneleit logo\" width=\"100\" height=\"33\" class=\"beneleit_logo\"></td>
-                    <td style=\"text-align:right\">".$usuario->avatar($avatar)."</td>
+                    <td style=\"text-align:right\">{$avatar}</td>
                 </tr></table>
             </div>
     
