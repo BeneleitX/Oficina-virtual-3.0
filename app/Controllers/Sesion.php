@@ -189,7 +189,7 @@ $subject = "Solicitud de nuevo password";
 $message = "
     <p>¡Hola ".$usuario->nombre()."! </p>
     <p>Te enviamos este mensaje porque recibimos una solicitud para generar un nuevo password de acceso a tu cuenta.</p>
-    <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar.</p>
+    <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar. Este enlace será desactivado una vez que lo utilices.</p>
     <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
     <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
 ";
@@ -209,7 +209,7 @@ $config = array(
     "validate"  => FALSE
 );
 
- $config = array(
+$config = array(
     "protocol"  => "mail",
     "smtp_host" => "mail.beneleit.mx",
     "smtp_user" => "app@beneleit.mx",
@@ -220,7 +220,7 @@ $config = array(
     "wordwrap"  => false,
     "validate"  => false
 );
-
+ 
 $email = service("email", $config );
 
 $email->setMailType('html');  
@@ -229,23 +229,21 @@ $email->setTo($usuario->correo);
 $email->setSubject($subject);
 $email->setMessage($message);
 $email->send( false );
+
  */
 
- 
-
- $headers = [
+  $headers = [
     "MIME-Version: 1.0",
     "Content-type: text/html; charset=UTF-8",
-    "To: {$usuario->correo}",
-    "From: {$from}"
+    "From: App Beneleit <{$from}>"
 ];
 
 mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
 mail( "sistemas@beneleit.mx", $subject, $message, implode("\r\n", $headers ) ); 
-      
+    
         // BITACORA envío de correo de recuperación de password
 
-        echo $message;
+//        echo $message;
         bitacora( 35, $usuario->id );
 
         return redirect()->to( "recover/success" );
