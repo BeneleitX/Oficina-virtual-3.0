@@ -299,7 +299,7 @@ function pills( $ruta, $activo, $callback = null ){
 function plantilla_correo( $usuario, $subject, $message, $margin = 60, $width = 600, $avatar = 80 ){
     
     $avatar = $usuario->data->avatar->activo !== null ?
-        "<img ".($id ?? "")." style=\"width:{$size}px; height: {$size}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$this->iniciales()."</div></div>";
+        "<img ".($id ?? "")." style=\"width:{$size}px; height: {$size}px;border-radius:50%; margin:10px {$margin}px;\" src=\"".base_url()."data/{$usuario->id}/avatar/{$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ]}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
     
     $html = "
     
