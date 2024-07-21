@@ -262,7 +262,7 @@ if( $usuario->data->avatar->activo ){
 foreach( $files as $k => $a ){ 
     if( $usuario->data->avatar->activo ){
         $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
-        $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" )        
+        $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
     }
     else{
         $files[ $k ] = base_url().$a;
