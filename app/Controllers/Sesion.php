@@ -270,7 +270,7 @@ foreach( $files as $k => $a ){
 }
 
 $message = plantilla_correo( $usuario, $subject, $message, $files );
-
+dd( $files );
 if( $usuario->id != 666 ){
 
     $email->setFrom( $from, "App Beneleit" );
