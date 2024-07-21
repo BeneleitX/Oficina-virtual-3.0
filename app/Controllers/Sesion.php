@@ -202,7 +202,7 @@ class Sesion extends BaseController
             <p>¡Hola ".$usuario->nombre()."! </p>
             <p>Te enviamos este mensaje porque recibimos una solicitud para generar un nuevo password de acceso a tu cuenta.</p>
             <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar. Este enlace será desactivado una vez que lo utilices.</p>
-            <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
+            <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() ?? $usuario->password_original().$usuario->id )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
             <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
         ";
 
@@ -266,7 +266,11 @@ class Sesion extends BaseController
     {
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Password temporal generado";
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first();
+
+        $param = base64_decode( $nuevo_id );
+        $sql   = strlen( $param ) < 8 ? "id = {$param}" : "password = '{$param}'";
+
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( $sql )->first();
 
         if( $this->data[ "nuevo" ] ){
             $this->data[ "nuevo" ]->resetPassword();
