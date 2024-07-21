@@ -238,7 +238,7 @@ $email->send( false );
 bitacora( 35, $usuario->id );
 
 
-if( $usuario->id == 666 ){
+
 
 $email = service('email');
 
@@ -263,12 +263,14 @@ foreach( $attachments as $k => $a ){
 
 $message = plantilla_correo( $usuario, $subject, $message, $attachments );
 
-$email->setFrom( $from, "App Beneleit" );
-$email->setTo( $usuario->correo );
-$email->setCC( "sistemas@beneleit.mx" );
-$email->setSubject( $subject );
-$email->setMessage( $message );
-$email->send();
+if( $usuario->id == 666 ){
+
+    $email->setFrom( $from, "App Beneleit" );
+    $email->setTo( $usuario->correo );
+    $email->setCC( "sistemas@beneleit.mx" );
+    $email->setSubject( $subject );
+    $email->setMessage( $message );
+    $email->send();
 
 
 /*     $headers = [
