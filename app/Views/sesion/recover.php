@@ -17,7 +17,7 @@
                             <p class="text-center p-3 m-0">
                                 <i class="far fa-circle-check text-teal" style="font-size:100px"></i>
                             </p>
-                            <p class="text-center">El correo electrónico se ha enviado</p>
+                            <p class="text-center">El correo electrónico se ha enviado a tu bandeja de entrada. Recuerda que en algunos casos el mensaje puede demorar hasta 5 minutos en llegar.</p>
                             <p class="text-center"><a href="<?php echo base_url( "login" ); ?>" class="btn btn-primary"><i class="fa fa-undo"></i> Regresar</a></p>
                             
                         <?php }else{ ?>

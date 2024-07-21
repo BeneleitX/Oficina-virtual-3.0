@@ -5,22 +5,27 @@ use App\Entities\Usuario;
 
 class Sesion extends BaseController
 {
-    public function login( $id = null ){
+    public function login( $id = null )
+    {
         $request = service('request');
 
+        // si estamos dentro de una petición AJAX cancelar todo y abrir pagina de login
         if( $this->request->isAJAX() ){
             echo "<script> top.location.href = '".base_url( "login" )."'; </script>";
         }
         else{
             $this->data[ "navbar" ] = false;
-            $this->data[ "fondo" ] = "marine";
-            $this->data[ "id" ] = $id;
+            $this->data[ "fondo" ]  = "marine";
+            $this->data[ "id" ]     = $id;
+
             echo template( "sesion/login", $this->data );
         }
     }
 
 
-    public function logout( $socio = null, $modelo = null ){
+    // cerrar sesión
+    public function logout( $socio = null, $modelo = null )
+    {
         if( session( "usuario" ) ){
             // BITACORA cerre manual de sesión
             bitacora( 3, session( "usuario" ));
@@ -28,48 +33,61 @@ class Sesion extends BaseController
             $this->session->destroy();
         }
 
+        // Si se cerró desde una petición de switch automático de socioso como admin
         if( $socio && $modelo ){
             return redirect()->to( "oauth/{$socio}/{$modelo}" );
         }
+
+        // Si fue cierre normal ir a pagina de login
         else{
             return redirect()->route( "login" );
         }
     }
 
 
-    public function procesa_login( $socio = null, $modelo = null ){
+    // validar formulario de login
+    public function procesa_login( $socio = null, $modelo = null )
+    {
+        // SI es un login autom´tico de switch de admin
         if( $socio && $modelo ){
             $usuario = model( "UsuarioModel" )->find( $socio );
             $this->session->set( "usuario", $usuario->id );
 
             return redirect()->to( "red/".$modelo );
         }
-        else{
-            $validation = service("validation");
-            $validation->setRules([
-                "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
-                "socio_password" => "required"
-            ],[
-                "socio_id" => [
-                    "required" => "No has escrito un No. de socio",
-                    "is_natural_no_zero" => "No es un No. de socio válido",
-                    "is_not_unique" => "El socio no existe",
-                ],
-                "socio_password" => [
-                    "required" => "No has escrito un password",
-                ]
-            ]);
 
-            if( !$validation->withRequest( $this->request )->run()){
+        // Si es un login normal,proceder a validar datos
+        else{
+            $validation = service( "validation" );
+
+            $validation->setRules(
+                [
+                    "socio_id"       => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
+                    "socio_password" => "required"
+                ],
+                [
+                    "socio_id"       => [
+                        "required"           => "No has escrito un No. de socio",
+                        "is_natural_no_zero" => "No es un No. de socio válido",
+                        "is_not_unique"      => "El socio no existe",
+                    ],
+                    "socio_password" => [
+                        "required"           => "No has escrito un password",
+                    ]
+                ]
+            );
+
+            if( !$validation->withRequest( $this->request )->run() ){
                 return redirect()
                     ->back()
-                    ->with( "errors", $validation->getErrors())
+                    ->with( "errors", $validation->getErrors() )
                     ->withInput();
             }
 
-            $data = $this->request->getPost();
+            $data    = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
 
+            // Password corrompido, debne generar uno nuevo
             if( strlen( $usuario->password_original() ) != 72 ){
                 return redirect()
                     ->back()
@@ -106,7 +124,8 @@ class Sesion extends BaseController
     }
 
 
-    public function recover( $accion = null ){
+    public function recover( $accion = null )
+    {
         $this->data[ "navbar" ] = false;
         $this->data[ "accion" ] = $accion;
 
@@ -114,15 +133,8 @@ class Sesion extends BaseController
     }
 
 
-    public function recover_success( $accion = null ){
-        $this->data[ "navbar" ] = false;
-        $this->data[ "accion" ] = $accion;
-
-        echo template( "sesion/recover_success", $this->data );
-    }
-
-
-    public function pass_request(){
+    public function pass_request()
+    {
         $validation = service("validation");
         $validation->setRules([
             "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
@@ -195,50 +207,8 @@ $message = "
 ";
 
 
-
-/*
-$config = array(
-    "protocol"  => "smtp",
-    "smtp_host" => "mail.beneleit.mx",
-    "smtp_user" => "app@beneleit.mx",
-    "smtp_pass" => "B3n3l31t**",
-    "smtp_port" => 587, //465,
-    "SMTPAuth" => true,
-    "mailtype"  => "html",
-    "newline"   => "\r\n",
-    "wordwrap"  => FALSE,
-    "validate"  => FALSE
-);
-
-$config = array(
-    "protocol"  => "mail",
-    "smtp_host" => "mail.beneleit.mx",
-    "smtp_user" => "app@beneleit.mx",
-    "smtp_pass" => "B3n3l31t**",
-    "smtp_port" => 587, //465,
-    "mailtype"  => "html",
-    "newline"   => "\r\n",
-    "wordwrap"  => false,
-    "validate"  => false
-);
- 
-$email = service("email", $config );
-
-$email->setMailType('html');  
-$email->setFrom($from, 'App Beneleit');
-$email->setTo($usuario->correo);
-$email->setSubject($subject);
-$email->setMessage($message);
-$email->send( false );
-
- */
-
-
- // BITACORA envío de correo de recuperación de password        
+// BITACORA envío de correo de recuperación de password        
 bitacora( 35, $usuario->id );
-
-
-
 
 $email = service('email');
 
@@ -248,18 +218,20 @@ $config['wordWrap'] = false;
 $config['mailtype'] = "html";
 
 $email->initialize($config);
-$files = [];
+$files = [
 
 $files[] = "assets/img/icon_beneleit3.png";
 $files[] = "assets/img/logo_blanco.png";
 $files[] = "assets/img/logo_color.png";
+
+];
 
 if( $usuario->data->avatar->activo !== null ){
     $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
 }
 
 
-if( $usuario->id == 666 ){
+
 
     foreach( $files as $k => $a ){ 
         $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
@@ -289,16 +261,13 @@ if( $usuario->id == 666 ){
         
 
         return redirect()->to( "recover/success" );
-    }
-    else{
+
         foreach( $files as $k => $a ){ 
             $files[ $k ] = base_url().$a;
         }
         $message = plantilla_correo( $usuario, $subject, $message, $files );
 
         echo $message;
-    }
-
     
     }
 
