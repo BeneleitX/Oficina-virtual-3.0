@@ -95,7 +95,7 @@ class Sesion extends BaseController
                     ->withInput();
             }
  */
-            if( $usuario->getPassword() != $data[ "socio_password" ] ){
+            if( $usuario->password != $data[ "socio_password" ] ){
 
                 // BITACORA inicio de sesión fallido
                 bitacora( 2, $usuario->id, [ 

@@ -66,9 +66,15 @@ class E_usuario extends Entity
     public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );
-
+        
         $cadena = base64_decode( $this->attributes[ "password" ] );
-        return $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
+        try {
+            $resultado = $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
+        } catch (Exception $e) {
+            return null;
+        }
+
+        return $resultado;
     }
 
 
