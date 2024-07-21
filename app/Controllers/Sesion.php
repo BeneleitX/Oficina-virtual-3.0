@@ -194,7 +194,7 @@ $message = "
     <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
 ";
 
-$message = plantilla_correo( $usuario, $subject, $message );
+
 
 /*
 $config = array(
@@ -248,6 +248,20 @@ $config['wordWrap'] = false;
 $config['mailtype'] = "html";
 
 $email->initialize($config);
+
+$attachments = [
+    "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ],
+    "assets/img/icon_beneleit3.png",
+    "assets/img/logo_blanco.png",
+    "assets/img/logo_color.png" 
+];
+
+foreach( $attachments as $k => $a ){ 
+    $email->attach( $a ); 
+    $attachments[ $k ] = "cid:".$email->setAttachmentCID( $a );
+}
+
+$message = plantilla_correo( $usuario, $subject, $message, $attachments );
 
 $email->setFrom( $from, "App Beneleit" );
 $email->setTo( $usuario->correo );
