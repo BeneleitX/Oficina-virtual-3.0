@@ -1,8 +1,13 @@
-<p class="text-center d-block d-lg-none"><img src="<?php echo base_url(); ?>assets/img/icon_beneleit.png" class="opacity-25 w-25 my-3"></p>
+<?php
+if( VARIABLES[ "aviso_inicio" ][ "valor" ] ){
+	echo "<div class=\"alert alert-danger small py-2\"><i class=\"fa fa-warning\"></i> ".VARIABLES[ "aviso_inicio" ][ "valor" ]."</div>";
+}
+?>
+<p class="text-center d-block d-lg-none"><img src="<?php echo base_url(); ?>assets/img/icon_beneleit.png" class="opacity-25 w-25 my-0"></p>
 
 <div id="login-form">
 	<div class="row">
-		<div class="col-lg-9">
+		<div class="col-lg-7 px-5">
 			<div id="carrusel" class="carousel slide mb-3" data-bs-ride="carousel">
 				<div class="carousel-indicators">
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -39,8 +44,11 @@
 				</button>
 			</div>
 		</div>
-		<div class="col-lg-3">
-			<p class="text-center d-none d-lg-block"><img src="<?php echo base_url(); ?>assets/img/icon_beneleit.png" class="opacity-25 w-50 my-4"></p>
+		<div class="col-lg-1">
+
+		</div>
+		<div class="col-lg-4 px-5">
+			<p class="text-center d-none d-lg-block"><img src="<?php echo base_url(); ?>assets/img/icon_beneleit.png" class="opacity-25 w-25 mt-1"></p>
 
 					<div class="card mb-3 bg-gray-200 xtext-white ">
 						
@@ -60,7 +68,7 @@
 						</div>
 						
 					</div>
-					<p class="text-center m-3 pt-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-outline-primary rounded-pill col-12" href="<?php echo base_url( "formulario" ); ?>"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+					<p class="text-center m-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-outline-primary rounded-pill col-12" href="<?php echo base_url( "formulario" ); ?>"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
 		</div>
 	</div>	
 </div>
