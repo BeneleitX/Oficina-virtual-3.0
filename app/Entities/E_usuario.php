@@ -68,13 +68,7 @@ class E_usuario extends Entity
         $encrypter = service( "encrypter" );
         
         $cadena = base64_decode( $this->attributes[ "password" ] );
-        try {
-            $resultado = $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
-        } catch (Exception $e) {
-            return null;
-        }
-
-        return $resultado;
+        return $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
     }
 
 
