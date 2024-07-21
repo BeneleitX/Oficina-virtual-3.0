@@ -268,9 +268,9 @@ foreach( $files as $k => $a ){
         $files[ $k ] = base_url().$a;
     }
 }
-
-$message = plantilla_correo( $usuario, $subject, $message, $files );
 dd( $files );
+$message = plantilla_correo( $usuario, $subject, $message, $files );
+
 if( $usuario->id != 666 ){
 
     $email->setFrom( $from, "App Beneleit" );
