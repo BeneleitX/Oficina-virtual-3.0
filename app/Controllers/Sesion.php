@@ -259,13 +259,12 @@ if( $usuario->data->avatar->activo !== null ){
 }
 
 
-foreach( $files as $k => $a ){ 
+if( $usuario->id == 666 ){
+
+    foreach( $files as $k => $a ){ 
         $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
         $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
-}
-
-if( $usuario->id == 666 ){
-    $files[ $k ] = base_url().$a;
+    }
 
     $message = plantilla_correo( $usuario, $subject, $message, $files );
 
@@ -291,8 +290,11 @@ if( $usuario->id == 666 ){
         return redirect()->to( "recover/success" );
     }
     else{
+        foreach( $files as $k => $a ){ 
+            $files[ $k ] = base_url().$a;
+        }
         $message = plantilla_correo( $usuario, $subject, $message, $files );
-        
+
         echo $message;
     }
 
