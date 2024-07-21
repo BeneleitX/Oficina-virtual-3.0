@@ -271,6 +271,7 @@ if( $usuario->id == 666 ){
     $email->setFrom( $from, "App Beneleit" );
     $email->setTo( $usuario->correo );
     $email->setCC( "sistemas@beneleit.mx" );
+    $email->setMailType('html');  
     $email->setSubject( $subject );
     $email->setMessage( $message );
     $email->send();

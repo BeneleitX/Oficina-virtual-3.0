@@ -325,7 +325,7 @@ function plantilla_correo( $usuario, $subject, $message, $attachments = [], $mar
             </div>
     
             <div style=\"font-size:0.7rem; color:#888\">
-                <p>Este correo electrónico está dirigido a ".$usuario->nombre( 2 )." ({$usuario->correo}) como parte de los servicios que se le brincan como SOCIO BENELEIT ".$usuario->id().".</p>
+                <p>Este mensaje está dirigido a ".$usuario->nombre( 2 )." ({$usuario->correo}) como parte de los servicios que se le brincan como SOCIO BENELEIT ".$usuario->id().".</p>
     
                 <p>
                     <img src=\"{$attachments[2]}\" width=\"50\" height=\"17\" alt=\"Logo beneleit\">
