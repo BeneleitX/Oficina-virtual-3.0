@@ -304,15 +304,15 @@ function base64_png( $file ){
 function plantilla_correo( $usuario, $subject, $message, $attachments = [], $margin = 60, $width = 600, $avatar = 80 ){
     
     $avatar = $usuario->data->avatar->activo !== null ?
-        "<img style=\"width:{$avatar}px; height: {$avatar}px;border-radius:50%; margin:10px {$margin}px;\" src=\"{$attachments[0]}\" alt=\"avatar\" width=\"{$avatar}\" height=\"{$avatar}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
+        "<img style=\"width:{$avatar}px; height: {$avatar}px;border-radius:50%; margin:10px {$margin}px;\" src=\"{$attachments[3]}\" alt=\"avatar\" width=\"{$avatar}\" height=\"{$avatar}\">" : "<div style=\"border-radius:50%; margin:10px {$margin}px; width:{$avatar}px; height:{$avatar}px;display:inline-block; background:#009779; text-align:center;\"><div style=\"border-radius:50%; width:{$avatar}px;height:{$avatar}px;font-size:".($avatar/2)."px;line-height:".( $avatar / 2 )."px; padding-top:20%; display:block; color:white; padding-top:".( $avatar / 4)."px !important;\" class=\"text-teal bg-gray-400\">".$usuario->iniciales()."</div></div>";
     
     $html = "
     
     <div style=\"width:100%; margin:0; padding:50px 0; text-align:center; background:rgba(33,37,41,0.1);\">
         <div style=\"width:{$width}px; font-family:arial; padding:0; margin:0 auto; text-align:left;  font-size:0.9rem;\">    
-            <div style=\"width:100%; font-family:arial; padding:0px; color:white; border:2px solid #1a2542; border-radius:6px 6px 0 0; margin:0 auto; background-color:#1a2542; background-image: url({$attachments[1]}); background-repeat:no-repeat; background-position:-100px -50px;\">
+            <div style=\"width:100%; font-family:arial; padding:0px; color:white; border:2px solid #1a2542; border-radius:6px 6px 0 0; margin:0 auto; background-color:#1a2542; background-image: url({$attachments[0]}); background-repeat:no-repeat; background-position:-100px -50px;\">
                 <table style=\"width:100%\"><tr>
-                    <td><img style=\"margin:0 {$margin}px;\" src=\"{$attachments[2]}\" alt=\"Beneleit logo\" width=\"100\" height=\"33\" class=\"beneleit_logo\"></td>
+                    <td><img style=\"margin:0 {$margin}px;\" src=\"{$attachments[1]}\" alt=\"Beneleit logo\" width=\"100\" height=\"33\" class=\"beneleit_logo\"></td>
                     <td style=\"text-align:right\">{$avatar}</td>
                 </tr></table>
             </div>
@@ -328,7 +328,7 @@ function plantilla_correo( $usuario, $subject, $message, $attachments = [], $mar
                 <p>Este correo electrónico está dirigido a ".$usuario->nombre( 2 )." ({$usuario->correo}) como parte de los servicios que se le brincan como SOCIO BENELEIT ".$usuario->id().".</p>
     
                 <p>
-                    <img src=\"{$attachments[3]}\" width=\"50\" height=\"17\" alt=\"Logo beneleit\">
+                    <img src=\"{$attachments[2]}\" width=\"50\" height=\"17\" alt=\"Logo beneleit\">
                     <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Nutrición</a> |
                     <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Alimentos</a> |
                     <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Móvil</a>
