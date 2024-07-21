@@ -272,14 +272,14 @@ class Sesion extends BaseController
 
         $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( $sql )->first();
 
-        if( $this->data[ "nuevo" ] ){
-            $this->data[ "nuevo" ]->resetPassword();
-            model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
-
-            echo template( "sesion/reset", $this->data );
-        }
-        else{
+        if( !$this->data[ "nuevo" ] || ( $this->data[ "nuevo" ]->password_original() && strlen( $param ) < 8 ) ){
             return redirect()->to( "login" );
         }
+
+        $this->data[ "nuevo" ]->resetPassword();
+        model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
+
+        echo template( "sesion/reset", $this->data );
+
     }
 }
