@@ -196,72 +196,57 @@ class Sesion extends BaseController
         // todo bien
         // ENVIAR CORREO
 
-$from    = "app@beneleit.mx";
-$subject = "Solicitud de nuevo password";
-$message = "
-    <p>¡Hola ".$usuario->nombre()."! </p>
-    <p>Te enviamos este mensaje porque recibimos una solicitud para generar un nuevo password de acceso a tu cuenta.</p>
-    <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar. Este enlace será desactivado una vez que lo utilices.</p>
-    <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
-    <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
-";
+        $from    = "app@beneleit.mx";
+        $subject = "Solicitud de nuevo password";
+        $message = "
+            <p>¡Hola ".$usuario->nombre()."! </p>
+            <p>Te enviamos este mensaje porque recibimos una solicitud para generar un nuevo password de acceso a tu cuenta.</p>
+            <p>Para proceder, haz click en el botón. </p><p>Usa el nuevo password para ingresar a tu perfil de usuario y cambiarlo por un password propio que te sea fácil de recordar. Este enlace será desactivado una vez que lo utilices.</p>
+            <p><a href=\"".base_url( "pass_catch" )."/".base64_encode( $usuario->password_original() )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Si, generar un nuevo password para mi cuenta</a></p></p>
+            <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
+        ";
 
 
-// BITACORA envío de correo de recuperación de password        
-bitacora( 35, $usuario->id );
+        // BITACORA envío de correo de recuperación de password        
+        bitacora( 35, $usuario->id );
 
-$email = service('email');
+        $email = service('email');
 
-$config['protocol'] = 'sendmail';
-$config['charset']  = 'UTF-8';
-$config['wordWrap'] = false;
-$config['mailtype'] = "html";
+        $config['protocol'] = 'sendmail';
+        $config['charset']  = 'UTF-8'; 
+        $config['wordWrap'] = false;
+        $config['mailtype'] = "html";
 
-$email->initialize($config);
-$files = [
+        $email->initialize($config);
+        $files = [
+            "assets/img/icon_beneleit3.png",
+            "assets/img/logo_blanco.png",
+            "assets/img/logo_color.png"
+        ];
 
-$files[] = "assets/img/icon_beneleit3.png";
-$files[] = "assets/img/logo_blanco.png";
-$files[] = "assets/img/logo_color.png";
+        // Si tiene avatar, agregar la imagen
+        if( $usuario->data->avatar->activo !== null ){
+            $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
+        }
 
-];
+        foreach( $files as $k => $a ){ 
+            $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
+            $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
+        }
 
-if( $usuario->data->avatar->activo !== null ){
-    $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
-}
+        $message = plantilla_correo( $usuario, $subject, $message, $files );
 
-
-
-
-    foreach( $files as $k => $a ){ 
-        $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
-        $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
-    }
-
-    $message = plantilla_correo( $usuario, $subject, $message, $files );
-
-    $email->setFrom( $from, "App Beneleit" );
-    $email->setTo( $usuario->correo );
-    $email->setCC( "sistemas@beneleit.mx" );
-    $email->setMailType('html');  
-    $email->setSubject( $subject );
-    $email->setMessage( $message );
-    $email->send();
-
-
-/*     $headers = [
-        "MIME-Version: 1.0",
-        "Content-type: text/html; charset=UTF-8",
-        "From: App Beneleit <{$from}>"
-    ];
-
-    mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
-    mail( "sistemas@beneleit.mx", $subject, $message, implode("\r\n", $headers ) ); 
- */    
-        
+        $email->setFrom( $from, "App Beneleit" ); 
+        $email->setTo( $usuario->correo );
+        $email->setCC( "sistemas@beneleit.mx" );
+        $email->setMailType('html');  
+        $email->setSubject( $subject );
+        $email->setMessage( $message );
+        $email->send();
 
         return redirect()->to( "recover/success" );
 
+        // Esto era para cuando los correos no sirven, esta despues del return así que nunca se ejecuta
         foreach( $files as $k => $a ){ 
             $files[ $k ] = base_url().$a;
         }
@@ -273,8 +258,8 @@ if( $usuario->data->avatar->activo !== null ){
 
 
 
-    public function pass_catch( $nuevo_id ){
-
+    public function pass_catch( $nuevo_id )
+    {
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Password temporal generado";
         $this->data[ "nuevo" ]  = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first();
