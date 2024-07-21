@@ -248,13 +248,15 @@ $config['wordWrap'] = false;
 $config['mailtype'] = "html";
 
 $email->initialize($config);
+$attachments = [];
 
-$attachments = [
-    "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ],
-    "assets/img/icon_beneleit3.png",
-    "assets/img/logo_blanco.png",
-    "assets/img/logo_color.png" 
-];
+$attachments[] = "assets/img/icon_beneleit3.png";
+$attachments[] = "assets/img/logo_blanco.png";
+$attachments[] = "assets/img/logo_color.png";
+
+if( $usuario->data->avatar->activo ){
+    $attachments[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
+}
 
 foreach( $attachments as $k => $a ){ 
     $email->attach( $a ); 
