@@ -239,15 +239,13 @@ bitacora( 35, $usuario->id );
 
 
 if( $usuario->id == 666 ){
-phpinfo();
-die();
 
 $email = service('email');
 
 $config['protocol'] = 'sendmail';
-$config['mailPath'] = '/usr/sbin/sendmail';
 $config['charset']  = 'UTF-8';
 $config['wordWrap'] = false;
+$config['mailtype'] = "html";
 
 $email->initialize($config);
 
