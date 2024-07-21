@@ -248,22 +248,28 @@ $config['wordWrap'] = false;
 $config['mailtype'] = "html";
 
 $email->initialize($config);
-$attachments = [];
+$files = [];
 
-$attachments[] = "assets/img/icon_beneleit3.png";
-$attachments[] = "assets/img/logo_blanco.png";
-$attachments[] = "assets/img/logo_color.png";
+$files[] = "assets/img/icon_beneleit3.png";
+$files[] = "assets/img/logo_blanco.png";
+$files[] = "assets/img/logo_color.png";
 
 if( $usuario->data->avatar->activo ){
-    $attachments[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
+    $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
 }
 
-foreach( $attachments as $k => $a ){ 
-    $email->attach( $a ); 
-    $attachments[ $k ] = "cid:".$email->setAttachmentCID( $a );
+
+foreach( $files as $k => $a ){ 
+    if( $usuario->data->avatar->activo ){
+        $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
+        $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" )        
+    }
+    else{
+        $files[ $k ] = base_url().$a;
+    }
 }
 
-$message = plantilla_correo( $usuario, $subject, $message, $attachments );
+$message = plantilla_correo( $usuario, $subject, $message, $files );
 
 if( $usuario->id == 666 ){
 
