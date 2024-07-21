@@ -254,13 +254,13 @@ $files[] = "assets/img/icon_beneleit3.png";
 $files[] = "assets/img/logo_blanco.png";
 $files[] = "assets/img/logo_color.png";
 
-if( $usuario->data->avatar->activo ){
+if( $usuario->data->avatar->activo !== null ){
     $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
 }
 
 
 foreach( $files as $k => $a ){ 
-    if( $usuario->data->avatar->activo ){
+    if( $usuario->data->avatar->activo !== null ){
         $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
         $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
     }
@@ -268,7 +268,7 @@ foreach( $files as $k => $a ){
         $files[ $k ] = base_url().$a;
     }
 }
-dd( $files );
+
 $message = plantilla_correo( $usuario, $subject, $message, $files );
 
 if( $usuario->id != 666 ){
