@@ -203,6 +203,7 @@ $config = array(
     "smtp_user" => "app@beneleit.mx",
     "smtp_pass" => "B3n3l31t**",
     "smtp_port" => 587, //465,
+    "SMTPAuth" => true,
     "mailtype"  => "html",
     "newline"   => "\r\n",
     "wordwrap"  => FALSE,
@@ -238,16 +239,35 @@ bitacora( 35, $usuario->id );
 
 
 if( $usuario->id == 666 ){
+phpinfo();
+die();
 
-  $headers = [
-    "MIME-Version: 1.0",
-    "Content-type: text/html; charset=UTF-8",
-    "From: App Beneleit <{$from}>"
-];
+$email = service('email');
 
-mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
-mail( "sistemas@beneleit.mx", $subject, $message, implode("\r\n", $headers ) ); 
-    
+$config['protocol'] = 'sendmail';
+$config['mailPath'] = '/usr/sbin/sendmail';
+$config['charset']  = 'UTF-8';
+$config['wordWrap'] = false;
+
+$email->initialize($config);
+
+$email->setFrom( $from, "App Beneleit" );
+$email->setTo( $usuario->correo );
+$email->setCC( "sistemas@beneleit.mx" );
+$email->setSubject( $subject );
+$email->setMessage( $message );
+$email->send();
+
+
+/*     $headers = [
+        "MIME-Version: 1.0",
+        "Content-type: text/html; charset=UTF-8",
+        "From: App Beneleit <{$from}>"
+    ];
+
+    mail( $usuario->correo, $subject, $message, implode("\r\n", $headers ) ); 
+    mail( "sistemas@beneleit.mx", $subject, $message, implode("\r\n", $headers ) ); 
+ */    
         
 
         return redirect()->to( "recover/success" );
