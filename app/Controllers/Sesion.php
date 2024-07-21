@@ -260,18 +260,14 @@ if( $usuario->data->avatar->activo !== null ){
 
 
 foreach( $files as $k => $a ){ 
-    if( $usuario->data->avatar->activo !== null ){
         $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
         $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
-    }
-    else{
-        $files[ $k ] = base_url().$a;
-    }
 }
 
-$message = plantilla_correo( $usuario, $subject, $message, $files );
+if( $usuario->id == 666 ){
+    $files[ $k ] = base_url().$a;
 
-if( $usuario->id != 666 ){
+    $message = plantilla_correo( $usuario, $subject, $message, $files );
 
     $email->setFrom( $from, "App Beneleit" );
     $email->setTo( $usuario->correo );
@@ -295,6 +291,8 @@ if( $usuario->id != 666 ){
         return redirect()->to( "recover/success" );
     }
     else{
+        $message = plantilla_correo( $usuario, $subject, $message, $files );
+        
         echo $message;
     }
 
