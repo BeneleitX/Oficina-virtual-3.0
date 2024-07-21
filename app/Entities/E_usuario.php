@@ -46,10 +46,14 @@ class E_usuario extends Entity
         $encrypter = service( "encrypter" );
         $password  = random_password();
 
-        $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
+        $this->password = $password; // base64_encode( $encrypter->encrypt( $password, [ "key" => $this->id ] ) );
 
-        $data = $this->data;
+        // BITACORA envío de correo de recuperación de password        
+        bitacora( 37, $this->id, [
+            "nuevo" => $password
+        ] );
         
+        $data = $this->data;
         $data->verificacion->password = false;
         $this->data = $data;
 

@@ -87,14 +87,14 @@ class Sesion extends BaseController
             $data    = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
 
-            // Password corrompido, debne generar uno nuevo
-            if( strlen( $usuario->password_original() ) != 72 ){
+            // Password corrompido, debe generar uno nuevo
+/*             if( strlen( $usuario->password_original() ) != 72 ){
                 return redirect()
                     ->back()
-                    ->with( "errors", [ "socio_password" => "<div class=\"alert alert-danger small\">Tu cuenta ha sido actualizada con éxito, sin embargo por cuestiones de seguridad y protección a tus datos personales, para ingresar a ella necesitas solicitar un nuevo password en el enlace siguiente:</div>" ] )
+                    ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
                     ->withInput();
             }
-
+ */
             if( $usuario->getPassword() != $data[ "socio_password" ] ){
 
                 // BITACORA inicio de sesión fallido
@@ -208,7 +208,9 @@ class Sesion extends BaseController
 
 
         // BITACORA envío de correo de recuperación de password        
-        bitacora( 35, $usuario->id );
+        bitacora( 35, $usuario->id, [
+            "correo" => $usuario->correo
+        ] );
 
         $email = service('email');
 
@@ -229,22 +231,24 @@ class Sesion extends BaseController
             $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
         }
 
-        foreach( $files as $k => $a ){ 
-            $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
-            $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
+        if( $_SERVER[ "SERVER_ADDR" ] != "127.0.0.1" ){
+            foreach( $files as $k => $a ){ 
+                $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
+                $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
+            }
+    
+            $message = plantilla_correo( $usuario, $subject, $message, $files );
+    
+            $email->setFrom( $from, "App Beneleit" ); 
+            $email->setTo( $usuario->correo );
+            $email->setCC( "sistemas@beneleit.mx" );
+            $email->setMailType('html');  
+            $email->setSubject( $subject );
+            $email->setMessage( $message );
+            $email->send();
+        
+            return redirect()->to( "recover/success" );
         }
-
-        $message = plantilla_correo( $usuario, $subject, $message, $files );
-
-        $email->setFrom( $from, "App Beneleit" ); 
-        $email->setTo( $usuario->correo );
-        $email->setCC( "sistemas@beneleit.mx" );
-        $email->setMailType('html');  
-        $email->setSubject( $subject );
-        $email->setMessage( $message );
-        $email->send();
-
-        return redirect()->to( "recover/success" );
 
         // Esto era para cuando los correos no sirven, esta despues del return así que nunca se ejecuta
         foreach( $files as $k => $a ){ 
