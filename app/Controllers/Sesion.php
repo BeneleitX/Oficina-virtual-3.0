@@ -196,7 +196,6 @@ class Sesion extends BaseController
         // todo bien
         // ENVIAR CORREO
 
-        $from    = "app@beneleit.mx";
         $subject = "Solicitud de nuevo password";
         $message = "
             <p>¡Hola ".$usuario->nombre()."! </p>
@@ -206,58 +205,14 @@ class Sesion extends BaseController
             <p>Si tu no has solicitado esta acción, simplemente ignora el mensaje.</p>
         ";
 
+        $respuesta = envia_correo( $usuario, $subject, $message );
 
-        // BITACORA envío de correo de recuperación de password        
-        bitacora( 35, $usuario->id, [
-            "correo" => $usuario->correo
-        ] );
-
-        $email = service('email');
-
-        $config['protocol'] = 'sendmail';
-        $config['charset']  = 'UTF-8'; 
-        $config['wordWrap'] = false;
-        $config['mailtype'] = "html";
-
-        $email->initialize($config);
-        $files = [
-            "assets/img/icon_beneleit3.png",
-            "assets/img/logo_blanco.png",
-            "assets/img/logo_color.png"
-        ];
-
-        // Si tiene avatar, agregar la imagen
-        if( $usuario->data->avatar->activo !== null ){
-            $files[] = "data/{$usuario->id}/avatar/".$usuario->data->avatar->imagenes[ $usuario->data->avatar->activo ];
+        if( $_SERVER[ "SERVER_ADDR" ] == "127.0.0.1" ){
+            echo $respuesta;
         }
-
-        if( $_SERVER[ "SERVER_ADDR" ] != "127.0.0.1" ){
-            foreach( $files as $k => $a ){ 
-                $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
-                $files[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
-            }
-    
-            $message = plantilla_correo( $usuario, $subject, $message, $files );
-    
-            $email->setFrom( $from, "App Beneleit" ); 
-            $email->setTo( $usuario->correo );
-            $email->setCC( "sistemas@beneleit.mx" );
-            $email->setMailType('html');  
-            $email->setSubject( $subject );
-            $email->setMessage( $message );
-            $email->send();
-        
+        else{
             return redirect()->to( "recover/success" );
         }
-
-        // Esto era para cuando los correos no sirven, esta despues del return así que nunca se ejecuta
-        foreach( $files as $k => $a ){ 
-            $files[ $k ] = base_url().$a;
-        }
-        $message = plantilla_correo( $usuario, $subject, $message, $files );
-
-        echo $message;
-    
     }
 
 

@@ -21,43 +21,44 @@
 </div> 
 
 <?php 
+if( $usuario ){
+    $data = (array)$usuario->data;
 
-$data = (array)$usuario->data;
+    if( $data && sizeof( $data[ "splash" ] )  > 0 ){
+        shuffle( $data[ "splash" ] );
+        $splash = array_shift( $data[ "splash" ] );
+        $splash->tipo = strtolower( $splash->tipo );
 
-if( $data && sizeof( $data[ "splash" ] )  > 0 ){
-    shuffle( $data[ "splash" ] );
-    $splash = array_shift( $data[ "splash" ] );
-    $splash->tipo = strtolower( $splash->tipo );
+        echo "<script>$(document).ready(function(){ modal_splash( '{$splash->tipo}', '".json_encode( $splash->parametros )."' ) });</script>";
+        $usuario->data = $data;
+        model( "UsuarioModel" )->save( $usuario );
+        ?>
 
-    echo "<script>$(document).ready(function(){ modal_splash( '{$splash->tipo}', '".json_encode( $splash->parametros )."' ) });</script>";
-    $usuario->data = $data;
-    model( "UsuarioModel" )->save( $usuario );
-    ?>
+        <script>
+            var myModalEl = document.getElementById('modal_splash');
+            myModalEl.addEventListener('hidden.bs.modal', function (event) {
+                clearTimeout(timeout);
+            })
 
-    <script>
-        var myModalEl = document.getElementById('modal_splash');
-        myModalEl.addEventListener('hidden.bs.modal', function (event) {
-            clearTimeout(timeout);
-        })
+            function modal_splash( tipo, parametros ){
+                $( '#modal_splash' ).modal( 'show' );
 
-        function modal_splash( tipo, parametros ){
-            $( '#modal_splash' ).modal( 'show' );
+                $.ajax({
+                    url: base_url + "splash", 
+                    type: "POST",
+                    data: { [csrf_token] : csrf_hash, tipo : tipo, parametros : parametros },
+                    success: function( result ){
+                        $( '#modal_splash .modal-body' ).html( result );
+                    }
+                });
+            }
 
-            $.ajax({
-                url: base_url + "splash", 
-                type: "POST",
-                data: { [csrf_token] : csrf_hash, tipo : tipo, parametros : parametros },
-                success: function( result ){
-                    $( '#modal_splash .modal-body' ).html( result );
-                }
-            });
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+        </script>
+        <?php
         }
-
-        function randomInRange(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-    </script>
-    <?php
     }
     ?>
     <script>

@@ -258,13 +258,13 @@ function update_pedido( flag = null ){
                     comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
                     caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes );
+                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
                     break;
                 case 'efectivo':
                     comision = parseFloat( metodospago[ metodopago ].settings.comision );
                     caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
                     cantidad.html( caption );
-                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes );
+                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
                     break;                 
             }
     });

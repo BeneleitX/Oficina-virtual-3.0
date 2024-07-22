@@ -99,7 +99,7 @@ if(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
                         <div class="col-lg-6">
                             <?php 
                             
-                            if(  $pagado  && !$entregado ){ ?>
+                            if(0 &&  $pagado  && !$entregado ){ ?>
                                 <form method="post" action="<?php echo base_url("entrega"); ?>">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
@@ -167,7 +167,7 @@ $dom = $usuario->data->domicilio ?? 0;
                                     </div>
                                 </div>
                                 <?php }
-                                elseif( $d[ "colonia" ] ?? 0 ) {
+                                elseif( 0 && $d[ "colonia" ] ?? 0 ) {
                                 ?>
                                 <div class="col-lg-6">
                                 <form method="post" action="<?php echo base_url("envia"); ?>">
@@ -275,7 +275,7 @@ if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
                         </div>
 
                         <?php if( ( $pagado || $cancelado ) ){ ?>
-                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
+                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
                         <?php }
                     }
                     else{

@@ -285,10 +285,10 @@ class E_usuario extends Entity
         return null;
     }
 
-    public function getDownlineJSON( $modelo ){
+    public function getDownlineJSON( $modelo, $niveles = null ){
 
         $db  = db_connect();
-        $sql = "select f_get_downline( {$this->id}, '{$modelo}', ".( MODELOS[ $modelo ][ "settings" ][ "niveles" ] )." ) as downline";
+        $sql = "select f_get_downline( {$this->id}, '{$modelo}', ".($niveles ?? MODELOS[ $modelo ][ "settings" ][ "niveles" ] )." ) as downline";
         $r = $db->query( $sql )->getRow();
 
         return $r->downline;
@@ -512,7 +512,12 @@ class E_usuario extends Entity
 
         if( $mes && $mes == date( "Ym" ) ) $mes = null;
 
-        $pedido         = $this->getPedido( $modelo );
+        $pedido         = $this->getPedido( $modelo, false );
+
+        if( !$pedido ){
+            return null;
+        }
+        
         $saldo          = $this->data->saldo->{$modelo};
         $bultos         = ceil( $pedido[ "data" ][ "peso" ] / $pedido[ "data" ][ "pesoxbulto" ] );
         $productos      = $pedido[ "data" ][ "total" ];
@@ -574,6 +579,26 @@ class E_usuario extends Entity
             }
 
             model( "PedidoModel" )->save( $pedido );
+
+        /**************************************************************/
+        // todo bien
+        // ENVIAR CORREO
+
+        $subject = "Pedido ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." {$pedido[ "referencia" ]} pagado";
+        $message = "
+            <p>¡Hola ".$this->nombre()."! </p>
+            <p>mensaje de pedido pagado y detalles</p>
+        ";
+
+        $respuesta = envia_correo( $this, $subject, $message );
+
+        if( $_SERVER[ "SERVER_ADDR" ] == "127.0.0.1" ){
+            echo $respuesta;
+
+        }
+        
+        /**************************************************************/
+        
 
             $this->data = $data;
             $this->historial = $historial;

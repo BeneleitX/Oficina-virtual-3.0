@@ -43,6 +43,29 @@ class Pedidos extends BaseController
 
     public function carrito( $tipo, $data ){
 
+
+                /**************************************************************/
+        // todo bien
+        // ENVIAR CORREO
+        $pedido  = model( "PedidoModel" )->where( "referencia = 75" )->first();
+        $usuario = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+        
+        $subject = "Pedido ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." {$pedido[ "referencia" ]} pagado";
+        $message = "
+            <p>¡Hola ".$usuario->nombre()."! </p>
+            <p>mensaje de pedido pagado y detalles</p>
+        ";
+
+        $respuesta = envia_correo( $usuario, $subject, $message );
+
+        if( $_SERVER[ "SERVER_ADDR" ] == "127.0.0.1" ){
+            echo $respuesta;
+
+        }
+        
+        /**************************************************************/
+
+        return;
         $this->data[ "navbar" ] = true;
 
         if( $tipo == "pedido" ){
@@ -264,25 +287,6 @@ class Pedidos extends BaseController
     }
     
 
-    public function xxxpagoyenvio( $modelo ){
-        load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "productos",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
-
-        $this->data[ "socio" ] = $this->data[ "usuario" ];
-        $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones();
-        if( !( $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo, false ) ) ){ 
-            return redirect()->to( 'tienda/'.$modelo );
-        }
-        $this->data[ "navbar" ] = true;
-        $this->data[ "modelo" ] = $modelo;
-        $this->data[ "titulo" ] = "Detalles de pedido";
-
-        echo template( "pedidos/pagoyenvio", $this->data );
-    }
-    
 
     public function checkout(){
         $this->data[ "modelo" ] = $this->request->getPost( "modelo" );
@@ -290,7 +294,7 @@ class Pedidos extends BaseController
 
         $this->data[ "socio" ] = $this->data[ "usuario" ];
         if( !( $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ], false ) ) || $this->data[ "pedido" ][ "estatus_codigo" ] != "250-EN-PROCESO" ){ 
-            return redirect()->to( 'compras/' );
+            return redirect()->to( 'historial' );
         }
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];

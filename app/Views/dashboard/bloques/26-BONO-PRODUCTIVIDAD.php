@@ -48,7 +48,7 @@ if( !$es_premiere ){
 
 </table>
 
-<div class="m-3 mt-0 text-<?php echo $ganado ? "success" : "gray-500"; ?> text-center"><?php echo $ganado ? "<h4>¡Felicidades!</h4> conseguiste tus productos de regalo" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Ingresa 4 socios directos nuevos PREMIERE en el mes"; ?></div>
+<div class="m-3 mt-0 text-<?php echo $ganado ? "success" : "gray-500"; ?> text-center"><?php echo $ganado ? "<h4>¡Felicidades!</h4>".( $es_premiere ? "<p>conseguiste tus productos de regalo</p>" : "<p class=\"text-center text-red small\">conseguiste tus productos de regalo, sin embargo, necesitas calificación premiere para reclamar tu premio</p>" ) : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Ingresa 4 socios directos nuevos PREMIERE en el mes"; ?></div>
 
 <div class="card-body"><table class="w-100"><tr>
 
