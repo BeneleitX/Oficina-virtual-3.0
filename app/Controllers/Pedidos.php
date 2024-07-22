@@ -44,7 +44,9 @@ class Pedidos extends BaseController
     public function carrito( $tipo, $data ){
 
 
-                /**************************************************************/
+        if( $this->data[ "usuario" ]->id == 666 ){
+
+        /**************************************************************/
         // todo bien
         // ENVIAR CORREO
         $pedido  = model( "PedidoModel" )->where( "referencia = 75" )->first();
@@ -66,6 +68,8 @@ class Pedidos extends BaseController
         /**************************************************************/
 
         return;
+
+    }
         $this->data[ "navbar" ] = true;
 
         if( $tipo == "pedido" ){
