@@ -122,7 +122,7 @@ class Registro extends BaseController
         foreach( MODELOS as $m ){
             if( $m[ "settings" ][ "efectivo" ] ){
                 $recibe[ "historial" ][ "modelos" ][ $m[ "codigo" ] ] = [
-                    "primercompra"   => null,
+                    "primercompra"   => json_decode( "{}" ),
                     "ultimacompra"   => null,
                     "fondeos" => [],
                     "ingresos" => [

@@ -75,7 +75,7 @@ class Redes extends BaseController
                 <table class=\"table small\">
                 <tr><td>Registro</td><td>".( $d->historial->registro )."</td></tr>
                 <tr><td>Activación</td><td>".( $d->historial->validacion )."</td></tr>
-                <tr><td>Primer compra</td><td>".substr( $d->historial->modelos->{$modelo}->primercompra, 0, 10 )."</td></tr>
+                <tr><td>Primer compra</td><td>".$d->getPrimerCompra( $modelo )."</td></tr>
                 <tr><td>Ultima compra</td><td>".substr( $d->historial->modelos->{$modelo}->ultimacompra, 0, 10 )."</td></tr>
                 </table>";
 

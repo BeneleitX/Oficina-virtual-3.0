@@ -549,23 +549,20 @@ class E_usuario extends Entity
             $pedido[ "estatus_codigo" ] = "420-PAGADO";
     
             $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
-            if( !$historial->modelos->{$modelo}->primercompra ){
-                $historial->modelos->{$modelo}->primercompra = $pedido[ "fechas" ][ "califica" ];
+            $pc = $this->getPrimerCompra( $modelo );
 
-                if( !isset( $data->recompensas ) ){
-                    $data->recompensas = json_decode( "{}" );
-                }
-                $data->recompensas->inicia = $pedido[ "fechas" ][ "califica" ];
+            if( !isset( $data->recompensas ) ){
+                $data->recompensas = json_decode( "{}" );
             }
+            $data->recompensas->inicia = $pedido[ "fechas" ][ "califica" ];
 
             $mesactual = substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ).substr( $pedido[ "fechas" ][ "califica" ], 5, 2 );
           
-/*             $mp = [];
             foreach( $pedido[ "PTS" ] as $promo => $pts ){
-                $mp[ $promo ] = ( $mp[ $promo ] ?? 0 ) + $pts;
+                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                    $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                }
             } 
-
-            $historial->modelos->{$modelo}->calificaciones->{$mesactual} = $mp; */
 
             if( $saldo >= $total && $metodopago[ "settings" ][ "tipocomision" ] == "saldo" ){
                 $data->saldo->{$modelo} -= $total;
@@ -599,6 +596,13 @@ class E_usuario extends Entity
         }
 
         return $pedido[ "referencia" ];
+    }
+
+
+    public function getPrimerCompra( $modelo ){
+        $db = db_connect();
+        $sql = "select f_fecha_primercompra( {$this->id}, '{$modelo}' ) as r";
+        return $db->query( $sql )->getRow()->r;  
     }
 
 

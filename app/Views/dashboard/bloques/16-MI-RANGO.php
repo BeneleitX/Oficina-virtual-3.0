@@ -8,6 +8,7 @@
         <?php 
 
         $checks    = $usuario->getChecks( date( "Y-m-d" ), "10-NUTRICION" );
+
         $rango     = model( "RangoModel" )->find( $usuario->data->rango );
         $new_rango = model( "RangoModel" )->find( $checks[ date( "Ym" ) ][ "nuevo" ] );
 

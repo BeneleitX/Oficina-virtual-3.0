@@ -218,7 +218,9 @@ if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
 
         ?></div>
 
-        <?php if( !( $pagado || $cancelado ) && $socio->historial->modelos->{$modelo}->primercompra && date( "Ym" ) > date( "Ym", strtotime( $socio->historial->modelos->{$modelo}->primercompra ) ) ){ ?>
+        <?php 
+        $pc = $socio->getPrimerCompra( $modelo );
+        if( !( $pagado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
                 <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
@@ -537,6 +539,7 @@ foreach( $productos as $p ){
 
 	<script>
 		var modelo 			= '<?php echo $modelo; ?>',
+            usuario 		= <?php echo json_encode( $socio ) ?>,
 			cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
 			cat_productos   = <?php echo json_encode( $prods ); ?>,
 			metodosentrega	= <?php echo json_encode( METODOSENTREGA ) ?>,
