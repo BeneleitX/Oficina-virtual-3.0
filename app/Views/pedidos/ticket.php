@@ -53,16 +53,18 @@
         }
         else{
             // $domicilios = $socio->getDomicilios();
-            // $entrega = $domicilios[ $pedido[ "data" ][ "entrega" ] ];
+            
 
             $d = $pedido[ "data" ][ "domicilio" ];
-            
+
             echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-teal text-teal text-start mb-3 p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
             {$d[ "calleynumero" ]}<br>
             Colonia {$d[ "colonia" ]}<br>
             {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
             C.P. {$d[ "codigopostal" ]}
             </div>";
+
+            $entrega = $d[ "nombre" ];
         }
     
     ?>
