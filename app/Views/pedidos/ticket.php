@@ -57,10 +57,10 @@
 
             $d = $pedido[ "data" ][ "domicilio" ];
 
-            echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-teal text-teal text-start mb-3 p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
-            {$d[ "calleynumero" ]}<br>
-            Colonia {$d[ "colonia" ]}<br>
-            {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+            echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-black mb-3 p-2\">
+            {$d[ "calleynumero" ]}
+            Colonia {$d[ "colonia" ]}
+            {$d[ "localidad" ]}, {$d[ "entidad" ]}
             C.P. {$d[ "codigopostal" ]}
             </div>";
 
