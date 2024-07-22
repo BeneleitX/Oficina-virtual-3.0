@@ -68,12 +68,20 @@
 <div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de entrega</h5></div>
     <div class="card-footer"><table class="w-100"><tr><td><?php echo $me[ "nombre" ]; ?></td><td><?php echo $entrega[ "nombre" ]; ?></td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr></table></div>
+
+
+
 </div><div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de pago</h5></div>
     <div class="card-footer"><table class="w-100"><tr><td><?php echo $mp[ "nombre" ]; ?></td><td class="text-end">Comision</td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionbanco" ], 2 ); ?></h5></td></tr></table></div>
-</div><div class="card mb-3">
+</div>
+
+<?php if( $pedido[ "data" ][ "saldo" ] > 0 ){ ?>
+<div class="card mb-3">
     <div class="card-footer"><table class="w-100"><tr><td>Saldo a favor</td><td></td><td class="text-end" style="width:120px"><h5 class="m-0">-$<?php echo number_format( $pedido[ "data" ][ "saldo" ] ?? 0, 2 ); ?></h5></td></tr></table></div>
 </div>
+<?php  } ?>
+
 <div class="card mb-3" style="overflow:hidden">
     <table class="table rounded-3 m-0">
         <tr><td valign="middle" class="text-white text-end" style="background:var(--bs-black) !important">Total de pedido</td><td valign="middle" class="text-end" style="width:110px; background:var(--bs-black) !important"><h5 class="text-white my-0">$<?php echo number_format( $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - ( $pedido[ "data" ][ "saldo" ] ?? 0 ) + $pedido[ "data" ][ "comisionbanco" ], 2 ); ?></h5></td></tr>
