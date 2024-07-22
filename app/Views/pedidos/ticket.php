@@ -49,7 +49,7 @@
         $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
 
         if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
-            $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ];
+            $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
         }
         else{
             // $domicilios = $socio->getDomicilios();
@@ -71,7 +71,7 @@
 
 <div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de entrega</h5></div>
-    <div class="card-footer"><table class="w-100"><tr><td><?php echo $me[ "nombre" ]; ?></td><td><?php echo $entrega[ "nombre" ]; ?></td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr></table></div>
+    <div class="card-footer"><table class="w-100"><tr><td><?php echo $me[ "nombre" ]; ?></td><td><?php echo $entrega; ?></td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr></table></div>
 
 
 
