@@ -564,6 +564,10 @@ class E_usuario extends Entity
             $mesactual = substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ).substr( $pedido[ "fechas" ][ "califica" ], 5, 2 );
           
             foreach( $pedido[ "PTS" ] as $promo => $pts ){
+                if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
+                    $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+                }
+
                 if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
                     $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
                 }
