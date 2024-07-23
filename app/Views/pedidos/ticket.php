@@ -45,9 +45,10 @@
 
         echo "\n<div class=\"card\" style=\"overflow:hidden\"><div class=\"card-footer text-end bg-black text-white\"><table class=\"w-100\"><tr><td style=\"width:47%\">{$total_prods} productos</td><td>Sub total de productos &nbsp; </td><td style=\"width:120px\"><h5 class=\"m-0 text-white\" style=\"width:120px\">$".number_format( $total_precio, 2 )."</h5></td></tr></table></div></div>";
 
+        $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
         if( isset( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){
             $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ];
-            $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
+            
 
             if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
                 $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
