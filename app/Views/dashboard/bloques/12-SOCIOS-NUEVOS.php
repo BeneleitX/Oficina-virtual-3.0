@@ -1,7 +1,7 @@
 <div class="card-body">
 <?php
 
-$socios = array_reverse( json_decode( $usuario->getDownlineJSON( '10-NUTRICION' ) ) );
+$socios = array_reverse( json_decode( $usuario->getDownlineJSON( '10-NUTRICION', 1 ) ) );
 $mes    = date( "Ym" );
 $conteo = 0;
 $cols   = 0;
