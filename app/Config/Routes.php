@@ -49,6 +49,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
     $routes->get( "historial/(:any)",       "Pedidos::historial/$1" ); 
+    $routes->get( "pedido",                 "Pedidos::historial" ); 
     $routes->get( "pedido/(:num)",          "Pedidos::carrito/pedido/$1" ); 
     $routes->get( "tienda/(:any)",          "Pedidos::carrito/modelo/$1" ); 
     $routes->get( "pagoyenvio/(:any)",      "Pedidos::pagoyenvio/$1" ); 

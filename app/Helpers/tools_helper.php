@@ -301,7 +301,7 @@ function base64_png( $file ){
 }
 
 
-function envia_correo( $usuario, $subject, $message ){
+function envia_correo( $usuario, $subject, $message, $imagenes = [] ){
     
     $margin = 60;
     $width  = 600;
@@ -330,13 +330,25 @@ function envia_correo( $usuario, $subject, $message ){
         foreach( $attachments as $k => $a ){ 
             $attachments[ $k ] = base_url().$a;
         }
+
+        foreach( $imagenes as $k => $a ){ 
+            $imagenes[ $k ] = base_url().$a;
+            $message = str_replace( "%%{$k}%%", $imagenes[ $k ], $message );
+        }
     }
     else{
         foreach( $attachments as $k => $a ){ 
             $email->attach( $a, "attachment", ( $k + 1 ).".png" ); 
             $attachments[ $k ] = "cid:".$email->setAttachmentCID( ( $k + 1 ).".png" );
         }
+
+        foreach( $imagenes as $k => $a ){ 
+            $email->attach( $a ); 
+            $imagenes[ $k ] = "cid:".$email->setAttachmentCID( $a );
+            $message = str_replace( "%%{$k}%%", $imagenes[ $k ], $message );
+        }
     }
+
 
 
     $avatar = $usuario->data->avatar->activo !== null ?

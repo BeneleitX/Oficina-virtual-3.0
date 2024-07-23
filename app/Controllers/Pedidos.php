@@ -43,33 +43,6 @@ class Pedidos extends BaseController
 
     public function carrito( $tipo, $data ){
 
-
-        if( $this->data[ "usuario" ]->id == 666 ){
-
-        /**************************************************************/
-        // todo bien
-        // ENVIAR CORREO
-        $pedido  = model( "PedidoModel" )->where( "referencia = 75" )->first();
-        $usuario = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
-        
-        $subject = "Pedido ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." {$pedido[ "referencia" ]} pagado";
-        $message = "
-            <p>¡Hola ".$usuario->nombre()."! </p>
-            <p>mensaje de pedido pagado y detalles</p>
-        ";
-
-        $respuesta = envia_correo( $usuario, $subject, $message );
-
-        if( $_SERVER[ "SERVER_ADDR" ] == "127.0.0.1" ){
-            echo $respuesta;
-
-        }
-        
-        /**************************************************************/
-
-        return;
-
-    }
         $this->data[ "navbar" ] = true;
 
         if( $tipo == "pedido" ){
