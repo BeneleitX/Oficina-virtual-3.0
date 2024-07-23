@@ -598,7 +598,7 @@ class E_usuario extends Entity
         $subject = "Pago de pedido Beneleit ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." No. {$pedido[ "referencia" ]}";
         $message = "
             <p>¡Hola ".$usuario->nombre()."! </p>
-            <P>Hemos recibido tu pago por lo que procedemos preparar la entrega de tus productos. Este es un resumen de los paquete sy productos que incluye tu compra.¡Muchas gracias!</P>
+            <P>Hemos recibido tu pago por lo que procedemos preparar la entrega de tus productos. Este es un resumen de los paquetes y productos que incluye tu compra.¡Muchas gracias!</P>
 
             <div style=\"width:60%; font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:15px;\">
                 <div style=\"background:#555;color:white;font-weight:bold;padding:5px 10px\">Pedido No. {$pedido[ "referencia" ]}</div>

@@ -45,34 +45,35 @@
 
         echo "\n<div class=\"card\" style=\"overflow:hidden\"><div class=\"card-footer text-end bg-black text-white\"><table class=\"w-100\"><tr><td style=\"width:47%\">{$total_prods} productos</td><td>Sub total de productos &nbsp; </td><td style=\"width:120px\"><h5 class=\"m-0 text-white\" style=\"width:120px\">$".number_format( $total_precio, 2 )."</h5></td></tr></table></div></div>";
 
-        $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ];
-        $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
+        if( isset( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){
+            $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ];
+            $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
 
-        if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
-            $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
-        }
-        else{
-            // $domicilios = $socio->getDomicilios();
-            
+            if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
+                $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
+            }
+            else{
+                // $domicilios = $socio->getDomicilios();
+                
 
-            $d = $pedido[ "data" ][ "domicilio" ];
+                $d = $pedido[ "data" ][ "domicilio" ];
 
-            echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-black mb-3 p-2\">
-            {$d[ "calleynumero" ]}
-            Colonia {$d[ "colonia" ]}
-            {$d[ "localidad" ]}, {$d[ "entidad" ]}
-            C.P. {$d[ "codigopostal" ]}
-            </div>";
+                echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-black mb-3 p-2\">
+                {$d[ "calleynumero" ]}
+                Colonia {$d[ "colonia" ]}
+                {$d[ "localidad" ]}, {$d[ "entidad" ]}
+                C.P. {$d[ "codigopostal" ]}
+                </div>";
 
-            $entrega = $d[ "nombre" ];
-        }
+                $entrega = $d[ "nombre" ];
+            }
     
     ?>
 
 <div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de entrega</h5></div>
     <div class="card-footer"><table class="w-100"><tr><td><?php echo $me[ "nombre" ]; ?></td><td><?php echo $entrega; ?></td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr></table></div>
-
+<?php } ?>
 
 
 </div><div class="card mb-3">
