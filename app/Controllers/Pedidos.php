@@ -55,7 +55,8 @@ class Pedidos extends BaseController
             $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
             $encrypter = service( "encrypter" );
-            $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $encrypter->encrypt( $this->data[ "pedido" ][ "id" ] , [ "key" => $this->data[ "usuario" ]->curp ] ) ) ) );
+            $tado = $encrypter->encrypt( $this->data[ "pedido" ][ "id" ] , [ "key" => $this->data[ "socio" ]->id ] );
+            $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $tado ) ) );
             $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
             $sql = "/* estatus_codigo = '201-ACTIVO' AND  */modelo_codigo = '{$this->data[ "modelo" ]}'";
