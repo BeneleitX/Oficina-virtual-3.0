@@ -291,7 +291,7 @@ if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
                                 echo " btn-primary ";
                             } 
                             
-                            echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\">{$mp[ "nombre" ]}<h4 class=\"cantidad m-0 text-white\"></h4></button>";
+                            echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
                         }
                     }
                     ?>

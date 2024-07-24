@@ -250,23 +250,25 @@ function update_pedido( flag = null ){
     }
       
     $( '[name=metodopago]' ).each( function( a, b){
-        var metodopago = $( this ).attr( 'value' ),
-            cantidad   = $( this ).find( '.cantidad' );
+        var metodopago  = $( this ).attr( 'value' ),
+            cantidad    = $( this ).find( '.cantidad' ),
+            costo_extra = $( this ).find( '.costo_extra' ),
+            comision    = 0;
 
-            switch( metodospago[ metodopago ].settings.tipocomision ){
-                case 'porcentaje':
-                    comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
-                    caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
-                    cantidad.html( caption );
-                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
-                    break;
-                case 'efectivo':
-                    comision = parseFloat( metodospago[ metodopago ].settings.comision );
-                    caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
-                    cantidad.html( caption );
-                    $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
-                    break;                 
-            }
+        switch( metodospago[ metodopago ].settings.tipocomision ){
+            case 'porcentaje':
+                comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
+                break;
+            case 'efectivo':
+                comision = parseFloat( metodospago[ metodopago ].settings.comision );
+                break;                 
+        }
+    
+        caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
+        cantidad.html( caption );
+        costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
+        $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
+
     });
     
     json = JSON.stringify( pedido );

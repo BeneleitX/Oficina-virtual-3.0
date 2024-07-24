@@ -41,6 +41,33 @@ class Pedidos extends BaseController
     }
     
 
+    public function  fuente(){
+        $respuesta = [
+            "draw" => 1,
+            "data" => []
+        ];
+
+        extract( $this->request->getPost() );
+        $db = db_connect();
+
+        $respuesta[ "recordsTotal" ] = intval( $db->query( "select count(*) as total from t_pedidos where substring( estatus_codigo, 1, 3 ) > 400 AND modelo_codigo = '{$modelo}' AND usuario_id = {$socio}" )->getRow()->total );
+
+        if( $search[ "value" ] ){
+            $respuesta[ "recordsFiltered" ] = intval( $db->query( "select count(*) as total from t_pedidos where substring( estatus_codigo, 1, 3 ) > 400 AND modelo_codigo = '{$modelo}' AND usuario_id = {$socio} and ()" )->getRow()->total );
+        }
+        else{
+            $respuesta[ "recordsFiltered" ] = $respuesta[ "recordsTotal" ];
+        }
+
+        $data = $db->query( "select * from t_pedidos where substring( estatus_codigo, 1, 3 ) > 400 AND modelo_codigo = '{$modelo}' AND usuario_id = {$socio} limit {$start}, {$length}" )->getResult();
+
+       // $pedidos = model( "PedidoModel" )->where( "substring( estatus_codigo, 1, 3 ) > 400 AND modelo_codigo = '{$modelo}' AND usuario_id = ".$socio , null, false )->findAll();
+
+
+        echo json_encode( $respuesta );
+    }
+
+
     public function carrito( $tipo, $data ){
 
         $this->data[ "navbar" ] = true;
@@ -290,7 +317,7 @@ class Pedidos extends BaseController
         $encrypter = service( "encrypter" );
         $d = base64_decode( urldecode( str_replace( "___", "%", $link ) ) );
 
-        $p = intval( $encrypter->decrypt( $d, [ "key" => $this->data[ "usuario" ]->curp ] ) );
+        $p = intval( $encrypter->decrypt( $d, [ "key" => $this->data[ "usuario" ]->id ] ) );
 
         $this->data[ "pedido" ] = model( "PedidoModel" )->find( $p );
         $this->data[ "print" ]  = true;

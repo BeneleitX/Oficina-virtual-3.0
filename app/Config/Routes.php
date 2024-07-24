@@ -5,9 +5,6 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
 
- git stash push --include-untracked
- git stash drop
-
  */
 
  $routes->post( "API/insert_order",         "API::insert_order" );
@@ -48,6 +45,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
+    $routes->post( "historial/fuente",              "Pedidos::fuente" ); 
     $routes->get( "historial/(:any)",       "Pedidos::historial/$1" ); 
     $routes->get( "pedido",                 "Pedidos::historial" ); 
     $routes->get( "pedido/(:num)",          "Pedidos::carrito/pedido/$1" ); 

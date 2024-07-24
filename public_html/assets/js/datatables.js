@@ -10442,8 +10442,8 @@
 			 * Plural object for the data type the table is showing
 			 */
 			entries: {
-				_: "entries",
-				1: "entry"
+				_: "registros",
+				1: "registro"
 			},
 	
 			/**
@@ -10452,7 +10452,7 @@
 			 * parameter - if it is not given, the value of `zeroRecords` will be used
 			 * instead (either the default or given value).
 			 */
-			"sEmptyTable": "No data available in table",
+			"sEmptyTable": "No hay registros en esta tabla",
 	
 	
 			/**
@@ -10469,14 +10469,14 @@
 			 * * `\_PAGE\_` - Current page number
 			 * * `\_PAGES\_` - Total number of pages of data in the table
 			 */
-			"sInfo": "Showing _START_ to _END_ of _TOTAL_ _ENTRIES-TOTAL_",
+			"sInfo": "Mostrando del _START_ al _END_ de un total de _TOTAL_ de _ENTRIES-TOTAL_",
 	
 	
 			/**
 			 * Display information string for when the table is empty. Typically the
 			 * format of this string should match `info`.
 			 */
-			"sInfoEmpty": "Showing 0 to 0 of 0 _ENTRIES-TOTAL_",
+			"sInfoEmpty": "Mostrando 0 _ENTRIES-TOTAL_",
 	
 	
 			/**
@@ -10484,7 +10484,7 @@
 			 * to the information (`info`) to give an idea of how strong the filtering
 			 * is. The variable _MAX_ is dynamically updated.
 			 */
-			"sInfoFiltered": "(filtered from _MAX_ total _ENTRIES-MAX_)",
+			"sInfoFiltered": "(filtrados de un total global de _MAX_ _ENTRIES-MAX_)",
 	
 	
 			/**
@@ -10527,7 +10527,7 @@
 			 * with a default select list of 10, 25, 50 and 100, and can be replaced
 			 * with a custom select box if required.
 			 */
-			"sLengthMenu": "_MENU_ _ENTRIES_ per page",
+			"sLengthMenu": "_MENU_ _ENTRIES_ por página",
 	
 	
 			/**
@@ -10537,7 +10537,7 @@
 			 * parameter is not used when loading data by server-side processing, just
 			 * Ajax sourced data with client-side processing.
 			 */
-			"sLoadingRecords": "Loading...",
+			"sLoadingRecords": "Cargando...",
 	
 	
 			/**
@@ -10554,7 +10554,7 @@
 			 * control over where it appears in the string. If "_INPUT_" is not given
 			 * then the input box is appended to the string automatically.
 			 */
-			"sSearch": "Search:",
+			"sSearch": "Buscar:",
 	
 	
 			/**
@@ -10584,7 +10584,7 @@
 			 * displayed after filtering. `emptyTable` is shown when there is simply no
 			 * information in the table at all (regardless of filtering).
 			 */
-			"sZeroRecords": "No matching records found"
+			"sZeroRecords": "No se encontraron coincidencias de búsqueda"
 		},
 	
 	
