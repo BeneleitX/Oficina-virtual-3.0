@@ -3,7 +3,7 @@
 <div class="row">
 
 <?php 
-
+dd( $this->data[ "usuario" ] );
 $menu = [
     [ "success", "variables", "gears", "Variables de entorno", sizeof( VARIABLES ) ],
     [ "success", "roles", "user-shield", "Roles de usuario", sizeof( $roles ) ],
