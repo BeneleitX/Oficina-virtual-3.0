@@ -17,11 +17,9 @@ if( sizeof( $t[ "extras" ] ) ){
 <div class="alert alert-info mb-5">
     <div class="row">
         <div class="col-md-3">
-        </div>
-        <div class="col-md-3">
             <button onclick="lanza_corte()" class="btn btn-danger col-12 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 300 ? "d-none" : ""; ?>"><i class="fa fa-repeat"></i> Generar pagos</button>
         </div>        
-        <div class="col-md-3 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 300 ? "d-none" : ""; ?>">
+        <div class="col-md-3 <?php echo $periodo[ "estatus_codigo" ] != '255-PENDIENTE' ? "d-none" : ""; ?>">
             <button onclick="$( '#modal_cierra' ).modal( 'show' )" class="btn btn-warning col-12"><i class="fa fa-lock"></i> Cerrar periodo</button>
         </div>
         <div class="col-md-3 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ? "d-none" : ""; ?>">
@@ -190,8 +188,8 @@ foreach( $t[ "siguiente" ] as $g ){
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-mustard fa fa-lock"></i></p>
                     <p>
                     <?php 
-                    if( 1 ){
-                        echo "<div class=\"alert alert-danger\">No se puede cerrar un periodo cuando aun está en curso</div>";
+                    if( $periodo[ "estatus_codigo" ] != '255-PENDIENTE' ){
+                        echo "<div class=\"alert alert-danger\">No se puede cerrar este periodo</div>";
                     }
                     else{
                         echo "<div class=\"mt-4 mb-3\"><button class=\"btn btn-danger\" id=\"cierra_start\">Click para cerrar el periodo</button></div>";

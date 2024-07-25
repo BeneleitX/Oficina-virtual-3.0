@@ -94,7 +94,9 @@ class Periodos extends BaseController
                     WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
                     AND '{$periodo[ "modelo_codigo" ]}' = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
                     AND fechas->>'$.califica' between '{$periodo[ "inicia" ]}' AND '{$periodo[ "termina" ]}';";
+            
             $db->query( $sql );
+            
             $res = $db->query( "SELECT f_genera_pagos( '{$periodo[ "codigo" ]}' ) as resultado;" )->getRow();
             echo $res->resultado;
 

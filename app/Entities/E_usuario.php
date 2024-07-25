@@ -717,9 +717,9 @@ class E_usuario extends Entity
     }
 
 
-    public function getChecks( $fecha, $modelo ){
+    public function getChecks( $modelo ){
         $db = db_connect();
-        $sql = "SELECT f_checks_rango( {$this->id}, '{$fecha}', '{$modelo}' ) as checks;";
+        $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
         $checks = $db->query($sql)->getRowArray();
         $a = $checks[ "checks" ];
         return json_decode( $a, 1 );

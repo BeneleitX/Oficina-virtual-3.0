@@ -29,7 +29,7 @@ $menu = [
     [ "success", "estatus", "layer-group", "Estatus de socios" ],  
     [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ) ], 
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR" ],     
-    [ "success", "layout_bancos", "comment-dollar", "Layout de bancos" ],     
+    [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos" ],     
 ];
 
 foreach( $menu as $opcion ){
