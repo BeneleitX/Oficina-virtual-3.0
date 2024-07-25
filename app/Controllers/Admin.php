@@ -11,7 +11,7 @@ class Admin extends BaseController
     public function dashboard(){
 
         if( !$this->data[ "usuario" ]->permiso( "20-ALMACEN") ){
-       //     return redirect()->to( "inicio" ); 
+            return redirect()->to( "inicio" ); 
         }
 
 
@@ -34,7 +34,7 @@ class Admin extends BaseController
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); */
-        dd( 1 );
+       
         echo template( "admin/dashboard", $this->data );
     }
 
