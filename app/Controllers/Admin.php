@@ -23,7 +23,7 @@ class Admin extends BaseController
         $this->data[ "credenciales" ] = model( "UsuarioModel" )->where( $sql , null, false )->findAll();
 
         $sql = "substring(estatus_codigo , 1, 3 ) > 200";
-        $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
+/*         $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
         $this->data[ "pasarelas" ]    = model( "MetodopagoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "paqueterias" ]  = model( "MetodoentregaModel" )->where( $sql , null, false )->findAll();
         $this->data[ "almacenes" ]    = model( "AlmacenModel" )->where( $sql , null, false )->findAll();
@@ -33,7 +33,7 @@ class Admin extends BaseController
         $this->data[ "roles" ]        = model( "RolModel" )->findAll();
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
-        $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll();
+        $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); */
         dd( 1 );
         echo template( "admin/dashboard", $this->data );
     }
