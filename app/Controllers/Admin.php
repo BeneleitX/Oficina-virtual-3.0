@@ -11,7 +11,7 @@ class Admin extends BaseController
     public function dashboard(){
 
         if( !$this->data[ "usuario" ]->permiso( "20-ALMACEN") ){
-            return redirect()->to( "inicio" ); 
+       //     return redirect()->to( "inicio" ); 
         }
 
 
