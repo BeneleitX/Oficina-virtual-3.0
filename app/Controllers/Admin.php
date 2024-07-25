@@ -15,7 +15,7 @@ class Admin extends BaseController
         }
 
 
-
+dd( $this->data[ "usuario" ] );
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Administración de sistema";
 
