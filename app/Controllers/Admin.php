@@ -15,7 +15,7 @@ class Admin extends BaseController
         }
 
 
-dd( $this->data[ "usuario" ] );
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Administración de sistema";
 
@@ -35,7 +35,7 @@ dd( $this->data[ "usuario" ] );
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll();
-
+        dd( $this->data[ "usuario" ] );
         echo template( "admin/dashboard", $this->data );
     }
 
