@@ -231,20 +231,55 @@ class Socio extends BaseController
 
 
     public function guarda_clabe(){
-        $this->data[ "socio" ] = $this->data[ "usuario" ];
+        $socio = $this->data[ "usuario" ];
 
         $clabe = $this->request->getPost( "clabe" );
 
-        $json = $this->data["socio"]->data;
+        $validation = service( "validation" );
+        $validation->setRules( [
+            "clabe" => "required|exact_length[18]"
+        ] );
 
+        // Si hay errores de validación automática, regresar a formulario
+        if( !$validation->withRequest( $this->request )->run() ){
+
+            // BITACORA Error al agregar CLABE
+            bitacora( 38, $socio->id, [ 
+                "clabe"   => $clabe,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", $validation->getErrors() )
+                ->withInput();
+        } 
+
+        $banco = substr( $clabe, 0, 3 );
+        
+        $db = db_connect();
+        if( !$db->query( "select count(*) as existe from t_bancos where codigo = '{$banco}'")->getRow()->existe ){
+            // BITACORA Error al agregar CLABE
+            bitacora( 38, $socio->id, [ 
+                "clabe"   => $clabe,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", [ "clabe" => "La CLABE no corresponde a un banco reconocido" ] )
+                ->withInput();           
+        }
+
+        $json = $socio->data;
         $json->clabe = $clabe;
         $json->verificacion->clabe = true;
-        $this->data["socio"]->data = $json; 
+        $socio->data = $json; 
 
-        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+        model( "UsuarioModel" )->save( $socio );
 
-        // BITACORA Eliminar beneficiario
-        bitacora( 13, $this->data[ "socio" ]->id, [ 
+        // BITACORA Actualziar CLABE interbancaria
+        bitacora( 13, $socio->id, [ 
             "clabe"   => $clabe,
             "usuario" => $this->data[ "usuario" ]->id
         ] );
@@ -257,13 +292,12 @@ class Socio extends BaseController
 
 
     public function nuevo_password( $s = null, $m = null, $p = null ){
-        $socio  = $s ? model( "UsuarioModel" )->find( $s ) : $this->data[ "usuario" ];
-        $actual = $this->request->getPost( "actual" ) ?? null;
-        $nuevo  = $p ?? $this->request->getPost( "nuevo" );
-        $nuevo_bis  = $p ?? $this->request->getPost( "nuevo_bis" );
+        $socio     = $s ? model( "UsuarioModel" )->find( $s ) : $this->data[ "usuario" ];
+        $actual    = $this->request->getPost( "actual" ) ?? null;
+        $nuevo     = $p ?? $this->request->getPost( "nuevo" );
+        $nuevo_bis = $p ?? $this->request->getPost( "nuevo_bis" );
 
         $validation = service( "validation" );
-
         $validation->setRules( [
             "actual"    => "required",
             "nuevo"     => "required|differs[actual]|min_length[6]",
@@ -273,10 +307,10 @@ class Socio extends BaseController
         if( $actual != $socio->password ){
             // BITACORA Error al crear nuevo password
             bitacora( 36, $socio->id, [ 
-                "actual"  => $actual,
-                "nuevo"   => $nuevo,
-                "nuevo_bis"   => $nuevo_bis,
-                "usuario"  => $this->data[ "usuario" ]->id
+                "actual"    => $actual,
+                "nuevo"     => $nuevo,
+                "nuevo_bis" => $nuevo_bis,
+                "usuario"   => $this->data[ "usuario" ]->id
             ] );
 
             return redirect()
@@ -289,10 +323,10 @@ class Socio extends BaseController
         if( !$validation->withRequest( $this->request )->run() ){
             // BITACORA Error al crear nuevo password
             bitacora( 36, $socio->id, [ 
-                "actual"  => $actual,
-                "nuevo"   => $nuevo,
-                "nuevo_bis"   => $nuevo_bis,
-                "usuario"  => $this->data[ "usuario" ]->id
+                "actual"    => $actual,
+                "nuevo"     => $nuevo,
+                "nuevo_bis" => $nuevo_bis,
+                "usuario"   => $this->data[ "usuario" ]->id
             ] );
 
             return redirect()
@@ -462,6 +496,7 @@ class Socio extends BaseController
         }
 
         $recibe = [
+            "id" => $dom_id ?? null,
             "estatus_codigo" => "201-ACTIVO", 
             "usuario_id"     => $this->data[ "socio" ]->id,
             "nombre"         => $n_nombre, 
@@ -471,8 +506,15 @@ class Socio extends BaseController
         ];
 
         $domiciliomodel = model( "DomicilioModel" );
-        $id = $domiciliomodel->insert( $recibe );
 
+        if( $dom_id ){
+            $domiciliomodel->save( $recibe );
+            $id = $dom_id;
+        }
+        else{
+            $id = $domiciliomodel->insert( $recibe );
+        }
+        
         $json = $this->data["socio"]->data;
         $json->verificacion->domicilio = true;
         if( !isset($json->domicilio) || $json->domicilio == null ){
@@ -483,7 +525,7 @@ class Socio extends BaseController
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
         // BITACORA Creación de cuenta de usuario
-        bitacora( 20, $this->data[ "socio" ]->id, [ 
+        bitacora( $dom_id ? 39 : 20, $this->data[ "socio" ]->id, [ 
             "domicilio_id" => $id,
             "usuario" => $this->data[ "usuario" ]->id
         ] );

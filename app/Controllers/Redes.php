@@ -72,11 +72,12 @@ class Redes extends BaseController
                     <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_0 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_0 ], 3, 2 )."</span>
                 </h5>
                 </tr></table>
-                <table class=\"table small\">
-                <tr><td>Registro</td><td>".( $d->historial->registro )."</td></tr>
-                <tr><td>Activación</td><td>".( $d->historial->validacion )."</td></tr>
-                <tr><td>Primer compra</td><td>".$d->getPrimerCompra( $modelo )."</td></tr>
-                <tr><td>Ultima compra</td><td>".substr( $d->historial->modelos->{$modelo}->ultimacompra, 0, 10 )."</td></tr>
+                <table class=\"table small w-50\">
+                <tr><td>Nacimiento</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->fechanac ) )."</td></tr>
+                <tr><td>Registro</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->historial->registro ) )."</td></tr>
+                <tr><td>Verificación</td><td class=\"text-end\">".( $d->historial->validacion ? date( "d-m-Y", strtotime( $d->historial->validacion ) ) : "" )."</td></tr>
+                <tr><td>Primer compra</td><td class=\"text-end\">".( $d->getPrimerCompra( $modelo ) ? date( "d-m-Y", strtotime( $d->getPrimerCompra( $modelo ) ) ) : "" )."</td></tr>
+                <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
                 </table>";
 
 

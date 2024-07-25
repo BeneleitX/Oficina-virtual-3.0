@@ -245,13 +245,18 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<table class="mb-3">
 						<tr>
 							<td><img id="clabe_banco" src="<?php echo $socio->banco( true ); ?>" style="height:50px; width:100px"></td>
-							<td style="width:100%; padding: 0 20px;"><input name="clabe" id="clabe" style="font-weight:bold" disabled class="form-control m-0 text-center" value="<?php echo $socio->data->clabe; ?>"></td>
-							<td class="pt-1"><h5><a href="javascript:edita_clabe()" data-bs-toggle="tooltip" title="Click para editar tu CLABE interbancaria"><i class="fa fa-edit"></i></a></h5></td>
+							<td style="width:100%; padding: 15px 0 0 20px;">
+								<input name="clabe" id="clabe" style="font-weight:bold" <?php echo session( "errors.clabe" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.clabe" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.clabe" ) ? old( "clabe" ) : $socio->data->clabe; ?>">
+								<p class="small text-red"><?php echo session( "errors.clabe" ); ?></p>
+							</td>
+							<?php if( !$socio->es_menor() ){ ?>
+							<td class="pt-1 ps-3" nowrap><h5><a href="javascript:edita_clabe()" data-bs-toggle="tooltip" title="Click para editar tu CLABE interbancaria"><i class="fa fa-edit"></i></a></h5></td>
+							<?php } ?>
 						</tr>
 					</table>
 
-					<small><i class="fa fa-circle-info"></i> La <strong>CLABE</strong> interbancaria se compone de 18 dígitos y es un requisito indispensable para la operación de tu oficina virtual.</small>	
-					<div id="nota_clabe" style="display:none" class="mt-3">
+					<div class="alert alert-info small mb-0"><i class="fa fa-circle-info"></i> La <strong>CLABE</strong> interbancaria se compone de 18 dígitos y es un requisito indispensable para la correcta operación de la oficina virtual para todos los socios mayores de edad.</div>	
+					<div id="nota_clabe" style="<?php echo session( "errors.clabe" ) ? "" : "display:none"; ?>" class="mt-3">
 						<h5>Actualizar CLABE interbancaria</h5>
 						<p>Proporciona tu clabe interbancaria a 18 dígitos. Esta CLABE debe pertenecer a una cuenta bancaria de la que seas titular y se encuentre activa. Al terminar haz click en el botón.</p>
 						<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar cambios</button>
@@ -299,17 +304,19 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 						if( sizeof($domicilios) ){
 							foreach( $domicilios as $d ){
+							
 								echo "
+							
 									<div class=\"col-xl-12  mb-3\">
-										<div class=\"alert alert-".( $d[ "colonia" ] ? "info" : "danger")." mb-0\">
-											<h5>{$d[ "nombre" ]} <a style=\"float:right\" class=\"text-teal\" href=\"#\"><i class=\"fa fa-edit\"></i></a></h5>
+										<div class=\"alert alert-".( $d[ "colonia" ] ? "info" : "danger")." mb-0\" dom_id=\"{$d[ "id" ]}\" colonia_id=\"{$d[ "colonia_id" ]}\" referencias=\"{$d[ "referencias" ]}\">
+											<h5 class=\"d_nombre\">{$d[ "nombre" ]} <a style=\"float:right\" class=\"text-teal\" href=\"javascript:edita_domicilio({$d[ "id" ]})\"><i class=\"fa fa-edit\"></i></a></h5>
 											
 											<p class=\"mb-0\">
-												{$d[ "calleynumero" ]}<br>
+												<span class=\"d_calle\">{$d[ "calleynumero" ]}</span><br>
 												Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Editar para corregir errores" )."<br>
 												".( $d[ "colonia" ] ? "
 												{$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-												C.P. {$d[ "codigopostal" ]} " : "" )."
+												C.P. <span class=\"d_cp\">{$d[ "codigopostal" ]}</span>" : "" )."
 											</p>
 										</div>
 									</div>

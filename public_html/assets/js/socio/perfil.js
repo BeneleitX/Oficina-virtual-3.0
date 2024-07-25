@@ -28,6 +28,75 @@ function regresar_colonia(){
 	$( '#aviso_colonia_nueva' ).hide();
 }
 
+function edita_domicilio( dom_id ){
+	var dom = $( '[dom_id=' + dom_id + ']' );
+
+	$( '[name=dom_id]' ).val( dom_id );
+
+	$( '[name=n_nombre]' ).val( dom.find( '.d_nombre' ).text() );
+	$( '[name=n_calle]' ).val( dom.find( '.d_calle' ).text() );
+	$( '[name=n_referencias]' ).val( dom.attr( 'referencias' ) );
+	$( '[name=n_cp]' ).val( dom.find( '.d_cp' ).text() );
+	go_cp( dom.attr( 'colonia_id' ) );
+
+	$( '#modal_domicilio' ).modal( 'show' );
+
+	$( '[name=n_cp]' ).attr( 'carga_colonia', '');
+}
+
+
+function go_cp( colonia = null ){
+	$( '#getCP' ).removeClass( 'is-invalid' );
+	$( '#n_colonia').empty();
+	regresar_colonia();
+
+	var cp = $( '#getCP' ).val();
+
+	if( cp.length == 5 ){
+		$.ajax({
+			url: base_url + "valida_cp", 
+			type: "POST",
+			dataType: "json",
+			contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+			data: { [csrf_token] : csrf_hash, cp : cp },
+			success: function( result ){
+				
+				if( result.error ){
+					$( '#getCP' ).addClass( 'is-invalid' );
+					$( '#n_colonia').prop( 'disabled', true );
+				}
+				else{
+					// si hay entidad y localidad
+					
+
+					$( '#n_localidad' ).val( result.localidad.nombre );
+					$( '[name=n_localidad_id]' ).val( result.localidad.id );
+					$( '#n_entidad' ).val( result.entidad.nombre );
+					$( '[name=n_entidad_id]' ).val( result.entidad.id );
+
+					if( result.total > 0){
+						$( '#n_colonia').prop( 'disabled', false );
+						$( '#n_colonia' ).append( '<option value="0" selected>SELECCIONA...</option>' );
+
+						$.each( result.colonias, function( k, c ){
+							selected = '';
+
+							$( '#n_colonia' ).append( '<option value="' + c.id + '" ' + ( colonia == c.id ? 'selected' : '' ) + '>' + c.nombre + '</option>' );
+						});
+					}
+					else{
+						$( '#n_colonia').prop( 'disabled', true );
+					}
+				}
+			}
+		});
+	}
+	else{
+		$( '#getCP' ).addClass( 'is-invalid' );
+	}	
+}
+
+
 $(document).ready(function(){
 
     $( '#imagen_avatar' ).on( 'mouseover', function(){
@@ -96,53 +165,7 @@ $(document).ready(function(){
 
 
 	$( '#getCP' ).keyup(delay(function (e) {
-
-		$( '#getCP' ).removeClass( 'is-invalid' );
-		$( '#n_colonia').empty();
-		regresar_colonia();
-
-		var cp = $( '#getCP' ).val();
-
-		if( cp.length == 5 ){
-			$.ajax({
-				url: base_url + "valida_cp", 
-				type: "POST",
-				dataType: "json",
-				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-				data: { [csrf_token] : csrf_hash, cp : cp },
-				success: function( result ){
-					
-					if( result.error ){
-						$( '#getCP' ).addClass( 'is-invalid' );
-						$( '#n_colonia').prop( 'disabled', true );
-					}
-					else{
-						// si hay entidad y localidad
-						
-
-						$( '#n_localidad' ).val( result.localidad.nombre );
-						$( '[name=n_localidad_id]' ).val( result.localidad.id );
-						$( '#n_entidad' ).val( result.entidad.nombre );
-						$( '[name=n_entidad_id]' ).val( result.entidad.id );
-
-						if( result.total > 0){
-							$( '#n_colonia').prop( 'disabled', false );
-							$( '#n_colonia' ).append( '<option value="0" selected>SELECCIONA...</option>' );
-
-							$.each( result.colonias, function( k, c ){
-								$( '#n_colonia' ).append( '<option value="' + c.id + '">' + c.nombre + '</option>' );
-							});
-						}
-						else{
-							$( '#n_colonia').prop( 'disabled', true );
-						}
-					}
-				}
-			});
-		}
-		else{
-			$( '#getCP' ).addClass( 'is-invalid' );
-		}
+		go_cp();
 	}, 1000));
 
 

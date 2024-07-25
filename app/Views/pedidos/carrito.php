@@ -44,7 +44,6 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
             $domicilios = $socio->getDomicilios(  );
 			?>
 		</div>
-
 	</div>
 
 	<div class="col-lg-6">
@@ -235,7 +234,11 @@ if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
                 <div class="card mb-3" style="overflow:hidden">
                     <table class="table rounded-3 m-0">
                         <tr><td valign="middle" class="">Total de productos</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_productos="<?php echo $pedido[ "data" ][ "total" ]; ?>">$<?php echo number_format( $pedido[ "data" ][ "total" ], 2 ); ?></h5></td></tr>
-                        <tr><td valign="middle" class="">Gastos de entrega</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_entrega="<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr>
+                        <tr>
+                            <td valign="middle" class="">Gastos de entrega <span id="bultos_cantidad"></span> <br>
+                            <div class="row g-1" id="bultos" style="margin-top:1px"></div>
+                            </td>
+                            <td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_entrega="<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr>
                         <?php
                             if( ( $pagado || $cancelado ) ){
                                 $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
@@ -476,7 +479,7 @@ else{ ?>
 </div>
 
 <div class="modal" tabindex="-1" id="modal_productos" promocion="">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 
 			<div class="modal-header">
@@ -497,8 +500,9 @@ else{ ?>
 
                         $pts = $p->data->puntos->{"010-DISTRIBUIDOR"} ?? 0;
 
-						echo "
-						<div class=\"col-lg-6\" producto=\"{$p->codigo}\"><div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\"><div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:20px\">{$pts} pts</div><div class=\"row g-0\"><div class=\"col-2 pt-2 ps-1\"><img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded-start\"></div><div class=\"col-10\"><div class=\"card-body pt-3\"><h5>".strtoupper( $p->data->nombre )."</h5><p class=\"small m-0\">{$p->data->descripcion}</p></div></div></div></div></div>";
+                        if( substr( $p->estatus_codigo, 0, 3 ) > 200 ){
+						    echo "\n<div class=\"col-lg-6 col-xl-4\" producto=\"{$p->codigo}\"><div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\"><div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:10px\">".number_format( $pts, 1 )."<br>pts</div><div class=\"row g-0\"><div class=\"col-2 pt-2 ps-1\"><img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded-start\"></div><div class=\"col-10\"><div class=\"card-body pt-3\"><h5>".strtoupper( $p->data->nombre )."</h5><p class=\"small m-0\">{$p->data->descripcion}</p></div></div></div></div></div>";
+                        }
 					}
 					?>
 				</div>
@@ -556,5 +560,7 @@ foreach( $productos as $p ){
             mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
             domicilios      = <?php echo json_encode( $domicilios ); ?>,
             hoy = new Date();
+
+        if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
 	</script>
 

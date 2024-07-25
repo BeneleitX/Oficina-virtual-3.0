@@ -416,7 +416,7 @@ class E_usuario extends Entity
         $existe = false;
 
         $sql = "SELECT 
-                    d.id as id, d.nombre as nombre, d.referencias, d.calleynumero, c.nombre as colonia, l.nombre as localidad, e.nombre as entidad, c.codigopostal
+                    d.id as id, d.nombre as nombre, d.referencias, d.calleynumero, c.nombre as colonia,c.id as colonia_id, l.nombre as localidad, e.nombre as entidad,  l.id as localidad_id, e.id as entidad_id, c.codigopostal
                 from t_domicilios d
                 left JOIN t_colonias c ON c.id = d.colonia_id
                 left JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
@@ -478,7 +478,8 @@ class E_usuario extends Entity
                     "peso" => 0,
                     "saldo" => 0,
                     "mesanterior" => 0,
-                    "pesoxbulto" => 0,
+                    "pesoxbulto" => MODELOS[ $modelo ][ "settings" ][ "pesoxbulto"],
+                    "productosxbulto" => MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ],
                     "total" => 0,
                     "comisionbanco" => 0,
                     "comisionentrega" => 0,

@@ -48,7 +48,7 @@ function revisa_stock(){
 
 
 function update_puntos( promocion ){
-    pedido.data.peso = 0;
+    
     pedido.PTS[ promocion ] = 0;
 
     if( $('.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).length ){
@@ -90,6 +90,7 @@ function cambia_cantidad( promocion, producto ){
 function update_pedido( flag = null ){
     pedido.data.total     = 0;
     pedido.data.productos = 0;
+    pedido.data.peso      = 0;
     pedido.promociones    = {};
 
     $( '#puntajes' ).empty();
@@ -167,19 +168,6 @@ function update_pedido( flag = null ){
       
         update_puntos( promocion );
 
-        // update bultos
-        var bultos = Math.ceil( pedido.data.peso / pesoxbulto);
-
-        $( '#bultos_cantidad' ).html( bultos );
-        $( '#bultos' ).empty();
-        
-        for( a = 1; a <= bultos; a++ ){
-            residuo    = ( pesoxbulto * a ) - pedido.data.peso;
-            porcentaje = a < ( bultos ) ? 100 : 100 - ( residuo * 100 / pesoxbulto );
-
-            $( '#bultos' ).append( '<div class="col-4"><div class="progress bg-white mb-1" role="progressbar" aria-valuenow="' + porcentaje + '" style="height:30px"><div class="progress-bar bg-mustard" style="width: ' + porcentaje + '%">' + a + '</div></div></div>' );
-        }
-
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
             // pedido.PTS[ promocion ] = cuenta_productos ? 1 : 0;
             total_promo = (cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
@@ -222,6 +210,53 @@ function update_pedido( flag = null ){
 
         total_productos_pedido += cuenta_productos;
     });
+
+    // update bultos
+    var bultos1 = Math.ceil( pedido.data.peso / pesoxbulto );
+    var bultos2 = Math.ceil( pedido.data.productos / pedido.data.productosxbulto );
+
+    bultos = bultos2 > bultos1 ? bultos2 : bultos1;
+    pluses = 0;
+
+    if( pedido.PTS["030-PLUS"] > 0 ){
+        pluses = Math.floor( pedido.PTS["030-PLUS"] / 3 );
+        bultos -= pluses;
+
+        if( bultos < 0 ){
+            bultos = 0;
+        }
+    }
+
+    pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
+
+    $( '[total_entrega]' ).attr( 'total_entrega', pedido.data.comisionentrega );
+    $( '.me_costo' ).html( 'Utilizar este método de entrega, genera un costo de ' + 
+
+    Moneda.format( pedido.data.comisionentrega ) ).show();
+
+    porcentaje1 = 100 * pedido.data.peso / pedido.data.pesoxbulto;
+    porcentaje2 = 100 * pedido.data.productos / pedido.data.productosxbulto;
+    
+
+    if( porcentaje2 > porcentaje1 ){
+        $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) ); 
+        $( '#bultos' ).empty();
+        
+        bultos = bultos2;
+        porcentaje = porcentaje2;
+    }
+    else{
+        $( '#bultos_cantidad' ).html( 'x' + bultos1 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) ); 
+        $( '#bultos' ).empty();
+
+        bultos = bultos1;
+        porcentaje = porcentaje1;
+    }
+
+    for( a = 1; a <= bultos; a++ ){
+        p = a < bultos ? 100 : 100 - ( 100 * a - porcentaje) ;
+        $( '#bultos' ).append( '<div class="col-2"><div class="progress border border-mustard bg-white m-0" role="progressbar" aria-valuenow="' + p + '" style="height:12px; border-radius:3px !important"><div class="progress-bar bg-mustard text-white fw-bold" style="width: ' + p + '%; border-radius:3px !important">' + a + '</div></div></div>' );
+    } 
 
     revisa_stock();
     $( '[total_productos]' ).attr( 'total_productos', pedido.data.total ).html( Moneda.format( pedido.data.total ) );
@@ -286,13 +321,15 @@ function update_pedido( flag = null ){
 
 
 function show_modal_productos( promocion ){
-    $( 'div[producto]' ).prop( 'activo', false ).hide();
+    $( '#modal_productos div[producto]' ).attr( 'activo', 'false' ).hide();
+    $( '#busca_producto' ).val( '' );
 
-    $( 'div[producto]' ).each( function(){
+    $( '#modal_productos div[producto]' ).each( function(){
         var producto = $( this ).attr( 'producto' );
 
-        if( cat_promociones[ promocion ].productos.elegibles !== undefined && cat_promociones[ promocion ].productos.elegibles.includes( producto ) )
-            $( this ).prop( 'activo', true ).show();
+        if( cat_promociones[ promocion ].productos.elegibles !== undefined && cat_promociones[ promocion ].productos.elegibles.includes( producto ) ){
+            $( this ).attr( 'activo', 'true' ).show();
+        }
     } ); 
 
     if( promocion == '010-DISTRIBUIDOR' ){
@@ -375,10 +412,11 @@ $(document).ready(function()
 	$( '#busca_producto' ).keyup( delay( function( e ){
 
         var busqueda = $( this ).val();
-        $( 'div[producto][activo=true]' ).show();
-        
-        $( 'div[producto][activo=true]' ).each( function(){
-            var texto = $( this ).text();
+
+        $( '#modal_productos div[producto][activo=true]' ).show();
+        $( '#modal_productos div[producto][activo=true]' ).each( function(){
+            var texto = $( this ).find( 'h5' ).text();
+
             if( !( texto.toLowerCase().indexOf( busqueda.toLowerCase() ) >= 0 ) )
                 $( this ).hide();
         } ); 
@@ -392,6 +430,7 @@ $(document).ready(function()
 
         pedido.data.entrega = null;
         pedido.data.comisionentrega = 0;
+        pedido.data.costoxbulto = 0;
         pedido.metodoentrega_codigo = null;
 
         $( '[total_productos]' ).attr( 'total_productos', 0 );
@@ -431,8 +470,9 @@ $(document).ready(function()
     // elige metodo de entrega
     $( '[name=metodosentrega]' ).on( 'change', function(){
         var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val(),
-            entrega = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ),
-            costo = metodosentrega[ metodoentrega_activo ].settings.costo;
+            entrega = $( 'div[domicilio_id]' ).attr( 'domicilio_id' );
+            
+        pedido.data.costoxbulto = metodosentrega[ metodoentrega_activo ].settings.costo;
 
         $( '.me_descripcion' ).html( metodosentrega[ metodoentrega_activo ].settings.descripcion );
         $( '.me_formulario, .me_costo' ).hide();
@@ -443,7 +483,7 @@ $(document).ready(function()
             entrega = $( '[name=select_almacen]' ).val();
 
             if( entrega ){
-                costo = tarifas[ almacenes[ entrega ].settings.tarifa ];
+                pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
             }
         }
         else{
@@ -451,12 +491,7 @@ $(document).ready(function()
             pedido.data.domicilio = domicilios[ entrega ];
         }
 
-        $( '[total_entrega]' ).attr( 'total_entrega', costo );
-        $( '.me_costo' ).html( 'Utilizar este método de entrega, genera un costo de ' + 
-        Moneda.format( costo ) ).show();
-
         pedido.data.entrega = entrega;
-        pedido.data.comisionentrega = costo;
         pedido.metodoentrega_codigo = metodoentrega_activo;
 
         update_pedido( "metodo entrega" ); 
@@ -465,15 +500,10 @@ $(document).ready(function()
     // Al cambiar almacen actualizar tarifa
     $( '[name=select_almacen]' ).on( 'change', function(){
         var entrega = $( this ).val(),
-            metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val(),
-            costo = tarifas[ almacenes[ entrega ].settings.tarifa ];
+            metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
 
-        $( '[total_entrega]' ).attr( 'total_entrega', costo );
-        $( '.me_costo' ).html( 'Utilizar este método de entrega, genera un costo de ' + 
-        Moneda.format( costo ) ).show();
-
+        pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
         pedido.data.entrega = entrega;
-        pedido.data.comisionentrega = costo;
         pedido.metodoentrega_codigo = metodoentrega_activo;
 
         update_pedido( "cambio almacen" );
