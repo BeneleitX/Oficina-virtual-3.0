@@ -30,8 +30,8 @@ class Admin extends BaseController
         $this->data[ "rangos" ]       = model( "RangoModel" )->findAll();
         $this->data[ "productos" ]    = model( "ProductoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "usuarios" ]     = model( "UsuarioModel" )->where( $sql , null, false )->findAll();
-       $this->data[ "roles" ]        = model( "RolModel" )->findAll();
-    /*    $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
+     /*  $this->data[ "roles" ]        = model( "RolModel" )->findAll();
+        $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
          $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); */
        
