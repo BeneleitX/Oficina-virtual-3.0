@@ -7,7 +7,7 @@
 $menu = [
     [ "success", "variables", "gears", "Variables de entorno", sizeof( VARIABLES ) ],
     [ "success", "roles", "user-shield", "Roles de usuario", sizeof( $roles ) ],
-    [ "secondary", "", "users", "Usuarios", sizeof( $usuarios )],
+    [ "secondary", "", "users", "Usuarios", $usuarios ],
     [ "success", "valida_credenciales", "address-card", "Valida credenciales", sizeof( $credenciales ) ],
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ) ],
     [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ) ],
