@@ -20,7 +20,7 @@ function lanza_corte(){
 
 function getStatus() { 
     $( '#modal_corte .progress-bar' ).css( 'width', '100%' );
-    return;
+   
     setTimeout(function() {
 
         fetch(base_url + 'assets/corte_check.php', {
