@@ -6,7 +6,7 @@ function lanza_corte(){
     $( '#dato_socios' ).text( '' );
     $( '#dato_comisiones' ).text( '' );
     $( '#dato_isr' ).text( '' );
-    $( '#dato_deposito' ).text( '' );
+    $( '#dato_total' ).text( '' );
     $( '#dato_bolsa' ).text( '' );
     $( '.icon_gira' ).addClass( 'fa-repeat text-red' ).removeClass( 'fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
     $( '.corte_aviso' ).removeClass( 'text-teal tetx-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios segundos' );
@@ -19,13 +19,12 @@ function lanza_corte(){
 
 
 function getStatus() { 
-    $( '#modal_corte .progress-bar' ).css( 'width', '100%' );
+    //$( '#modal_corte .progress-bar' ).css( 'width', '100%' );
    
     setTimeout(function() {
 
-        fetch(base_url + 'assets/corte_check.php', {
+        fetch( base_url + 'assets/corte_check.php?p=' + periodo, {
             Method: 'POST',
-            body: JSON.stringify({ periodo: periodo }),
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -33,20 +32,24 @@ function getStatus() {
         })
         .then((resp) => resp.json())
         .then(function( respuesta ) {
-            $( '#modal_corte .progress-bar' ).css( 'width', respuesta.porcentaje + '%' );
-            
-            $( '#dato_pedidos' ).text( respuesta.pedidos );
-            $( '#dato_socios' ).text( respuesta.socios );
-            $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
-            $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
-            $( '#dato_deposito' ).text( Moneda.format( respuesta.total ) );
-            $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
 
-            if (respuesta.porcentaje < 100) {
-                getStatus();
+            if( respuesta.porcentaje_pagos !== undefined ){
+                $( '#modal_corte .porcentaje_comisiones' ).css( 'width', respuesta.porcentaje_comisiones + '%' );
+                $( '#modal_corte .porcentaje_pagos' ).css( 'width', respuesta.porcentaje_pagos + '%' );
+                
+                $( '#dato_pedidos' ).text( respuesta.pedidos + ' de ' + respuesta.total_pedidos );
+                $( '#dato_socios' ).text( respuesta.socios );
+                $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
+                $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
+                $( '#dato_total' ).text( Moneda.format( respuesta.total ) );
+                $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
+
+                if( respuesta.porcentaje_pagos < 100 ){
+                    getStatus();
+                }
             }
         })
-    }, Math.floor( Math.random() * 1000 ) );
+    }, 1000 + Math.floor( Math.random() * 1000 ) );
 }
 
 
@@ -91,36 +94,30 @@ $(document).ready(function(){
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
 
-		$.ajax({
-			url: base_url + 'corte',
-			data: { periodo: periodo, [csrf_token] : csrf_hash },
-			type: 'POST',
-			dataType: "json",
-			async: true,
-			success: function( respuesta ){
-                if( respuesta.error !== undefined ){
-                    $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-red' ).addClass( 'fa-triangle-exclamation text-mustard' );
-                    $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-mustard' ).text( 'Ya existe otro corte en proceso' );
-                    $( '#modal_corte .progress-bar' ).removeClass( 'bg-teal' ).addClass( 'bg-gray-500' );
-                }
-                else{
-                    $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-red' ).addClass( 'fa-check text-teal' );
-                    $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
-                }
+        
+        $.ajax({
+            type: 'POST',
+			url: base_url + 'reset_corte',
+            dataType: "json",
+            async: false,
+			data: { [csrf_token] : csrf_hash },
+            success: function(r){ console.log(r); }
+		});
 
-                $( '#dato_pedidos' ).text( respuesta.pedidos );
-                $( '#dato_socios' ).text( respuesta.socios );
-                $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
-                $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
-                $( '#dato_deposito' ).text( Moneda.format( respuesta.total ) );
-                $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
+        $.ajax({
+            url: base_url + 'corte',
+            data: { periodo: periodo, [csrf_token] : csrf_hash },
+            type: 'POST',
+            async: true,
+            success: function(){
+                $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-red' ).addClass( 'fa-check text-teal' );
+                $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
 
                 $( '#modal_corte .modal-footer' ).show();
                 $( 'button[disabled]' ).prop( 'disabled', false);
             }
-		});
+        });
 
-        getStatus();
-        
+        getStatus();        
     });
 });

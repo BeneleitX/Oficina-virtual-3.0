@@ -149,9 +149,13 @@ foreach( $t[ "siguiente" ] as $g ){
                     <p>
                         <div class="pe1 mt-4 mb-3"><button class="btn btn-info" id="corte_start">Click para comenzar</button></div>
                         <div class="mt-0 pe2 mb-3" style="display:none">
-                            <p class="m-3">Calculando comisiones de pedidos <span id="cuentapedidos"></span></p>
+                            <p class="mt-3">Calculando comisiones de pedidos</p>
                             <div class="progress mb-3" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: 0%"></div>
+                                <div class="progress-bar porcentaje_comisiones progress-bar-striped progress-bar-animated bg-teal" style="width: 0%"></div>
+                            </div>
+                            <p class="mt-3">Generando pagos de socios</p>
+                            <div class="progress mb-3" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar porcentaje_pagos progress-bar-striped progress-bar-animated bg-teal" style="width: 0%"></div>
                             </div>
 
                             <table class="table table-striped">
@@ -160,7 +164,7 @@ foreach( $t[ "siguiente" ] as $g ){
                             <tr><td class="text-start">Comisiones generadas</td><td class="text-end"><span id="dato_comisiones">0</span></td></tr>
                             <tr><td class="text-start">Bolsa</td><td class="text-end"><span id="dato_bolsa">0</span></td></tr>
                             <tr><td class="text-start">Retención I.S.R.</td><td class="text-end"><span id="dato_isr">0</span></td></tr>
-                            <tr><td class="text-start">Total a depositar</td><td class="text-end"><span id="dato_deposito">0</span></td></tr>
+                            <tr><td class="text-start">Total a depositar</td><td class="text-end"><span id="dato_total">0</span></td></tr>
                             </table>
                         </div>
                     </p>

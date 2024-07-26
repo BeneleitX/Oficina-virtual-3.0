@@ -64,45 +64,27 @@ class Periodos extends BaseController
     }
 
 
+    public function reset_corte(){
+        $db = db_connect();
+        $db->query( "UPDATE t_variables SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) WHERE codigo = 'avance_corte'" );
+        return "{}";
+    }
+
+
     public function corte(){
-        if(VARIABLES[ "avance_corte" ][ "valor" ][ "porcentaje" ] != 100 ){
-            $respuesta = [
-                "error" => VARIABLES[ "avance_corte" ][ "valor" ]
-            ];
-        }
-        else{
-            extract( $this->request->getPost() );
-            $respuesta = [
-                "periodo" => $periodo
-            ];
-            $periodo = model( "PeriodoModel" )->find( $periodo );
+        $db = db_connect();
+        
+        /*
+        POR AHORA EL CORTE JALARÁ TODOS LOS PEDIDOS DEL PERIODO SIN EXCEPCION
+        MAS ADELANTE APRA OPTIMIZAR EL PROCESO SE DEBE LIMITAR LA CONSULA SOLO A LOS PEDIDOS QUE
+        ESTEN MARCADOS PARA RECALCULAR, ES DECIR LOS QUE TENGAN SOCIOS EN MORADO EN SU UPLINE O SOCIOS 
+        QUE HAYAN HECHO COMPRAS PARA MES ANTERIOR, Y POR ULTIMO Y COMO UNA SEGUNDA OPTIMIZACIÓN
+        PARA AGILIZARLO AUN MAS SE DEBE DE TRASLADAR EL CALCULO A UN PROCEDIMIENTO EN LA BASE DE DATOS 
+        QUE HAGA TODO EL PROCESO SIN NECESIDAD DE EXTRAER Y REINSERTAR LA INFORMACIÓN EN UN
+        CICLO DE PHP. QUEDA PENDIENTE TODO ESTO POR AHORA
+        */
 
-            $db = db_connect();
-           
-            /*
-            POR AHORA EL CORTE JALARÁ TODOS LOS PEDIDOS DEL PERIODO SIN EXCEPCION
-            MAS ADELANTE APRA OPTIMIZAR EL PROCESO SE DEBE LIMITAR LA CONSULA SOLO A LOS PEDIDOS QUE
-            ESTEN MARCADOS PARA RECALCULAR, ES DECIR LOS QUE TENGAN SOCIOS EN MORADO EN SU UPLINE O SOCIOS 
-            QUE HAYAN HECHO COMPRAS PARA MES ANTERIOR, Y POR ULTIMO Y COMO UNA SEGUNDA OPTIMIZACIÓN
-            PARA AGILIZARLO AUN MAS SE DEBE DE TRASLADAR EL CALCULO A UN PROCEDIMIENTO EN LA BASE DE DATOS 
-            QUE HAGA TODO EL PROCESO SIN NECESIDAD DE EXTRAER Y REINSERTAR LA INFORMACIÓN EN UN
-            CICLO DE PHP. QUEDA PENDIENTE TODO ESTO POR AHORA
-            */
-
-            $sql = "SELECT f_reparte_comisiones( pd.id, 1 )
-                    FROM t_pedidos pd
-                    WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
-                    AND '{$periodo[ "modelo_codigo" ]}' = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
-                    AND fechas->>'$.califica' between '{$periodo[ "inicia" ]}' AND '{$periodo[ "termina" ]}';";
-            
-            $db->query( $sql );
-            
-            $res = $db->query( "SELECT f_genera_pagos( '{$periodo[ "codigo" ]}' ) as resultado;" )->getRow();
-            echo $res->resultado;
-
-            $periodo[ "data" ] = json_decode( $res->resultado );
-            model( "PeriodoModel" )->save( $periodo );
-        }
+        $db->query( "call p_genera_pagos( '".$this->request->getPost( "periodo" )."' )" );
     } 
     
     
