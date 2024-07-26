@@ -144,7 +144,7 @@ foreach( $t[ "siguiente" ] as $g ){
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class="text-red icon_gira fa fa-repeat"></i></p>
-                    <p class="text-red text-center corte_aviso">El proceso puede durar varios segundos</p>
+                    <p class="text-red text-center corte_aviso">El proceso puede durar varios minutos</p>
 
                     <p>
                         <div class="pe1 mt-4 mb-3"><button class="btn btn-info" id="corte_start">Click para comenzar</button></div>
