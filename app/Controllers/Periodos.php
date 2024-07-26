@@ -37,26 +37,30 @@ class Periodos extends BaseController
         ];
 
         foreach( $this->data[ "pagos" ] as $p ){
-            $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
 
-            // previos
-            if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus ){
-                $this->data[ "t" ][ "previos" ][] = $p;
-            }
+            if( $p[ "data" ][ "periodos" ][ "creacion" ] <= $this->data[ "periodo" ][ "codigo" ] ){
 
-            // actual
-            elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && $p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ){
-                $this->data[ "t" ][ "actual" ][] = $p;
-            }
+                $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
 
-            // siguiente
-            elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && !$p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] > $this->data[ "periodo" ][ "codigo" ] ){
-                $this->data[ "t" ][ "siguiente" ][] = $p;
-            }
+                // previos
+                if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus ){
+                    $this->data[ "t" ][ "previos" ][] = $p;
+                }
 
-            // extras
-            else{
-                $this->data[ "t" ][ "extras" ][] = $p;
+                // actual
+                elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && $p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ){
+                    $this->data[ "t" ][ "actual" ][] = $p;
+                }
+
+                // siguiente
+                elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && !$p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] > $this->data[ "periodo" ][ "codigo" ] ){
+                    $this->data[ "t" ][ "siguiente" ][] = $p;
+                }
+
+                // extras
+                else{
+                    $this->data[ "t" ][ "extras" ][] = $p;
+                }
             }
         }
 
