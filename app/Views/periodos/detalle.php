@@ -138,7 +138,7 @@ foreach( $t[ "siguiente" ] as $g ){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-teal"><?php echo $periodo[ "codigo" ]; ?></span> <span class="periodo_codigo"></span></h5>
+                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="periodo_detalle">
@@ -149,11 +149,11 @@ foreach( $t[ "siguiente" ] as $g ){
                     <p>
                         <div class="pe1 mt-4 mb-3"><button class="btn btn-info" id="corte_start">Click para comenzar</button></div>
                         <div class="mt-0 pe2 mb-3" style="display:none">
-                            <p class="mt-3">Calculando comisiones de pedidos</p>
+                            <p class="mt-3 mb-0">Calculando comisiones de pedidos</p>
                             <div class="progress mb-3" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
                                 <div class="progress-bar porcentaje_comisiones progress-bar-striped progress-bar-animated bg-teal" style="width: 0%"></div>
                             </div>
-                            <p class="mt-3">Generando pagos de socios</p>
+                            <p class="mt-3 mb-0">Generando pagos de socios</p>
                             <div class="progress mb-3" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
                                 <div class="progress-bar porcentaje_pagos progress-bar-striped progress-bar-animated bg-teal" style="width: 0%"></div>
                             </div>

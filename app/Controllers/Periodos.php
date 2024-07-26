@@ -93,7 +93,7 @@ class Periodos extends BaseController
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
 
-        if( $periodo[ "estatus_codigo" ] == '250-EN-PROCESO' ){
+        if( $periodo[ "estatus_codigo" ] == '255-PENDIENTE' ){
             $db  = db_connect();
             $sql = "UPDATE t_pagos p
                     JOIN t_usuarios u ON u.id = p.usuario_id
@@ -105,7 +105,7 @@ class Periodos extends BaseController
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) ";
             $db->query( $sql );
 
-            $periodo[ "estatus_codigo" ] = "305-CERRADO";
+            $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
             model( "PeriodoModel" )->save( $periodo );
         }
     }    
@@ -115,7 +115,7 @@ class Periodos extends BaseController
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
 
-        if( $periodo[ "estatus_codigo" ] == '305-CERRADO' ){
+        if( $periodo[ "estatus_codigo" ] == '306-PERIODO-CERRADO' ){
             $db  = db_connect();
             $sql = "UPDATE t_pagos p
                     SET p.data = JSON_SET( p.data, '$.periodos.deposito', '' ), 
@@ -125,7 +125,7 @@ class Periodos extends BaseController
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
 
-            $periodo[ "estatus_codigo" ] = "250-EN-PROCESO";
+            $periodo[ "estatus_codigo" ] = "255-PENDIENTE";
             model( "PeriodoModel" )->save( $periodo );
         }
     }

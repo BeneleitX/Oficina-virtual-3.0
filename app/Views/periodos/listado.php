@@ -15,9 +15,10 @@
             <th>Termina</th>
             <th>Pedidos</th>
             <th>Socios</th>
-            <th>Venta</th>
             <th>Comisiones</th>
+            <th>I.S.R.</th>
             <th>Pagado</th>
+            <th>Estatus</th>
             <th></th>
         </tr>
     </thead>
@@ -29,10 +30,11 @@
                 <td><span class=\"badge bg-marine\">".periodo( $periodo[ "codigo" ] )."</span></td>
                 <td>{$periodo[ "inicia" ]}</td>
                 <td>{$periodo[ "termina" ]}</td>
-                <td>0</td>
-                <td>0</td>
-                <td class=\"text-end\">$0.00</td>
-                <td class=\"text-end\">$0.00</td>
+                <td>{$periodo[ "data" ][ "pedidos" ]}</td>
+                <td>".( $periodo[ "data" ][ "pagos" ] ?? 0 )."</td>
+                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "comisiones" ], 2 )."</td>
+                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "isr" ], 2 )."</td>
+                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "total" ], 2 )."</td>
                 <td>".estatus( $periodo[ "estatus_codigo" ] )."</td>
                 <td class=\"text-end\"><a href=\"".base_url( "periodo/".$periodo[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
             </tr>";
