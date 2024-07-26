@@ -8,8 +8,8 @@ function lanza_corte(){
     $( '#dato_isr' ).text( '' );
     $( '#dato_total' ).text( '' );
     $( '#dato_bolsa' ).text( '' );
-    $( '.icon_gira' ).addClass( 'fa-repeat text-red' ).removeClass( 'fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
-    $( '.corte_aviso' ).removeClass( 'text-teal tetx-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios segundos' );
+    $( '.icon_gira' ).addClass( 'fa fa-repeat text-red' ).removeClass( 'far fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
+    $( '.corte_aviso' ).removeClass( 'text-teal text-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios segundos' );
     $( '.pe1' ).show();
     $( '.pe2' ).hide();
     
@@ -110,7 +110,7 @@ $(document).ready(function(){
             type: 'POST',
             async: true,
             success: function(){
-                $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-mustard' ).addClass( 'fa-circle-check text-teal' );
+                $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
                 $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
 
                 $( '#modal_corte .modal-footer' ).show();
