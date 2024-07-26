@@ -43,14 +43,13 @@ function getStatus() {
                 $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
                 $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
                 $( '#dato_total' ).text( Moneda.format( respuesta.total ) );
-                $( '#dato_bolsa' ).text( Moneda.format( respuesta.bolsa ) );
 
                 if( respuesta.porcentaje_pagos < 100 ){
                     getStatus();
                 }
             }
         })
-    }, 1000 + Math.floor( Math.random() * 1000 ) );
+    }, 2000 + Math.floor( Math.random() * 1000 ) );
 }
 
 
@@ -90,7 +89,7 @@ $(document).ready(function(){
 
 
     $( '#corte_start' ).on( 'click', function(){
-        $( '.icon_gira' ).addClass( 'fa-spin' );
+        $( '.icon_gira' ).removeClass( 'text-red' ).addClass( 'fa-spin text-mustard' );
 
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
@@ -111,7 +110,7 @@ $(document).ready(function(){
             type: 'POST',
             async: true,
             success: function(){
-                $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-red' ).addClass( 'fa-check text-teal' );
+                $( '.icon_gira' ).removeClass( 'fa-spin fa-repeat text-mustard' ).addClass( 'fa-circle-check text-teal' );
                 $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
 
                 $( '#modal_corte .modal-footer' ).show();

@@ -160,10 +160,9 @@ foreach( $t[ "siguiente" ] as $g ){
 
                             <table class="table table-striped">
                             <tr><td class="text-start">Pedidos pagados en el periodo</td><td class="text-end"><span id="dato_pedidos">0</span></td></tr>
-                            <tr><td class="text-start">Socios beneficiados</td><td class="text-end"><span id="dato_socios">0</span></td></tr>
-                            <tr><td class="text-start">Pagos</td><td class="text-end"><span id="dato_pagos">0</span></td></tr>
+                            <tr><td class="text-start">Socios involucrados</td><td class="text-end"><span id="dato_socios">0</span></td></tr>
+                            <tr><td class="text-start">Pagos reales</td><td class="text-end"><span id="dato_pagos">0</span></td></tr>
                             <tr><td class="text-start">Comisiones generadas</td><td class="text-end"><span id="dato_comisiones">0</span></td></tr>
-                            <tr><td class="text-start">Bolsa</td><td class="text-end"><span id="dato_bolsa">0</span></td></tr>
                             <tr><td class="text-start">Retención I.S.R.</td><td class="text-end"><span id="dato_isr">0</span></td></tr>
                             <tr><td class="text-start">Total a depositar</td><td class="text-end"><span id="dato_total">0</span></td></tr>
                             </table>
