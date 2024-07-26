@@ -26,7 +26,7 @@ if( sizeof( $t[ "extras" ] ) ){
             <button onclick="$( '#modal_abre' ).modal( 'show' )" class="btn btn-secondary col-12"><i class="fa fa-lock"></i> Abrir periodo</button>
         </div>        
         <div class="col-md-3">
-            <button onclick="excel_corte()" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ? "disabled" : ""; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
+            <button onclick="excel_corte()" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 250 ? "" : "disabled"; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
     </div>
 </div>
