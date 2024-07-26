@@ -62,6 +62,10 @@ class Periodos extends BaseController
                     $this->data[ "t" ][ "extras" ][] = $p;
                 }
             }
+            // extras
+            else{
+                $this->data[ "t" ][ "extras" ][] = $p;
+            }            
         }
 
         echo template( "periodos/detalle", $this->data );
