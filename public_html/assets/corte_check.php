@@ -1,6 +1,14 @@
 <?php
 $query  = "select valor from t_variables where codigo = 'avance_corte'";
-$link   = new mysqli("localhost", "root", "B3n3l31t**", "v4.beneleit");
+
+
+if( $_SERVER[ "HTTP_HOST" ] == "v4.beneleit" )
+    $link   = new mysqli("localhost", "root", "B3n3l31t**", "v4.beneleit");
+elseif( $_SERVER[ "HTTP_HOST" ] == "v4.app" )
+    $link   = new mysqli("localhost", "root", "B3n3l31t**", "v4.app");
+else
+    $link   = new mysqli("localhost", "vpsbeneleitmx_root", "B3n3l31t**", "vpsbeneleitmx_tester");
+
 $result = mysqli_query($link, $query);
 echo mysqli_fetch_row( $result )[0];
 mysqli_close($link);
