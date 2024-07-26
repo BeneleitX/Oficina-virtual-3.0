@@ -39,6 +39,7 @@ function getStatus() {
                 
                 $( '#dato_pedidos' ).text( respuesta.pedidos + ' de ' + respuesta.total_pedidos );
                 $( '#dato_socios' ).text( respuesta.socios );
+                $( '#dato_pagos' ).text( respuesta.pagos + ' de ' + respuesta.total_pagos );
                 $( '#dato_comisiones' ).text( Moneda.format( respuesta.comisiones ) );
                 $( '#dato_isr' ).text( Moneda.format( respuesta.isr ) );
                 $( '#dato_total' ).text( Moneda.format( respuesta.total ) );
