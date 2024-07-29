@@ -92,6 +92,11 @@ class Periodos extends BaseController
         CICLO DE PHP. QUEDA PENDIENTE TODO ESTO POR AHORA
         */
 
+        // BITACORA corte parcial / corte semanal      
+        bitacora( 43, $this->id, [
+            "periodo" => $this->request->getPost( "periodo" )
+        ] );
+
         $db->query( "call p_genera_pagos( '".$this->request->getPost( "periodo" )."' )" );
     } 
     
@@ -113,6 +118,11 @@ class Periodos extends BaseController
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) ";
             $db->query( $sql );
 
+            // BITACORA Cierra semana  
+            bitacora( 44, $this->id, [
+                "periodo" => $periodo[ "codigo" ]
+            ] );
+
             $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
             model( "PeriodoModel" )->save( $periodo );
         }
@@ -132,6 +142,11 @@ class Periodos extends BaseController
                     AND p.estatus_codigo  = '420-PAGADO' 
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
+
+            // BITACORA Abre semana  
+            bitacora( 45, $this->id, [
+                "periodo" => $periodo[ "codigo" ]
+            ] );
 
             $periodo[ "estatus_codigo" ] = "255-PENDIENTE";
             model( "PeriodoModel" )->save( $periodo );
