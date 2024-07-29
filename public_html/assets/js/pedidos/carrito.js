@@ -303,10 +303,10 @@ function update_pedido( flag = null ){
         cantidad.html( caption );
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
 
-        permitepagos = !($('[name=metodosentrega]').length > 0) || ( total_productos_pedido > 0 && subtotal > 0 && !(!pedido.metodoentrega_codigo) );
+        bloqueapagos = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0;
 
-        $( this ).prop( 'disabled',  !permitepagos || pendientes );
-
+        $( this ).prop( 'disabled',  !bloqueapagos || pendientes );
+        console.log( bloqueapagos, total_productos_pedido, subtotal, parseInt( pedido.data.entrega ) );
     });
     
     json = JSON.stringify( pedido );

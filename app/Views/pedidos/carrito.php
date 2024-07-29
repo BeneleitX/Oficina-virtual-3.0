@@ -129,6 +129,10 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
         if( ( !$pagado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
             echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
         }
+
+        if( !$pagado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
+            $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
+        }
     }
 ?>
 </select>
@@ -156,12 +160,17 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                             $dom = 0;
                         }
                         elseif( ( $pedido[ "data" ][ "entrega_xpace" ] ?? 0 ) > 0 ){
-                            echo $dom = $pedido[ "data" ][ "entrega" ];
+                            $dom = $pedido[ "data" ][ "entrega" ];
                         }
                     }
                     else{
-                        
-                        if( intval( $pedido[ "data" ][ "entrega" ] ) && substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ){
+                        if( $pedido[ "metodoentrega_codigo" ] )
+                        if( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ]["tipocosto" ] == "efectivo" ){
+
+                            if( !$pedido[ "data" ][ "entrega" ] ){
+                                $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
+                            }
+
                             $d = $pedido[ "data" ][ "entrega" ];
                         }
                     }

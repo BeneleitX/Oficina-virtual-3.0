@@ -350,7 +350,7 @@ function beneleit( data ){
           
         // Texto calificación mes actual
         nodeEnter.append( 'text' )
-            .attr( 'dx', -16 )
+            .attr( 'dx', -7 )
             .attr( 'dy', 8 )
             .attr( 'text-anchor', 'center' )
             .style( 'fill', 'white' )

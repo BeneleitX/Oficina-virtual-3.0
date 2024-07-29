@@ -157,7 +157,7 @@ class E_usuario extends Entity
         $data = json_decode( $this->attributes[ "data" ] );
         $data->genero =  substr( $curp, 10, 1) == "H" ? "MASCULINO" : "FEMENINO";
         $data->nacionalidad = substr( $this->attributes[ "curp" ], 11, 2) != "NE" ? "MEXICANA" : "EXTRANJERA";
-        $data->avatar->face = $caras[ rand( 0, sizeof( $caras ) - 1 ) ];
+        $data->avatar->face = $caras[ rand( 0, sizeof( $caras   ) - 1 ) ];
         $data->avatar->bg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
         $data->beneficiarios = [];
         $this->attributes[ "data" ] = json_encode( $data );
@@ -165,11 +165,11 @@ class E_usuario extends Entity
 
 
     public function getPremieres( $mes = null ){
-    if( !$mes ){
-        $mes = date( "Ym" );
-    }
+        if( !$mes ){
+            $mes = date( "Ym" );
+        }
 
-    $sql = "SELECT 
+        $sql = "SELECT 
             historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"010-DISTRIBUIDOR\"' AS biex,
             historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"030-PLUS\"' AS plus,
             redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
@@ -179,8 +179,8 @@ class E_usuario extends Entity
             redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
             HAVING biex >= 6 AND plus >= 3";  
             
-            $db  = db_connect();
-            return $db->query($sql)->getResultArray();
+        $db  = db_connect();
+        return $db->query($sql)->getResultArray();
     }
 
 
@@ -191,6 +191,10 @@ class E_usuario extends Entity
             $m_0 = date('Ym');
             $m_1 = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
+            if( !defined( "calificaciones" ) ){
+                load_catalogo( "calificaciones", "");
+            }
+
             $db  = db_connect();
             $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
             $calificaciones = $db->query($sql)->getRowArray();
@@ -200,13 +204,13 @@ class E_usuario extends Entity
 
             switch( $modelo[ "codigo" ] ){
                 case "10-NUTRICION" : 
-                    $calificacion = "[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]";                    
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
                     break;
                 case "20-TELEFONIA" : 
-                    $calificacion = "[ ".substr( $calificaciones[ $m_0 ], 3)." ]";                    
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
                     break;
                 case "30-ALIMENTOS" : 
-                    $calificacion = "[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]";                    
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
                     break;
             }
 
@@ -826,11 +830,19 @@ class E_usuario extends Entity
     }
 
 
+    public function getDirectosActivos( $modelo ){
+        $sql = "SELECT id FROM t_usuarios WHERE redes->>'$.modelos.\"{$modelo}\".padre' = 1 and  SUBSTRING( f_get_calificacion(id, '".date( "Ym" )."', '{$modelo}'), 4 ) != '--'";  
+            
+        $db  = db_connect();
+        return $db->query($sql)->getResultArray();
+    }
+
+
     public function getComisiones( $periodo = null, $esquema = null ){
         $resultado = [];
 
         if( $periodo ){
-            $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
+            $sql = "SELECT comision.fecha, comision.compresion, pedido.promociones, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
                     FROM t_comisiones comision
                     join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                     join t_periodos periodo on periodo.codigo = '{$periodo}'
