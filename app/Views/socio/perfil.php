@@ -333,6 +333,42 @@ if( !$socio->data->verificacion->correo ){ ?>
 			</div>
 		</div>	
 		
+
+		<div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">Números Beneleit Móvil</h5></div>
+            <div class="card-body">	
+				<div class="row">
+					<?php
+						$celulares = $socio->getCelulares();
+						if( sizeof($celulares) ){
+							foreach( $celulares as $c ){
+								$paquetes = getPaqueteMovil( $c[ "numero" ] );
+						
+								echo "\n<div class=\"col-lg-6\"><div class=\"card mb-3 bg-".( sizeof( $paquetes ) ? "marine" : "gray-600" )." text-white\"><div class=\"card-header bg-".( sizeof( $paquetes ) ? "blue" : "gray-500" )."\"><h5 class=\"mb-0 text-white\">{$c[ "nombre" ]}</h5></div><table class=\"w-100 mt-3 mb-0\"><tr class=\"\"><td class=\"ps-3 py-2 w-100\"><h3 class=\"mb-0 text-white\">{$c[ "numero" ]}</h3><small>{$c[ "imei" ]}</small><p><span class=\"badge bg-".( sizeof( $paquetes ) ? "teal" : "red" )."\">".( sizeof( $paquetes ) ? "activo" : "inactivo" )."</span></p></td><td valign=\"top\" class=\"text-end\" nowrap>";
+
+
+								foreach( $paquetes as $pq ){
+									$pq[ "descripcion" ] = str_replace( "B -", "B<br>", $pq[ "descripcion" ] );
+						
+									echo "<img src=\"".base_url()."assets/img/productos/{$pq[ "paquete" ]}.png\" style=\"border-radius:5px; width:80px; height:80px\" class=\"me-3\" data-bs-toggle=\"tooltip\" title=\"<h5 class='m-3 text-teal'>{$pq[ "nombre" ]}</h5><small>{$pq[ "descripcion" ]}</small><hr><p>Vence: ".date( "d-m-Y", strtotime( $pq[ "vencimiento" ] ) )."</p>\">";
+								}
+
+								
+								echo "\n</td></tr></table></div></div>";								
+							}
+					
+						}
+						else{
+							// echo "<div class=\"col-xl-12  mb-3\">x</div>";
+						}
+					?>
+				</div>
+
+				<button class="btn btn-primary" id="nuevo_numero"><i class="fa fa-plus"></i> Agregar número</button>
+			</div>
+		</div>	
+
+
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">Beneficiarios de la cuenta</h5></div>
 			<div class="card-body">	
@@ -556,6 +592,59 @@ if( !$socio->data->verificacion->correo ){ ?>
 		</div>
 	</div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="modal_numero">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content bg-marine" style="background-image:url(<?php echo base_url(); ?>assets/img/icon_beneleit3.png); background-repeat: no-repeat; background-position: 450px -40px;">
+
+			<div class="modal-header">
+				<h5 class="modal-title text-teal">Número celular Beneleit Móvil</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="form_numero">
+
+					<?php echo csrf_field() ?>
+					<input type="hidden" name="t_id"  value="">
+
+					<div class="row">
+						<div class="col-md-4">
+							<label class="text-teal">Descripción del número</label>
+							<input required type="text" name="t_nombre" class="form-control mb-3" value="">
+							</div>
+
+							<div class="col-md-8 mt-3 p-0">
+							<small class=" text-mustard"><i class="fa fa-circle-info"></i> Cada número debe estar identificado con un nombre.<br>Por ejemplo: "Mi número personal", "iPhone de mi esposa", "Celular de luis", etc.</small>
+
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<label class="text-teal">Número a 10 dígitos</label>
+							<input required minlength ="10" maxlength="10" type="text" name="t_numero" class="fs-1 form-control mb-3 text-center" value="">
+							</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-6">
+							<label class="text-teal">IMEI</label>
+							<input required type="text" minlength ="15" maxlength="15" name="t_imei"  class="form-control mb-3" value="">
+						</div>
+					</div>
+				</form>
+				
+			</div>
+			<div class="modal-footer">
+				<button id="submit_numero" class="btn btn-primary"><i class="fa fa-check"></i> Guardar número</button>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
 
 
 <script>

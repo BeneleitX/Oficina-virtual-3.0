@@ -7,7 +7,7 @@ $db = db_connect();
 $sql = "SELECT * FROM t_pedidos
         WHERE usuario_id = {$usuario->id}
         AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
-        ORDER BY id DESC LIMIT 5";
+        ORDER BY fechas->>'$.pagado' DESC LIMIT 5";
 
 $pedidos = $db->query( $sql )->getResultArray();
 load_catalogo( "promociones" );
@@ -32,7 +32,7 @@ load_catalogo( "promociones" );
                 }
 
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
-                    <td><p class=\"mb-0 small text-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $p[ "modelo_codigo"] ][ "nombre" ]."</p><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
+                    <td><p class=\"mb-0 small text-marine\"><i class=\"fa fa-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $p[ "modelo_codigo"] ][ "nombre" ]."</p><span class=\"badge bg-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "color" ]."\">{$p[ "referencia" ]}</span></td>
                     <td><p class=\"mb-0 small\">Productos: {$p[ "data" ][ "productos" ]}</p>{$PTS}</td>
                     <td><p class=\"small mb-0\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10)."</p>".estatus( $p[ "estatus_codigo" ] )."</td>
                     <td><p class=\"small mb-0\">Califica en</p><span class=\"badge bg-".( substr( $p[ "fechas" ][ "califica" ], 5, 2 ) == date( "m" ) ? "teal" : "red" )."\">".substr( $p[ "fechas" ][ "califica" ], 0, 4 )."-".substr( $p[ "fechas" ][ "califica" ], 5, 2 )."</span></td>

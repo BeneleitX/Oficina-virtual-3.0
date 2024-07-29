@@ -43,7 +43,8 @@ foreach( MODELOS as $m ){
     ];
 }
 
-$date1 = new DateTime( "last monday" );
+$date0 = new DateTime( date('Y-m-d H:i:s')." + 1 day" );
+$date1 = new DateTime( $date0->format('Y-m-d H:i:s')." last monday" );
 $date2 = new DateTime( $date1->format('Y-m-d H:i:s')." + 7 days" );
 
 $interval   = $date1->diff( $date2 );

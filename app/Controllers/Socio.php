@@ -534,6 +534,48 @@ class Socio extends BaseController
     }
 
 
+    public function create_numero(){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        extract( $this->request->getPost() );
+
+        $recibe = [
+            "id" => $t_id ?? null,
+            "estatus_codigo" => "201-ACTIVO", 
+            "numero"         => $t_numero,
+            "nombre"         => $t_nombre, 
+            "usuario_id"     => $this->data[ "socio" ]->id,
+            "imei"           => $t_imei,
+            "fechas"         => [
+                "creado" => date( "Y-m-d" ),
+                "recargas" => []
+            ]
+        ];
+
+        $celular = model( "CelularModel" );
+
+        if( $t_id ){
+            $celular->save( $recibe );
+            $id = $t_id;
+        }
+        else{
+            $id = $celular->insert( $recibe );
+        }
+        
+        // BITACORA Creación de numero telefonico
+        bitacora( $t_id ? 41 : 40, $this->data[ "socio" ]->id, [ 
+            "celular_id" => $id,
+            "numero"     => $t_numero,
+            "nombre"     => $t_nombre, 
+            "imei"       => $t_imei,
+            "usuario"    => $this->data[ "usuario" ]->id
+        ] );
+
+        echo $id ?? 0;
+    }
+
+
+
     public function check_csf(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -550,6 +592,7 @@ class Socio extends BaseController
         
         print_r( $json );
     }
+
 
     public function carga_csf(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];

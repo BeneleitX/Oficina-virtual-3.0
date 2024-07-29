@@ -40,6 +40,10 @@
                     }
                 }
 
+                if( $p[ "modelo_codigo" ] == "20-TELEFONIA" ){
+                    $PTS .= " <span class=\"badge bg-light-blue\">".array_keys( $p[ "promociones" ][ "310-TELEFONIA" ][ "productos" ] )[ 0 ]."</span>"; 
+                }
+
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
                     <td class=\"text-center\"><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
                     <td>".estatus( $p[ "estatus_codigo" ] )."</td>
@@ -55,7 +59,9 @@
                     <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? "<span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) ) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
                     <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\"><span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span>".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "" )."</td>
                     <td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
-<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
+
+<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( $modelo == '20-TELEFONIA' ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( substr( $p[ "metodoentrega_codigo" ], 0, 2 ) == 11 ? " <strong>".$p[ "data" ][ "entrega" ]."</strong>" : "" )."</td>
+
                     <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }

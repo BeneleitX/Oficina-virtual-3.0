@@ -34,10 +34,29 @@ foreach( MODELOS as $m ){
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
     $headers .= "<th class=\"text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</td>";
     $bot .="<td class=\"col-4 rounded p-2 text-center small bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</td>";
-    $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
-    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+ 
+ 
+    switch( $m["codigo"] ){
+        case "10-NUTRICION": 
+            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+        
+            break;
+        case "20-TELEFONIA": 
+            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  $cx[ $m["codigo" ] ][ "m_0" ] : "" )."\" class=\"form-control py-2 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+        
+            break;
+        case "30-ALIMENTOS": 
+            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+        
+            break;
+    }
+ 
 }
 
 ?>

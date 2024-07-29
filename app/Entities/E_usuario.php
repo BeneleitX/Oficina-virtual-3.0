@@ -198,7 +198,19 @@ class E_usuario extends Entity
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];
 
-            return "<span data-bs-toggle=\"tooltip\" title=\"<h3 class='m-0'><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
+            switch( $modelo[ "codigo" ] ){
+                case "10-NUTRICION" : 
+                    $calificacion = "[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]";                    
+                    break;
+                case "20-TELEFONIA" : 
+                    $calificacion = "[ ".substr( $calificaciones[ $m_0 ], 3)." ]";                    
+                    break;
+                case "30-ALIMENTOS" : 
+                    $calificacion = "[ ".substr( $calificaciones[ $m_1 ], 3, 2 )." - ".substr( $calificaciones[ $m_0 ], 3, 2 )." ]";                    
+                    break;
+            }
+
+            return "<span data-bs-toggle=\"tooltip\" title=\"<h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>{$calificacion}\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
         elseif( $clase ){
             return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
@@ -408,6 +420,12 @@ class E_usuario extends Entity
         return intval( $estrellas ); 
     }
 
+
+    public function getCelulares(){
+        $db  = db_connect();
+        $sql = "SELECT * from t_celulares WHERE usuario_id = {$this->id} and substr( estatus_codigo, 1, 3) > 200";
+        return $db->query( $sql )->getResultArray();
+    }
 
 
     public function getDomicilios( $con_colonia = false ){
@@ -645,31 +663,35 @@ class E_usuario extends Entity
                     <tr><td style=\"color:white;padding:5px 10px; font-size:0.6rem\" width=\"30%\">{$total_prods} producto".( $total_prods-1 ? "s" : "")."</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"50%\">Sub total de productos</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"20%\">$".number_format( $total_precio, 2 )."</td></tr>
                 </table></div></div>";
 
-        $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ];
+        $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ?? null;
         $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
 
-        if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
-            $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
+        if( $me ){
+            if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
+                $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
+            }
+            elseif( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" ){
+                $entrega = $pedido[ "data" ][ "entrega" ];
+            }
+            else{
+                // $domicilios = $socio->getDomicilios();
+                
+
+                $d = $pedido[ "data" ][ "domicilio" ];
+
+                $message .= "\n<div style=\"width:60%; font-size:0.6rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0; padding:5px 15px\">
+                {$d[ "calleynumero" ]}<br>
+                Colonia {$d[ "colonia" ]}<br>
+                {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+                C.P. {$d[ "codigopostal" ]}
+                </div>";
+
+                $entrega = $d[ "nombre" ];
+            }
         }
-        else{
-            // $domicilios = $socio->getDomicilios();
-            
-
-            $d = $pedido[ "data" ][ "domicilio" ];
-
-            $message .= "\n<div style=\"width:60%; font-size:0.6rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0; padding:5px 15px\">
-            {$d[ "calleynumero" ]}<br>
-            Colonia {$d[ "colonia" ]}<br>
-            {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-            C.P. {$d[ "codigopostal" ]}
-            </div>";
-
-            $entrega = $d[ "nombre" ];
-        }
-
 
         $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:5px;\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">
-                    <tr><td style=\"padding:5px 10px; border-bottom:1px solid gray; font-size:0.6rem\" width=\"50%\">{$me[ "nombre" ]}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"30%\" align=\"right\">{$entrega}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionentrega" ], 2 )."</td></tr>           
+                    ".( $me ? "<tr><td style=\"padding:5px 10px; border-bottom:1px solid gray; font-size:0.6rem\" width=\"50%\">{$me[ "nombre" ]}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"30%\" align=\"right\">{$entrega}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionentrega" ], 2 )."</td></tr>" : "" )."          
                     <tr><td style=\"padding:5px 10px; font-size:0.6rem\" width=\"50%\">{$mp[ "nombre" ]}</td><td style=\"padding:5px 10px;\" align=\"right\" width=\"30%\">Comisión</td><td style=\"padding:5px 10px;\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionbanco" ], 2 )."</td></tr>
                 </table></div>";
 

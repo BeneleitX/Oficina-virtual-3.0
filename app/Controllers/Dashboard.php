@@ -24,7 +24,7 @@ class Dashboard extends BaseController
 
         $json = $this->data["usuario"]->data;
 
-        if( !isset( $json->layout ) ){
+        if( !isset( $json->layout ) or !is_object( $json->layout ) ){
             $json->layout = json_decode( "{}" );
         }
 

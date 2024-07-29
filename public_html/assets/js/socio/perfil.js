@@ -163,6 +163,12 @@ $(document).ready(function(){
 		$( '#modal_domicilio' ).modal( 'show' );
 	});
 
+	$( '#nuevo_numero' ).on( 'click', function(){
+		$( '[name=num_id]' ).val( 0 );
+
+		$( '#modal_numero' ).modal( 'show' );
+	});
+
 
 	$( '#getCP' ).keyup(delay(function (e) {
 		go_cp();
@@ -189,7 +195,7 @@ $(document).ready(function(){
 			$( '[name=n_calle]' ).removeClass( 'is-invalid' );
 		}
 
-		if( $( '[name=n_cp]' ).val().length < 3 ){
+		if( $( '[name=n_cp]' ).val().length != 5 ){
 			$( '[name=n_cp]' ).addClass( 'is-invalid' );
 			ok = false;
 		}
@@ -233,6 +239,54 @@ $(document).ready(function(){
 			});
 		}
 	});
+
+
+	$( '#submit_numero' ).on( 'click', function(){
+		var ok = true;
+
+		if( $( '[name=t_nombre]' ).val().length < 1 ){
+			$( '[name=t_nombre]' ).addClass( 'is-invalid' );
+			ok = false;
+		}
+		else{
+			$( '[name=t_nombre]' ).removeClass( 'is-invalid' );
+		}
+		
+		if( $( '[name=t_numero]' ).val().length != 10 ){
+			$( '[name=t_numero]' ).addClass( 'is-invalid' );
+			ok = false;
+		}
+		else{
+			$( '[name=t_numero]' ).removeClass( 'is-invalid' );
+		}
+
+		if( $( '[name=t_imei]' ).val().length != 15){
+			$( '[name=t_imei]' ).addClass( 'is-invalid' );
+			ok = false;
+		}
+		else{
+			$( '[name=t_imei]' ).removeClass( 'is-invalid' );
+		}
+
+	
+		if( ok ){
+			formData = new FormData( $( '#form_numero' )[0] );
+
+			$.ajax({
+				url: base_url + "create_numero", 
+				type: "POST",
+				contentType: false,
+				processData: false,
+				data: formData,
+				success: function( result ){
+					if( result > 0 ){
+						window.location.href = base_url + "perfil";
+					}
+				}
+			});
+		}
+	});
+
 
 	$( '#check_sat' ).on( 'change', function(){
 		var valor = $( this ).is( ':checked' );

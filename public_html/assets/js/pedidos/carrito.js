@@ -302,7 +302,10 @@ function update_pedido( flag = null ){
         caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
         cantidad.html( caption );
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
-        $( this ).prop( 'disabled', ( total_productos_pedido == 0 && subtotal == 0 ) || pendientes || !pedido.metodoentrega_codigo );
+
+        permitepagos = !($('[name=metodosentrega]').length > 0) || ( total_productos_pedido > 0 && subtotal > 0 && !(!pedido.metodoentrega_codigo) );
+
+        $( this ).prop( 'disabled',  !permitepagos || pendientes );
 
     });
     
@@ -370,7 +373,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         
         precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
 
-        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
+        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
 
         $( '.card[promocion=' + promocion + ']' ).show();
     }
@@ -482,10 +485,20 @@ $(document).ready(function()
             $( '.me_formulario[mp=almacen]' ).show();
             entrega = $( '[name=select_almacen]' ).val();
 
+            pedido.data.domicilio  = null;
+
             if( entrega ){
                 pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
             }
+        }  
+
+        else if( metodoentrega_activo.substring(0,2) == '11'){
+            $( '.me_formulario[mp=celular]' ).show();
+            entrega = $( '[name=select_celular]' ).val();
+            pedido.data.domicilio = null;
+            pedido.data.costoxbulto = 0;
         }
+
         else{
             $( '.me_formulario[mp=domicilio]' ).show();
             pedido.data.domicilio = domicilios[ entrega ];
@@ -505,9 +518,22 @@ $(document).ready(function()
         pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
         pedido.data.entrega = entrega;
         pedido.metodoentrega_codigo = metodoentrega_activo;
-
+        pedido.data.domicilio = null;
         update_pedido( "cambio almacen" );
     } );
+
+
+    $( '[name=select_celular' ).on( 'change', function(){
+        var entrega = $( this ).val(),
+            metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
+
+        pedido.data.costoxbulto = 0;
+        pedido.data.entrega = entrega;
+        pedido.metodoentrega_codigo = metodoentrega_activo;
+        pedido.data.domicilio = null;
+        update_pedido( "cambio celular" );
+    } );
+
 
     $( 'button[domicilio_id]' ).on( 'click', function(){
         var domicilio = $( this ).attr( 'domicilio_id' ),
@@ -549,4 +575,8 @@ $(document).ready(function()
     });
 
     if( !( pagado || cancelado ) ) update_pedido( "inicial" );
+
+    if( $( '[name=metodosentrega]' ).length == 1 ){
+        // $( '[name=metodosentrega]' ).click();
+    }    
 });

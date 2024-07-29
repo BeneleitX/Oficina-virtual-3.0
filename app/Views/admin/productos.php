@@ -27,11 +27,11 @@
             foreach( $productos as $producto ){
 
                 foreach( MODELOS[ $modelo ][ "settings" ][ "promocion_base" ] as $promo ){
-                    $Pts = $producto->data->puntos->{$promo};
+                    $Pts = $producto->data->puntos->{$promo} ?? 0;
                 }
 
                 echo "\n<tr producto=\"{$producto->codigo}\">
-                    <td valign=\"middle\" class=\"text-center\"><img style=\"width:60px; height:60px; \" src=\"".base_url()."assets/img/productos/".($producto->data->avatar ? $producto->codigo : "NO-IMAGEN").".png\"></td>
+                    <td valign=\"middle\" class=\"text-center\"><img style=\"width:60px; height:60px; border-radius:5px \" src=\"".base_url()."assets/img/productos/".($producto->data->avatar ? $producto->codigo : "NO-IMAGEN").".png\"></td>
                     <td valign=\"middle\">".strtoupper( $producto->data->nombre )."<br><span class=\"badge bg-marine\">{$producto->codigo}</span></td>
                     <td valign=\"middle\">{$producto->data->descripcion}</td>
                     <td valign=\"middle\">".number_format( $producto->data->dimensiones->peso, 1 )."g</td>

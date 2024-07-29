@@ -403,3 +403,20 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] ){
 
     return $html;
 }
+
+function getPaqueteMovil( $celular ){
+    $db = db_connect();
+    return $db->query( "SELECT 
+                pr.codigo AS paquete,
+                CAST( pe.fechas->>'$.pagado' AS DATE ) AS fechacompra,
+                pr.data->>'$.dias' AS dias,
+                CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ) AS vencimiento,
+                pr.data->'$.puntos.\"310-TELEFONIA\"' AS puntos,
+                pr.data->>'$.nombre' AS nombre,
+                pr.data->>'$.descripcion' AS descripcion
+            FROM t_pedidos pe
+            JOIN t_productos pr ON pr.codigo = JSON_UNQUOTE( JSON_EXTRACT( JSON_KEYS( pe.promociones->>'$.\"310-TELEFONIA\".productos' ) , '$[0]' ) )
+            WHERE pe.estatus_codigo = '420-PAGADO' AND pe.modelo_codigo = '20-TELEFONIA' AND pe.data->>'$.entrega' = '{$celular}'
+            AND now() BETWEEN CAST( pe.fechas->>'$.pagado' AS DATE ) AND CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
+            ORDER BY pr.data->'$.puntos.\"310-TELEFONIA\"' DESC" )->getResultArray();
+}

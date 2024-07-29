@@ -25,7 +25,7 @@ class Periodos extends BaseController
 
         $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
 
-        $sql = $this->data[ "periodo" ][ "estatus_codigo" ] == "250-EN-PROCESO" ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $sql = "modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 255 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
 
         $this->data[ "pagos" ]   = model( "PagoModel" )->where( $sql )->findAll();
 
