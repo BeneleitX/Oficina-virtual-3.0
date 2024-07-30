@@ -19,7 +19,7 @@
         <div class="col-lg-4">
             <p><strong>ESTRELLAS</strong>: Son generadas por compras BIEX de socios en tercer nivel registrados y activados durante el ciclo.</p>
             <p>Cada socio en tu tercer nivel, puede generar con sus compras un máximo de 2 <i class="fa fa-star text-amber"></i>estrellas por mes.</p>
-            <p>Para recibir y acumular <i class="fa fa-star text-amber"></i>estrellas es requisito indispensable contar con calificación EJECUTIVO en Nutrición</p>
+            <p>Para recibir y acumular <i class="fa fa-star text-amber"></i>estrellas es requisito indispensable contar con calificación PREMIERE en Nutrición</p>
         </div>
         <div class="col-lg-4">
         <p><strong>RECOMPENSAS</strong>: Las recompensas pueden conseguirse acumulando <i class="fa fa-star text-amber"></i>estrellas. Entre más grande sea tu red, más estrellas obtendrás cada mes.</p>
@@ -28,8 +28,8 @@
         </div>
         <div class="col-lg-4">
         <p><strong>CICLOS</strong>: Un ciclo es una colección de recompensas. Cuando se obtienen todas, se avanza al siguiente, iniciando desde cero el conteo de <i class="fa fa-star text-amber"></i>estrellas para nuevas recompensas.</p>
-        <p>El límite para acumular <i class="fa fa-star text-amber"></i>estrellas es de 24 meses (a partir de tu primer compra), una vez transcurrido este tiempo, las <i class="fa fa-star text-amber"></i>estrellas acumuladas desaparecen y se reinician los contadores a cero, teniendo otros 24 meses para conseguir las recompensas pendientes.</p>
-        <p>Dejar de calificar un mes también en Nutrición, causará el reinicio de los contadores.</p>
+        <p>El límite para acumular <i class="fa fa-star text-amber"></i>estrellas es de 30 meses (a partir de tu primer compra), una vez transcurrido este tiempo, las <i class="fa fa-star text-amber"></i>estrellas acumuladas desaparecen y se reinician los contadores a cero, teniendo 24 meses a partir del segundo ciclo para conseguir las recompensas pendientes.</p>
+        <p><strong>Dejar de calificar un mes en Nutrición, causará el reinicio de los contadores.</strong></p>
         </div>
     </div>
 </div>

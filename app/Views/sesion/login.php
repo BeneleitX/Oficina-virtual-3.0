@@ -61,9 +61,10 @@ if( VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 								<p class="small text-danger"><?php echo session( "errors.socio_id" ); ?></p>
 								<input type="password" class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password">
 								<p class="small text-danger"><?php echo session( "errors.socio_password" ); ?></p>
-								<p class="text-center mt-3"><a href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>
-								<hr class="b-primary">
 								<p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary rounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
+								<hr class="b-primary">
+								<p class="text-center mt-3 mb-0"><a href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>
+
 							</form>
 						</div>
 						
