@@ -577,6 +577,6 @@ $(document).ready(function()
     if( !( pagado || cancelado ) ) update_pedido( "inicial" );
 
     if( $( '[name=metodosentrega]' ).length == 1 ){
-        // $( '[name=metodosentrega]' ).click();
+        $( '[name=metodosentrega]' ).click();
     }    
 });

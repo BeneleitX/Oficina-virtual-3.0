@@ -5,7 +5,7 @@ $numeros = $usuario->getCelulares();
 $htmlx   = "";
 
 foreach( $numeros as $c ){
-        $paqs = "";
+        $paqs = ""; 
         $paquetes = getPaqueteMovil( $c[ "numero" ] );
 
         foreach( $paquetes as $pq ){
@@ -29,8 +29,8 @@ foreach( $numeros as $c ){
     $directos = $usuario->getDirectosActivos( "20-TELEFONIA" );
     ?>
 
-    <div class="row">
-        <div class="col-6"><a href="<?php echo base_url("tienda/20-TELEFONIA"); ?>" class="btn btn-success col-12"><i class="fa fa-shopping-cart"></i> Comprar recarga</a></div>
+    <div class="row mt-3">
+        <div class="col-6"><a href="<?php echo base_url("tienda/20-TELEFONIA"); ?>" class="btn btn-success col-12" <?php echo sizeof( $numeros ) ? "" : "disabled"; ?>><i class="fa fa-shopping-cart"></i> Comprar recarga</a></div>
         <div class="col-6"><a href="<?php echo base_url("perfil"); ?>" class="btn btn-danger col-12"><i class="fa fa-phone"></i> Ir a mis números</a></div>
     </div>
 
