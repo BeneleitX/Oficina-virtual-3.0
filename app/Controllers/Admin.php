@@ -174,4 +174,13 @@ class Admin extends BaseController
             "valor" => $valor
         ] );        
     }
+
+    public function apikeys(){
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "API keys";
+
+        echo template( "admin/apikeys", $this->data );
+    } 
+
+
 }

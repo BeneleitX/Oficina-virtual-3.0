@@ -115,6 +115,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "esquemas/(:any)",        "Esquemas::listado/$1" );
 
     $routes->get( "admin",                  "Admin::dashboard" ); 
+    $routes->get( "apikeys",                "Admin::apikeys" ); 
     $routes->get( "variables",              "Admin::variables" ); 
     $routes->get( "estatus",                "Admin::estatus" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 

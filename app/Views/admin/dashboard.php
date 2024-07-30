@@ -30,6 +30,7 @@ $menu = [
     [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ) ], 
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR" ],     
     [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos" ],     
+    [ "danger", "apikeys", "network-wired", "API keys" ],     
 ];
 
 foreach( $menu as $opcion ){
