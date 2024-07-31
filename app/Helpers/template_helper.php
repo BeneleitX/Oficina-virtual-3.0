@@ -19,7 +19,7 @@ function template($url, $data)
 }
 
 
-function load_catalogo( $tabla, $where = null ){
+function load_catalogo( $tabla, $where = null, $nombre = null ){
     if( defined( strtoupper( $tabla) ) ) return;
 
     $db = db_connect();
@@ -37,7 +37,7 @@ function load_catalogo( $tabla, $where = null ){
         $array[ $row[ "codigo" ] ] = $tmp;
     }
 
-    define( strtoupper( $tabla ), $array );
+    define( strtoupper( $nombre ?? $tabla ), $array );
 }
 
 

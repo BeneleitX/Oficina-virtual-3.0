@@ -1,5 +1,5 @@
 <?php
-if( VARIABLES[ "aviso_inicio" ][ "valor" ] ){
+if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 	echo "<div class=\"alert alert-danger small py-2\"><i class=\"fa fa-warning\"></i> ".VARIABLES[ "aviso_inicio" ][ "valor" ]."</div>";
 }
 ?>

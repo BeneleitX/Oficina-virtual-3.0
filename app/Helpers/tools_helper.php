@@ -420,3 +420,53 @@ function getPaqueteMovil( $celular ){
             AND now() BETWEEN CAST( pe.fechas->>'$.pagado' AS DATE ) AND CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
             ORDER BY pr.data->'$.puntos.\"310-TELEFONIA\"' DESC" )->getResultArray();
 }
+
+
+function nuevo_pedido( $modelo ){
+    load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'", "pp");
+
+    
+    $PTS    = [];
+    $promos = [];
+
+    foreach( $pp as $p ){
+        $PTS[ $p[ "codigo" ] ] = 0;
+        $promos[ $p[ "codigo" ] ] = [];
+    }
+
+    ksort( $promos );
+    
+    $nuevo  = [
+        "id" => null,
+        "referencia" => null,
+        "estatus_codigo" => "250-EN-PROCESO",
+        "modelo_codigo" => $modelo,
+        "PTS" =>  $PTS,
+        "usuario_id" => null,
+        "data" => [
+            "peso" => 0,
+            "saldo" => 0,
+            "mesanterior" => 0,
+            "costoxbulto" => 0,
+            "pesoxbulto" => MODELOS[ $modelo ][ "settings" ][ "pesoxbulto"],
+            "productosxbulto" => MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ],
+            "total" => 0,
+            "comisionbanco" => 0,
+            "comisionentrega" => 0,
+            "entrega" => null,
+            "productos" => 0,
+            "tercernivel" => [
+                "cantidad" => 0,
+                "socio" => 0
+            ]
+        ],
+        "promociones" => $promos,
+        "metodopago_codigo" => null,
+        "metodoentrega_codigo" => null,
+        "fechas" => [
+            "creado" => date( "Y-m-d H:i:s" )
+        ]
+    ];
+    
+    return $nuevo;
+}

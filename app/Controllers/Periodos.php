@@ -93,7 +93,7 @@ class Periodos extends BaseController
         */
 
         // BITACORA corte parcial / corte semanal      
-        bitacora( 43, $this->id, [
+        bitacora( 43, $this->data[ "usuario" ]->id, [
             "periodo" => $this->request->getPost( "periodo" )
         ] );
 
