@@ -19,25 +19,4 @@ function template($url, $data)
 }
 
 
-function load_catalogo( $tabla, $where = null, $nombre = null ){
-    if( defined( strtoupper( $tabla) ) ) return;
-
-    $db = db_connect();
-
-    // catálogo de modelos de negocio
-    $array = [];
-    
-    foreach( $db->query( "select * from t_{$tabla}".( $where ? " where ".$where : "")." order by codigo" )->getResultArray() as $row ){ 
-        $tmp = [];
-
-        foreach( $row as $k => $d ){
-            $tmp[ $k ] = is_array( $obj = json_decode( $d, 1 ) ) ? $obj : $d;
-        }
-
-        $array[ $row[ "codigo" ] ] = $tmp;
-    }
-
-    define( strtoupper( $nombre ?? $tabla ), $array );
-}
-
 

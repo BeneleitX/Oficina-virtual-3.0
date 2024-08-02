@@ -482,7 +482,7 @@ class E_usuario extends Entity
             $pedido = nuevo_pedido( $modelo );
             $pedido[ "usuario_id" ] = $this->id;
 
-            model( "PedidoModel" )->save( $nuevo );
+            model( "PedidoModel" )->save( $pedido );
             $pedido = $this->getPedido( $modelo );
         }
         

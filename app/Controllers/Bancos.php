@@ -97,7 +97,7 @@ class Bancos extends BaseController
                         $respuesta[ "errores" ][] = "Inconsistencias en fecha | {$line}";
                         $valido = 0;
                     }
-            °
+            
                     $f = explode( " ", $e[ 1 ] );
                     $g = explode( "/", $f[ 0 ] );
                     

@@ -422,8 +422,34 @@ function getPaqueteMovil( $celular ){
 }
 
 
+
+function load_catalogo( $tabla, $where = null, $nombre = null ){
+    
+    if( defined( strtoupper( $nombre ) ) ) return;
+
+    $db = db_connect();
+
+    // catálogo de modelos de negocio
+    $array = [];
+    
+    foreach( $db->query( "select * from t_{$tabla}".( $where ? " where ".$where : "")." order by codigo" )->getResultArray() as $row ){ 
+        $tmp = [];
+
+        foreach( $row as $k => $d ){
+            $tmp[ $k ] = is_array( $obj = json_decode( $d, 1 ) ) ? $obj : $d;
+        }
+
+        $array[ $row[ "codigo" ] ] = $tmp;
+    }
+
+    define( strtoupper( $nombre ?? $tabla ), $array );
+}
+
+
+
+
 function nuevo_pedido( $modelo ){
-    load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'", "pp");
+    load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'", "pp" );
     
     $PTS    = [];
     $promos = [];
