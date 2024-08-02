@@ -424,12 +424,11 @@ function getPaqueteMovil( $celular ){
 
 function nuevo_pedido( $modelo ){
     load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'", "pp");
-
     
     $PTS    = [];
     $promos = [];
 
-    foreach( $pp as $p ){
+    foreach( PP as $p ){
         $PTS[ $p[ "codigo" ] ] = 0;
         $promos[ $p[ "codigo" ] ] = [];
     }

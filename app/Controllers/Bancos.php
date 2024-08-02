@@ -118,7 +118,7 @@ class Bancos extends BaseController
 
                     if( $valido ){
                         $respuesta[ "pagos" ][ $l[ "referencia" ] ] = $l;
-                        $referencias[] = $l[ "pedido" ];
+                        $referencias[] = substr( $l[ "pedido" ], 0, -1 );
                     }
                     else{
                         echo json_encode( $respuesta );
@@ -127,22 +127,19 @@ class Bancos extends BaseController
                 }
             }
 
-            $pedidos = model( "IngresoModel" )->where( "" )->findAll();
-
-
-
-
             $pedidos = model( "PedidoModel" )->find( $referencias );
             
             if( $pedidos ){
                 
                 foreach( $pedidos as $p ){
-                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "socio" ] = $p[ "usuario_id" ];
+                    $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "socio" ] = $u->id()." ".$u->nombre( 2 );
+
+                    if( $p[ "estatus_codigo "] )
+
+                    $respuesta[ "conteo" ][ "pagados" ]++;
                 }
             }
-
-            $respuesta[ "conteo" ][ "pagados" ]++;
-
         }
 
         echo json_encode( $respuesta );

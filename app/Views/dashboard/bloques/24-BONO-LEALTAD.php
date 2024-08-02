@@ -12,7 +12,7 @@ if( !$es_bx ){
 
     <?php
 
-        $dto = new \DateTime( date( "Y-m-d" ) ." - 2 months" );
+        $dto = new \DateTime( date( "Y-m-" ) ."01 - 2 months" );
         $historial = $usuario->historial->modelos->{"10-NUTRICION"};
         $contador  = 2;
         $ganado    = 0;
@@ -30,7 +30,7 @@ if( !$es_bx ){
             $dto->modify('+1 month');
         }
 
-        $dto = new \DateTime( date( "Y-m-d" ) ." - 2 months" );
+        $dto = new \DateTime( date( "Y-m-" ) ."01 - 2 months" );
         
         for( $a = 0; $a < 3; $a++ ){
 
