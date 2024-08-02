@@ -10,11 +10,19 @@ $(document).ready(function(){
 
     var table = new DataTable('#tabla_pedidos', {
         pageLength: 50,
-		columnDefs: [{ className: "dt-nowrap", "targets": [3] } ]
+		columnDefs: [{ className: "dt-nowrap", "targets": [3] } ],
+		drawCallback: function( settings ) {
+			$('[data-bs-toggle="tooltip"]').tooltip();
+		}
     });
 
 
     $( 'input.upload').on( 'change', function(){
+
+		if( !$( this ).val() ){
+			return; 
+		}
+
 		var formData = new FormData();
 
 		formData.append( 'archivo', $( 'input.upload' )[0].files[0] ); 
@@ -31,6 +39,9 @@ $(document).ready(function(){
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
 			processData: false, // NEEDED, DON'T OMIT THIS
 			success: function( respuesta ){
+
+					$( 'input.upload').val( '' );
+					table.clear();
 
 					var pagos = [],
 						n = 1;
@@ -55,6 +66,7 @@ $(document).ready(function(){
 					table.rows
 					.add( pagos )
 					.draw();
+
 			}
 		});
 	});
