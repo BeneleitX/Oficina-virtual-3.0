@@ -9,7 +9,7 @@ function id($n, $digitos = 0)
 {
     $array = array_map('intval', str_split(str_pad($n,$digitos,"0", STR_PAD_LEFT)));
     $i     = array_shift($array);
-    $res   = "<span class='fw-light opacity-50'>";
+    $res   = "<span style='font-weight:100; opacity:.4'>";
 
     while($i == "0")
     {
@@ -17,7 +17,7 @@ function id($n, $digitos = 0)
         $i = array_shift($array);
     }
 
-    $res .= "</span><span class='fw-bold'>";
+    $res .= "</span><span style='font-weight:600'>";
     $res .= $i;
 
     foreach($array as $a)

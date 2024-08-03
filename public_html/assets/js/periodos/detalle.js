@@ -53,10 +53,29 @@ function getStatus() {
 }
 
 
+
 $(document).ready(function(){
 
     new DataTable('#tabla_pagos, #tabla_anteriores', {
         pageLength: 50
+    });
+
+
+    $( '#btn_excel_corte' ).on( 'click', function(){
+        var btn = $( this );
+
+        btn.addClass( 'disabled' ).html( '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...' );
+
+        $.ajax({
+            url: base_url + 'excel_corte',
+            data: { periodo: periodo, [csrf_token] : csrf_hash },
+            type: 'POST',
+            success: function( file ){
+                // download
+                btn.removeClass( 'disabled' ).html( '<i class="fa fa-file-excel"></i> Descargar excel' );
+                window.location.href = base_url + file;
+            }
+        });  
     });
 
 

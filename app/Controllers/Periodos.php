@@ -1,6 +1,11 @@
 <?php
 
 namespace App\Controllers;
+require '../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 class Periodos extends BaseController
 {
@@ -119,7 +124,7 @@ class Periodos extends BaseController
             $db->query( $sql );
 
             // BITACORA Cierra semana  
-            bitacora( 44, $this->id, [
+            bitacora( 44, $this->data[ "usuario" ]->id, [
                 "periodo" => $periodo[ "codigo" ]
             ] );
 
@@ -144,7 +149,7 @@ class Periodos extends BaseController
             $db->query( $sql );
 
             // BITACORA Abre semana  
-            bitacora( 45, $this->id, [
+            bitacora( 45, $this->data[ "usuario" ]->id, [
                 "periodo" => $periodo[ "codigo" ]
             ] );
 
@@ -152,4 +157,48 @@ class Periodos extends BaseController
             model( "PeriodoModel" )->save( $periodo );
         }
     }
+
+
+    public function excel_corte(){
+        $sheet1Data = [
+            ["First Name", "Last Name", "Date of Birth"],
+            ['Britney',  "Spears", "02-12-1981"],
+            ['Michael',  "Jackson", "29-08-1958"],
+            ['Christina',  "Aguilera", "18-12-1980"],
+        ];
+
+        $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
+
+        $data = $periodo[ "data" ];
+        $data[ "contador" ] = intval( $data[ "contador" ] ?? 0 ) + 1;
+
+        $time = str_pad( $data[ "contador" ], 2, "0", STR_PAD_LEFT );
+
+        $periodo[ "data" ] = $data;
+        model( "PeriodoModel" )->save( $periodo );
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet1 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "Sheet 1");
+        $mySpreadsheet->addSheet($worksheet1, 0);
+        $worksheet1->fromArray($sheet1Data);
+
+        foreach ($worksheet1->getColumnIterator() as $column){
+            $worksheet1->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        }
+
+        // BITACORA descarga excel de corte
+        bitacora( 46, $this->data[ "usuario" ]->id, [
+            "periodo" => $this->request->getPost( "periodo" ),
+            "time" => $time
+        ] );
+
+        echo $file = "assets/archivo/corte/{$periodo[ "modelo_codigo" ]}/{$periodo[ "modelo_codigo" ]}_".periodo( $periodo[ "codigo" ] )."_{$time}.xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }
+
 }
+
+// 1722617526

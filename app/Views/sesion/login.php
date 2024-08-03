@@ -48,7 +48,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 
 		</div>
 		<div class="col-lg-4 px-5">
-			<p class="text-center d-none d-lg-block"><img src="<?php echo base_url(); ?>assets/img/icon_beneleit.png" class="opacity-25 w-25 mt-1"></p>
+			<p class="text-center d-none d-lg-block"><img src="<?php echo base_url(); ?>assets/img/logo_blanco.png" class="opacity-25 w-25 mt-3"></p>
 
 					<div class="card mb-3 bg-gray-200 xtext-white ">
 						
@@ -69,7 +69,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 						</div>
 						
 					</div>
-					<p class="text-center m-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-outline-primary rounded-pill col-12" href="<?php echo base_url( "formulario" ); ?>"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+					<p class="text-center m-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" style="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
 		</div>
 	</div>	
 </div>

@@ -65,6 +65,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
     $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 
     $routes->post( "reset_corte",           "Periodos::reset_corte" ); 
+    $routes->post( "excel_corte",           "Periodos::excel_corte" ); 
     $routes->post( "corte",                 "Periodos::corte" ); 
     $routes->post( "cierra_periodo",        "Periodos::cierra_periodo" ); 
     $routes->post( "abre_periodo",          "Periodos::abre_periodo" ); 
@@ -108,7 +109,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "paqueterias/(:any)",     "Paqueteria::listado/$1" ); 
     $routes->get( "paqueteria/(:any)",      "Paqueteria::detalle/$1" );
     $routes->post( "envia",                 "Paqueteria::entrega" );
-    $routes->post( "marca_enviado",          "Paqueteria::marca_enviado" );
+    $routes->post( "marca_enviado",         "Paqueteria::marca_enviado" );
 
     $routes->get( "roles",                  "Roles::listado" ); 
 

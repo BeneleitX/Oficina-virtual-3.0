@@ -11,6 +11,18 @@ if( sizeof( $t[ "extras" ] ) ){
     echo "<div class=\"alert alert-danger mb-3\"><i class=\"fa fa-warning\"></i> Este periodo contiene pagos con inconsistencias. Favor de notificar a sistemas antes de cerrar la semana</div>";
 }
 
+function pago( $g ){
+    return "<tr>
+    <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
+    <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
+    <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
+    <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
+    <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
+    <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
+    <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
+    <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";    
+}
+
 ?>
 
 
@@ -26,7 +38,7 @@ if( sizeof( $t[ "extras" ] ) ){
             <button onclick="$( '#modal_abre' ).modal( 'show' )" class="btn btn-secondary col-12"><i class="fa fa-lock"></i> Abrir periodo</button>
         </div>        
         <div class="col-md-3">
-            <button onclick="excel_corte()" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 250 ? "" : "disabled"; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
+            <button id="btn_excel_corte" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 250 ? "" : "disabled"; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
     </div>
 </div>
@@ -50,15 +62,7 @@ if( sizeof( $t[ "extras" ] ) ){
     <?php 
 
     foreach( $t[ "previos" ] as $g ){
-        echo "<tr>
-            <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
-            <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
-            <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
-            <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
-            <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
+        echo pago( $g );
     }
     ?>
     </tbody>
@@ -84,15 +88,7 @@ if( sizeof( $t[ "extras" ] ) ){
     <?php 
 
     foreach( $t[ "actual" ] as $g ){
-        echo "<tr>
-            <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
-            <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
-            <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
-            <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
-            <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
-            <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
+        echo pago( $g );
     }
         
     ?>
@@ -118,15 +114,7 @@ if( sizeof( $t[ "extras" ] ) ){
     <?php 
 
 foreach( $t[ "siguiente" ] as $g ){
-    echo "<tr>
-        <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
-        <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
-        <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
-        <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
-        <td width=\"14%\">".( $g[ "data" ][ "retencion"] ? "" : "<i class=\"fa fa-filter-circle-dollar text-blue\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
-        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
-        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
-        <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";
+    echo pago( $g );
 }
         
     ?>
