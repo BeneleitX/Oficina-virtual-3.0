@@ -227,14 +227,6 @@ class Registro extends BaseController
         
                 $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
         
-                if( $_SERVER[ "SERVER_ADDR" ] == "127.0.0.1" ){
-                    /* echo $respuesta;
-                    die(); */
-                }
-                else{
-                    return redirect()->to( "recover/success" );
-                }
-
 
         if( $demo > 0 ){
             return redirect()->to( "red/{$modelo}" );
