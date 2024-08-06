@@ -680,7 +680,7 @@ class E_usuario extends Entity
 
             $db = db_connect();
             $db->query( "select f_update_PTS( {$this->id}, '{$modelo}', '{$mescalifica}' )" );  
-            $db->query( "select f_get_estatus( {$this->id} )" );
+            $db->query( "select f_get_estatus( {$this->id}, 0 )" );
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();
         }
         else{

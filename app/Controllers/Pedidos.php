@@ -179,7 +179,7 @@ class Pedidos extends BaseController
 
             $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );  
             $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
-            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]} )" );
+            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();            
         }
 
@@ -204,7 +204,7 @@ class Pedidos extends BaseController
 
         $db = db_connect();
         $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
-        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]} )" );
+        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
 
         // BITACORA Cancelar pedido
         bitacora( 33, $this->data[ "usuario" ]->id, [ 
