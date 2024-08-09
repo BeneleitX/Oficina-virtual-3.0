@@ -343,7 +343,7 @@ function beneleit( data ){
             .attr( 'dy', 70 )
             .attr( 'text-anchor', 'middle')
             .style( 'font-size', '12px' )
-            .style( 'fill', function( d ){ return d.rango == '90-DIAMANTE' || d.rango.substr(1) == '00-SOCIO' ? 'marine' : 'white' } )
+            .style( 'fill', 'white' )
             .style( 'font-weight', 'bold' )
             .text( function( d ){ return d.id ; });
 
