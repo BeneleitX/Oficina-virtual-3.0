@@ -95,7 +95,7 @@ class Registro extends BaseController
                     "csf"           => null,
                     "rfc"           => null
                 ],
-                "rango"     => "00-SOCIO",
+                "rango"     => "100-SOCIO",
                 "recompensas"    => [
                     "activa" => "010-CELULAR",
                     "ciclo"  => 1,
