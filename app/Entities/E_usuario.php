@@ -241,7 +241,7 @@ class E_usuario extends Entity
  
     public function rango( int $size = 40 ): string 
     {
-        return "<img style=\"width:{$size}px; height:{$size}px;\" src=\"".base_url()."assets/img/rangos/{$this->data->rango}.jpg\">";
+        return "<img style=\"width:{$size}px; height:{$size}px;\" src=\"".base_url()."assets/img/rangos/{$this->data->rango}.png\">";
     }
 
 

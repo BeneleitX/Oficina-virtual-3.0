@@ -48,12 +48,14 @@ class RangoModel extends Model
 
     protected function JSONdecode(array $data)
     {
-        if( $data[ "singleton" ] ){
-            $data[ "data" ][ "cantidades"  ] = json_decode( $data[ "data" ][ "cantidades"  ], true );
-        }
-        else{
-            foreach( $data[ "data" ] as $k => $d ){
-                $data[ "data" ][ $k ][ "cantidades"  ] = json_decode( $data[ "data" ][ $k ][ "cantidades"  ], true );
+        if( $data[ "data" ] ){
+            if( $data[ "singleton" ] ){
+                $data[ "data" ][ "cantidades"  ] = json_decode( $data[ "data" ][ "cantidades"  ], true );
+            }
+            else{
+                foreach( $data[ "data" ] as $k => $d ){
+                    $data[ "data" ][ $k ][ "cantidades"  ] = json_decode( $data[ "data" ][ $k ][ "cantidades"  ], true );
+                }
             }
         }
 
