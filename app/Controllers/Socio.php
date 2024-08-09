@@ -278,6 +278,9 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $socio );
 
+        // actualizaar pagos pendientes
+        $db->query( "update t_pagos set clabe = '{$clabe}' where usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+
         // BITACORA Actualziar CLABE interbancaria
         bitacora( 13, $socio->id, [ 
             "clabe"   => $clabe,
@@ -623,6 +626,11 @@ class Socio extends BaseController
             "usuario" => $this->data[ "usuario" ]->id
         ] );
 
+
+        // actualizaar pagos pendientes
+        $db = db_connect();
+        $db->query( "update t_pagos set data = json_set( data, '$.retencion', 0 ) where usuario_id = ".$this->data[ "socio" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+
         session()->setFlashdata('msg', [ 
             "clase"   => "success", 
             "icono"   => "check", 
@@ -651,9 +659,60 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
+        // actualizaar pagos pendientes
+        $db = db_connect();
+        $db->query( "update t_pagos set data = json_set( data, '$.retencion', 1 ) where usuario_id = ".$this->data[ "socio" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+        
         return redirect()->to( "perfil" )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "trash", 
             "texto" => "Se eliminó la Constancia de Situación Fiscal"] );
     }
+
+
+    public function guarda_rfc(){
+        $socio = $this->data[ "usuario" ];
+
+        $rfc = $this->request->getPost( "rfc" );
+
+        $validation = service( "validation" );
+        $validation->setRules( [
+            "rfc" => "required|max_length[15]"
+        ] );
+
+        // Si hay errores de validación automática, regresar a formulario
+        if( !$validation->withRequest( $this->request )->run() ){
+
+            // BITACORA Error al agregar rfc
+            bitacora( 49, $socio->id, [ 
+                "rfc"   => $rfc,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", $validation->getErrors() )
+                ->withInput();
+        } 
+      
+        $db = db_connect();
+        
+        $json = $socio->data;
+        $json->sat->rfc = $rfc;
+        $socio->data = $json; 
+
+        model( "UsuarioModel" )->save( $socio );
+
+        // BITACORA Actualziar CLABE interbancaria
+        bitacora( 48, $socio->id, [ 
+            "rfc"   => $rfc,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó tu RFC" ] );        
+    }
+
 }

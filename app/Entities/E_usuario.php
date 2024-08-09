@@ -314,7 +314,7 @@ class E_usuario extends Entity
     public function getUplineJSON( $modelo ){
 
         $db  = db_connect();
-        $sql = "select f_get_upline( {$this->id}, '{$modelo}', 1 ) as upline";
+        $sql = "select f_get_upline( {$this->id}, '{$modelo}', 1, '".date( "Y-m-d" )."' ) as upline";
         $r = $db->query( $sql )->getRow();
 
         return $r->upline;

@@ -11,7 +11,7 @@
         <?php echo pills( "balance", $modelo, "codigo_periodo" ); ?>
     </div>
     <div class="col-lg-4 text-end">
-        <button class="btn btn-success"><i class="fa fa-file-excel"></i> Descargar Excel</button>
+        <button class="btn btn-success d-none"><i class="fa fa-file-excel"></i> Descargar Excel</button>
     </div>
 </div>
 
@@ -94,7 +94,7 @@ for( $d = 0; $d < 7; $d++ ){
                                     <td width=\"10%\" class=\"text-center\"><a href=\"".base_url()."/pedido/{$c->referencia}\"><span class=\"badge bg-marine\">{$c->referencia}</span></a></td>
                                     <td width=\"20%\" class=\"text-center\">{$c->fecha}</td>
                                     <td width=\"10%\" class=\"text-start\"><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge border border-red text-red\">Compresion</span>" : "")."</td>
-                                    <td width=\"20%\"><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}</td>
+                                    <td width=\"20%\" nowrap><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}</td>
                                     <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c->cantidad, 2 )."</strong></td>
                                     <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
                                 </tr>";

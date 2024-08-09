@@ -45,7 +45,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
     $routes->get( "historial",              "Pedidos::historial" ); 
-    $routes->post( "historial/fuente",              "Pedidos::fuente" ); 
+    $routes->post( "historial/fuente",      "Pedidos::fuente" ); 
     $routes->get( "historial/(:any)",       "Pedidos::historial/$1" ); 
     $routes->get( "pedido",                 "Pedidos::historial" ); 
     $routes->get( "pedido/(:num)",          "Pedidos::carrito/pedido/$1" ); 
@@ -68,6 +68,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "excel_corte",           "Periodos::excel_corte" ); 
     $routes->post( "corte",                 "Periodos::corte" ); 
     $routes->post( "cierra_periodo",        "Periodos::cierra_periodo" ); 
+    $routes->post( "marca_pagado",          "Periodos::marca_pagado" ); 
     $routes->post( "abre_periodo",          "Periodos::abre_periodo" ); 
 
     $routes->get( "recompensas",            "Recompensas::detalle" );     
@@ -94,6 +95,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "add_beneficiario",      "Socio::add_beneficiario" );
     $routes->post( "cancela_beneficiario",  "Socio::cancela_beneficiario" );
     $routes->post( "guarda_clabe",          "Socio::guarda_clabe" );
+    $routes->post( "guarda_rfc",            "Socio::guarda_rfc" );
     $routes->post( "valida_cp",             "Socio::valida_cp" );
     $routes->post( "create_domicilio",      "Socio::create_domicilio" );
     $routes->post( "create_numero",         "Socio::create_numero" );

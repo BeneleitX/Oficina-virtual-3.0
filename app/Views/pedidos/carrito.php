@@ -140,7 +140,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 <?php
                     }
                     else{
-                       echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.</div>";
+                       echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.</div><p class=\"m-0\"><a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a></p>";
 
                     }
                 ?>
@@ -205,7 +205,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                                 if( $entregado ){ ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">
-                                        Este pedido ha sido enviado por paquetería con fecha <?php echo substr( $pedido[ "fechas" ][ "enviado" ] ?? "", 0, 10 ); ?>.<br>Guía de rastreo: <span class="badge bg-mustard"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
+                                        Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.<br>Guía de rastreo: <span class="badge bg-mustard fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
                                     </div>
                                 </div>
                                 <?php }
@@ -268,7 +268,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
         <?php 
         $pc = $socio->getPrimerCompra( $modelo );
-        if( !( $pagado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
+        if( $modelo == '10-NUTRICION' &&  !( $pagado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
                 <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
@@ -324,7 +324,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
-                                <tr><td valign="middle" class="">Fecha de pago</td><td valign="middle" class="text-end"><h5 class="m-0"><?php echo substr( $pedido[ "fechas" ][ "pagado" ], 0, 10 ); ?></h5></td></tr>
+                                <tr><td valign="middle" class="">Fecha de pago</td><td valign="middle" class="text-end"><h5 class="m-0"><?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?></h5></td></tr>
                                 <tr><td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td><td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end"><h5 class="m-0" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>"><?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?></h5></td></tr>
                             </table>
                         </div>
@@ -593,6 +593,8 @@ $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;
 }
+
+
 ?>
 
 	<script>

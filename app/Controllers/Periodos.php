@@ -30,9 +30,22 @@ class Periodos extends BaseController
 
         $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
 
-        $sql = "modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 255 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $sql = "substring(estatus_codigo, 1, 3) < 400 AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $this->data[ "pendientes" ] = sizeof( model( "PeriodoModel" )->where( $sql )->findAll() );
 
-        $this->data[ "pagos" ]   = model( "PagoModel" )->where( $sql )->findAll();
+
+        $sql = "modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
+
+        if( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 ){
+            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' )";
+        }
+        else{
+            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( SUBSTRING( estatus_codigo,1,3) < 300 AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ;
+        }
+
+        $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}'";
+
+        $this->data[ "pagos" ] = model( "PagoModel" )->where( $sql )->findAll();
 
         $this->data[ "t" ] = [
             "previos"   => [],
@@ -53,19 +66,18 @@ class Periodos extends BaseController
                 }
 
                 // actual
-                elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && $p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ){
+                elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && (  ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && $p[ "s" ]->verificado->estatus ) OR ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 &&  $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ) ) ){
                     $this->data[ "t" ][ "actual" ][] = $p;
                 }
 
                 // siguiente
-                elseif( ( $p[ "estatus_codigo" ] == "255-PENDIENTE" && !$p[ "s" ]->verificado->estatus ) || $p[ "data" ][ "periodos" ][ "deposito" ] > $this->data[ "periodo" ][ "codigo" ] ){
+                elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && $p[ "data" ][ "periodos" ][ "deposito" ] != $this->data[ "periodo" ][ "codigo" ]){
                     $this->data[ "t" ][ "siguiente" ][] = $p;
                 }
-
-                // extras
                 else{
                     $this->data[ "t" ][ "extras" ][] = $p;
-                }
+                }            
+    
             }
             // extras
             else{
@@ -116,9 +128,9 @@ class Periodos extends BaseController
             $sql = "UPDATE t_pagos p
                     JOIN t_usuarios u ON u.id = p.usuario_id
                     SET p.data = JSON_SET( p.data, '$.periodos.deposito', '{$periodo[ "codigo" ]}' ), 
-                        p.estatus_codigo  = '420-PAGADO'
+                        p.estatus_codigo  = '330-EN-ESPERA'
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
-                    AND p.estatus_codigo  = '255-PENDIENTE' 
+                    AND p.estatus_codigo  = '250-EN-PROCESO' 
                     AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) ";
             $db->query( $sql );
@@ -131,7 +143,34 @@ class Periodos extends BaseController
             $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
             model( "PeriodoModel" )->save( $periodo );
         }
-    }    
+    }   
+    
+    
+    public function marca_pagado(){
+        extract( $this->request->getPost() );
+
+        $periodo = model( "PeriodoModel" )->find( $periodo );
+
+        if( $periodo[ "estatus_codigo" ] == '306-PERIODO-CERRADO' ){
+            $db  = db_connect();
+            $sql = "UPDATE t_pagos p
+                    SET p.estatus_codigo  = '420-PAGADO'
+                    WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
+                    AND p.estatus_codigo  = '330-EN-ESPERA' 
+                    AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
+            $db->query( $sql );
+
+            // BITACORA marca periodo como pagado
+            bitacora( 45, $this->data[ "usuario" ]->id, [
+                "periodo" => $periodo[ "codigo" ]
+            ] );
+
+            $periodo[ "estatus_codigo" ] = "422-PERIODO-PAGADO";
+            model( "PeriodoModel" )->save( $periodo );
+        }
+    }   
+    
+    
     
     public function abre_periodo(){
         extract( $this->request->getPost() );
@@ -142,9 +181,9 @@ class Periodos extends BaseController
             $db  = db_connect();
             $sql = "UPDATE t_pagos p
                     SET p.data = JSON_SET( p.data, '$.periodos.deposito', '' ), 
-                        p.estatus_codigo  = '255-PENDIENTE'
+                        p.estatus_codigo  = '250-EN-PROCESO'
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
-                    AND p.estatus_codigo  = '420-PAGADO' 
+                    AND p.estatus_codigo  = '330-EN-ESPERA' 
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
 
@@ -160,14 +199,62 @@ class Periodos extends BaseController
 
 
     public function excel_corte(){
-        $sheet1Data = [
-            ["First Name", "Last Name", "Date of Birth"],
-            ['Britney',  "Spears", "02-12-1981"],
-            ['Michael',  "Jackson", "29-08-1958"],
-            ['Christina',  "Aguilera", "18-12-1980"],
+        $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
+
+        $db  = db_connect();
+        $sql = "SELECT p.id AS pago_id, p.usuario_id, p.clabe, p.data as p_data, u.data as u_data, f_es_verificado( u.id) AS verificado, b.nombre as banco
+                FROM t_pagos p LEFT JOIN t_usuarios u ON u.id = p.usuario_id left join t_bancos b on b.codigo = substring( p.clabe, 1, 3 )
+                where ( json_unquote( json_extract( p.data, '$.periodos.creacion' ) ) = '{$periodo[ "codigo" ]}' OR ( json_unquote( json_extract( p.data, '$.periodos.deposito' ) ) = '{$periodo[ "codigo" ]}' ) ) AND modelo_codigo = '{$periodo[ "modelo_codigo" ]}' and substring( p.estatus_codigo, 1, 3 ) > 300 order by p.usuario_id asc";
+
+        $pagos = $db->query( $sql )->getResultArray();
+
+        $sheetData = [ 
+            0 => [ [ "PAGO", "ID", "SOCIO", "RFC", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ],
+            1 => [ [ "PAGO", "ID", "BENEFICIARIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "SUBTOTAL", "IMPORTE", "RETENCIÓN DE IVA 10.66%", "IVA 16%", "TOTAL", "DESCRIPCIÓN", "CONCEPTO DE FACTURA" ] ],
+            2 => [ [ "PAGO", "ID", "SOCIO", "RFC", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ] 
         ];
 
-        $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
+        foreach( $pagos as $pago ){
+            
+            $pago[ "p_data" ] = json_decode( $pago[ "p_data" ], 1 );
+            $pago[ "u_data" ] = json_decode( $pago[ "u_data" ], 1 );
+            $pago[ "verificado" ] = json_decode( $pago[ "verificado" ], 1 );
+            
+            if( $pago[ "p_data" ][ "retencion" ] == 100 ){
+                $sheetData[ 0 ][] = $datos;
+            }
+            elseif( $pago[ "p_data" ][ "retencion" ] == 1 ){
+                $sheetData[ 2 ][] = [
+                    $pago[ "pago_id" ],
+                    $pago[ "usuario_id" ],
+                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
+                    $pago[ "clabe" ],
+                    30,
+                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
+                    $pago[ "banco" ],
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 2 ),
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "isr" ], 2 ),
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "total" ], 2 ),
+                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
+                ];
+            }
+            elseif( $pago[ "p_data" ][ "retencion" ] == 0 ){
+                $sheetData[ 1 ][] = [
+                    $pago[ "pago_id" ],
+                    $pago[ "usuario_id" ],
+                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
+                    $pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
+                    $pago[ "clabe" ],
+                    30,
+                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
+                    $pago[ "banco" ],
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 2 ),
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "isr" ], 2 ),
+                    number_format( $pago[ "p_data" ][ "cantidades" ][ "total" ], 2 ),
+                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
+                ];
+            }
+        }
 
         $data = $periodo[ "data" ];
         $data[ "contador" ] = intval( $data[ "contador" ] ?? 0 ) + 1;
@@ -179,12 +266,29 @@ class Periodos extends BaseController
 
         $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $mySpreadsheet->removeSheetByIndex(0);
-        $worksheet1 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "Sheet 1");
-        $mySpreadsheet->addSheet($worksheet1, 0);
-        $worksheet1->fromArray($sheet1Data);
 
-        foreach ($worksheet1->getColumnIterator() as $column){
-            $worksheet1->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        $worksheet = [ 
+            2 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "RET ISR"),
+            1 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "NO RET"),
+            0 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "VENTA")
+        ];
+
+        $mySpreadsheet->addSheet( $worksheet[ 0 ], 0 );
+        $worksheet[ 0 ]->fromArray( $sheetData[ 0 ] );
+        $worksheet[ 0 ]->getStyle( "I:K" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+
+        $mySpreadsheet->addSheet( $worksheet[ 1 ], 0 );
+        $worksheet[ 1 ]->fromArray( $sheetData[ 1 ] );
+        $worksheet[ 1 ]->getStyle( "I:K" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+
+        $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
+        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
+        $worksheet[ 2 ]->getStyle( "I:K" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+
+        foreach( $worksheet as $k => $ws ){
+            foreach( $ws->getColumnIterator() as $column ){
+                $worksheet[ $k ]->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+            }
         }
 
         // BITACORA descarga excel de corte
@@ -193,7 +297,10 @@ class Periodos extends BaseController
             "time" => $time
         ] );
 
-        echo $file = "assets/archivo/corte/{$periodo[ "modelo_codigo" ]}/{$periodo[ "modelo_codigo" ]}_".periodo( $periodo[ "codigo" ] )."_{$time}.xlsx";
+        $path = "assets/archivo/corte/{$periodo[ "modelo_codigo" ]}";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/{$periodo[ "modelo_codigo" ]}_".periodo( $periodo[ "codigo" ] )."_{$time}.xlsx";
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );

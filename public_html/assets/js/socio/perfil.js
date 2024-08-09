@@ -12,6 +12,13 @@ function edita_clabe(){
 }
 
 
+function edita_rfc(){
+	$( '#nota_rfc' ).slideDown();
+	$( '#rfc' ).attr( 'disabled', false );
+	$( '#rfc' ).focus();
+}
+
+
 function agrega_colonia(){
 	$( '[name=tipo_colonia]').val( 'nueva' );
 	$( '#colonia_select' ).hide();

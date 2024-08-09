@@ -158,6 +158,7 @@ function update_pedido( flag = null ){
                 "orden"       : orden,
                 "nombre"      : cat_productos[ producto ].data.nombre.toUpperCase(),
                 "descripcion" : cat_productos[ producto ].data.descripcion,
+                "reparte"     : cat_productos[ producto ].precio.reparte ?? null,
                 "precio"      : unitario
             };
 
@@ -303,10 +304,10 @@ function update_pedido( flag = null ){
         cantidad.html( caption );
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
 
-        bloqueapagos = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0;
+        es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
+        bloqueapagos  = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( !es_paqueteria || pedido.data.domicilio  );
 
         $( this ).prop( 'disabled',  !bloqueapagos || pendientes );
-        console.log( bloqueapagos, total_productos_pedido, subtotal, parseInt( pedido.data.entrega ) );
     });
     
     json = JSON.stringify( pedido );

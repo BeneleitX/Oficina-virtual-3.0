@@ -3,47 +3,52 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "paqueterías/".$paqueteria[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a almacenes</a></p>
+<p><a href="<?php echo base_url( "paqueterias/".$paqueteria[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a Paqueterías</a></p>
 
 
-<table class="table table-striped bg-white" id="tabla_pedidos">
-    <thead>
-        <tr>
-            <th>Pedido</th>
-            <th>Socio</th>
-            <th>Estatus</th>
-            <th>Productos</th>
-            <th>Fecha de pago</th>
-            <th></th>
-        </tr>
-    </thead>
+<form action="<?php echo base_url( "envia" ); ?>" method="post">
+    <?php echo csrf_field(); ?>
+    <table class="table table-striped bg-white" id="tabla_pedidos">
+        <thead>
+            <tr>
+                <th>Pedido</th>
+                <th>Socio</th>
+                <th>Estatus</th>
+                <th>Productos</th>
+                <th>Fecha de pago</th>
+                <th></th>
+            </tr>
+        </thead>
 
-    <tbody>
-        <?php 
-             foreach( $pedidos as $p ){
-                $p[ "PTS"         ] = json_decode( $p[ "PTS"  ], true );
-                $p[ "data"        ] = json_decode( $p[ "data" ], true );
-                $p[ "promociones" ] = json_decode( $p[ "promociones"  ], true );
-                $p[ "fechas"      ] = json_decode( $p[ "fechas" ], true );
+        <tbody>
+            <?php 
+                foreach( $pedidos as $p ){
+                    $p[ "PTS"         ] = json_decode( $p[ "PTS"  ], true );
+                    $p[ "data"        ] = json_decode( $p[ "data" ], true );
+                    $p[ "promociones" ] = json_decode( $p[ "promociones"  ], true );
+                    $p[ "fechas"      ] = json_decode( $p[ "fechas" ], true );
 
-                $p[ "socio" ] = new \App\Entities\E_usuario( $p[ "usuario_id" ], $p[ "socio" ] );
+                    $p[ "socio" ] = new \App\Entities\E_usuario( $p[ "usuario_id" ], $p[ "socio" ] );
 
-                echo "\n<tr almacen=\"{$p[ "id" ]}\">
-                    <td><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
-                    <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id()." ".$p[ "socio" ]->nombre(2)."</td>
-                    <td>".estatus( "330-EN-ESPERA" )."</td>
+                    echo "\n<tr almacen=\"{$p[ "id" ]}\">
+                        <td><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
+                        <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id()." ".$p[ "socio" ]->nombre(2)."</td>
+                        <td>".estatus( "330-EN-ESPERA" )."</td>
 
-                    <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
-                    <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? substr( $p[ "fechas" ][ "pagado" ], 0, 10) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
+                        <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
+                        <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? substr( $p[ "fechas" ][ "pagado" ], 0, 10) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
 
-                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
-                </tr>"; 
-            }
-        ?>
-     
-    </tbody>
-</table>
-
+                        <td class=\"text-end\">
+                            <a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a>
+                            <button type=\"submit\" name=\"pedido\" value=\"{$p[ "id" ]}\" class=\"btn btn-xs btn-primary\">ENVIAR</button>
+                        </td>
+                    </tr>"; 
+                }
+            ?>
+        
+        </tbody>
+    </table>
+</form>
 
 <div class="modal" tabindex="-1" id="stock_modal">
 	<div class="modal-dialog">

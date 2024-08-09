@@ -47,14 +47,16 @@ class AlmacenModel extends Model
 
     protected function JSONdecode(array $data)
     {
-        if( $data[ "singleton" ] ){
-            $data[ "data" ][ "settings"  ] = json_decode( $data[ "data" ][ "settings"  ], true );
-            $data[ "data" ][ "productos" ] = json_decode( $data[ "data" ][ "productos" ], true );
-        }
-        else{
-            foreach( $data[ "data" ] as $k => $d ){
-                $data[ "data" ][ $k ][ "settings"  ] = json_decode( $data[ "data" ][ $k ][ "settings"  ], true );
-                $data[ "data" ][ $k ][ "productos" ] = json_decode( $data[ "data" ][ $k ][ "productos" ], true );
+        if( $data[ "data" ] ){
+            if( $data[ "singleton" ] ){
+                $data[ "data" ][ "settings"  ] = json_decode( $data[ "data" ][ "settings"  ], true );
+                $data[ "data" ][ "productos" ] = json_decode( $data[ "data" ][ "productos" ], true );
+            }
+            else{
+                foreach( $data[ "data" ] as $k => $d ){
+                    $data[ "data" ][ $k ][ "settings"  ] = json_decode( $data[ "data" ][ $k ][ "settings"  ], true );
+                    $data[ "data" ][ $k ][ "productos" ] = json_decode( $data[ "data" ][ $k ][ "productos" ], true );
+                }
             }
         }
 

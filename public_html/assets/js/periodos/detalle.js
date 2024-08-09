@@ -79,6 +79,21 @@ $(document).ready(function(){
     });
 
 
+    $( '#marca_pagado' ).on( 'click', function(){
+
+		$.ajax({
+			url: base_url + 'marca_pagado',
+			data: { periodo: periodo, [csrf_token] : csrf_hash },
+			type: 'POST',
+			success: function(){
+                // reload
+                window.location.href = base_url + "periodo/" + periodo;
+            }
+		});        
+    });
+
+
+    
     $( '#cierra_start' ).on( 'click', function(){
 
 		$.ajax({

@@ -92,7 +92,8 @@ class Registro extends BaseController
                 ],
                 "sat"           => [
                     "estatus"       => 0,
-                    "csf"           => null
+                    "csf"           => null,
+                    "rfc"           => null
                 ],
                 "rango"     => "00-SOCIO",
                 "recompensas"    => [

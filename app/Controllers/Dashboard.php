@@ -6,11 +6,18 @@ class Dashboard extends BaseController
 {
     function __construct() {
         $this->data[ "menu" ] = "inicio";
+        
     }
 
     public function inicio(){
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "¡Hola {$this->data[ "usuario" ]->nombre()}! ".$this->data[ "usuario" ]->id( null, "marine");
+
+        $db = db_connect();
+        $db->query( "select f_update_PTS(   {$this->data[ "usuario" ]->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+        $db->query( "select f_get_estatus(  {$this->data[ "usuario" ]->id}, 1 )" );
+        $db->query( "select f_checks_rango( {$this->data[ "usuario" ]->id}, '10-NUTRICION' );" );
+
 
         $sql = "estatus_codigo = '201-ACTIVO'";
         $this->data[ "bloques" ] = model( "BloqueModel" )->where( $sql , null, false )->orderBy('columna', 'asc')->orderBy('orden', 'asc')->findAll();

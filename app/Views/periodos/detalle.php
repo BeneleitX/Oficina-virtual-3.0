@@ -22,24 +22,46 @@ function pago( $g ){
     <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
     <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";    
 }
-
 ?>
 
 
 <div class="alert alert-info mb-5">
     <div class="row">
+        <?php if( substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ){ ?>
+            <div class="col-md-3">
+            <button onclick="lanza_corte()" class="btn btn-danger col-12"><i class="fa fa-repeat"></i> Generar pagos</button>
+        </div>  
+        <?php if( $periodo[ "termina" ] < date( "Y-m-d" ) ){ if( $pendientes ){
+        ?>
+        <div class="col-md-3 small text-red" style="padding-top:5px">
+            <i class="fa fa-warning"></i> Este periodo no se puede cerrar porque hay otros periodos anteriores pendientes de cierre y pago
+        </div>
+        <?php
+        }else{ ?>
         <div class="col-md-3">
-            <button onclick="lanza_corte()" class="btn btn-danger col-12 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 300 ? "d-none" : ""; ?>"><i class="fa fa-repeat"></i> Generar pagos</button>
-        </div>        
-        <div class="col-md-3 <?php echo $periodo[ "estatus_codigo" ] != '255-PENDIENTE' ? "d-none" : ""; ?>">
             <button onclick="$( '#modal_cierra' ).modal( 'show' )" class="btn btn-warning col-12"><i class="fa fa-lock"></i> Cerrar periodo</button>
         </div>
-        <div class="col-md-3 <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 300 ? "d-none" : ""; ?>">
-            <button onclick="$( '#modal_abre' ).modal( 'show' )" class="btn btn-secondary col-12"><i class="fa fa-lock"></i> Abrir periodo</button>
+        <?php } } else{
+            ?>
+                    <div class="col-md-3 small text-red" style="padding-top:5px">
+            <i class="fa fa-warning"></i> Este periodo está en proceso. No se puede cerrar porque aun no alcanza su fecha de cierre
+        </div>
+            <?php
+        } }
+            else{ 
+                if( substr( $periodo[ "estatus_codigo" ], 0, 3 ) < 400 ){
+                ?>
+        <div class="col-md-3">
+            <button onclick="$( '#modal_abre' ).modal( 'show' )" class="btn btn-warning col-12"><i class="fa fa-unlock"></i> Reabrir periodo</button>
         </div>        
         <div class="col-md-3">
-            <button id="btn_excel_corte" <?php echo substr( $periodo[ "estatus_codigo" ], 0, 3 ) > 250 ? "" : "disabled"; ?> class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
+            <button onclick="$( '#modal_paga' ).modal( 'show' )" class="btn btn-secondary col-12"><i class="fa fa-hand-holding-dollar"></i> Marcar como pagado</button>
+        </div>        
+        <?php } ?>
+        <div class="col-md-3">
+            <button id="btn_excel_corte" class="btn btn-success col-12"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
+        <?php } ?>
     </div>
 </div>
 
@@ -160,7 +182,8 @@ foreach( $t[ "siguiente" ] as $g ){
             </div>
             
             <div class="modal-footer" style="display:none">
-                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Continuar</button>
+            <button type="button" class="btn d-none btn-danger" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Continuar</button>
+            <a class="btn btn-danger" href="<?php echo base_url( "periodo/".$periodo[ "codigo" ] ); ?>"><i class="i-cancelar"></i> Continuar</a>
             </div>
         </div>
     </div>
@@ -172,22 +195,14 @@ foreach( $t[ "siguiente" ] as $g ){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
+                <h5 class="modal-title" id="add_rolLabel">Cerrar periodo <span class="badge bg-mustard"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-mustard fa fa-lock"></i></p>
-                    <p>
-                    <?php 
-                    if( $periodo[ "estatus_codigo" ] != '255-PENDIENTE' ){
-                        echo "<div class=\"alert alert-danger\">No se puede cerrar este periodo</div>";
-                    }
-                    else{
-                        echo "<div class=\"mt-4 mb-3\"><button class=\"btn btn-danger\" id=\"cierra_start\">Click para cerrar el periodo</button></div>";
-                    }
-                    ?>
-                    </p>
+                    <div class="alert alert-info">Se deshabilitará el corte parcial y los pagos de socios verificados se marcarán como EN ESPERA DE PAGO.</div>
+                    <p><div class="mt-4 mb-3"><button class="btn btn-warning" id="cierra_start">Click para cerrar el periodo</button></div></p>
                 </div>
             </div>
         </div>
@@ -199,21 +214,38 @@ foreach( $t[ "siguiente" ] as $g ){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
+                <h5 class="modal-title" id="add_rolLabel">Reabrir periodo <span class="badge bg-mustard"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
-                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-marine fa fa-lock-open"></i></p>
-                    <p>
-                    <div class="mt-4 mb-3"><button class="btn btn-danger" id="abre_start">Click para abrir el pertiodo</button></div>
-                    </p>
+                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-mustard fa fa-unlock"></i></p>
+                    <div class="alert alert-info">Todos los pagos de este periodo regresaran a estatus EN PROCESO. Se habilitará nuevamente el corte parcial.</div>
+                    <p><div class="mt-4 mb-3"><button class="btn btn-warning" id="abre_start">Click para abrir el pertiodo</button></div></p>
                 </div>
             </div>
         </div>
     </div>
 </div> 
 
+
+<div class="modal" id="modal_paga" tabindex="-1" aria-labelledby="add_rolLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add_rolLabel">Marcar como pagado <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="periodo_detalle">
+                <div class="text-center">
+                    <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-marine fa fa-hand-holding-dollar"></i></p>
+                    <div class="alert alert-danger">Esta acción no puede deshacerse.<br>Recuerda que para hacer un corte, es necesario que todos los periodos anteriores esten marcados como pagados.</div>
+                    <p><div class="mt-4 mb-3"><button class="btn btn-secondary" id="marca_pagado">Click para marcar como pagado</button></div></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
 
 <script>
     var periodo = '<?php echo $periodo[ "codigo" ]; ?>';

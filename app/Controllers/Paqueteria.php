@@ -12,7 +12,7 @@ class Paqueteria extends BaseController
         $db = db_connect();
         $sql = "SELECT m.*, COUNT(p.id) AS pedidos 
             FROM t_metodosentrega m 
-            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
+            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500
             WHERE m.modelo_codigo = '{$modelo}' AND m.settings->>'$.tipocosto' = 'efectivo'
             GROUP BY m.codigo";
 
@@ -91,25 +91,11 @@ class Paqueteria extends BaseController
         $tmpName  = $_FILES[ "evidencia" ][ "tmp_name" ];
         move_uploaded_file( $tmpName, $path.$filename );
 
-        $db = db_connect();
-        $sql = "SELECT p.*, u.data AS socio from t_pedidos p
-            LEFT JOIN t_usuarios u ON u.id = p.usuario_id
-            WHERE p.metodoentrega_codigo = '{$paqueteria}' 
-            AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500";
-
-        $pedido[ "data" ][ "domicilio" ] = $db->query( $sql )->getRowArray();
-
         $pedido[ "estatus_codigo" ] = "530-ENVIADO";
         $pedido[ "data" ][ "guia" ] = $guia;
         $pedido[ "fechas" ][ "enviado" ] = date( "Y-m-d H:i:s" );
         model( "PedidoModel" )->save( $pedido );
 
-        foreach( $pedido[ "promociones" ] as $promo ){
-            foreach( $promo[ "productos" ] as $c => $p ){
-                $almacen[ "productos" ][ $c ] = ( $almacen[ "productos" ][ $c ] ?? 0 ) - $p[ "cantidad" ];
-            }
-        }
-        model( "AlmacenModel" )->save( $almacen );
 
         // BITACORA Entrega pedido en almacen
         bitacora( 29, $this->data[ "usuario" ]->id, [ 

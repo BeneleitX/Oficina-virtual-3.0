@@ -244,7 +244,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<?php echo csrf_field() ?>
 					<table class="mb-3">
 						<tr>
-							<td><img id="clabe_banco" src="<?php echo $socio->banco( true ); ?>" style="height:50px; width:100px"></td>
+							<td width="30%" class="text-end"><img id="clabe_banco" src="<?php echo $socio->banco( true ); ?>" style="height:50px; width:100px"></td>
 							<td style="width:100%; padding: 15px 0 0 20px;">
 								<input name="clabe" id="clabe" style="font-weight:bold" <?php echo session( "errors.clabe" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.clabe" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.clabe" ) ? old( "clabe" ) : $socio->data->clabe; ?>">
 								<p class="small text-red"><?php echo session( "errors.clabe" ); ?></p>
@@ -269,21 +269,43 @@ if( !$socio->data->verificacion->correo ){ ?>
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">Declaración de impuestos</h5></div>
             <div class="card-body">	
+
+			<form method="post" action="<?php echo base_url( "guarda_rfc" ); ?>">
+					<?php echo csrf_field() ?>
+					<table class="mb-3">
+						<tr>
+							<td width="30%" class="text-end">R.F.C.</td>
+							<td style="width:100%; padding: 15px 0 0 20px;">
+								<input name="rfc" id="rfc" style="font-weight:bold" <?php echo session( "errors.rfc" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.rfc" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.rfc" ) ? old( "rfc" ) : $socio->data->sat->rfc ?? ""; ?>">
+								<p class="small text-red"><?php echo session( "errors.rfc" ); ?></p>
+							</td>
+							<td class="pt-1 ps-3" nowrap><h5><a href="javascript:edita_rfc()" data-bs-toggle="tooltip" title="Click para editar tu RFC"><i class="fa fa-edit"></i></a></h5></td>
+						</tr>
+					</table>
+
+					<div id="nota_rfc" style="<?php echo session( "errors.rfc" ) ? "" : "display:none"; ?>" class="mt-3">
+						<h5>Actualizar R.F.C.</h5>
+						<p>Proporciona tu RFC a 13 dígitos. Recuerda que si decides solicitar declarar tus impuestos por tu cuenta, debes cancelar la casilla azul siguiente y proporcionar tu constancia de situación fiscal en PDF. Al terminar haz click en el botón.</p>						
+						<button type="submit" class="btn btn-primary mb-3"><i class="fa fa-save"></i> Guardar cambios</button>
+					</div>
+				</form>
+<div class="alert alert-warning mb-0">
 				<table><tr><td>
 					<input id="check_sat" type="checkbox" style="transform: scale(3); margin:0 15px" <?php if( $socio->data->sat->estatus == 0) echo "checked"; ?> <?php if( $socio->data->sat->csf ?? false ) echo "disabled"; ?>>
 				</td><td style="padding-left:10px" <?php if( $socio->data->sat->csf ) echo "class=\"text-gray-500\""; ?>> <strong>SI,</strong> estoy de acuerdo en que BENELEIT se haga cargo de la declaración de impuestos generados por los ingresos residuales obtenidos a mi nombre. 
 				</td></tr></table>
-				<div id="sube_csf" class="alert alert-<?php echo !$socio->data->sat->csf ? "warning" : "success"; ?> mt-3 mb-0" <?php if( $socio->data->sat->estatus == 0) echo "style=\"display:none\""; ?>>
+							</div>
+				<div id="sube_csf" class="alert alert-<?php echo !$socio->data->sat->csf ? "danger" : "success"; ?> mt-3 mb-0" <?php if( $socio->data->sat->estatus == 0) echo "style=\"display:none\""; ?>>
 					<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente cancela tu constancia y marca de nuevo la casilla.</p>
 
 					<?php if( $socio->data->sat->csf ){ ?>
 						<table><tr>
 							<td class="text-end pe-3">
-								<a href="<?php echo base_url()."data/{$socio->id}/csf/{$socio->data->sat->csf}"; ?>" target="_blank"><img src="<?php echo base_url(); ?>assets/img/csf.png" style="width:50%" class="rounded-3 border border-5 border-white"></a>
+								<a href="<?php echo base_url()."data/{$socio->id}/csf/{$socio->data->sat->csf}"; ?>" target="_blank"><img src="<?php echo base_url(); ?>assets/img/csf.png" style="width:60%" class="rounded-3 border border-5 border-white"></a>
 							</td>
 							<td>
 								<p>La Constancia de Situación Fiscal ha sido recibida. La opción de declaración de impuestos por parte de la empresa ha quedado deshabilitada.</p>
-								<a href="<?php echo base_url("cancela_csf"); ?>" class="small"><i class="fa fa-trash"></i> Cancelar constancia</a></td>
+								<a href="<?php echo base_url("cancela_csf"); ?>" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Cancelar constancia</a></td>
 					</tr></table>
 					<?php } else { ?>
 						<button tipo="frente" onclick="$( '#carga_csf' ).click()" class="btn bg-white btn-outline-success col-6 xoffset-3 py-4 mt-3">Cargar <h5 class="text-green m-0">Constancia de Situación Fiscal</h5>reciente</button>
@@ -373,25 +395,25 @@ if( !$socio->data->verificacion->correo ){ ?>
             <div class="card-header"><h5 class="mb-0">Beneficiarios de la cuenta</h5></div>
 			<div class="card-body">	
 
-			<div class="card mb-3 mb-0">	
-			<table class="table align-middle mb-0">
-				<?php 
+				<?php if( sizeof( $socio->data->beneficiarios) ){ ?>
+				<table class="table table-striped align-middle mt-0 mb-3 border border-gray-400">
+					<?php 
 
-					foreach( $socio->data->beneficiarios as $k => $b ){
-						echo "\n<tr>
-							<td>{$b->nombre}</td>
-							<td>{$b->porcentaje}%</td>
-							<td class=\"text-end\"><a href=\"javascript:borra_beneficiario( {$k} )\" class=\"text-red\"><i class=\"fa fa-trash\"></i></a></td>
-						</tr>
-						";
-					}
-				?>
-			</table>
-			<div class="card-body <?php if( $porc == 100 ) echo "d-none"; ?>">	
-			<button class="btn btn-primary" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
-			</div></div>
-			
-			<small><i class="fa fa-circle-info"></i> Un <strong>beneficiario</strong> es una persona designada por el socio titular, que heredaría los derechos (o un porcentaje de ellos) sobre su cuenta, su red y sus ingresos pasivos, en dado caso de que el titular llegue a fallecer.</small>
+						foreach( $socio->data->beneficiarios as $k => $b ){
+							echo "\n<tr>
+								<td width=\"10%\" class=\"text-end\"><i class=\"fa fa-circle-user text-teal\"></i></td>
+								<td width=\"50%\">{$b->nombre}</td>
+								<td width=\"20%\" class=\"text-center\">{$b->porcentaje}%</td>
+								<td width=\"20%\" class=\"text-end\"><a href=\"javascript:borra_beneficiario( {$k} )\" class=\"text-red\"><i class=\"fa fa-trash\"></i></a></td>
+							</tr>
+							";
+						}
+					?>
+				</table>
+				<?php } ?>
+
+				<button class="btn <?php if( $porc == 100 ) echo "d-none"; ?>  btn-primary mb-3" onclick="$( '#beneficiario' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar beneficiario</button>
+				<div class="alert alert-info mb-0"><i class="fa fa-circle-info"></i> Un <strong>beneficiario</strong> es una persona designada por el socio titular, que heredaría los derechos (o un porcentaje de ellos) sobre su cuenta, su red y sus ingresos pasivos, en dado caso de que el titular llegue a fallecer.</div>
 			</div>
 		</div>			
 	</div>
