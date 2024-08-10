@@ -5,9 +5,8 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <?php
-    $recompensa = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
+    $r = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
     $total_estrellas = $usuario->getEstrellas();
-    $porcentaje = intval( $total_estrellas * 100 / $recompensa[ "estrellas" ] );
 
 ?>
 
@@ -38,8 +37,6 @@
     <div class="mb-3 col-lg-4">
         <div class="card">
         <?php 
-            $r = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? '' );
-            $total_estrellas = $usuario->getEstrellas();
 
             // Se declaran arrays porque se buscan multiples datos, por ahora dejaremos solo uno
             if( $r ){ 

@@ -88,13 +88,7 @@ class Sesion extends BaseController
             $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
 
             // Password corrompido, debe generar uno nuevo
-/*             if( strlen( $usuario->password_original() ) != 72 ){
-                return redirect()
-                    ->back()
-                    ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
-                    ->withInput();
-            }
- */
+
             if( !$usuario->password_original() || $usuario->password != $data[ "socio_password" ] ){
 
                 // BITACORA inicio de sesión fallido

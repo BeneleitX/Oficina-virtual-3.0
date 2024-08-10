@@ -100,9 +100,7 @@ class Registro extends BaseController
                     "activa" => "010-CELULAR",
                     "ciclo"  => 1,
                     "inicia" => null,
-                    "estrellas" => [
-                        date( "Ym" ) => 0
-                    ],
+                    "estrellas" => 0,
                     "reclamados" => []
                 ]
             ],
@@ -203,7 +201,7 @@ class Registro extends BaseController
                     <p>¡Hola ".$usuario->nombre()."! </p>
                     <p>Hemos creado tu cuenta de socio Beneleit, a la cual se le ha asignado un número único con el que te identificarás de ahora en adelante. Recuerdalo y compartelo:</p>
 
- <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">".$usuario->id()."</span></p>
+                <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">".$usuario->id()."</span></p>
 
                     <p>Tambien hemos habilitado tu oficina virtual, un espacio personal de trabajo donde podrás llevar un control total de tu cuenta a través de herramientas e indicadores que te brindarán asistencia en tu experiencia de negocios en Beneleit</p>
                     
@@ -215,7 +213,7 @@ class Registro extends BaseController
                         <li style=\"margin: 10px 0\"><strong>Redes:</strong> Representación gráfica de tus redes, con información a detalle de los socios que la conforman.</li>
                         <li style=\"margin: 10px 0\"><strong>Centro de ayuda:</strong> Desde aquí podrás consultar manuales y tutoriales para sacarle un máximo provecho a tu oficina virtual, podrás levantar tickets de soporte para reportar incidencias o solicitar información, o si requieres una atención más personalizada, ponerte en contacto directo con nuestro servicio de Call Center a través de Whatsapp.</li>
                     </ul>
-<img src=\"%%menu%%\" style=\"border-radius:6px\" width=\"100%\" alt=\"menu\">
+                <img src=\"%%menu%%\" style=\"border-radius:6px\" width=\"100%\" alt=\"menu\">
 
                     <p>Tu oficina virtual es una herramienta muy valiosa. ¡Usala!, si tienes dudas sobre alguna de sus funciones, puedes apoyarte en tu patrocinador o consultar nuestros canales de ayuda.</p>
                     <p>Ingresa ahora utilizando el password temporal que te hemos asignado, no olvides que una vez dentro, deberás ir a tu perfil de usuario para cambiarlo por uno que te sea familiar, seguro y fácil de recordar.</p>

@@ -40,7 +40,7 @@
 </div>
 
 	<a data-bs-toggle="tooltip" 
-		title="Comunicación" class="menu-opcion <?php echo $menu == "inicio" ? "selected" : ""; ?>" 
+		title="Inicio" class="menu-opcion <?php echo $menu == "inicio" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "inicio" ); ?>">
 		<i class="fa fa-house-chimney-user"></i>
 	</a>

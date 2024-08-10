@@ -86,12 +86,26 @@ function random_password(){
 }
 
 
-function mask( $texto ){
-    $ok = 2;
-    $nueva = "";
- 
-    foreach( str_split( $texto ) as $k => $d ){
-        $nueva .= ($k >= $ok ? "*" : $d );
+function mask( $texto, $tipo = "nombre" ){
+    
+    switch( $tipo ){
+        case "nombre":
+            $ok = 2;
+            $nueva = "";
+         
+            foreach( str_split( $texto ) as $k => $d ){
+                $nueva .= ($k >= $ok ? "*" : $d );
+            }
+            break;
+
+        case "clabe":
+            $ok = 12;
+            $nueva = "";
+            
+            foreach( str_split( $texto ) as $k => $d ){
+                $nueva .= ($k < $ok ? "*" : $d );
+            }
+            break;
     }
 
     return $nueva;

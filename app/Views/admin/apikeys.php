@@ -65,19 +65,42 @@
 <div class="col-lg-6">
         <div class="card mt-3 bg-marine text-white">
             <div class="card-header bg-blue"><h5 class="text-white mb-0">Respuesta JSON de solicitud user_auth</h5><p class="mb-0 text-yellow"><i class="fa fa-arrow-right"></i> url (POST) https://api.beneleit.mx/user_auth</p></div>
-          
             <table class="table table-striped">
                 <tr><td><strong>id</strong></td><td>Id único de cliente beneleit</td></tr>
                 <tr><td><strong>password</strong></td><td>Password ingresado para su validación</td></tr>
             </table>
-          
             <pre><code>
             {
                 "request": "https://api.beneleit.mx/user_auth",
                 "timestamp": 1722454696,
                 "response": {
                     "error": false,
-                    "auth": true,
+                    "auth": true
+                },
+                "client": {
+                    "allow_access": true,
+                    "ip": "189.203.205.83",
+                    "error": false,
+                    "name": "CRM Talento.net",
+                    "status": "201-ACTIVO"
+                }
+            }
+            </code></pre>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card mt-3 bg-marine text-white">
+            <div class="card-header bg-blue"><h5 class="text-white mb-0">Respuesta JSON de solicitud user_info</h5><p class="mb-0 text-yellow"><i class="fa fa-arrow-right"></i> url (POST) https://api.beneleit.mx/user_info</p></div>
+            <table class="table table-striped">
+                <tr><td><strong>id</strong></td><td>Id único de cliente beneleit</td></tr>
+            </table>
+            <pre><code>
+            {
+                "request": "https://api.beneleit.mx/user_info",
+                "timestamp": 1722454696,
+                "response": {
+                    "error": false,
                     "user": {
                         "id": 123456,
                         "avatar": "https://beneleit.mx/data/avatar/1721508233.jpg",
@@ -97,7 +120,6 @@
             }
             </code></pre>
         </div>
-
     </div>
 
     <div class="col-lg-6">

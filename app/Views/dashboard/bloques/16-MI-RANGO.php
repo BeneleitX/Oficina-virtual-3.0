@@ -7,7 +7,6 @@
 
         <?php 
 
-        $checks    = $usuario->getChecks( "10-NUTRICION" );
         $rango     = model( "RangoModel" )->find( $usuario->data->rango );
         $new_rango = model( "RangoModel" )->find( $checks[ date( "Ym" ) ][ "nuevo" ] );
 
@@ -45,7 +44,7 @@
     <tr>
         <td class="col-4 rounded p-2 text-center bg-gray-<?php echo $ingresos_mes ? "300" : "100"; ?>">$<?php echo number_format( $ingresos_mes, 2); ?></td>
         <td class="col-4 rounded p-2 text-center bg-gray-<?php echo $new_rango[ "cantidades" ][ 0 ] ? "300" : "100"; ?>">$<?php echo number_format( $new_rango[ "cantidades" ][ 0 ], 2); ?></td>
-        <td class="col-4 rounded p-2 text-center bg-gray-<?php echo ( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes ) ? "300" : "100"; ?>">$<?php echo number_format( ( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes ), 2); ?></td>
+        <td class="col-4 rounded p-2 text-center bg-gray-<?php echo ( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes ) ? "300" : "100"; ?>">$<?php echo number_format( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes, 2); ?></td>
     </tr>
 </table>
 

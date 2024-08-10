@@ -12,6 +12,7 @@ class Dashboard extends BaseController
     public function inicio(){
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "¡Hola {$this->data[ "usuario" ]->nombre()}! ".$this->data[ "usuario" ]->id( null, "marine");
+        $this->data[ "checks" ] = $this->data[ "usuario" ]->getChecks( "10-NUTRICION" );
 
         $db = db_connect();
         $db->query( "select f_update_PTS(   {$this->data[ "usuario" ]->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
@@ -52,7 +53,7 @@ class Dashboard extends BaseController
                 <div class=\"text-center\">
                     <h2 class=\"mt-3\">!Felicidades!</h2>
                     <p>¡Has alcanzado un nuevo rango!</p>
-                    <p><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.jpg\" class=\"img-fluid col-10 col-sm-6 col-md-4 col-lg-3 px-5\"></p>
+                    <p><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png\" class=\"img-fluid col-10 col-sm-6 col-md-4 col-lg-3 px-5\"></p>
 
                     <p><span class=\"fs-3 mb-5 badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></p>
 
@@ -230,20 +231,27 @@ class Dashboard extends BaseController
                 
 
             case "cash":
+                $pago = model( "PagoModel")->find( 117 );
+
                 $html .= "
                     <div class=\"text-center\">
 
-                    <img src=\"".base_url()."assets/img/welcome.png\" class=\"img-fluid\">
-                    <h3 class=\"mt-4\">¡BIENVENIDO!</h3>
-                    <p class=\"mb-4\">¡a tu nueva oficina virtual Beneleit!</p>
-                    <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Comenzar</button></p>
+                    
+                    <h3 class=\"mt-4\">¡FELICIDADES!</h3>
+                    <p class=\"mb-4\">Estos son tus ingresos de <span class=\"text-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $pago[ "modelo_codigo" ] ][ "nombre" ]."</span><br>para la semana <span class=\"badge bg-gray-500\">".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] )."</span></p>
+                    <p class=\"display-1 mb-4\"><span class=\"badge bg-marine\">$".number_format( $pago[ "data" ][ "cantidades" ][ "total" ], 2 )."</span></p>
+                    <p class=\"mb-5\">Los cuales estan siendo transferidos a la<br>cuenta CLABE ".mask( $pago[ "clabe" ], "clabe" )."</p>
+                    <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>
 
                     <script>
 
                     $( document ).ready(function(){
-                        ( function call_confetti() {
 
+
+                        ( function call_confetti() {
+                        
+                        //var unicorn = confetti.shapeFromText({ text: '🦄', 2 });
                             confetti({
                                 scalar: 2,
                                 decay: 0.95,
