@@ -18,8 +18,8 @@
 			<div class="dropdown-menu">
 
 				<div class="dropdown dropend">
-                    <a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por Estatus</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+                    <a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por Estatus</a>
+                    <div class="dropdown-menu">
 						<a class="dropdown-item mini" href="javascript:filtrar( 'estatus', '220-NUEVO-VERIFICADO' )">NUEVO-VERIFICADO</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'estatus', '310-NO-CALIFICADO' )">NO-CALIFICADO</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'estatus', '410-CALIFICADO' )">CALIFICADO</a>
@@ -28,40 +28,38 @@
                 </div>
 
 				<div class="dropdown dropend">
-                    <a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por Patrocinador directo</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+                    <a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por Patrocinador directo</a>
+                    <div class="dropdown-menu">
 					  	<a class="dropdown-item mini" href="javascript:filtrar( 'patrocinador', 1 )">DIRECTOS</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'patrocinador', 2 )">NO DIRECTOS</a>
                     </div>
                 </div>
 
 				<div class="dropdown dropend">
-                      <a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por calificación de mes anterior</a>
-                      <div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+                      <a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por calificación de mes anterior</a>
+                      <div class="dropdown-menu">
 						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '00---' )">SIN CALIFICAR</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '10-B1' )">BASICO 1</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '15-B2' )">BASICO 2</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '20-BX' )">BIEX</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '30-EE' )">EJECUTIVO</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '40-PR' )">PREMIERE</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '11-01' )">BASICO</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '21-03' )">BIEX</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '31-3+' )">EJECUTIVO</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_0', '41-6+' )">PREMIERE</a>
                       </div>
                 </div>
 
 				<div class="dropdown dropend">
-					<a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por calificación de mes actual</a>
-					<div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+					<a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por calificación de mes actual</a>
+					<div class="dropdown-menu">
 						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '00---' )">SIN CALIFICAR</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '10-B1' )">BASICO 1</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '15-B2' )">BASICO 2</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '20-BX' )">BIEX</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '30-EE' )">EJECUTIVO</a>
-						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '40-PR' )">PREMIERE</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '11-01' )">BASICO</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '21-03' )">BIEX</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '31-3+' )">EJECUTIVO</a>
+						<a class="dropdown-item mini" href="javascript:filtrar( 'califica_1', '41-6+' )">PREMIERE</a>
 					</div>
                 </div>
 
-				<div class="dropdown dropend">
-					<a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por rango</a>
-					<div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+				<div class="dropdown dropend d-none">
+					<a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por rango</a>
+					<div class="dropdown-menu">
 						<a class="dropdown-item mini" href="javascript:filtrar( 'rango', '00-SOCIO' )">SOCIO</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'rango', '10-3K' )">3K</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'rango', '20-5K' )">5K</a>
@@ -76,8 +74,8 @@
                 </div>
 
 				<div class="dropdown dropend">
-					<a class="dropdown-item mini dropdown-toggle" href="#" id="dropdown-layouts" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por profundidad</a>
-					<div class="dropdown-menu" aria-labelledby="dropdown-layouts">
+					<a class="dropdown-item mini dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Por profundidad</a>
+					<div class="dropdown-menu">
 						<a class="dropdown-item mini" href="javascript:filtrar( 'profundidad', 0 )">PRIMER NIVEL</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'profundidad', 1 )">SEGUNDO NIVEL</a>
 						<a class="dropdown-item mini" href="javascript:filtrar( 'profundidad', 2 )">TERCER NIVEL</a>
@@ -89,7 +87,7 @@
 			<a type="button" onclick="filtrar( 'ninguno', '' )" class="btn btn-danger"><i class="fa fa-xmark"></i></a>
 		</div>
 
-		<button class="btn btn-success"><i class="fa fa-file-excel"></i> Descargar Excel</button>
+		<button class="btn d-none btn-success"><i class="fa fa-file-excel"></i> Descargar Excel</button>
 
 	</div>
 </div>

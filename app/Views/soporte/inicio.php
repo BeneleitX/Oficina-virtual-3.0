@@ -6,27 +6,33 @@
 <h4 class="mt-1 mb-5"><?php echo $titulo; ?></h4>
 
 <div class="row mb-5">
-    <div class="col-lg-4">
+    <div class="col-lg-4 d-none">
         <div class="card text-center"><a href="#">
             <p class="my-4"><i class="fab fa-youtube text-red" style="font-size:100px"></i></p>
             <h5 class="mb-4">1. Consulta nuestras guías de usuario</h5>
         </a></div>
     </div>
     
+    <?php if( $usuario->permiso( "50-ROOT") ){ ?>
     <div class="col-lg-4">
         <div class="card text-center"><a href="javascript:open_modal()">
             <p class="my-4"><i class="fa fa-ticket text-deep-purple" style="font-size:100px"></i></p>
             <h5 class="mb-4">2. Levanta un ticket de soporte</h5>
         </a></div>
     </div>
+<?php } ?>
 
     <div class="col-lg-4">
-        <div class="card text-center"><a href="#">
+        <div class="card text-center"><a href="https://web.whatsapp.com/send?phone=+522217968774" target="_blank">
             <p class="my-4"><i class="fab fa-square-whatsapp text-green" style="font-size:100px"></i></p>
             <h5 class="mb-4">3. Comunicate a nuestro call center</h5>
         </a></div>
     </div>    
 
+</div>
+
+<div class="alert alert-warning">
+    Estimado socio: Nuestra sección de soporte en línea se encuentra en desarrollo. Si tienes alguna duda o problema con tu oficina virtual puedes comunicarte a nuestro call center donde con gusto te brindaremos la ayuda necesaria para resolverlo.
 </div>
 
 
@@ -49,6 +55,9 @@
      
     </tbody>
 </table>
+
+
+
 
 
 <div class="modal" tabindex="-1" id="nuevo_ticket">

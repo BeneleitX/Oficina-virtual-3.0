@@ -9,7 +9,9 @@
         <?php echo pills( "historial", $modelo ); ?>
     </div>
     <div class="col-lg-4">
+        <?php if( $modelo != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ){ ?>
         <a class="btn btn-lg mt-4 col-12 btn-secondary" href="<?php echo base_url( "tienda/".$modelo ); ?>"><i class="fa fa-shopping-cart"></i> Nuevos pedidos</a>
+        <?php } ?>
     </div>
 </div>
 

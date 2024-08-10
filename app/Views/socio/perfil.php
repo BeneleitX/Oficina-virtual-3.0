@@ -54,7 +54,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 <div class="input-group mb-3">
   <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->correo; ?>">
-  <a data-bs-toggle="tooltip" title="Correo electrónico <?php echo $socio->data->verificacion->correo ? "verificado" : "sin verificar. Click aquí para enviar mensaje de verificación ahora"; ?>" class="btn btn-<?php echo $socio->data->verificacion->correo ? "success" : "danger"; ?>" href="<?php echo base_url( "valida_correo" ); ?>" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->correo ? "check" : "xmark"; ?>"></i></a>
+  <a data-bs-toggle="tooltip" title="Correo electrónico <?php echo $socio->data->verificacion->correo ? "verificado" : "sin verificar. Click aquí para enviar mensaje de verificación ahora"; ?>" class="btn d-none btn-<?php echo $socio->data->verificacion->correo ? "success" : "danger"; ?>" href="<?php echo base_url( "valida_correo" ); ?>" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->correo ? "check" : "xmark"; ?>"></i></a>
 </div>
 					</div>
 					<div class="col-md-6">
@@ -62,7 +62,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 <div class="input-group mb-3">
   <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->telefono; ?>">
-  <button data-bs-toggle="tooltip" title="Teléfono <?php echo $socio->data->verificacion->telefono ? "verificado" : "sin verificar"; ?>" class="btn btn-<?php echo $socio->data->verificacion->telefono ? "success" : "danger"; ?>" type="button" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->telefono ? "check" : "xmark"; ?>"></i></button>
+  <button data-bs-toggle="tooltip" title="Teléfono <?php echo $socio->data->verificacion->telefono ? "verificado" : "sin verificar"; ?>" class="btn d-none btn-<?php echo $socio->data->verificacion->telefono ? "success" : "danger"; ?>" type="button" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->telefono ? "check" : "xmark"; ?>"></i></button>
 </div>
 
 					</div>
@@ -420,7 +420,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 </div>
 
 
-
+<?php if( $usuario->permiso( "30-SOPORTE" ) || $usuario->permiso( "40-ADMIN" ) ){ ?>
 <div class="card border-red mt-3">
 	<div class="card-header">
 		<h5 class="text-red mb-0">Administración de socio</h5>
@@ -429,8 +429,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 		<a class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-magnifying-glass"></i> Ver bitácora de movimientos</a>
 	</div>
 </div>
-
-
+<?php } ?>
 
 <div class="modal" tabindex="-1" id="verificacion">
 	<div class="modal-dialog">

@@ -69,7 +69,7 @@
 		<i class="fa fa-circle-question"></i>
 	</a>
 
-	<?php if( $usuario->permiso( "20-ALMACEN") ){ ?>
+	<?php if( $usuario->permiso( "20-ALMACEN" ) ){ ?>
     <a data-bs-toggle="tooltip" 
 		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "admin" ); ?>">
