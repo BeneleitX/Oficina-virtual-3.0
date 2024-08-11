@@ -242,7 +242,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
         <?php 
         switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
-            case "00" : $costoentrega = VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ]; break;
+            case "00" : $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; break;
             case "11" : $costoentrega = 0; break;
             default   : $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
         }
