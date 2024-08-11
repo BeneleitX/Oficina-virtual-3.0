@@ -6,7 +6,18 @@
 <?php if( !$pagado && !$cancelado ){ ?>
     <div class="row">
 	    <div class="col-md-6 mb-3">
-		   <?php echo pills( "tienda", $modelo ); ?>
+		   <?php 
+           
+           echo "\n<ul class=\"nav nav-pills my-4\">";
+            
+           foreach( MODELOS as $m ){
+               if( $m[ "settings" ][ "efectivo" ] && ( $m[ "codigo" ] != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ) ){
+                   echo "\n<li class=\"nav-item\"><a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
+               }
+           }
+           
+           echo "</ul>";
+            ?>
         </div>
         <div class="col-md-6 mb-3 text-end">
                 <button id="borra_todo" class="btn btn-outline-danger mt-4"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
@@ -153,7 +164,9 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
                     $dom = $usuario->data->domicilio ?? 0;
 
-                    if( ( $pagado || $cancelado ) && sizeof( $domicilios ) ){
+                    if( sizeof( $domicilios ) ){
+
+                    if( ( $pagado || $cancelado ) ){
 
                         if( isset( $pedido[ "data" ][ "domicilio" ] ) ){
                             $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
@@ -176,7 +189,6 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                     }
 
 
-                    if( sizeof( $domicilios ) ){
                         
                         if( isset($domicilios[ $dom ]) ){
                             $d = $domicilios[ $dom ];
