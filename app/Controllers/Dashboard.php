@@ -93,7 +93,6 @@ class Dashboard extends BaseController
 
                 break;
 
-
             case "cumple":
                 $html .= "
                     <div class=\"text-center\">
@@ -125,8 +124,7 @@ class Dashboard extends BaseController
                     </script>
                     ";
 
-                break; 
-
+                break;
 
             case "bienvenida":
                 $html .= "
@@ -161,14 +159,13 @@ class Dashboard extends BaseController
 
                 break; 
 
-
             case "estrellas":
                 $html .= "
                     <div class=\"text-center\">
                     <h2 class=\"mt-3\">!Felicidades!</h2>
                     <p><img src=\"".base_url()."assets/img/estrella.png\" class=\"img-fluid col-10 col-sm-6 col-md-4 col-lg-3 px-5\"></p>
                     
-                    <h4 class=\"fs-2 mb-3\">Has conseguido <span class=\"text-mustard\">{$parametros[0]}</span> estrella".( $parametros[0] - 1 ? "s" : "" )."<h4><h5>Total acumulado: <span class=\"text-mustard\">{$this->data[ "usuario" ]->data->recompensas->estrellas}</span></h5>
+                    <h4 class=\"fs-2 mb-3\">Has conseguido <span class=\"text-mustard\">{$parametros[0]}</span> estrella".( $parametros[0] - 1 ? "s" : "" )."</h4><h5>Total acumulado: <span class=\"text-mustard\">{$this->data[ "usuario" ]->data->recompensas->estrellas}</span></h5>
                     <p class=\"mt-5\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>
 
@@ -228,10 +225,76 @@ class Dashboard extends BaseController
                     ";
 
                 break; 
-                
+    
+            case "recompensa":
+                $r = model( "RecompensaModel" )->find( $parametros[0] );
 
+                $html .= "
+                    <div class=\"text-center\">
+                    <h2 class=\"mt-3\">!Felicidades!</h2>
+                    <p class=\"py-4\"><img src=\"".base_url()."assets/img/recompensas/{$r[ "codigo" ]}.png\" class=\"col-10 col-sm-6 col-md-4 col-lg-3 px-5\" style=\"width:256px\"></p>
+                    
+                    <p class=\"m-0\">Haz alcanzado la recompensa Beneleit</p>
+                    <h4 class=\"fs-2 mb-3\"><span class=\"text-mustard\">{$r[ "nombre" ]}</span></h4>
+                    <p class=\"mt-5\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
+                    </div>
+
+                    <script>
+
+                    $( document ).ready(function(){
+
+                    var count = 200;
+var defaults = {
+  origin: { y: 0.7 }
+};
+
+function fire(particleRatio, opts) {
+  confetti({
+    ...defaults,
+    ...opts,
+    particleCount: Math.floor(count * particleRatio),
+    origin: { y: 1 }
+  });
+}
+
+                        ( function call_confetti() {
+                        
+
+
+fire(0.25, {
+  spread: 26,
+  startVelocity: 45,
+});
+fire(0.2, {
+  spread: 60,
+});
+fire(0.35, {
+  spread: 100,
+  decay: 0.91,
+  scalar: 0.8
+});
+fire(0.1, {
+  spread: 300,
+  startVelocity: 15,
+  decay: 0.92,
+  scalar: 1.2
+});
+fire(0.1, {
+  spread: 120,
+  startVelocity: 30,
+});                            
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(100, 2000));
+                        }() ); 
+
+                    });
+                    </script>
+                    ";
+
+                break; 
+        
             case "cash":
-                $pago = model( "PagoModel")->find( 117 );
+                $pago = model( "PagoModel")->find( $parametros[0] );
 
                 $html .= "
                     <div class=\"text-center\">
@@ -251,9 +314,8 @@ class Dashboard extends BaseController
 
                         ( function call_confetti() {
                         
-                        //var unicorn = confetti.shapeFromText({ text: '🦄', 2 });
                             confetti({
-                                scalar: 2,
+                                scalar: 1,
                                 decay: 0.95,
                                 spread: 180,
                                 particleCount: 10,
@@ -264,7 +326,7 @@ class Dashboard extends BaseController
                             });
 
                             confetti({
-                                scalar: 3,
+                                scalar: 2,
                                 decay: 0.95,
                                 spread: 180,
                                 particleCount: 10,

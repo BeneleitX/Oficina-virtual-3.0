@@ -437,11 +437,13 @@ function getPaqueteMovil( $celular ){
 
 
 
+
+
 function load_catalogo( $tabla, $where = null, $nombre = null ){
     
     if( defined( strtoupper( $nombre ?? $tabla ) ) ) return;
-
     $db = db_connect();
+
 
     // catálogo de modelos de negocio
     $array = [];

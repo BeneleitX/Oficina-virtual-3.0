@@ -214,10 +214,12 @@ function update_pedido( flag = null ){
 
     // update bultos
     var bultos1 = Math.ceil( pedido.data.peso / pesoxbulto );
-    var bultos2 = Math.ceil( pedido.data.productos / pedido.data.productosxbulto );
+    var bultos2 = 1; //Math.ceil( pedido.data.productos / pedido.data.productosxbulto );
 
-    bultos = bultos2 > bultos1 ? bultos2 : bultos1;
+    var bultos = bultos2 > bultos1 ? bultos2 : bultos1;
     pluses = 0;
+
+
 
     if( pedido.PTS["030-PLUS"] > 0 ){
         pluses = Math.floor( pedido.PTS["030-PLUS"] / 3 );
@@ -237,9 +239,9 @@ function update_pedido( flag = null ){
 
     porcentaje1 = 100 * pedido.data.peso / pedido.data.pesoxbulto;
     porcentaje2 = 100 * pedido.data.productos / pedido.data.productosxbulto;
-    
 
-    if( porcentaje2 > porcentaje1 ){
+
+    if( 0 && porcentaje2 > porcentaje1 ){
         $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) ); 
         $( '#bultos' ).empty();
         
@@ -305,7 +307,10 @@ function update_pedido( flag = null ){
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
-        bloqueapagos  = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( !es_paqueteria || pedido.data.domicilio  );
+
+        bloqueapagos = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
+
+        console.log( bloqueapagos, total_productos_pedido > 0, subtotal > 0, parseInt( pedido.data.entrega ) > 0, !es_paqueteria || pedido.data.domicilio !== undefined, pedido.data.entrega );
 
         $( this ).prop( 'disabled',  !bloqueapagos || pendientes );
     });
@@ -403,7 +408,7 @@ function get_orden_next( promocion ){
 var pendientes = 0;
 
 $(document).ready(function()
-{
+{ 
 	function delay(fn, ms) {
 		let timer = 0
 		return function(...args) {

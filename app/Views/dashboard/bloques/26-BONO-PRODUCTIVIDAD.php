@@ -36,7 +36,7 @@ if( !$es_premiere ){
                     $ganado = $re >= 4 ? 1 : 0;
                     while($re++ < 4){
 
-                        echo "\n<td class=\"px-3 text-center\"><div class=\"rounded-circle bg-gray-200 mb-0\" style=\"margin:0 auto; width:60px; height:60px; display:inline-block\">&nbsp;</div><br><div class=\"badge bg-gray-300 col-12 fw-light opacity-50\">&nbsp;</div></span></td>";
+                        echo "\n<td class=\"px-2 text-center\"><div class=\"rounded-circle bg-gray-200 mb-0\" style=\"margin:0 auto; width:60px; height:60px; display:inline-block\">&nbsp;</div><br><div class=\"badge bg-gray-300 col-12 fw-light opacity-50\">&nbsp;</div></span></td>";
 
                     }
                 ?>

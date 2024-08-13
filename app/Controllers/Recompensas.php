@@ -9,7 +9,7 @@ class Recompensas extends BaseController
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
         $this->data[ "titulo"  ] = "Detalles de recompensas";
-        $this->data[ "comisiones" ] = $this->data[ "socio" ]->getComisiones( null, "120-BIEX-3ER-NIVEL" );
+        $this->data[ "comisiones" ] = $this->data[ "socio" ]->getComisiones( null, "120-BIEX-3ER-NIVEL", "255-PENDIENTE" );
 
         load_catalogo( "recompensas");
         echo template( "recompensas/detalle", $this->data );

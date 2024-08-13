@@ -73,7 +73,7 @@ $(document).ready(function(){
                 endAngle: 130,
                 hollow: {
                     size: '50%',
-                    image: base_url + 'assets/img/estrella.png',
+                    image: base_url + 'assets/img/recompensas/<?php echo $r[ "codigo" ]; ?>.png',
                     imageOffsetY: -10,
                     imageWidth: 60,
                     imageHeight: 60,

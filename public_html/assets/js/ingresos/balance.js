@@ -1,8 +1,9 @@
 
 $(document).ready(function(){
-console.log(3);
+
     new DataTable('.tabla_comisiones', {
-        pageLength: 50
+        pageLength: 50,
+        responsive: true
     });
 
 

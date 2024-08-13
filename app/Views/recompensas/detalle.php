@@ -6,8 +6,9 @@
 
 <?php
     $r = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
-    $total_estrellas = $usuario->getEstrellas();
+    $total_estrellas = $usuario->getEstrellas( $r );
 
+    $alcanzadas = $socio->recompensas_alcanzadas();
 ?>
 
 <h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
@@ -16,7 +17,7 @@
 <div class="alert alert-info">
     <div class="row">
         <div class="col-lg-4">
-            <p><strong>ESTRELLAS</strong>: Son generadas por compras BIEX de socios en tercer nivel registrados y activados durante el ciclo.</p>
+            <p><strong>ESTRELLAS</strong>: Son puntos acumulables generados por las compras BIEX (<i class="fa fa-star text-amber"></i>) y PREMIERE (<i class="fa fa-star text-amber"></i><i class="fa fa-star text-amber"></i>) de socios en tercer nivel registrados y activados durante el ciclo.</p>
             <p>Cada socio en tu tercer nivel, puede generar con sus compras un máximo de 2 <i class="fa fa-star text-amber"></i>estrellas por mes.</p>
             <p>Para recibir y acumular <i class="fa fa-star text-amber"></i>estrellas es requisito indispensable contar con calificación PREMIERE en Nutrición</p>
         </div>
@@ -69,8 +70,8 @@
                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porcentaje; ?>%"></div>
                         </div>
                         <?php
-                        if( $r[ "estrellas" ] <= $total_estrellas ){
-                            echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4><p class=\"text-center\"><button class=\"btn btn-primary\">Reclama tu recompensa aquí</button></p>";
+                        if( in_array( $r[ "codigo" ], $alcanzadas ) ){
+                            echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4>";
                         }
                         ?>
                     </td></tr>
@@ -85,7 +86,7 @@
 
 if( $usuario->data->recompensas->inicia ){
     $inicia  = date( "Y-m-d", strtotime( $usuario->data->recompensas->inicia ) );
-    $termina = date( "Y-m-d", strtotime( $inicia." +24 month" ) );
+    $termina = date( "Y-m-d", strtotime( $inicia." +30 month" ) );
 
     $date1 = new DateTime( $inicia );
     $date2 = new DateTime( $termina );
@@ -182,7 +183,7 @@ $(document).ready(function(){
                 endAngle: 130,
                 hollow: {
                     size: '60%',
-                    image: base_url + 'assets/img/estrella.png',
+                    image: base_url + 'assets/img/recompensas/<?php echo $r[ "codigo" ]; ?>.png',
                     imageOffsetY: -40,
                     imageWidth: 80,
                     imageHeight: 80,
@@ -242,7 +243,13 @@ $(document).ready(function(){
                 <div class="row">
                 <?php
                 foreach( RECOMPENSAS as $r ){
-                    echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-primary\" style=\"height:100px\"><i class=\"fa fs-1 fa-{$r[ "icono" ]}\"></i><br>{$r[ "nombre" ]}</a></div>";
+
+                    if( in_array( $r[ "codigo" ], $alcanzadas ) ){
+                        echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-success disabled\" style=\"height:200px\"><img src=\"".base_url()."assets/img/recompensas/{$r[ "codigo" ]}.png\" class=\"my-3\" style=\"width:64px\"><br>{$r[ "nombre" ]}<h4><i class=\"fa fa-star text-amber\"></i> {$r[ "estrellas" ]}</h4></a></div>";
+                    }
+                    else{
+                        echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-light\" style=\"height:200px\"><img src=\"".base_url()."assets/img/recompensas/{$r[ "codigo" ]}.png\" class=\"my-3\" style=\"width:64px\"><br>{$r[ "nombre" ]}<h4><i class=\"fa fa-star text-amber\"></i> {$r[ "estrellas" ]}</h4></a></div>";
+                    }
                 }
                 ?>
                 </div>

@@ -14,6 +14,14 @@ class Periodos extends BaseController
     }
 
     public function listado( $modelo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ]   = true;
         $this->data[ "modelo" ]   = $modelo;
         $this->data[ "titulo" ]   = "Periodos";
@@ -23,6 +31,15 @@ class Periodos extends BaseController
     }
 
     public function detalle( $periodo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $this->data[ "navbar" ]  = true;
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
         $estatus = ESTATUS[ $this->data[ "periodo" ][ "estatus_codigo" ] ];
@@ -90,6 +107,15 @@ class Periodos extends BaseController
 
 
     public function reset_corte(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $db = db_connect();
         $db->query( "UPDATE t_variables SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) WHERE codigo = 'avance_corte'" );
         return "{}";
@@ -97,6 +123,15 @@ class Periodos extends BaseController
 
 
     public function corte(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $db = db_connect();
         
         /*
@@ -119,6 +154,15 @@ class Periodos extends BaseController
     
     
     public function cierra_periodo(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
@@ -147,6 +191,15 @@ class Periodos extends BaseController
     
     
     public function marca_pagado(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
@@ -173,6 +226,15 @@ class Periodos extends BaseController
     
     
     public function abre_periodo(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
@@ -199,6 +261,15 @@ class Periodos extends BaseController
 
 
     public function excel_corte(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
 
         $db  = db_connect();

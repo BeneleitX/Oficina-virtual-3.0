@@ -33,7 +33,7 @@ elseif( sizeof( $premieres ) > 1 ){
 
 <table class="px-2 w-100" style="border-spacing: 10px;border-collapse: separate; ">
     <tr>
-        <td colspan="2" class="text-center"><p>Socios nuevos PREMIERE: <span class="badge bg-<?php echo $p_clase; ?>"><?php echo sizeof( $premieres ); ?></span></p>
+        <td class="text-center"><p>Socios nuevos PREMIERE: <span class="badge bg-<?php echo $p_clase; ?>"><?php echo sizeof( $premieres ); ?></span></p>
             <table align="center" class="w-75 mb-3"><tr>
                 <?php
                     $re = 0;
@@ -48,7 +48,7 @@ elseif( sizeof( $premieres ) > 1 ){
 
                     while($re++ < 3){
 
-                        echo "\n<td class=\"px-3 text-center\"><div class=\"rounded-circle bg-gray-200 mb-0\" style=\"margin:0 auto; width:60px; height:60px; display:inline-block\">&nbsp;</div><br><div class=\"badge bg-gray-300 col-12 fw-light opacity-50\">&nbsp;</div></span></td>";
+                        echo "\n<td class=\"px-2 text-center\"><div class=\"rounded-circle bg-gray-200 mb-0\" style=\"margin:0 auto; width:60px; height:60px; display:inline-block\">&nbsp;</div><br><div class=\"badge bg-gray-300 col-12 fw-light opacity-50\">&nbsp;</div></span></td>";
 
                     }
                 ?>
@@ -56,12 +56,13 @@ elseif( sizeof( $premieres ) > 1 ){
 
         </td>
         <td class="text-center bg-gray-200" style="border-radius:6px">
-            <p class="text-gray-600 fs-1 m-0"><i class="fa fa-tag"></i> <?php echo array_sum( $bono ); ?></p>
+            <p class="text-gray-600 fs-3 m-0"><i class="fa fa-tag"></i> <?php echo array_sum( $bono ); ?></p>
             <p class="small m-0">Factor de multiplicación<br>de bono</p>
-            <h4><span class="badge bg-<?php echo $p_clase; ?>">x<?php echo number_format( $p_factor, 2 ); ?></span></h4>
+            <h4><span class="badge px-2 bg-<?php echo $p_clase; ?>">x<?php echo number_format( $p_factor, 2 ); ?></span></h4>
         </td>
     </tr>
-
+                </table>
+    <table class="px-2 w-100" style="border-spacing: 10px;border-collapse: separate; ">
     <tr>
         <th class="text-center">1° Nivel</td>
         <th class="text-center">2° Nivel</td>

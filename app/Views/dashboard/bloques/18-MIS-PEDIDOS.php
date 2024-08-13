@@ -32,9 +32,9 @@ load_catalogo( "promociones" );
                 }
 
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
-                    <td><p class=\"mb-0 small text-marine\"><i class=\"fa fa-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $p[ "modelo_codigo"] ][ "nombre" ]."</p><span class=\"badge bg-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "color" ]."\">{$p[ "referencia" ]}</span></td>
-                    <td><p class=\"mb-0 small\">Productos: {$p[ "data" ][ "productos" ]}</p>{$PTS}</td>
-                    <td><p class=\"small mb-0\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10)."</p>".estatus( $p[ "estatus_codigo" ] )."</td>
+                    <td nowrap><p class=\"mb-0 small text-marine\"><i class=\"fa fa-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $p[ "modelo_codigo"] ][ "nombre" ]."</p><span class=\"badge bg-".MODELOS[ $p[ "modelo_codigo"] ][ "settings" ][ "color" ]."\">{$p[ "referencia" ]}</span></td>
+                    <td><p class=\"mb-0 small\">Productos: {$p[ "data" ][ "productos" ]}</p><small>{$PTS}</small></td>
+                    <td><p class=\"small mb-0\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10)."</p><small>".estatus( $p[ "estatus_codigo" ] )."</small></td>
                     <td><p class=\"small mb-0\">Califica en</p><span class=\"badge bg-".( substr( $p[ "fechas" ][ "califica" ], 5, 2 ) == date( "m" ) ? "teal" : "red" )."\">".substr( $p[ "fechas" ][ "califica" ], 0, 4 )."-".substr( $p[ "fechas" ][ "califica" ], 5, 2 )."</span></td>
                 </tr>";
             }            

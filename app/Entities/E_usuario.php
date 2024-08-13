@@ -363,13 +363,10 @@ class E_usuario extends Entity
             $data = $this->data;
 
             $data->recompensas = [
-                "ciclo"  => 1,
-                "activa" => "010-CELULAR",
-                "inicia" => null,
-                "estrellas" => [
-                    date( "Ym" ) => 0
-                ],
-                "reclamados" => []
+                "ciclo"      => 1,
+                "activa"     => "010-CELULAR",
+                "inicia"     => null,
+                "estrellas"  => 0
             ];
 
             $this->data = $data;
@@ -394,7 +391,7 @@ class E_usuario extends Entity
         return $this->attributes[ "password"];
     }
 
-    public Function getEstrellas( $mes = null ){
+    public Function getEstrellas( $r = null ){
         
         $db  = db_connect();
         $sql = "SELECT SUM(cantidad) as estrellas
@@ -403,25 +400,73 @@ class E_usuario extends Entity
                 AND esquema_codigo = '120-BIEX-3ER-NIVEL'
                 AND estatus_codigo = '255-PENDIENTE'";
 
-        $estrellas = $db->query( $sql )->getRow()->estrellas;
+        $estrellas = intval( $db->query( $sql )->getRow()->estrellas );
+
         $data = $this->data;
 
-        if( $estrellas > $data->recompensas->estrellas ){
-            
+        // checa si ya alcanzó recompensa
+        if( $r && $estrellas >= intval( $r[ "estrellas" ] ) ){
+
+            // update conteo
+            $recompensa = $this->redime_recompensa( $r );
+
+            // notificación flash
+            $data->splash[] = [
+                "tipo" => "recompensa",
+                "parametros" => [ $r[ "codigo" ] ]
+            ];
+
+            $data->recompensas->activa = $recompensa;
+            $data->recompensas->estrellas = intval( $estrellas - $r[ "estrellas"] );
+            $this->data = $data;
+
+            model( "UsuarioModel" )->save( $this );
+        }
+        elseif( $estrellas > $data->recompensas->estrellas ){
             // notificación flash
             $data->splash[] = [
                 "tipo" => "estrellas",
                 "parametros" => [ intval( $estrellas - $data->recompensas->estrellas ) ]
             ];
 
-            // update conteo
             $data->recompensas->estrellas = intval( $estrellas );
-
             $this->data = $data;
+
             model( "UsuarioModel" )->save( $this );
         }
 
         return intval( $estrellas ); 
+    }
+
+
+    public function recompensas_alcanzadas(){
+        $db = db_connect();
+        $re = $db->query( "select recompensa_codigo from t_redenciones where usuario_id = '{$this->id}'" );
+        $resultado = [];
+
+        foreach( $re->getResult() as $r ){
+            $resultado[] = $r->recompensa_codigo;
+        }
+
+        return $resultado;
+    }
+
+
+    public function redime_recompensa( $r ){
+        $db = db_connect();
+        $db->query( "insert into t_redenciones values( NULL, '330-EN-ESPERA', {$this->id}, '{$r[ "codigo" ]}', '".date( "Y-m-d" )."')" );
+        $db->query( "call p_cobra_estrellas( {$this->id}, '{$r[ "estrellas" ]}' )" );
+    
+        // coloca siguiente recompensa
+        $sql = "SELECT p.codigo as recompensa 
+                FROM t_recompensas p
+                WHERE p.estatus_codigo = '201-ACTIVO' AND p.ciclo = {$this->data->recompensas->ciclo}
+                AND p.codigo NOT IN(
+                    SELECT recompensa_codigo from t_redenciones r WHERE r.usuario_id = {$this->id}
+                )
+                ORDER BY p.estrellas ASC LIMIT 1";
+    
+        return $db->query( $sql )->getRow()->recompensa;
     }
 
 
@@ -797,7 +842,7 @@ class E_usuario extends Entity
     }
 
 
-    public function getComisiones( $periodo = null, $esquema = null ){
+    public function getComisiones( $periodo = null, $esquema = null, $estatus = null ){
         $resultado = [];
 
         if( $periodo ){
@@ -819,6 +864,7 @@ class E_usuario extends Entity
                     join t_pedidos pedido on pedido.id = comision.pedido_id
                     WHERE comision.usuario_id = {$this->id} 
                     and comision.esquema_codigo = '{$esquema}'
+                    ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" )."
                     and substring( comision.estatus_codigo, 1, 3 ) > 200";
 
         }

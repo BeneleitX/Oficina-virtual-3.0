@@ -4,7 +4,22 @@ namespace App\Controllers;
 
 class Paqueteria extends BaseController
 {
+    function __construct() {
+        $this->data[ "menu" ] = "inicio";
+        
+    }
+
     public function listado( $modelo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-PAQUETERIA") || 
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Envío por paquetería";
         $this->data[ "modelo" ] = $modelo;
@@ -24,6 +39,15 @@ class Paqueteria extends BaseController
 
 
     public function detalle( $paqueteria ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-PAQUETERIA") || 
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
 
         $this->data[ "navbar"  ] = true;
         $this->data[ "paqueteria" ] = model( "MetodoentregaModel" )->find( $paqueteria );
@@ -47,7 +71,18 @@ class Paqueteria extends BaseController
         echo template( "paqueteria/detalle", $this->data );
     }
 
+
     public function entrega(){
+            if( !(
+            $this->data[ "usuario" ]->permiso( "20-PAQUETERIA") || 
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $productos = [];
 
         $this->data[ "navbar"  ] = true;
@@ -81,6 +116,16 @@ class Paqueteria extends BaseController
 
 
     public function marca_enviado(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-PAQUETERIA") || 
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         // aqui se marca como entregado el pedido
 
         extract( $this->request->getPost() );

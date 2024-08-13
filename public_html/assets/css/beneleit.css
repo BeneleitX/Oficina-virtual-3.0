@@ -102,7 +102,7 @@ a.menu-opcion:not(:first-child).selected{
     top:4px;
 }
 
-#puntajes .pts{
+#puntajes .pts, #pre_puntajes .pts{
     border-radius:6px;
     display: inline-block;
     width:50px;
@@ -117,12 +117,12 @@ a.menu-opcion:not(:first-child).selected{
     height:150px !important;
 }
 
-#puntajes .pts-titulo{
+#puntajes .pts-titulo, #prepuntajes .pts-titulo{
     width:100%;
     font-size:12px;
     padding: 3px 0 2px 0;
 }
-#puntajes .pts-numero{
+#puntajes .pts-numero, #pre_puntajes .pts-numero{
     width:100%;
     padding: 0 0 2px 0;
     opacity:.8;

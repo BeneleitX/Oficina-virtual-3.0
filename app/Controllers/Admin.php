@@ -10,9 +10,15 @@ class Admin extends BaseController
 
     public function dashboard(){
 
-        if( !$this->data[ "usuario" ]->permiso( "20-ALMACEN") ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN") ||
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
             return redirect()->to( "inicio" ); 
         }
+        
+        /**********************************/
 
         $db = db_connect();
 
@@ -39,6 +45,17 @@ class Admin extends BaseController
     }
 
     public function credenciales(){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Validar credenciales INE";
 
@@ -50,6 +67,16 @@ class Admin extends BaseController
 
 
     public function resolucion_ine(){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         extract( $this->request->getPost() );
 
         $socio = model( "UsuarioModel" )->find( $socio );
@@ -84,6 +111,16 @@ class Admin extends BaseController
     }
 
     public function promociones( $modelo ){
+        
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Promociones";
         $this->data[ "modelo" ] = $modelo;
@@ -96,6 +133,14 @@ class Admin extends BaseController
 
 
     public function promo_detalle( $promocion ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $sql = "codigo = '{$promocion}'";
         $this->data[ "promocion" ] = model( "PromocionModel" )->where( $sql , null, false )->first();
 
@@ -110,6 +155,14 @@ class Admin extends BaseController
 
 
     public function save_promo(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $data = $this->request->getPost( "data" );
 
         model( "PromocionModel" )->save( $data );
@@ -117,6 +170,14 @@ class Admin extends BaseController
 
 
     public function pasarelas( $modelo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Métodos de pago";
         $this->data[ "modelo" ] = $modelo;
@@ -130,6 +191,16 @@ class Admin extends BaseController
     
     
     public function productos( $modelo ){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN") || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Productos";
         $this->data[ "modelo" ] = $modelo;
@@ -143,6 +214,14 @@ class Admin extends BaseController
 
 
     public function estatus(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Estatus de socio";
 
@@ -155,6 +234,15 @@ class Admin extends BaseController
     
 
     public function variables(){
+        
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Variables de sistema";
 
@@ -162,6 +250,14 @@ class Admin extends BaseController
     } 
     
     public function save_variable(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $variable = $this->request->getPost( "variable" );
         $valor    = $this->request->getPost( "valor" );
 
@@ -176,6 +272,14 @@ class Admin extends BaseController
     }
 
     public function apikeys(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "API keys";
 

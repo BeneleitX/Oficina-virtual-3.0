@@ -7,9 +7,6 @@ use CodeIgniter\Router\RouteCollection;
 
  */
 
- $routes->post( "API/insert_order",         "API::insert_order" );
- $routes->post( "API/validate_login",       "API::validate_login" );
-
 
 $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );

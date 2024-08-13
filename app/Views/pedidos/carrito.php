@@ -1,29 +1,46 @@
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?></h4>
+<h4 class="mt-1 mb-0">
+    <?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
+</h4>
 
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
-<p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
 
-<?php if( !$pagado && !$cancelado ){ ?>
+
+<?php if( !$pagado && !$cancelado ){ 
+    ?>
     <div class="row">
 	    <div class="col-md-6 mb-3">
-		   <?php 
-           
-           echo "\n<ul class=\"nav nav-pills my-4\">";
+            <?php 
+            echo "\n<ul class=\"nav nav-pills my-4\">";
             
-           foreach( MODELOS as $m ){
-               if( $m[ "settings" ][ "efectivo" ] && ( $m[ "codigo" ] != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ) ){
-                   echo "\n<li class=\"nav-item\"><a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
-               }
-           }
+            foreach( MODELOS as $m ){
+                if( $m[ "settings" ][ "efectivo" ] && ( $m[ "codigo" ] != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ) ){
+                    echo "\n<li class=\"nav-item\"><a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
+                }
+            }
            
-           echo "</ul>";
+            echo "</ul>";
             ?>
+
+<p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
         </div>
-        <div class="col-md-6 mb-3 text-end">
-                <button id="borra_todo" class="btn btn-outline-danger mt-4"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
+        <div class="col-md-6 mb-3 pt-4 text-end">
+            <p><button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button></p>
+        <table align="right"><tr>
+                <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
+                <td id="pre_puntajes">
+                    <?php
+                    foreach( PROMOCIONES as $p ){
+                        if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) > 0 ){
+                            echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ]}</div></div>";
+                        }
+                    }
+                    ?>
+                </td>
+            </tr></table>
         </div>
     </div>
-<?php }
+<?php 
+}
 else{
     if( intval( $pedido[ "data" ][ "mesanterior" ] ) ){
         echo "<div class=\"alert alert-danger\"><i class=\"fa fa-circle-info\"></i> Los puntos generados por esta compra son abonados al mes anterior de la fecha de pago.</div>";
@@ -125,7 +142,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
     <div class="me_formulario" mp="celular"  <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
         
-        <?php if( sizeof( $celulares ) ){ ?>
+        <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" && sizeof( $celulares ) ){ ?>
             <div class="row"><div class="col-lg-6">
                 
 <select class="form-select form-select-lg fw-bold" name="select_celular">
@@ -241,7 +258,8 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
         <div class="alert alert-danger mt-3" id="no_stock" style="display:none"><p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p><ul class="m-0"></ul></div>
 
         <?php 
-        switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
+
+        switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) ){
             case "00" : $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; break;
             case "11" : $costoentrega = 0; break;
             default   : $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
