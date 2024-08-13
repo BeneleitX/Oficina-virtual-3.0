@@ -404,6 +404,10 @@ class E_usuario extends Entity
 
         $data = $this->data;
 
+        if( is_object( $data->recompensas->estrellas ) ){
+            $data->recompensas->estrellas = 0;
+        }
+
         // checa si ya alcanzó recompensa
         if( $r && $estrellas >= intval( $r[ "estrellas" ] ) ){
 

@@ -294,19 +294,18 @@ class Pedidos extends BaseController
 
 
     public function checkout(){
-        $this->data[ "modelo" ] = $this->request->getPost( "modelo" );
+        $this->data[ "modelo" ]     = $this->request->getPost( "modelo" );
         $this->data[ "metodopago" ] = model( "MetodopagoModel" )->find( $this->request->getPost( "metodopago" ) );
+        $this->data[ "socio" ]      = $this->data[ "usuario" ];
 
-        $this->data[ "socio" ] = $this->data[ "usuario" ];
         if( !( $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ], false ) ) || $this->data[ "pedido" ][ "estatus_codigo" ] != "250-EN-PROCESO" ){ 
             return redirect()->to( 'historial' );
         }
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
 
-
         $pre = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ]};
-
         $this->data[ "cantidad" ] = $pre + ( $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $pre * 2 / 100 : 20 );
 
         echo template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );

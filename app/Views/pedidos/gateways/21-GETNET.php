@@ -1,1 +1,23 @@
-<button id="checkout_b" class="btn btn-warning col-12">Simular pago</button>
+<?php 
+helper( "getnet_helper" );
+$cadenaXML = getCadenaXML( $pedido, $socio );
+
+
+?>
+
+
+<iframe 
+    src="https://sandboxpol.mit.com.mx/i/SNDBX01"
+    width="100%" 
+    height="480px" 
+    frameborder="0" 
+    scrolling="no"
+    seamless="seamless"
+  ></iframe> 
+          
+<script>
+
+$(document).ready(function()
+{ 
+});
+</script>
