@@ -235,4 +235,10 @@ class Sesion extends BaseController
         dd( $xml );
     }
 
+
+    public function GetnetRedirect(){
+        echo "OK";
+        return;
+    }
+
 }

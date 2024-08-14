@@ -23,6 +23,7 @@ $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->post( "GetnetGatewayResponse",     "Sesion::GetnetGatewayResponse" ); 
+$routes->get( "GetnetRedirect",            "Sesion::GetnetRedirect" ); 
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                 "Sesion::logout" );
