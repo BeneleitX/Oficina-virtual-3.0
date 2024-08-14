@@ -462,8 +462,8 @@ dtttt91222233Xbbbbfddtttt9122+3L2z8CDAAGA9CHeMiJOgAAAABJRU5ErkJggg==" transform=
 </svg>
 
 <div class="container" style="text-align:center">
-  <h1 style="font-size: 100px">Ooops!</h1>
-  <h3>Estas intentando ingresar a una sección que no existe</h3>
+
+  <h3>Estas intentando ingresar a una<br>sección que no existe</h3>
   <a href="/">Regresar al inicio</a>
 </div>
 
