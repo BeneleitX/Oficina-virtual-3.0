@@ -1,15 +1,13 @@
 <?php 
 helper( "getnet_helper" );
-$cadenaXML = getCadenaXML( $pedido, $socio );
-
-
+$xurl = getCadenaXML( $pedido, $socio );
 ?>
 
 
 <iframe 
-    src="https://sandboxpol.mit.com.mx/i/SNDBX01"
+    src="<?php echo $xurl; ?>"
     width="100%" 
-    height="480px" 
+    height="880px" 
     frameborder="0" 
     scrolling="no"
     seamless="seamless"

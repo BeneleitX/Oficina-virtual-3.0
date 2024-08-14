@@ -226,4 +226,10 @@ class Sesion extends BaseController
         echo template( "sesion/reset", $this->data );
 
     }
+
+
+    public function GetnetGatewayResponse(){
+        dd( $this->request->getPost() );
+    }
+
 }

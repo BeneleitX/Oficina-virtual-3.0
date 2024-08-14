@@ -1,31 +1,30 @@
 <?php
 
-function AESencriptar( $AES, $xml )
-{
+function AESencriptar($plaintext, $key128){
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-    $cipherText = openssl_encrypt ( $xml, 'AES-128-CBC', hex2bin( $AES[ "key128" ]), 1, $iv);
+    $cipherText = openssl_encrypt ( $plaintext, 'AES-128-CBC', hex2bin($key128), 1, $iv);
     return base64_encode($iv.$cipherText);
-}
+  }
 
 
-function AESdesencriptar($encodedInitialData)
-{
+function AESdesencriptar($encodedInitialData, $key128){
     $encodedInitialData =  base64_decode($encodedInitialData);
     $iv = substr($encodedInitialData,0,16);
     $encodedInitialData = substr($encodedInitialData,16);
-    return openssl_decrypt($encodedInitialData, 'AES-128-CBC', hex2bin($this->key128), 1, $iv);
-}
+    $decrypted = openssl_decrypt($encodedInitialData, 'AES-128-CBC', hex2bin($key128), 1, $iv);
+    return $decrypted;
+  }
 
 function getCadenaXML( $pedido, $socio ){
 
     $sandbox = [
         "empresa"  => "SNBX",
         "sucursal" => "01SNBXBRNCH",
-        "usuario"  => "SNBXUSR01",
+        "usuario"  => "SNBXUSR0123",
         "password" => "SECRETO",
-        "key128"   => "5dcc67393750523cd165f17e1efadd21",
+        "key128"   => "5DCC67393750523CD165F17E1EFADD21",
         "cadena"   => "SNDBX123",
-        "url"      => "https://wppsandbox.mit.com.mx/gen"
+        "url"      => "https://sandboxpo.mit.com.mx/gen"
     ];
 
     $beneleit = [
@@ -39,54 +38,24 @@ function getCadenaXML( $pedido, $socio ){
     ];    
 
     // Elegir ambiente
-    $AES = $sandbox;
+    $AES = $beneleit;
 
     $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $pedido[ "data" ][ "saldo" ];
     $comisionbanco = $subtotal * 2 / 100;
     $total = $subtotal + $comisionbanco;
 
-    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-            <P>
-                <business>
-                    <id_company>{$AES[ "empresa" ]}</id_company>
-                    <id_branch>{$AES[ "sucursal" ]}</id_branch>
-                    <user>{$AES[ "usuario" ]}</user>
-                    <pwd>{$AES[ "password" ]}</pwd>
-                </business>
-                <url>
-                    <reference>{$pedido[ "referencia" ]}</reference>
-                    <amount>{$total}</amount>
-                    <moneda>MXN</moneda>
-                    <canal>W</canal>
-                    <omitir_notif_default>0</omitir_notif_default>
-                    <st_correo>0</st_correo>
-                    <mail_cliente>{$socio->correo}</mail_cliente>
-                </url>
-            </P>";
+    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>{$socio->correo}</mail_cliente><version>IntegraWPP</version></url></P>";
 
-    $cifrado = AESencriptar( $AES, $xml );
+    $cifrado = AESencriptar( $xml, $AES[ "key128" ] );
+    $encodedString = "<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>";
+    
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $AES[ "url" ] );
+    curl_setopt($curl, CURLOPT_POST, true );
+    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "xml" => $encodedString ] ) );
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+    $respuesta = curl_exec( $curl );
+    curl_close($curl);
 
-
-    $encodedString = urlencode('<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>');
-    $request = new \HttpRequest();
-    $request->setUrl( $AES[ "url" ] );
-    $request->setMethod(HTTP_METH_POST);
-    
-    $request->setHeaders(array(
-      'cache-control' => 'no-cache',
-      'content-type' => 'application/x-www-form-urlencoded'
-    ));
-    
-    $request->setContentType('application/x-www-form-urlencoded');
-    $request->setPostFields(array(
-      'xml' => encodedString
-    ));
-    
-    try {
-      $response = $request->send();
-    
-      echo $response->getBody();
-    } catch (HttpException $ex) {
-      echo $ex;
-    }    
+    return simplexml_load_string( AESdesencriptar( $respuesta, $AES[ "key128" ] ) )->nb_url;
 }

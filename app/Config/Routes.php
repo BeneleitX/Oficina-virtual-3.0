@@ -22,6 +22,8 @@ $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
 $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
+$routes->post( "GetnetGatewayResponse",     "Sesion::GetnetGatewayResponse" ); 
+
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                 "Sesion::logout" );
     $routes->get( "logout/(:num)/(:any)",              "Sesion::logout/$1/$2" );
