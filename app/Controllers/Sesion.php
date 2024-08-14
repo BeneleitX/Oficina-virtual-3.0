@@ -229,7 +229,10 @@ class Sesion extends BaseController
 
 
     public function GetnetGatewayResponse(){
-        dd( $this->request->getPost() );
+        $respuesta = $this->request->getPost( "strResponse" );
+        $xml = simplexml_load_string( AESdesencriptar( $respuesta, $AES[ "key128" ] ) )->nb_url;
+
+        dd( $xml );
     }
 
 }
