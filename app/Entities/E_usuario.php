@@ -93,7 +93,7 @@ class E_usuario extends Entity
 
     }
 
-    public function getCalificaciones( $modelo ){
+    public function getCalificaciones( $modelo, $mes = false ){
         $PTS = [];
 
         if( !defined( "PROMOCIONES" ) ) {
@@ -101,22 +101,33 @@ class E_usuario extends Entity
         }
 
         foreach( PROMOCIONES as $promo ){
-            foreach( MESES as $mes ){
-                $PTS[ $promo[ "codigo" ] ][ "meses" ][ $mes ] = 0;
+
+            if( $mes ){
+                if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]} ) ){
+                    $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]};
+
+                }
             }
-            $PTS[ $promo[ "codigo" ] ][ "total" ] = 0;
+            else{
+                foreach( MESES as $mes ){
+                    $PTS[ $promo[ "codigo" ] ][ "meses" ][ $mes ] = 0;
+                }
+                $PTS[ $promo[ "codigo" ] ][ "total" ] = 0;
+            }
         } 
 
-        foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
-            if( $promos )
-            foreach( $promos as $promo => $pts ){
-                $PTS[ $promo ][ "meses" ][ $mes ] = $pts;
+        if( !$mes ){
+            foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
+                if( $promos )
+                foreach( $promos as $promo => $pts ){
+                    $PTS[ $promo ][ "meses" ][ $mes ] = $pts;
 
-                if( !isset( $PTS[ $promo ][ "total" ] ) ){
-                    $PTS[ $promo ][ "total" ] = 0;
+                    if( !isset( $PTS[ $promo ][ "total" ] ) ){
+                        $PTS[ $promo ][ "total" ] = 0;
+                    }
+
+                    $PTS[ $promo ][ "total" ] = $PTS[ $promo ][ "total" ] + $pts;
                 }
-
-                $PTS[ $promo ][ "total" ] = $PTS[ $promo ][ "total" ] + $pts;
             }
         }
 
@@ -221,7 +232,7 @@ class E_usuario extends Entity
 
             switch( $modelo[ "codigo" ] ){
                 case "10-NUTRICION" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_1 ] ][ "descripcion" ]." - ".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
                     break;
                 case "20-TELEFONIA" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
@@ -769,10 +780,13 @@ class E_usuario extends Entity
 
 
     public function getChecks( $modelo ){
-        $db = db_connect();
+        /* $db = db_connect();
         $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
-        $checks = $db->query($sql)->getRowArray();
-        $a = $checks[ "checks" ];
+        $checks = $db->query($sql)->getRowArray(); 
+        $a = $checks[ "checks" ]; */
+
+        $a = json_encode( $this->data->checks );
+
         return json_decode( $a, 1 );
     }
 

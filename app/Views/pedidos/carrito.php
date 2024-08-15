@@ -29,16 +29,16 @@
         <?php if( !$pagado && !$cancelado ){ ?>
         <div class="col-md-6 mb-3 pt-4 text-end">
             <p><button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button></p>
-        <table align="right"><tr>
+            <table align="right"><tr>
                 <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
                 <td id="pre_puntajes">
                     <?php
                     $k = 0;
 
                     foreach( PROMOCIONES as $p ){
-                        if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) > 0 ){
+                        if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
                             $k++;
-                            echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ]}</div></div>";
+                            echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div></div>";
                         }
                     }
 

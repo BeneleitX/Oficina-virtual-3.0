@@ -7,11 +7,36 @@ $db = db_connect();
 $sql = "SELECT * FROM t_pedidos
         WHERE usuario_id = {$usuario->id}
         AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
+        and fechas->>'$.pagado' > '".date( "Y-m" )."-01'
         ORDER BY fechas->>'$.pagado' DESC LIMIT 5";
 
 $pedidos = $db->query( $sql )->getResultArray();
 load_catalogo( "promociones" );
 ?>
+
+<table width="100%" class="my-2"><tr>
+    <td class="small text-center">Puntajes acumulados por compras en este mes</td></tr>
+    <tr><td id="pre_puntajes" class="text-center py-2">
+        <?php
+        $k = 0;
+
+        foreach( MODELOS as $modelo ){
+            $PTS = $usuario->getCalificaciones( $modelo[ "codigo" ], date( "Ym" ) );
+
+            foreach( PROMOCIONES as $p ){
+                if( isset( $PTS[ $p[ "codigo" ] ] ) and intval( $PTS[ $p[ "codigo" ] ] ) > 0 ){
+                    $k++;
+                    echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\"><small>{$p[ "settings" ][ "siglas" ]}</small></div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$PTS[ $p[ "codigo" ] ]}</div></div>";
+                }
+            }
+        }
+
+        if( !$k ){
+            echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-gray-400\">PTS</div><div class=\"pts-numero bg-gray-400\">0</div></div>";
+        }
+        ?>
+    </td>
+</tr></table>
 
 <table class="table table-striped bg-white m-0">
 
@@ -40,7 +65,7 @@ load_catalogo( "promociones" );
             }            
         }
         else{
-            echo "<div class=\"row m-3\"><div class=\"col-4 display-1 py-3 text-gray-300 text-center ps-5\"><i class=\"fa fa-cart-arrow-down\"></i></div><div class=\"col-8 pt-5 text-gray-500 text-center\">Aun no hay compras<br>en tu historial</div></div>";
+            echo "<div class=\"row my-0\"><div class=\"col-4 display-1 py-3 text-gray-300 text-center ps-5\"><i class=\"fa fa-cart-arrow-down\"></i></div><div class=\"col-8 pt-5 text-gray-500 text-center\">Aun no hay compras<br>en tu historial</div></div>";
         }
         ?>
      
@@ -48,6 +73,6 @@ load_catalogo( "promociones" );
 </table>
 
 <div class="card-body">
-        <a class="btn btn-lg mt-4 col-12 btn-primary" href="<?php echo base_url( "tienda/10-NUTRICION" ); ?>"><i class="fa fa-shopping-cart"></i> Hacer un nuevo pedido</a>
+        <a class="btn btn-lg mt-2 col-12 btn-primary" href="<?php echo base_url( "tienda/10-NUTRICION" ); ?>"><i class="fa fa-shopping-cart"></i> Hacer un nuevo pedido</a>
 </div>
 

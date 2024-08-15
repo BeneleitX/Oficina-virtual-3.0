@@ -89,7 +89,12 @@ class Sesion extends BaseController
 
             // Password corrompido, debe generar uno nuevo
 
-            if( !$usuario->password_original() || $usuario->password != $data[ "socio_password" ] ){
+            if( !$usuario->password_original() ){
+                $usuario->password = random_password();
+                model( "UsuarioModel" )->save( $usuario );
+            }
+
+            if( $usuario->password != $data[ "socio_password" ] ){
 
                 // BITACORA inicio de sesión fallido
                 bitacora( 2, $usuario->id, [ 
@@ -107,7 +112,11 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
-            UPDATE t_usuarios SET redes = JSON_SET( redes, CONCAT('$.modelos."', i_modelo ,'".profundidad'), f_get_niveles( id, i_modelo ) ) WHERE id = socio->>'$.id';
+            $db = db_connect();
+            $db->query( "select f_get_estatus(  {$usuario->id}, 1 )" );
+            $db->query( "select f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
+            
+            // UPDATE t_usuarios SET redes = JSON_SET( redes, CONCAT('$.modelos."', i_modelo ,'".profundidad'), f_get_niveles( id, i_modelo ) ) WHERE id = socio->>'$.id';
             
             return redirect()->route( "inicio" ); 
         }

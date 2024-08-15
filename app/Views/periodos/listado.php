@@ -28,8 +28,8 @@
         foreach( $periodos as $periodo ){
             echo "<tr>
                 <td><span class=\"badge bg-marine\">".periodo( $periodo[ "codigo" ] )."</span></td>
-                <td>{$periodo[ "inicia" ]}</td>
-                <td>{$periodo[ "termina" ]}</td>
+                <td><span class=\"d-none\">{$periodo[ "inicia" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "inicia" ] ) )."</td>
+                <td><span class=\"d-none\">{$periodo[ "termina" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "termina" ] ) )."</td>
                 <td>".( $periodo[ "data" ][ "pedidos" ] ?? 0 )."</td>
                 <td>".( $periodo[ "data" ][ "pagos" ] ?? 0 )."</td>
                 <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "comisiones" ] ?? 0 , 2 )."</td>

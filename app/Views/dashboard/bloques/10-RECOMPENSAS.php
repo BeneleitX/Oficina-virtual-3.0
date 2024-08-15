@@ -31,6 +31,12 @@
             $porc  = ceil( $resta * 100 / $total );
         }
         else{
+
+            $data = $usuario->data;
+            $data->recompensas->inicia = date( "2024-08-15" );
+            $usuario->data = $data;
+            model( "UsuarioModel" )->save( $usuario );
+
             $inicia  = "No iniciado";
             $termina = "???";
             $resta = "???";

@@ -25,12 +25,16 @@
                     $b[ "data" ][ "titulo" ] .= " ".date( "W-Y" );
                     break;
 
+                case "18-MIS-PEDIDOS":
+                    $b[ "data" ][ "titulo" ] .= " ".mes( date( "m" ) )." ".date( "Y" );
+                    break;
+
                 case "22-BONO-MENSUAL-PROMOS":
-                    $b[ "data" ][ "titulo" ] .= " ".strtoupper( mes( date( "m" ) ) )." ".date( "Y" );
+                    $b[ "data" ][ "titulo" ] .= " ".mes( date( "m" ) )." ".date( "Y" );
                     break;
             }
 
-            $html .= "<div style=\"cursor:pointer\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><h5 class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</h5></div>";
+            $html .= "<div style=\"cursor:pointer\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
 
 
             $html .= "<div id=\"div_{$b[ "codigo" ]}\" class=\"accordion-collapse collapse ".( ( $usuario->data->layout->{$b[ "codigo" ]} ?? true ) == "true" ? "show" : "" )."\"><a ";
