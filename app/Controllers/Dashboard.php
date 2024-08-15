@@ -21,6 +21,31 @@ class Dashboard extends BaseController
     }
 
 
+    public function sociodata( $socio ){
+        
+        if( $this->data["usuario"]->id < 60 ){
+
+            $socio = model( "UsuarioModel" )->find( $socio );
+            
+            echo "
+            <html><body style=\"background:black;color:white\">
+            <pre><table>
+
+            <tr><td>NUMERO</td><td>".$socio->id()."</td></tr>
+            <tr><td>NOMBRE</td><td>".$socio->nombre( 2 )."</td></tr>
+            <tr><td>TELEFONO</td><td>{$socio->telefono}</td></tr>
+            <tr><td>CORREO</td><td>{$socio->correo}</td></tr>
+            
+            </table></pre>
+            </body></html>
+            ";
+        }
+        else{
+            return redirect()->route( "logout" );
+        }
+    }
+
+
     public function save_layout(){
         $bloque = $this->request->getPost( "bloque" );
 

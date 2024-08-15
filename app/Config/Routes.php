@@ -33,6 +33,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
     $routes->post( "splash",                "Dashboard::splash" );
+    $routes->get( "sociodata/(:num)",       "Dashboard::sociodata/$1" );
     $routes->post( "save_layout",           "Dashboard::save_layout" );
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
