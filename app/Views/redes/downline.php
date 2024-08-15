@@ -93,7 +93,13 @@
 </div>
 
 
-<div id="downline"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+<div id="downline">
+	<p class="my-5 text-center">
+		<i style="font-size:100px" class="fa-solid fa-circle-notch fa-spin"></i>
+		<br><br>
+		En redes extensas este proceso puede durar varios minutos, te pedimos paciencia
+	</p>
+</div>
 
 <script src= "<?php echo base_url() ?>/assets/js/d3.js"></script>
 

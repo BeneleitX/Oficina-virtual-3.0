@@ -107,7 +107,8 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
-
+            UPDATE t_usuarios SET redes = JSON_SET( redes, CONCAT('$.modelos."', i_modelo ,'".profundidad'), f_get_niveles( id, i_modelo ) ) WHERE id = socio->>'$.id';
+            
             return redirect()->route( "inicio" ); 
         }
     }
