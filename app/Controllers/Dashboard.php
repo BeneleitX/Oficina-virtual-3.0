@@ -39,6 +39,13 @@ class Dashboard extends BaseController
             </table></pre>
             </body></html>
             ";
+
+
+        // BITACORA Consulta de datos
+        bitacora( 50, $this->data[ "usuario" ]->id, [ 
+            "socio" => $socio->id
+        ] );
+
         }
         else{
             return redirect()->route( "logout" );
