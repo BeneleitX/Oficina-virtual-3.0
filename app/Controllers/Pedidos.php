@@ -292,6 +292,13 @@ class Pedidos extends BaseController
     }
     
 
+    public function beneleit_movil(){
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Beneleit Móvil";
+
+        echo template( "pedidos/beneleit_movil", $this->data );
+    }
+
 
     public function checkout(){
         $this->data[ "modelo" ]     = $this->request->getPost( "modelo" );

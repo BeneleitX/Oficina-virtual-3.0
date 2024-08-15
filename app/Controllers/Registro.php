@@ -125,6 +125,7 @@ class Registro extends BaseController
                     "primercompra"   => json_decode( "{}" ),
                     "ultimacompra"   => null,
                     "fondeos" => [],
+                    "reset" => $fecha,
                     "ingresos" => [
                         date( "Ym" ) => []
                     ],

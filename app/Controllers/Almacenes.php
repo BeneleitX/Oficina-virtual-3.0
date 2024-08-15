@@ -141,7 +141,7 @@ class Almacenes extends BaseController
             "cantidad" => $cantidad
         ] );
 
-        return redirect()->to( "almacen/001-PL-ALMACEN" )->with( "msg", [ 
+        return redirect()->to( "almacen/".$almacen[ "codigo" ] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "El producto se ha agregado al almacen"] );  

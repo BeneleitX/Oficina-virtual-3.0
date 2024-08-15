@@ -5,11 +5,10 @@
 <p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
 
 
-<?php if( !$pagado && !$cancelado ){ 
-    ?>
+
     <div class="row">
 	    <div class="col-md-6 mb-3">
-            <?php 
+        <?php if( !$pagado && !$cancelado ){ 
             echo "\n<ul class=\"nav nav-pills my-4\">";
             
             foreach( MODELOS as $m ){
@@ -19,26 +18,38 @@
             }
            
             echo "</ul>";
+        }
             ?>
 
 <p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
+
+
         </div>
+
+        <?php if( !$pagado && !$cancelado ){ ?>
         <div class="col-md-6 mb-3 pt-4 text-end">
             <p><button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button></p>
         <table align="right"><tr>
                 <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
                 <td id="pre_puntajes">
                     <?php
+                    $k = 0;
+
                     foreach( PROMOCIONES as $p ){
                         if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ] ) > 0 ){
+                            $k++;
                             echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ "202408" ]}</div></div>";
                         }
+                    }
+
+                    if( !$k ){
+                        echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-gray-400\">PTS</div><div class=\"pts-numero bg-gray-400\">0</div></div>";
                     }
                     ?>
                 </td>
             </tr></table>
         </div>
-    </div>
+    
 <?php 
 }
 else{
@@ -50,7 +61,7 @@ else{
     }    
 }
 ?>
-
+</div>
 <div class="row">
 	<div class="col-lg-6">
 		<div id="shoppingcart">
@@ -168,8 +179,12 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 <?php
                     }
                     else{
-                       echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.</div><p class=\"m-0\"><a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a></p>";
-
+                        if( ( $pagado || $cancelado ) ){
+                            echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Por el momento no se cuenta con información relacionada con el número celular al cual fue aplicado el servicio</div>";
+                        }
+                        else{
+                            echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.</div><p class=\"m-0\"><a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a></p>";
+                        }
                     }
                 ?>
         
@@ -618,18 +633,19 @@ else{ ?>
 </div>
 
 <?php } 
+$pedido[ "no_stock" ] = false;
 
 $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;
 }
 
-
 ?>
 
 	<script>
+        
 		var modelo 			= '<?php echo $modelo; ?>',
-            usuario 		= <?php echo json_encode( $socio ) ?>,
+            usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
 			cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
 			cat_productos   = <?php echo json_encode( $prods ); ?>,
 			metodosentrega	= <?php echo json_encode( METODOSENTREGA ) ?>,

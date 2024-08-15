@@ -34,6 +34,24 @@ class E_usuario extends Entity
         }
     }
 
+
+    public function getDatos(){
+        return [
+            "id" => $this->id,
+            "estatus_codigo" => $this->estatus_codigo,
+            "rol_codigos" => $this->rol_codigos,
+            "data" => $this->data,
+            "correo" => $this->correo,
+            "telefono" => $this->telefono,
+            "fechanac" => $this->fechanac,
+            "curp" => $this->curp,
+            "redes" => $this->redes,
+            "historial" => $this->historial,
+            "verificado" => $this->verificado,
+            "PTS" => $this->PTS
+        ];
+    }
+
     protected function setPassword( string $password ): string
     {
         $encrypter = service( "encrypter" );
@@ -66,7 +84,6 @@ class E_usuario extends Entity
     public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );
-        
         $cadena = base64_decode( $this->attributes[ "password" ] );
         return $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
     }

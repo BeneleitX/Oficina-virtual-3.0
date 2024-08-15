@@ -9,9 +9,13 @@
         <?php echo pills( "historial", $modelo ); ?>
     </div>
     <div class="col-lg-4">
-        <?php if( $modelo != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ){ ?>
-        <a class="btn btn-lg mt-4 col-12 btn-secondary" href="<?php echo base_url( "tienda/".$modelo ); ?>"><i class="fa fa-shopping-cart"></i> Nuevos pedidos</a>
-        <?php } ?>
+        <?php 
+        if( $modelo == '20-TELEFONIA' ){
+            echo "<a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a>";
+        }else{
+            echo "<a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a>";
+        }
+        ?>
     </div>
 </div>
 
@@ -62,7 +66,7 @@
                     <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\"><span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span>".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "" )."</td>
                     <td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
 
-<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( $modelo == '20-TELEFONIA' ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( substr( $p[ "metodoentrega_codigo" ], 0, 2 ) == 11 ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> ERROR</span>" )."</strong>" : "" )."</td>
+<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( $modelo == '20-TELEFONIA' ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( substr( $p[ "metodoentrega_codigo" ], 0, 2 ) == 11 ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> dato pendiente</span>" )."</strong>" : "" )."</td>
 
                     <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";

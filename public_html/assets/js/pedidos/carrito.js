@@ -5,6 +5,7 @@ function revisa_stock(){
 
         $( '#no_stock ul' ).empty();
         $( '#no_stock' ).hide();
+        pedido.no_stock = false;
 
     if( metodoentrega_activo && metodoentrega_activo.substring(0,2) == '00'){
         entrega = $( '[name=select_almacen]' ).val();
@@ -41,6 +42,7 @@ function revisa_stock(){
             // si hay faltantes lanzar alerta
             if( Object.keys( productos ).length ){
                 $( '#no_stock' ).show();
+                pedido.no_stock = true;
             }
         }
     }
@@ -308,9 +310,7 @@ function update_pedido( flag = null ){
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
-        bloqueapagos = total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
-
-        console.log( bloqueapagos, total_productos_pedido > 0, subtotal > 0, parseInt( pedido.data.entrega ) > 0, !es_paqueteria || pedido.data.domicilio !== undefined, pedido.data.entrega );
+        bloqueapagos = !pedido.no_stock && total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
         $( this ).prop( 'disabled',  !bloqueapagos || pendientes );
     });
@@ -379,7 +379,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         
         precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
 
-        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
+        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><a href="javascript:lightbox( \'' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png\' );" class="lightbox_trigger"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></a></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
 
         $( '.card[promocion=' + promocion + ']' ).show();
     }
@@ -405,10 +405,37 @@ function get_orden_next( promocion ){
     return next + 1;
 }
 
+function lightbox( image_href ){
+
+    if ($('#lightbox').length > 0) { 
+        $('#content').html('<img src="' + image_href + '" /><br>Click para cerrar');
+        $('#lightbox').show();
+    }
+    else { 
+        var lightbox = 
+        '<div id="lightbox">' +
+            '<div id="content">' + //insert clicked link's href into img src
+                '<img src="' + image_href +'" /><br>Click para cerrar' +
+            '</div>' +	
+        '</div>';
+            
+        $('body').append(lightbox);
+    }
+
+    $('body').on('click', '#lightbox', function() { 
+        $('#lightbox').hide();
+    });
+
+    return false;
+}
+
 var pendientes = 0;
+
+
 
 $(document).ready(function()
 { 
+    
 	function delay(fn, ms) {
 		let timer = 0
 		return function(...args) {

@@ -13,9 +13,9 @@ $routes->get( "recover",                    "Sesion::recover" );
 $routes->get( "recover/(:any)",             "Sesion::recover/$1" );
 $routes->get( "login/(:num)",               "Sesion::login/$1" );
 $routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
+$routes->get( "pass_catch/(:any)",          "Sesion::pass_catch/$1" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
 $routes->post( "pass_request",              "Sesion::pass_request" );
-$routes->get( "pass_catch/(:any)",          "Sesion::pass_catch/$1" );
 
 $routes->get( "formulario",                 "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
@@ -58,6 +58,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "cambia_fecha",          "Pedidos::cambia_fecha" ); 
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
+    $routes->get( "beneleit_movil",        "Pedidos::beneleit_movil" ); 
     
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
