@@ -31,7 +31,7 @@ foreach( MODELOS as $m ){
         f_get_calificacion( {$usuario->id}, '{$m_0}', '{$m[ "codigo" ]}' ) as 'm_0'";
      
         $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
-    
+
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
     $headers .= "<th class=\"text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</td>";
     $bot .="<td class=\"col-4 rounded p-2 text-center small bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</td>";
