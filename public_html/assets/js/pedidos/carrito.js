@@ -103,11 +103,15 @@ function update_pedido( flag = null ){
         total_productos_pedido = 0;
 
     $( '.card[promocion]' ).each( function(){
+
+        
         var cuenta_productos = 0,
             total_promo      = 0,
             total_comisionable = 0,
             promocion        = $( this ).attr( 'promocion' ),
-            disponible       = eval( cat_promociones[ promocion ].formulas.disponible );
+            disponible       = false;
+            
+        disponible = eval( cat_promociones[ promocion ].formulas.disponible );
 
         pedido.promociones[ promocion ] = {
             'productos'    : {},

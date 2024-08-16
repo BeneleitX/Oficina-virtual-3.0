@@ -93,7 +93,7 @@ class E_usuario extends Entity
 
     }
 
-    public function getCalificaciones( $modelo, $mes = false ){
+    public function getCalificaciones( $modelo, $m = false ){
         $PTS = [];
 
         if( !defined( "PROMOCIONES" ) ) {
@@ -102,7 +102,7 @@ class E_usuario extends Entity
 
         foreach( PROMOCIONES as $promo ){
 
-            if( $mes ){
+            if( $m ){
                 if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]} ) ){
                     $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]};
 
@@ -116,7 +116,7 @@ class E_usuario extends Entity
             }
         } 
 
-        if( !$mes ){
+        if( !$m ){
             foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
                 if( $promos )
                 foreach( $promos as $promo => $pts ){
