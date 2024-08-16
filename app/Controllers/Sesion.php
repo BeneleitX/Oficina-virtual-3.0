@@ -136,9 +136,9 @@ class Sesion extends BaseController
     {
         $validation = service("validation");
         $validation->setRules([
-            "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
-            "socio_telefono" => "required|exact_length[10]|numeric",
-            "socio_correo" => "required|valid_email"
+            "socio_id" => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]|trim",
+            "socio_telefono" => "required|exact_length[10]|numeric|trim",
+            "socio_correo" => "required|valid_email|strtolower|trim"
         ],[
             "socio_id" => [
                 "required" => "No has escrito un No. de socio",
