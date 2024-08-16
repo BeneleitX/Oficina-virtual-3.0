@@ -103,8 +103,8 @@ class E_usuario extends Entity
         foreach( PROMOCIONES as $promo ){
 
             if( $m ){
-                if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]} ) ){
-                    $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$mes}->{$promo[ "codigo" ]};
+                if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]} ) ){
+                    $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]};
 
                 }
             }
