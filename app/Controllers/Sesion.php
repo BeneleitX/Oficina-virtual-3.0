@@ -179,7 +179,7 @@ class Sesion extends BaseController
                 ->withInput();
         }
 
-        if( strtoupper( $socio_correo ) != strtoupper( $usuario->correo ) ){
+        if( strtoupper( $socio_correo ) != strtoupper( $usuario->correo ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
             // BITACORA solicitar recuperación de password fallido
             bitacora( 34, $usuario->id, [ 
                 "telefono" => $socio_telefono,
