@@ -21,35 +21,87 @@ class Dashboard extends BaseController
     }
 
 
-    public function sociodata( $socio ){
+    public function sociodata( $request = null ){
         
-        if( $this->data["usuario"]->id < 60 ){
+        if( $this->data[ "usuario" ]->id < 60 || in_array( $this->data[ "usuario" ]->id, [ 666, 555 ] ) ){
+            $this->data[ "saved" ] = false;
+            $this->data[ "navbar" ] = true;
+            $this->data[ "titulo" ] = "Consulta";
 
-            $socio = model( "UsuarioModel" )->find( $socio );
+            if( $request ){
+
+                $request = base64_decode( urldecode( $request ) );
+                $this->data[ "saved" ] = true;
+                $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+                $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
+            }
+            elseif( $this->request->getPost( "socio" ) ){
+                $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+            }
+            else{
+                $this->data[ "socio" ] = null;
+            }
             
-            echo "
-            <html><body style=\"background:black;color:white\">
-            <pre><table>
+            if( $this->data[ "socio" ] && !$request ){
+                
+                // BITACORA Consulta de datos
+                bitacora( 50, $this->data[ "usuario" ]->id, [ 
+                    "socio" => $this->data[ "socio" ]->id
+                ] );
+            }
 
-            <tr><td>NUMERO</td><td>".$socio->id()."</td></tr>
-            <tr><td>NOMBRE</td><td>".$socio->nombre( 2 )."</td></tr>
-            <tr><td>TELEFONO</td><td>{$socio->telefono}</td></tr>
-            <tr><td>CORREO</td><td>{$socio->correo}</td></tr>
-            
-            </table></pre>
-            </body></html>
-            ";
-
-
-        // BITACORA Consulta de datos
-        bitacora( 50, $this->data[ "usuario" ]->id, [ 
-            "socio" => $socio->id
-        ] );
-
+            echo template( "dashboard/sociodata", $this->data );
         }
         else{
             return redirect()->route( "logout" );
         }
+    }
+
+
+    public function update_sociodata(){
+        $r   = $this->request->getPost();
+        $socio = model( "UsuarioModel" )->find( $r[ "id" ] );
+
+        $data = $socio->data;
+        $cambios = [];
+
+        if( $socio->telefono != $r[ "telefono" ] ){ $socio->telefono = $r[ "telefono" ]; $cambios[] = [ $socio->telefono, $r[ "telefono" ] ]; } 
+        if( $socio->correo   != $r[ "correo" ]   ){ $socio->correo   = $r[ "correo" ];   $cambios[] = [ $socio->correo,   $r[ "correo" ] ]; } 
+        if( $socio->fechanac != $r[ "fechanac" ] ){ $socio->fechanac = $r[ "fechanac" ]; $cambios[] = [ $socio->fechanac, $r[ "fechanac" ] ]; } 
+        if( $socio->curp     != $r[ "curp" ]     ){ $socio->curp     = $r[ "curp" ];     $cambios[] = [ $socio->curp,     $r[ "curp" ] ]; } 
+
+        if( $data->nombre != $r[ "nombre" ] ){ $data->nombre = $r[ "nombre" ]; $cambios[] = [  $data->nombre, $r[ "nombre" ] ]; } 
+        if( $data->apellidos[0] != $r[ "apellido1" ] ){ $data->apellidos[0] = $r[ "apellido1" ]; $cambios[] = [ $data->apellidos[0], $r[ "apellido1" ] ]; } 
+        if( $data->apellidos[1] != $r[ "apellido2" ] ){ $data->apellidos[1] = $r[ "apellido2" ]; $cambios[] = [ $data->apellidos[1], $r[ "apellido2" ] ]; } 
+        if( $data->clabe != $r[ "clabe" ] ){ $data->clabe  = $r[ "clabe" ]; $cambios[] = [ $data->clabe, $r[ "clabe" ] ]; } 
+        if( $data->sat->rfc != $r[ "rfc" ] ){ $data->sat->rfc = $r[ "rfc" ]; $cambios[] = [ $data->sat->rfc, $r[ "rfc" ] ]; } 
+
+        if( sizeof( $cambios ) ){
+            $socio->data = $data;
+            model( "UsuarioModel" )->save( $socio );
+
+            // BITACORA Consulta de datos
+            bitacora( 51, $this->data[ "usuario" ]->id, [ 
+                "socio"   => $socio->id,
+                "cambios" => $cambios
+            ] );
+
+            session()->setFlashdata('msg', [ 
+                "clase" => "success", 
+                "icono" => "user-check", 
+                "texto" => "Se actualizaron los datos del socio"
+            ]);
+        }
+        else{
+            session()->setFlashdata('msg', [ 
+                "clase" => "warning", 
+                "icono" => "user-check", 
+                "texto" => "No se detectaron cambios en los datos del socio. No hubo guardado de cambios."
+            ]);
+        }
+
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
     }
 
 

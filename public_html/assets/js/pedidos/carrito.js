@@ -314,9 +314,9 @@ function update_pedido( flag = null ){
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
-        bloqueapagos = !pedido.no_stock && total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
+        permitepagos = !pedido.no_stock && total_productos_pedido > 0 && subtotal > 0 && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
-        $( this ).prop( 'disabled',  !bloqueapagos || pendientes );
+        $( this ).prop( 'disabled',  !permitepagos || pendientes );
     });
     
     json = JSON.stringify( pedido );
@@ -538,7 +538,7 @@ $(document).ready(function()
 
         else{
             $( '.me_formulario[mp=domicilio]' ).show();
-            pedido.data.domicilio = domicilios[ entrega ];
+            pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
         }
 
         pedido.data.entrega = entrega;
