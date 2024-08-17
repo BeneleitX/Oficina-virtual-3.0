@@ -11,9 +11,10 @@ class Admin extends BaseController
     public function dashboard(){
 
         if( !(
-            $this->data[ "usuario" ]->permiso( "20-ALMACEN") ||
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
-            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
+            $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -29,13 +30,14 @@ class Admin extends BaseController
         $this->data[ "credenciales" ] = model( "UsuarioModel" )->where( $sql , null, false )->findAll();
 
         $sql = "substring(estatus_codigo , 1, 3 ) > 200";
-         $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
+        
+        $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
         $this->data[ "pasarelas" ]    = model( "MetodopagoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "paqueterias" ]  = model( "MetodoentregaModel" )->where( $sql , null, false )->findAll();
         $this->data[ "almacenes" ]    = model( "AlmacenModel" )->where( $sql , null, false )->findAll();
         $this->data[ "rangos" ]       = model( "RangoModel" )->findAll();
         $this->data[ "productos" ]    = model( "ProductoModel" )->where( $sql , null, false )->findAll();
-        $this->data[ "usuarios" ]     = $db->query( "select count(id) as uss from t_usuarios where {$sql}" )->getRow()->uss;
+        $this->data[ "usuarios" ]     = $db->query( "select count(id) as uss from t_usuarios" )->getRow()->uss;
         $this->data[ "roles" ]        = model( "RolModel" )->findAll();
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();

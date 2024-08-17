@@ -23,42 +23,46 @@ class Dashboard extends BaseController
 
     public function sociodata( $request = null ){
         
-        if( $this->data[ "usuario" ]->id < 60 || in_array( $this->data[ "usuario" ]->id, [ 666, 555 ] ) ){
-            $this->data[ "saved" ] = false;
-            $this->data[ "navbar" ] = true;
-            $this->data[ "titulo" ] = "Consulta";
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
+            return redirect()->to( "inicio" ); 
+        }
 
-            if( $request ){
+        $this->data[ "saved" ] = false;
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Administración de usuarios";
 
-                $request = base64_decode( urldecode( $request ) );
-                $this->data[ "saved" ] = true;
-                $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
-                $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
-            }
-            elseif( $this->request->getPost( "socio" ) ){
-                $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
-            }
-            else{
-                $this->data[ "socio" ] = null;
-            }
-            
-            if( $this->data[ "socio" ] && !$request ){
-                
-                // BITACORA Consulta de datos
-                bitacora( 50, $this->data[ "usuario" ]->id, [ 
-                    "socio" => $this->data[ "socio" ]->id
-                ] );
-            }
+        if( $request ){
 
-            echo template( "dashboard/sociodata", $this->data );
+            $request = base64_decode( urldecode( $request ) );
+            $this->data[ "saved" ] = true;
+            $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
+        }
+        elseif( $this->request->getPost( "socio" ) ){
+            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
         }
         else{
-            return redirect()->route( "logout" );
+            $this->data[ "socio" ] = null;
         }
+        
+        if( $this->data[ "socio" ] && !$request ){
+            
+            // BITACORA Consulta de datos
+            bitacora( 50, $this->data[ "usuario" ]->id, [ 
+                "socio" => $this->data[ "socio" ]->id
+            ] );
+        }
+
+        echo template( "dashboard/sociodata", $this->data );
     }
 
 
     public function update_sociodata(){
+
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
         $r   = $this->request->getPost();
         $socio = model( "UsuarioModel" )->find( $r[ "id" ] );
 

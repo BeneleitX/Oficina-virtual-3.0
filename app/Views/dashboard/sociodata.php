@@ -1,6 +1,8 @@
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
+<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+
 <div class="row">
     <div class="col-4 col-lg-2">
         <form action="<?php echo base_url( "sociodata" ); ?>" method="post">
@@ -14,7 +16,7 @@
 
     <?php if( $socio ){ ?>
         <div class="col-4 col-lg-2">
-        <button class="btn btn-light w-100" id="activa_editar"><i class="fa fa-warning text-mustard"></i> Editar</button>
+        <button class="btn btn-danger w-100" id="activa_editar"><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
     <?php } ?>
 
@@ -33,7 +35,7 @@
                 <div class="card" style="overflow:hidden">
                     <div class="card-body text-center">
                         <p>SOCIO<br><?php echo $socio->id( null, "marine" ); ?></p>
-                        <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-400" ); ?></p>
+                        <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
                         <p><?php echo $usuario->avatar( 120 ); ?></p>
                         <p><?php echo $usuario->rango( 150 ); ?></p>
                         <p><span class="badge bg-<?php echo RANGOS[ $usuario->data->rango ][ "color" ]?>"><?php echo RANGOS[ $usuario->data->rango ][ "nombre" ]?></span></p>
