@@ -36,9 +36,9 @@
                     <div class="card-body text-center">
                         <p>SOCIO<br><?php echo $socio->id( null, "marine" ); ?></p>
                         <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
-                        <p><?php echo $usuario->avatar( 120 ); ?></p>
-                        <p><?php echo $usuario->rango( 150 ); ?></p>
-                        <p><span class="badge bg-<?php echo RANGOS[ $usuario->data->rango ][ "color" ]?>"><?php echo RANGOS[ $usuario->data->rango ][ "nombre" ]?></span></p>
+                        <p><?php echo $socio->avatar( 120 ); ?></p>
+                        <p><?php echo $socio->rango( 150 ); ?></p>
+                        <p><span class="badge bg-<?php echo RANGOS[ $socio->data->rango ][ "color" ]?>"><?php echo RANGOS[ $socio->data->rango ][ "nombre" ]?></span></p>
                         </div>
                 </div>
             </div>
