@@ -74,11 +74,11 @@ class Dashboard extends BaseController
         if( $socio->fechanac != $r[ "fechanac" ] ){ $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; $socio->fechanac = $r[ "fechanac" ]; } 
         if( $socio->curp     != $r[ "curp" ]     ){ $cambios[] = [ "curp", $socio->curp,     $r[ "curp" ] ]; $socio->curp     = $r[ "curp" ];     } 
 
-        if( $data->nombre != $r[ "nombre" ] ){ $cambios[] = [ nombre, $data->nombre, $r[ "nombre" ] ]; $data->nombre = $r[ "nombre" ]; } 
-        if( $data->apellidos[0] != $r[ "apellido1" ] ){ $cambios[] = [ apellido1, $data->apellidos[0], $r[ "apellido1" ] ]; $data->apellidos[0] = $r[ "apellido1" ]; } 
-        if( $data->apellidos[1] != $r[ "apellido2" ] ){ $cambios[] = [ apellido2, $data->apellidos[1], $r[ "apellido2" ] ]; $data->apellidos[1] = $r[ "apellido2" ]; } 
-        if( $data->clabe != $r[ "clabe" ] ){ $cambios[] = [ clabe, $data->clabe, $r[ "clabe" ] ]; $data->clabe  = $r[ "clabe" ];  } 
-        if( $data->sat->rfc != $r[ "rfc" ] ){ $cambios[] = [ rfc, $data->sat->rfc, $r[ "rfc" ] ]; $data->sat->rfc = $r[ "rfc" ]; } 
+        if( $data->nombre != $r[ "nombre" ] ){ $cambios[] = [ "nombre", $data->nombre, $r[ "nombre" ] ]; $data->nombre = $r[ "nombre" ]; } 
+        if( $data->apellidos[0] != $r[ "apellido1" ] ){ $cambios[] = [ "apellido1", $data->apellidos[0], $r[ "apellido1" ] ]; $data->apellidos[0] = $r[ "apellido1" ]; } 
+        if( $data->apellidos[1] != $r[ "apellido2" ] ){ $cambios[] = [ "apellido2", $data->apellidos[1], $r[ "apellido2" ] ]; $data->apellidos[1] = $r[ "apellido2" ]; } 
+        if( $data->clabe != $r[ "clabe" ] ){ $cambios[] = [ "clabe", $data->clabe, $r[ "clabe" ] ]; $data->clabe  = $r[ "clabe" ];  } 
+        if( $data->sat->rfc != $r[ "rfc" ] ){ $cambios[] = [ "rfc", $data->sat->rfc, $r[ "rfc" ] ]; $data->sat->rfc = $r[ "rfc" ]; } 
 
         if( sizeof( $cambios ) ){
             $socio->data = $data;
