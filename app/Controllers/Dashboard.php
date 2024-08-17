@@ -29,7 +29,7 @@ class Dashboard extends BaseController
 
         $this->data[ "saved" ] = false;
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Administración de usuarios";
+        $this->data[ "titulo" ] = "Administración de usuarios de sistema BENELEIT";
 
         if( $request ){
 
@@ -62,23 +62,23 @@ class Dashboard extends BaseController
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
             return redirect()->to( "inicio" ); 
         }
-
+        
         $r   = $this->request->getPost();
         $socio = model( "UsuarioModel" )->find( $r[ "id" ] );
 
         $data = $socio->data;
         $cambios = [];
 
-        if( $socio->telefono != $r[ "telefono" ] ){ $socio->telefono = $r[ "telefono" ]; $cambios[] = [ $socio->telefono, $r[ "telefono" ] ]; } 
-        if( $socio->correo   != $r[ "correo" ]   ){ $socio->correo   = $r[ "correo" ];   $cambios[] = [ $socio->correo,   $r[ "correo" ] ]; } 
-        if( $socio->fechanac != $r[ "fechanac" ] ){ $socio->fechanac = $r[ "fechanac" ]; $cambios[] = [ $socio->fechanac, $r[ "fechanac" ] ]; } 
-        if( $socio->curp     != $r[ "curp" ]     ){ $socio->curp     = $r[ "curp" ];     $cambios[] = [ $socio->curp,     $r[ "curp" ] ]; } 
+        if( $socio->telefono != $r[ "telefono" ] ){ $cambios[] = [ "telefono", $socio->telefono, $r[ "telefono" ] ]; $socio->telefono = $r[ "telefono" ]; } 
+        if( $socio->correo   != $r[ "correo" ]   ){ $cambios[] = [ "correo", $socio->correo,   $r[ "correo" ] ]; $socio->correo   = $r[ "correo" ];   } 
+        if( $socio->fechanac != $r[ "fechanac" ] ){ $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; $socio->fechanac = $r[ "fechanac" ]; } 
+        if( $socio->curp     != $r[ "curp" ]     ){ $cambios[] = [ "curp", $socio->curp,     $r[ "curp" ] ]; $socio->curp     = $r[ "curp" ];     } 
 
-        if( $data->nombre != $r[ "nombre" ] ){ $data->nombre = $r[ "nombre" ]; $cambios[] = [  $data->nombre, $r[ "nombre" ] ]; } 
-        if( $data->apellidos[0] != $r[ "apellido1" ] ){ $data->apellidos[0] = $r[ "apellido1" ]; $cambios[] = [ $data->apellidos[0], $r[ "apellido1" ] ]; } 
-        if( $data->apellidos[1] != $r[ "apellido2" ] ){ $data->apellidos[1] = $r[ "apellido2" ]; $cambios[] = [ $data->apellidos[1], $r[ "apellido2" ] ]; } 
-        if( $data->clabe != $r[ "clabe" ] ){ $data->clabe  = $r[ "clabe" ]; $cambios[] = [ $data->clabe, $r[ "clabe" ] ]; } 
-        if( $data->sat->rfc != $r[ "rfc" ] ){ $data->sat->rfc = $r[ "rfc" ]; $cambios[] = [ $data->sat->rfc, $r[ "rfc" ] ]; } 
+        if( $data->nombre != $r[ "nombre" ] ){ $cambios[] = [ nombre, $data->nombre, $r[ "nombre" ] ]; $data->nombre = $r[ "nombre" ]; } 
+        if( $data->apellidos[0] != $r[ "apellido1" ] ){ $cambios[] = [ apellido1, $data->apellidos[0], $r[ "apellido1" ] ]; $data->apellidos[0] = $r[ "apellido1" ]; } 
+        if( $data->apellidos[1] != $r[ "apellido2" ] ){ $cambios[] = [ apellido2, $data->apellidos[1], $r[ "apellido2" ] ]; $data->apellidos[1] = $r[ "apellido2" ]; } 
+        if( $data->clabe != $r[ "clabe" ] ){ $cambios[] = [ clabe, $data->clabe, $r[ "clabe" ] ]; $data->clabe  = $r[ "clabe" ];  } 
+        if( $data->sat->rfc != $r[ "rfc" ] ){ $cambios[] = [ rfc, $data->sat->rfc, $r[ "rfc" ] ]; $data->sat->rfc = $r[ "rfc" ]; } 
 
         if( sizeof( $cambios ) ){
             $socio->data = $data;
