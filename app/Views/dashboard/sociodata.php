@@ -85,7 +85,7 @@
                                 <tr><td class="text-end">CLABE</td>
                                 <td><table style="border:none;margin:0"><tr>
                                     <td style="padding:0; width:90%"><input name="clabe" disabled class="form-control" value="<?php echo $socio->data->clabe; ?>"></tD>
-                                    <td><img style="width:100px; margin-left:10px" src="<?php echo base_url()."assets/img/".( strlen( $socio->data->clabe ) == 18 ? "bancos/002" : "blank" ); ?>.png"></td>
+                                    <td><img style="width:100px; height:50px;margin-left:10px" src="<?php echo base_url()."assets/img/".( strlen( $socio->data->clabe ) == 18 ? "bancos/002" : "blank" ); ?>.png"></td>
                                 </tr></table></td></tr>
 
                             </table>
