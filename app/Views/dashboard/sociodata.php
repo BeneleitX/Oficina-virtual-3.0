@@ -16,7 +16,7 @@
 
     <?php if( $socio ){ ?>
         <div class="col-4 col-lg-2">
-        <button class="btn btn-danger w-100" id="activa_editar"><i class="fa fa-warning text-mustard"></i> Editar</button>
+        <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
     <?php } ?>
 
@@ -24,6 +24,8 @@
 
 <?php if( $socio ){
     $patro = model( "UsuarioModel" )->find( $socio->redes->patrocinador );
+
+
     ?>
 
     <form action="<?php echo base_url( "update_sociodata" ); ?>" method="post">
@@ -32,7 +34,7 @@
 
         <div class="row">
             <div class="col-lg-2">
-                <div class="card" style="overflow:hidden">
+                <div class="card <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "border-red" : ""; ?>" style="overflow:hidden">
                     <div class="card-body text-center">
                         <p>SOCIO<br><?php echo $socio->id( null, "marine" ); ?></p>
                         <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
@@ -44,6 +46,11 @@
             </div>
 
             <div class="col-lg-10">
+                <?php 
+                    if( in_array( "00-BLOQUEADO", $socio->rol_codigos ) ){
+                        echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Este socio ha sido marcado como BLOQUEADO PERMANENTE</i></div>";
+                    }
+                ?>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card" style="overflow:hidden">
