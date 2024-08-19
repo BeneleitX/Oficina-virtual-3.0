@@ -39,7 +39,7 @@
                     <td valign=\"middle\">".estatus( $producto->estatus_codigo )."</td>
                     <td valign=\"middle\" class=\"text-end\">$".number_format( $producto->precio->total, 2 )."<br>
                     <span class=\"small text-teal\">Comisionable $<strong>".number_format( $producto->precio->base ?? 0, 2 )."</strong></span></td>
-                    <td valign=\"middle\" class=\"text-end\"><a href=\"".base_url( "promo_detalle/".$producto->codigo )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
+                    <td valign=\"middle\" class=\"text-end\"><a href=\"".base_url( "promo_detalle/".$producto->codigo )."\" class=\"disabled btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }
         ?>

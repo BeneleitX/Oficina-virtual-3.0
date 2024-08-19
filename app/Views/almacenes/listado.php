@@ -5,7 +5,15 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
 
-<?php echo pills( "almacenes", $modelo ); ?>
+<div class="row">
+    <div class="col-lg-10">
+        <?php echo pills( "almacenes", $modelo ); ?>        
+    </div>
+    <div class="col-lg-2">
+        <a href="<?php echo base_url( "transferencias/".$modelo ); ?>" class="btn btn-secondary col-12 my-4"><i class="fa fa-truck-arrow-right"></i> Transferir productos</a>
+    </div>
+</div>
+
 
 <table class="table table-striped bg-white" id="tabla_almacenes">
     <thead>
