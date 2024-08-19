@@ -174,7 +174,8 @@ class Almacenes extends BaseController
 
         foreach( $us->getResult() as $u ){
 
-            $sql = "UPDATE t_usuarios y SET y.historial = JSON_SET( 
+            $sql = "
+            UPDATE t_usuarios y SET y.historial = JSON_SET( 
                         y.historial, 
                         '$.modelos.\"10-NUTRICION\".calificaciones', 
                         (
@@ -206,6 +207,7 @@ class Almacenes extends BaseController
                         )
                     ) 
                     WHERE y.id = {$u->id}";
+            $db->query( $sql );
         }
     }
 }
