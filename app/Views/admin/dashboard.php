@@ -23,7 +23,7 @@ $menu = [
     [ "secondary", "reportes", "chart-pie", "Reportes", 0,[] ],
     [ "secondary", "backups", "cloud-arrow-down", "Respaldos de BD", 0,[] ],
     [ "secondary", "tickets", "ticket", "Tickets de soporte", 0,[] ],  
-    [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", $almacenes, ["20-ALMACEN"] ],    
+    [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", $almacenes, ["20-ALMACEN", "18-STOCK"] ],    
     [ "secondary", "bloques", "table-cells", "Bloques de inicio", 0,[] ],    
     [ "secondary", "facturacion", "file-invoice-dollar", "Facturacion", 0,[] ],    
     [ "success", "estatus", "layer-group", "Estatus de socios", 0,[] ],  

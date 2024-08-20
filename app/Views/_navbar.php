@@ -70,6 +70,7 @@
 	</a>
 
 	<?php if(
+		$usuario->permiso( "18-STOCK" ) ||
 		$usuario->permiso( "20-ALMACEN" ) ||
 		$usuario->permiso( "32-EDICION" )
 	){ ?>

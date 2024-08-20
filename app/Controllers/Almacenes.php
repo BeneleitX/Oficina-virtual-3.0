@@ -5,6 +5,15 @@ namespace App\Controllers;
 class Almacenes extends BaseController
 {
     public function listado( $modelo ){
+ 
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+ 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Almacenes y puntos de entrega";
         $this->data[ "modelo" ] = $modelo;
@@ -16,6 +25,7 @@ class Almacenes extends BaseController
                 FROM t_almacenes a 
                 LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
                 WHERE a.modelo_codigo = '{$modelo}'
+                ".( $this->data[ "usuario" ]->permiso( "18-STOCK" ) ? "AND json_contains( a.settings->>'$.staff', '{$this->data[ "usuario" ]->id}' )" : "" )."
                 GROUP BY a.codigo";
 
         $this->data[ "almacenes" ] = $db->query( $sql )->getResultArray();
@@ -26,9 +36,24 @@ class Almacenes extends BaseController
 
     public function detalle( $almacen ){
 
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+ 
+
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
         $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $almacen );
+
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+
         $this->data[ "titulo"  ] = "Entregas en almacen <span class=\"badge bg-teal\">".$this->data[ "almacen"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "almacen"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
 
         load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "almacen" ][ "modelo_codigo" ]}'");
@@ -45,6 +70,14 @@ class Almacenes extends BaseController
     }
 
     public function entrega(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+ 
         $productos = [];
 
         $this->data[ "navbar"  ] = true;
@@ -53,11 +86,9 @@ class Almacenes extends BaseController
         $this->data[ "pedido"  ] = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
         $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $this->data[ "pedido" ][ "data" ][ "entrega" ] );
         $this->data[ "cliente" ] = model( "UsuarioModel" )->find( $this->data[ "pedido"  ][ "usuario_id" ] );
-        $staff = model( "UsuarioModel" )->find( $this->data[ "almacen" ][ "settings" ][ "staff" ] );
 
-        $this->data[ "almacen" ][ "staff" ] = [];
-        foreach( $staff as $u ){
-            $this->data[ "almacen" ][ "staff" ][ $u->id ] = $u;
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
+            return redirect()->to( "inicio" ); 
         }
 
         $this->data[ "pedido" ][ "productos" ] = [];
@@ -82,12 +113,24 @@ class Almacenes extends BaseController
 
 
     public function marca_entregado(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+         
         // aqui se marca como entregado el pedido
 
         extract( $this->request->getPost() );
         $pedido   = model( "PedidoModel"  )->find( $pedido );
         $entrega  = model( "UsuarioModel" )->find( $entrega );
         $almacen  = model( "AlmacenModel" )->find( $pedido[ "data" ][ "entrega" ] );
+
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $almacen[ "settings" ][ "staff" ] ) ){
+            return redirect()->to( "inicio" ); 
+        }
 
         $path     = "assets/img/evidencias/";
         $filename = $pedido[ "id" ]."_".time().".jpg";
@@ -122,12 +165,19 @@ class Almacenes extends BaseController
 
     public function get_inventario(){
         $almacen = model( "AlmacenModel" )->find( $this->request->getPost( "almacen" ) );
-
         echo json_encode( $almacen[ "inventario" ][ "balance" ] );
     }
 
 
     public function get_data_producto(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+         
         extract( $this->request->getPost() );
 
         $html = "";
@@ -158,7 +208,7 @@ class Almacenes extends BaseController
 
         if( $transfers->getNumRows() ){
             foreach( $transfers->getResult() as $t ){
-                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td><td><button type=\"submit\" class=\"btn btn-sm btn-warning\" name=\"recibe\" value=\"{$t->id}\">RECIBE</button></td><td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
+                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td>".( $this->data[ "usuario" ]->permiso( "18-STOCK" ) ? "<td><button type=\"submit\" class=\"btn btn-sm btn-warning\" name=\"recibe\" value=\"{$t->id}\">RECIBE</button></td>" : "" )."<td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
             }
         }
         else{
@@ -174,13 +224,20 @@ class Almacenes extends BaseController
 
         $html .= "</table></div>";
 
-        $html .= "<div class=\"card mb-0\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-boxes-stacked\"></i> Inventario físico</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 ) + ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div></div>";
+        $html .= "<div class=\"card mb-0\" style=\"overflow:hidden\"><div class=\"card-header bg-red\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-boxes-stacked\"></i> Inventario físico</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 ) + ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div></div>";
 
         echo $html;
     }
 
 
     public function addstock(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+         
         // agregar productos a stock de almacenes
 
         extract( $this->request->getPost() );
@@ -205,6 +262,13 @@ class Almacenes extends BaseController
 
 
     public function transferencias( $modelo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+         
         $this->data[ "navbar"  ] = true;
         $this->data[ "titulo"  ] = "Transferencias entre almacenes";
         $this->data[ "modelo"  ] = $modelo;
@@ -217,6 +281,9 @@ class Almacenes extends BaseController
 
 
     public function recibe_transfer(){
+        if( !( $this->data[ "usuario" ]->permiso( "18-STOCK" ) ) ){
+            return redirect()->to( "inicio" ); 
+        }
 
         $transfer = model( "TransferenciaModel" )->find( $this->request->getPost( "recibe" ) );
         $transfer[ "estatus_codigo" ] = "620-RECIBIDO";
@@ -236,6 +303,13 @@ class Almacenes extends BaseController
 
 
     public function aplica_transfer(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+          
         $db = db_connect();
         extract( $this->request->getPost() );
 

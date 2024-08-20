@@ -11,6 +11,7 @@ class Admin extends BaseController
     public function dashboard(){
 
         if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
             $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
