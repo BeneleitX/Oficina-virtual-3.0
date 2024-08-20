@@ -2,12 +2,12 @@
 
 namespace App\Controllers;
 
-class Almacenes extends BaseController
+class Almacenes extends BaseController 
 {
     public function listado( $modelo ){
  
         if( !(
-            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
@@ -37,7 +37,7 @@ class Almacenes extends BaseController
     public function detalle( $almacen ){
 
         if( !(
-            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
+            $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
@@ -208,13 +208,13 @@ class Almacenes extends BaseController
 
         if( $transfers->getNumRows() ){
             foreach( $transfers->getResult() as $t ){
-                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td>".( $this->data[ "usuario" ]->permiso( "18-STOCK" ) ? "<td><button type=\"submit\" class=\"btn btn-sm btn-warning\" name=\"recibe\" value=\"{$t->id}\">RECIBE</button></td>" : "" )."<td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
+                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td><td><button type=\"submit\" class=\"btn btn-sm btn-warning\" name=\"recibe\" value=\"{$t->id}\">RECIBE</button></td><td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
             }
         }
         else{
             $html .= "<tr><td colspan=\"3\" class=\"text-end pe-3 text-gray-600\">0</td></tr>";
         }       
-        $html .= "</table></form></div>";
+        $html .= "</table></form></div>"; 
         
         $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers"][ "620" ][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
 
