@@ -54,7 +54,7 @@ class Almacenes extends BaseController
         }
 
 
-        $this->data[ "titulo"  ] = "Entregas en almacen <span class=\"badge bg-teal\">".$this->data[ "almacen"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "almacen"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
+        $this->data[ "titulo"  ] = "Administración de almacen <span class=\"badge bg-teal\">".$this->data[ "almacen"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "almacen"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
 
         load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "almacen" ][ "modelo_codigo" ]}'");
 
@@ -281,7 +281,9 @@ class Almacenes extends BaseController
 
 
     public function recibe_transfer(){
-        if( !( $this->data[ "usuario" ]->permiso( "18-STOCK" ) ) ){
+        if( 
+            
+            !( $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) || $this->data[ "usuario" ]->permiso( "18-STOCK" ) ) ){
             return redirect()->to( "inicio" ); 
         }
 
