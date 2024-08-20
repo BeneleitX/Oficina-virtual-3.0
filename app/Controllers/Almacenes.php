@@ -281,9 +281,12 @@ class Almacenes extends BaseController
 
 
     public function recibe_transfer(){
-        if( 
-            
-            !( $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) || $this->data[ "usuario" ]->permiso( "18-STOCK" ) ) ){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
             return redirect()->to( "inicio" ); 
         }
 
