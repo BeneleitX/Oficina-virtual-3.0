@@ -8,6 +8,7 @@ class AlmacenModel extends Model
 {
     protected $table      = "t_almacenes";
     protected $primaryKey = "codigo";
+    protected $extras = [ "inventario" => "f_get_inventario" ];
     protected $useAutoIncrement = false;
     protected $returnType     = "array";
     protected $useSoftDeletes = false;
@@ -17,8 +18,7 @@ class AlmacenModel extends Model
         "estatus_codigo",
         "modelo_codigo",
         "settings",
-        "nombre",
-        "productos"
+        "nombre"
     ];
 
 
@@ -50,12 +50,12 @@ class AlmacenModel extends Model
         if( $data[ "data" ] ){
             if( $data[ "singleton" ] ){
                 $data[ "data" ][ "settings"  ] = json_decode( $data[ "data" ][ "settings"  ], true );
-                $data[ "data" ][ "productos" ] = json_decode( $data[ "data" ][ "productos" ], true );
+                $data[ "data" ][ "inventario" ] = json_decode( $data[ "data" ][ "inventario" ], true );
             }
             else{
                 foreach( $data[ "data" ] as $k => $d ){
                     $data[ "data" ][ $k ][ "settings"  ] = json_decode( $data[ "data" ][ $k ][ "settings"  ], true );
-                    $data[ "data" ][ $k ][ "productos" ] = json_decode( $data[ "data" ][ $k ][ "productos" ], true );
+                    $data[ "data" ][ $k ][ "inventario" ] = json_decode( $data[ "data" ][ $k ][ "inventario" ], true );
                 }
             }
         }
@@ -66,7 +66,6 @@ class AlmacenModel extends Model
     protected function JSONencode(array $data)
     {
         $data[ "data" ][ "settings"  ] = json_encode( isset( $data[ "data" ][ "settings"  ] ) ? $data[ "data" ][ "settings"  ] : [] );
-        $data[ "data" ][ "productos" ] = json_encode( isset( $data[ "data" ][ "productos" ] ) ? $data[ "data" ][ "productos"  ] : [] );
 
         return $data;
     }     

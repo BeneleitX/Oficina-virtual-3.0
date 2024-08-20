@@ -245,7 +245,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                     ?>
                     <div class="row">
                         
-                            <?php if( ( $pagado || $cancelado ) ){ 
+                            <?php if( ( $pagado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
                                 if( $entregado ){ ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">

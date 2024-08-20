@@ -22,7 +22,7 @@
                 <table class="w-100">
                     <tr>
                         <td valign="top">Entrega:</td>
-                        <td><input name="entrega" type="hidden" value="">
+                        <td><input name="entrega" type="hidden" value="<?php echo $socio->id; ?>">
                         <input class="form-control mb-3" disabled value="<?php echo $socio->nombre(2); ?>">
                         </td>
                     </tr>

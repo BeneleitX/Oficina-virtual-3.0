@@ -10,11 +10,13 @@ class Almacenes extends BaseController
         $this->data[ "modelo" ] = $modelo;
 
         $db = db_connect();
-        $sql = "SELECT a.*, COUNT(p.id) AS pedidos 
-            FROM t_almacenes a 
-            LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
-            WHERE a.modelo_codigo = '{$modelo}'
-            GROUP BY a.codigo";
+        $sql = "SELECT a.codigo, a.nombre, a.settings, COUNT(p.id) AS pedidos, (
+                    SELECT COUNT(DISTINCT t.fecha) FROM t_transferencias t where t.destino = a.codigo AND estatus_codigo = '530-ENVIADO'
+                ) AS transferencias
+                FROM t_almacenes a 
+                LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
+                WHERE a.modelo_codigo = '{$modelo}'
+                GROUP BY a.codigo";
 
         $this->data[ "almacenes" ] = $db->query( $sql )->getResultArray();
 
@@ -30,11 +32,6 @@ class Almacenes extends BaseController
         $this->data[ "titulo"  ] = "Entregas en almacen <span class=\"badge bg-teal\">".$this->data[ "almacen"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "almacen"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
 
         load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "almacen" ][ "modelo_codigo" ]}'");
-
-/*         $this->data[ "stock" ] = [];
-        foreach( $this->data[ "almacen" ][ "productos" ] as $p ){
-            $this->data[ "stock" ][ $p[ "codigo" ] ] = $p;
-        } */
 
         $db = db_connect();
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
@@ -88,9 +85,8 @@ class Almacenes extends BaseController
         // aqui se marca como entregado el pedido
 
         extract( $this->request->getPost() );
-        $pedido   = model( "PedidoModel" )->find( $pedido );
+        $pedido   = model( "PedidoModel"  )->find( $pedido );
         $entrega  = model( "UsuarioModel" )->find( $entrega );
-
         $almacen  = model( "AlmacenModel" )->find( $pedido[ "data" ][ "entrega" ] );
 
         $path     = "assets/img/evidencias/";
@@ -121,6 +117,66 @@ class Almacenes extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "El pedido {$pedido[ "referencia" ]} fue marcado como entregado"] );        
+    }
+
+
+    public function get_inventario(){
+        $almacen = model( "AlmacenModel" )->find( $this->request->getPost( "almacen" ) );
+
+        echo json_encode( $almacen[ "inventario" ][ "balance" ] );
+    }
+
+
+    public function get_data_producto(){
+        extract( $this->request->getPost() );
+
+        $html = "";
+        $almacen = model( "AlmacenModel" )->find( $almacen );
+
+        $db = db_connect();
+
+        $sql = "SELECT id, notas, fecha, cantidad from t_transferencias where estatus_codigo = '620-RECIBIDO' and producto_codigo = '{$producto}' and destino = '{$almacen[ "codigo" ]}'";
+        $transfers = $db->query( $sql );
+
+        $html = "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><span class=\"text-white m-0\"><i class=\"fa fa-right-to-bracket\"></i> Tranferencias recibidas</span></div><table class=\"w-100 m-0 table table-striped\">";
+
+        if( $transfers->getNumRows() ){
+            foreach( $transfers->getResult() as $t ){
+                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td><td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
+            }
+        }
+        else{
+            $html .= "<tr><td colspan=\"3\" class=\"text-end pe-3 text-gray-600\">0</td></tr>";
+        }
+        $html .= "</table></div>";
+         
+        $sql = "SELECT id, notas, fecha, cantidad from t_transferencias where estatus_codigo = '530-ENVIADO' and producto_codigo = '{$producto}' and destino = '{$almacen[ "codigo" ]}'";
+        $transfers = $db->query( $sql );
+
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><span class=\"text-white m-0\"><i class=\"fa fa-truck-arrow-right\"></i> Tranferencias en tránsito</span></div><form method=\"post\" action=\"".base_url( "recibe_transfer" )."\"><table class=\"w-100 m-0 table table-striped\">";
+        $html .= csrf_field(); 
+
+        if( $transfers->getNumRows() ){
+            foreach( $transfers->getResult() as $t ){
+                $html .= "<tr><td nowrap>".date( "d-m-Y", strtotime( $t->fecha ) )."</td><td class=\"w-100\"><strong>{$t->notas}</strong></td><td><button type=\"submit\" class=\"btn btn-sm btn-warning\" name=\"recibe\" value=\"{$t->id}\">RECIBE</button></td><td class=\"text-end pe-3\" nowrap>".number_format( $t->cantidad )."</td></tr>";
+            }
+        }
+        else{
+            $html .= "<tr><td colspan=\"3\" class=\"text-end pe-3 text-gray-600\">0</td></tr>";
+        }       
+        $html .= "</table></form></div>";
+        
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers"][ "620" ][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
+
+        $html .= "<tr><td nowrap class=\"w-100\">Productos entregados</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "622" ][ $producto ] ?? 0 )."</td></tr>";
+        $html .= "<tr><td nowrap class=\"w-100\">Productos pendientes de entrega</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 )."</td></tr>";
+        $html .= "<tr><td nowrap class=\"w-100\">Productos disponibles para venta</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 )."</td></tr>";
+
+        $html .= "</table></div>";
+
+        $html .= "<div class=\"card mb-0\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-boxes-stacked\"></i> Inventario físico</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 ) + ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div></div>";
+
+        echo $html;
     }
 
 
@@ -159,8 +215,69 @@ class Almacenes extends BaseController
         echo template( "almacenes/transferencias", $this->data );
     }
 
-    public function aplica_transfer(){
 
+    public function recibe_transfer(){
+
+        $transfer = model( "TransferenciaModel" )->find( $this->request->getPost( "recibe" ) );
+        $transfer[ "estatus_codigo" ] = "620-RECIBIDO";
+        $transfer[ "recibe" ] = $this->data[ "usuario" ]->id;
+        model( "TransferenciaModel" )->save( $transfer );
+
+        // BITACORA recibe transferencia de productos
+        bitacora( 53, $this->data[ "usuario" ]->id, [ 
+            "id"    => $transfer[ "id" ]
+        ] );
+
+        return redirect()->to( "almacen/".$transfer[ "destino" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Los productos se han marcado como recibidos"] );  
+    }
+
+
+    public function aplica_transfer(){
+        $db = db_connect();
+        extract( $this->request->getPost() );
+
+        if( $origen == $destino ){
+            $origen = null;
+        }
+
+        foreach( $productos as $k => $p ){
+            if ( intval( $p ) == 0 ){
+                unset( $productos[ $k ] );
+            }
+            else{
+                $sql = "INSERT into t_transferencias values(
+                    NULL,
+                    '530-ENVIADO',
+                    '{$k}',
+                    ".intval( $p ).",
+                    ".( $origen ? "'{$origen}'" : "NULL" ).",
+                    '{$destino}',
+                    '{$fecha}',
+                    {$this->data[ "usuario" ]->id},
+                    NULL,
+                    '{$notas}'
+                )";
+        
+                $db->query( $sql );
+            }
+        }
+
+        // BITACORA Envía transferencia de productos
+        bitacora( 52, $this->data[ "usuario" ]->id, [ 
+            "origen"    => $origen,
+            "destino"   => $destino,
+            "fecha"     => $fecha,
+            "notas"     => $notas, 
+            "productos" => $productos
+        ] );
+
+        return redirect()->to( "almacenes/".$modelo )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Los productos se han marcado como enviados"] );  
     }
 
 

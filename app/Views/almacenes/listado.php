@@ -20,10 +20,10 @@
         <tr>
             <th>Código</th>
             <th>Nombre</th>
-            <th>Estatus</th>
-            <th>Socio</th>
-            <th>Pedidos</th>
             <th>Tipo</th>
+            <th>Responsable</th>
+            <th>Por entregar</th>
+            <th>Transferencias</th>
             <th></th>
         </tr>
     </thead>
@@ -34,7 +34,7 @@
 
             foreach( $almacenes as $a ){
                 $a[ "settings"  ] = json_decode( $a[ "settings"  ], true );
-                $a[ "productos" ] = json_decode( $a[ "productos" ], true );
+                // $a[ "productos" ] = json_decode( $a[ "productos" ], true );
 
                 if( !isset( $socios[ $a[ "settings" ][ "socio" ] ] )){
                     $socios[ $a[ "settings" ][ "socio" ] ] = $a[ "socio" ] = model( "UsuarioModel" )->find( $a[ "settings" ][ "socio" ] );
@@ -43,11 +43,11 @@
 
                 echo "\n<tr almacen=\"{$a[ "codigo" ]}\">
                     <td>{$a[ "codigo" ]}</td>
-                    <td>{$a[ "nombre" ]}</td>
-                    <td>".estatus( $a[ "estatus_codigo" ] )."</td>
-                    <td>".( $socio ? $socio->avatar(24)." ".$socio->id( null, "marine" )." ".$socio->nombre(2) : "" )."</td>
-                    <td class=\"text-center\">".( $a[ "pedidos" ] > 0 ? "<strong>{$a[ "pedidos" ]}</strong>" : "-")."</td>
                     <td class=\"text-center\">{$a[ "settings" ][ "tipo" ]}</td>
+                    <td>{$a[ "nombre" ]}</td>
+                    <td>".( $socio ? $socio->avatar(24)." ".$socio->id( null, "marine" )." ".$socio->nombre(2) : "" )."</td>
+                    <td class=\"text-center\">".( $a[ "pedidos" ] ? "<i class=\"text-teal fa fa-cart-shopping\"></i> {$a[ "pedidos" ]}" : "" )."</td>
+                    <td class=\"text-center\">".( $a[ "transferencias" ] ? "<i class=\"text-red fa fa-truck-arrow-right\"></i> {$a[ "transferencias" ]}" : "" )."</td>
                     <td class=\"text-end\"><a href=\"".base_url( "almacen/".$a[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }

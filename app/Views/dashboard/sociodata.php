@@ -106,7 +106,7 @@
                         <h5 class="text-red mb-0">Editar datos de socio</h5>
                     </div>
                     <div class="card-body text-red" style="position:relative; padding-right:250px">
-                    <img src="<?php echo base_url(); ?>assets/img/cat1.png" style="width:250px; position:absolute; bottom:0; right:0px">
+                    <img src="<?php echo base_url(); ?>assets/img/gatos/cat1.png" style="width:250px; position:absolute; bottom:0; right:0px">
                         <p><i class="fa fa-warning text-mustard"></i> La edición de datos es un proceso que puede no ser reversible. Por favor VERIFICA bien la información antes de procesarla. Todo cambio de datos puede afectar la interacción del socio con el sistema, por lo que esta acción estará siendo monitoreada y registrada en una bitácora de movimientos.</p>
 
                         <button type="submit" class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-save"></i> Guardar cambios</button>

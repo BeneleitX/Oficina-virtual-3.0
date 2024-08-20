@@ -34,7 +34,7 @@ class Admin extends BaseController
         $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
         $this->data[ "pasarelas" ]    = model( "MetodopagoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "paqueterias" ]  = model( "MetodoentregaModel" )->where( $sql , null, false )->findAll();
-        $this->data[ "almacenes" ]    = model( "AlmacenModel" )->where( $sql , null, false )->findAll();
+        $this->data[ "almacenes" ]    = $db->query( "select count(*) as conteo from t_almacenes where estatus_codigo = '201-ACTIVO'" )->getRow()->conteo;
         $this->data[ "rangos" ]       = model( "RangoModel" )->findAll();
         $this->data[ "productos" ]    = model( "ProductoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "usuarios" ]     = $db->query( "select count(id) as uss from t_usuarios" )->getRow()->uss;

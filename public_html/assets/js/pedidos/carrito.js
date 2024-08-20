@@ -1,4 +1,31 @@
 
+function load_inventario( entrega ){
+
+    if( entrega ){
+
+        if( typeof(almacenes[ entrega ].productos ) === 'undefined' ){
+            almacenes[ entrega ].productos = {};
+        }
+
+        if( !Object.keys( almacenes[ entrega ].productos ).length ){
+            $.ajax({
+                url: base_url + "get_inventario", 
+                type: "POST",
+                async: false,
+                dataType: 'json',
+                data: { 
+                    [csrf_token] : csrf_hash, 
+                    almacen      : entrega
+                },
+                success: function( result ){
+                    almacenes[ entrega ].productos = result;
+                }
+            });
+        }
+    }
+}
+
+
 function revisa_stock(){
     var productos = {},
         metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
@@ -9,6 +36,7 @@ function revisa_stock(){
 
     if( metodoentrega_activo && metodoentrega_activo.substring(0,2) == '00'){
         entrega = $( '[name=select_almacen]' ).val();
+        load_inventario( entrega );
         
         if( entrega ){
             $( '.card[promocion] table[productos] > tr[producto]' ).each( function(){
@@ -16,7 +44,7 @@ function revisa_stock(){
                     cantidad = parseInt( campo.val() ),
                     producto = $( this ).attr( 'producto' );
 
-                if( productos[ producto ] === undefined ){
+                if( typeof( productos[ producto ] ) === 'undefined' ){
                     productos[ producto ] = 0;
                 }
 
@@ -25,7 +53,7 @@ function revisa_stock(){
 
             $.each( almacenes[ entrega ].productos, function( p, c ){
 
-                if( productos[ p ] !== undefined ){
+                if( typeof( productos[ p ] ) !== 'undefined' ){
                     if( c >= productos[ p ] ){
                         delete productos[ p ];
                     }
@@ -521,6 +549,7 @@ $(document).ready(function()
         if( metodoentrega_activo.substring(0,2) == '00'){
             $( '.me_formulario[mp=almacen]' ).show();
             entrega = $( '[name=select_almacen]' ).val();
+            load_inventario( entrega );
 
             pedido.data.domicilio  = null;
 
@@ -552,6 +581,7 @@ $(document).ready(function()
         var entrega = $( this ).val(),
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
 
+        load_inventario( entrega );
         pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
         pedido.data.entrega = entrega;
         pedido.metodoentrega_codigo = metodoentrega_activo;

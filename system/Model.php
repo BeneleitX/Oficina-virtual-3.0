@@ -194,7 +194,7 @@ class Model extends BaseModel
         if( isset( $this->extras ) ){
 			$q = $this->table.".*";
 			foreach( $this->extras as $campo => $procedure )
-				$q .= ", {$procedure}(id) as {$campo}";
+				$q .= ", {$procedure}({$this->primaryKey}) as {$campo}";
 
 			$builder->select( $q );
 		}

@@ -110,10 +110,13 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "transferencias/(:any)",  "Almacenes::transferencias/$1" ); 
     $routes->get( "almacenes/(:any)",       "Almacenes::listado/$1" ); 
     $routes->get( "almacen/(:any)",         "Almacenes::detalle/$1" );
-    $routes->get( "kkk",         "Almacenes::kkk" );    
+    $routes->get( "kkk",                    "Almacenes::kkk" );    
     $routes->post( "entrega",               "Almacenes::entrega" );
+    $routes->post( "get_data_producto",     "Almacenes::get_data_producto" );
+    $routes->post( "get_inventario",        "Almacenes::get_inventario" );
     $routes->post( "marca_entregado",       "Almacenes::marca_entregado" );
     $routes->post( "aplica_transfer",       "Almacenes::aplica_transfer" );
+    $routes->post( "recibe_transfer",       "Almacenes::recibe_transfer" );
     $routes->post( "addstock",              "Almacenes::addstock" );
 
     $routes->get( "paqueterias/(:any)",     "Paqueteria::listado/$1" ); 
