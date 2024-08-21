@@ -364,7 +364,7 @@ class Almacenes extends BaseController
 
     public function compresion( $limit = 100, $offset = 0 )
     {
-        $db_a = db_connect( "prod" );
+        $db = db_connect();
 
         $sql = "
             SELECT id
@@ -373,13 +373,13 @@ class Almacenes extends BaseController
             LIMIT {$offset}, {$limit}
         ";
 
-        $b_socios = $db_a->query( $sql );
+        $socios = $db->query( $sql );
 
-        foreach( $b_socios->getResultArray() as $b_socio ){
-            $db_a->query( "do f_compresion_de_red( {$b_socio[ "id" ]}, \"10-NUTRICION\" );" );
+        foreach( $socios->getResultArray() as $s ){
+            $db->query( "do f_compresion_de_red( {$s[ "id" ]}, \"10-NUTRICION\" );" );
         }
 
-        if( sizeof( $b_socios->getResultArray() ) ){
+        if( sizeof( $socios->getResultArray() ) ){
             echo "{$offset}<meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
         }
         else{
