@@ -361,6 +361,34 @@ class Almacenes extends BaseController
 
 
 
+
+    public function compresion( $limit = 100, $offset = 0 )
+    {
+        $db_a = db_connect( "prod" );
+
+        $sql = "
+            SELECT id
+            FROM t_usuarios
+            WHERE SUBSTRING( DATA->>'$.estatus.modelos.\"10-NUTRICION\"',1 ,3 ) < 200
+            LIMIT {$offset}, {$limit}
+        ";
+
+        $b_socios = $db_a->query( $sql );
+
+        foreach( $b_socios->getResultArray() as $b_socio ){
+            $db_a->query( "do f_compresion_de_red( {$b_socio[ "id" ]}, \"10-NUTRICION\" );" );
+        }
+
+        if( sizeof( $b_socios->getResultArray() ) ){
+            echo "{$offset}<meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
+        }
+        else{
+            echo "<br><a href=\"".base_url()."\">Inicio</a>";
+        }      
+    }
+
+
+
     public function kkk(){
 
         $db = db_connect();

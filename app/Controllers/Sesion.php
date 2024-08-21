@@ -20,6 +20,7 @@ class Sesion extends BaseController
 
             echo template( "sesion/login", $this->data );
         }
+
     }
 
 
@@ -62,7 +63,7 @@ class Sesion extends BaseController
 
             $validation->setRules(
                 [
-                    "socio_id"       => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
+                    "socio_id"       => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]|trim",
                     "socio_password" => "required"
                 ],
                 [
