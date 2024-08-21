@@ -380,7 +380,7 @@ class Almacenes extends BaseController
         }
 
         if( sizeof( $socios->getResultArray() ) ){
-            echo "{$offset}<meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
+            echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
         }
         else{
             echo "<br><a href=\"".base_url()."\">Inicio</a>";
