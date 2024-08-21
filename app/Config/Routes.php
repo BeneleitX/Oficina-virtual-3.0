@@ -23,7 +23,10 @@ $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->post( "GetnetGatewayResponse",     "Sesion::GetnetGatewayResponse" ); 
-$routes->get( "GetnetRedirect",            "Sesion::GetnetRedirect" ); 
+$routes->get( "GetnetRedirect",             "Sesion::GetnetRedirect" ); 
+
+$routes->get( "kkk",                        "Tools::kkk" );   
+$routes->get( "compresion/(:num)/(:num)",   "Tools::compresion/$1/$2" );     
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                 "Sesion::logout" );
@@ -109,9 +112,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "transferencias/(:any)",  "Almacenes::transferencias/$1" ); 
     $routes->get( "almacenes/(:any)",       "Almacenes::listado/$1" ); 
-    $routes->get( "almacen/(:any)",         "Almacenes::detalle/$1" );
-    $routes->get( "kkk",                    "Almacenes::kkk" );   
-    $routes->get( "compresion/(:num)/(:num)",     "Almacenes::compresion/$1/$2" );        
+    $routes->get( "almacen/(:any)",         "Almacenes::detalle/$1" );  
     $routes->post( "entrega",               "Almacenes::entrega" );
     $routes->post( "get_data_producto",     "Almacenes::get_data_producto" );
     $routes->post( "get_inventario",        "Almacenes::get_inventario" );
