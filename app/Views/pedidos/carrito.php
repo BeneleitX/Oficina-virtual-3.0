@@ -200,7 +200,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
                     if( ( $pagado || $bloqueado || $cancelado ) ){
 
-                        if( isset( $pedido[ "data" ][ "entrega" ] ) ){
+                        if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
                             $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "domicilio" ] ];
                             $dom = 0;
                         }
