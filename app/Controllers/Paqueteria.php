@@ -61,7 +61,7 @@ class Paqueteria extends BaseController
         $db = db_connect();
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
             LEFT JOIN t_usuarios u ON u.id = p.usuario_id
-            WHERE p.metodoentrega_codigo = '{$paqueteria}' 
+            WHERE p.metodoentrega_codigo = '{$paqueteria}' and p.fechas->>'$.pagado' > '2024-07-01'
             AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500";
 
         $this->data[ "pedidos" ] = $db->query( $sql )->getResultArray();
