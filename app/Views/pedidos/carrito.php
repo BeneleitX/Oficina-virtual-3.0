@@ -408,39 +408,40 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
 <?php 
 
-if( $pagado ){
 
-if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
-    echo "<div class=\"card mb-5\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
-    <th class=\"text-center\">Folio</th>
-    <th>Esquema</th>
-    <th>Nivel</th>
-    <th class=\"text-end\">Comisión</th>
-    <th>Estatus</th>
-    <th>Socio</th>
-    </tr></thead><tbody>";  
-    $db = db_connect();
 
-    $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
+if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+    if( $pagado ){
+        echo "<div class=\"card mb-5\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
+        <th class=\"text-center\">Folio</th>
+        <th>Esquema</th>
+        <th>Nivel</th>
+        <th class=\"text-end\">Comisión</th>
+        <th>Estatus</th>
+        <th>Socio</th>
+        </tr></thead><tbody>";  
+        $db = db_connect();
 
-    foreach( $comisiones as $c ){
-        $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
-        echo "<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
-        <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
-        <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
-        <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
-        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
-        <td>".estatus( $c->estatus_codigo )."</td>
-        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
-        </tr>"; 
+        $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
+
+        foreach( $comisiones as $c ){
+            $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
+            echo "<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
+            <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
+            <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
+            <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
+            <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
+            <td>".estatus( $c->estatus_codigo )."</td>
+            <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
+            </tr>"; 
+        }
+
+        echo "</tbody></table></div>"; 
     }
-
-    echo "</tbody></table></div>"; 
-
-?>
+    ?>
 
     <div class="alert alert-danger">
-    <table><tr><td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td><td><ul class="m-0"><li>Modificar los siguientes parámetros puede ocasionar que las calificaciones y comisiones generadas por este pedido sufran cambios permanentes.</li><li>Una vez cerrado el periodo al que pertenece la fecha de compra, estas opciones serán bloqueadas.</li></ul></td></tr></table>
+        <table><tr><td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td><td><ul class="m-0"><li>Modificar los siguientes parámetros puede ocasionar que las calificaciones y comisiones generadas por este pedido sufran cambios permanentes.</li><li>Una vez cerrado el periodo al que pertenece la fecha de compra, estas opciones serán bloqueadas.</li></ul></td></tr></table>
     </div>  
     <div class="card border-red my-3">
         <div class="card-header">
@@ -449,12 +450,13 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
         <div class="card-body">
         
             <div class="row">
-            <div class="col-lg-4 m-0">
-                <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
+                <?php if( $pagado ){ ?>
+                <div class="col-lg-4 m-0">
+                    <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
                 </div>
 
                 <div class="col-lg-4 m-0">
-                <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
+                    <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
                 </div>
 
                 <div class="col-lg-4 m-0">
@@ -464,13 +466,14 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
                         <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
                     </form>
                 </div>
+                <php } ?>
             </div>
         </div>
     </div>
 
 
     <div class="modal" tabindex="-1" id="cambia_fecha">
-	    <div class="modal-dialog">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <form method="post" action="<?php echo base_url( "cambia_fecha" ); ?>">
                     <?php echo csrf_field() ?>
@@ -495,7 +498,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
                         <div class="row">
                             <div class="col-6">
                                 
-                                <input class="form-control col-6" type="date" name="nueva" value="<?php echo substr( $pedido[ "fechas" ][ "califica" ], 0, 10 ) ?>">
+                                <input class="form-control col-6" type="date" name="nueva" value="<?php echo substr( $pedido[ "fechas" ][ "califica" ] ?? "", 0, 10 ) ?>">
                             </div>
                         </div>
                     </div>
@@ -509,7 +512,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
     </div>
 
     <div class="modal" tabindex="-1" id="cancela_pedido">
-	    <div class="modal-dialog">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <form method="post" action="<?php echo base_url( "cancela_pedido" ); ?>">
                     <?php echo csrf_field() ?>
@@ -538,9 +541,9 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
         </div>
     </div>
 
-<?php
+    <?php
 
-}
+    }
 }
 else{ ?>
 <div class="modal" tabindex="-1" id="modal_domicilios">

@@ -26,7 +26,7 @@ class Paqueteria extends BaseController
         $db = db_connect();
         $sql = "SELECT m.*, COUNT(p.id) AS pedidos 
             FROM t_metodosentrega m 
-            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500 and p.fechas->>'$.pagado' > '2024-08-01'
+            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND p.estatus_codigo = '420-PAGADO' and p.fechas->>'$.pagado' > '2024-08-01'
             WHERE m.modelo_codigo = '{$modelo}' AND m.settings->>'$.tipocosto' = 'efectivo'
             GROUP BY m.codigo";
 
@@ -62,7 +62,7 @@ class Paqueteria extends BaseController
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
             LEFT JOIN t_usuarios u ON u.id = p.usuario_id
             WHERE p.metodoentrega_codigo = '{$paqueteria}' and p.fechas->>'$.pagado' > '2024-08-01'
-            AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500";
+            AND p.estatus_codigo = '420-PAGADO'";
 
         $this->data[ "pedidos" ] = $db->query( $sql )->getResultArray();
 
