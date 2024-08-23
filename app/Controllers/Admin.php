@@ -94,7 +94,7 @@ class Admin extends BaseController
 
         if( $accion == "acepta" ){
             $historial = $socio->historial;    
-            $historial->validacion = date( "Y-m-d" );
+            $historial->validacion = date( "Y-m-d" ); 
             $socio->historial = $historial; 
         }
         else{

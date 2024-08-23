@@ -87,7 +87,7 @@ class Almacenes extends BaseController
         $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $this->data[ "pedido" ][ "data" ][ "entrega" ] );
         $this->data[ "cliente" ] = model( "UsuarioModel" )->find( $this->data[ "pedido"  ][ "usuario_id" ] );
 
-        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
             return redirect()->to( "inicio" ); 
         }
 
@@ -128,7 +128,7 @@ class Almacenes extends BaseController
         $entrega  = model( "UsuarioModel" )->find( $entrega );
         $almacen  = model( "AlmacenModel" )->find( $pedido[ "data" ][ "entrega" ] );
 
-        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $almacen[ "settings" ][ "staff" ] ) ){
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $almacen[ "settings" ][ "staff" ] ) ){
             return redirect()->to( "inicio" ); 
         }
 
@@ -304,7 +304,7 @@ class Almacenes extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Los productos se han marcado como recibidos"] );  
-    }
+    } 
 
 
     public function aplica_transfer(){
@@ -312,7 +312,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "inicio" );  
         }
           
         $db = db_connect();

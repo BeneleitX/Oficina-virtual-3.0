@@ -8,9 +8,7 @@ class ProductoModel extends Model
 {
     protected $table      = "t_productos";
     protected $primaryKey = "codigo";
-
     protected $useAutoIncrement = false;
-
     protected $returnType     = \App\Entities\E_producto::class;
     protected $useSoftDeletes = false;
 
