@@ -91,7 +91,7 @@ class Paqueteria extends BaseController
 
         $d = $this->data[ "cliente" ]->getDomicilios();
 
-        if( !$this->data[ "pedido"  ][ "data" ][ "entrega" ] ){
+        if( !$this->data[ "pedido"  ][ "data" ][ "entrega" ] && sizeof( $d ) ){
             $k = array_keys( $d );
             $this->data[ "pedido"  ][ "data" ][ "entrega" ] = $k[0];
         }
