@@ -95,7 +95,7 @@ class Paqueteria extends BaseController
             $k = array_keys( $d );
             $this->data[ "pedido"  ][ "data" ][ "entrega" ] = $k[0];
         }
-        $this->data[ "d" ] = $d[ $this->data[ "pedido"  ][ "data" ][ "entrega" ] ];
+        $this->data[ "d" ] = $d[ $this->data[ "pedido"  ][ "data" ][ "entrega" ] ] ?? null;
         $this->data[ "pedido" ][ "productos" ] = [];
         foreach( $this->data[ "pedido" ][ "promociones" ] as $promo ){
             foreach( $promo[ "productos" ] as $codigo => $producto ){

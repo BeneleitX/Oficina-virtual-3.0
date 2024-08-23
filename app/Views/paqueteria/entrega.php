@@ -27,12 +27,17 @@
                     <tr>
                         <td valign="top">Domicilio</td>
                         <td><div class="card mb-3"><div class="card-body"><?php
-                        echo "\n
-                        {$d[ "calleynumero" ]}<br>
-                        Colonia {$d[ "colonia" ]}<br>
-                        {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                        C.P. {$d[ "codigopostal" ]}
-                        </div>";
+                        
+                        if( is_array( $d ) ){
+                            echo "\n
+                            {$d[ "calleynumero" ]}<br>
+                            Colonia {$d[ "colonia" ]}<br>
+                            {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+                            C.P. {$d[ "codigopostal" ]}";
+                        }
+                        else{
+                            echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> No se han podido recuperar datos del domicilio destino</span>";
+                        }
                         ?></div></div></td>
                     </tr>
 
