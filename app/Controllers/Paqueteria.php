@@ -26,7 +26,7 @@ class Paqueteria extends BaseController
         $db = db_connect();
         $sql = "SELECT m.*, COUNT(p.id) AS pedidos 
             FROM t_metodosentrega m 
-            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500
+            LEFT JOIN t_pedidos p ON p.metodoentrega_codigo = m.codigo AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 500 and p.fechas->>'$.pagado' > '2024-07-01'
             WHERE m.modelo_codigo = '{$modelo}' AND m.settings->>'$.tipocosto' = 'efectivo'
             GROUP BY m.codigo";
 
