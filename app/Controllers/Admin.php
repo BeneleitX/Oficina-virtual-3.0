@@ -16,6 +16,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
             $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "34-VALIDACION" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
@@ -51,7 +52,7 @@ class Admin extends BaseController
     public function credenciales(){
 
         if( !(
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
@@ -73,7 +74,7 @@ class Admin extends BaseController
     public function resolucion_ine(){
 
         if( !(
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
+            $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 

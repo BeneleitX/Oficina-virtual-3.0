@@ -9,6 +9,13 @@ class Bancos extends BaseController
 {
     public function layout()
     {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Ingreso de pagos referenciados";
 
@@ -16,8 +23,34 @@ class Bancos extends BaseController
     }
 
 
-    public function analiza_layout(){
+    public function pendientes()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
 
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Pagos ingresados sin destino";
+
+        $db  = db_connect();
+        $sql = "select * from t_fondeos where estatus_codigo = '330-EN-ESPERA' order by fecha desc";
+        $this->data[ "pendientes" ] = $db->query( $sql );
+
+        echo template( "bancos/pendientes", $this->data );
+    }
+
+
+    public function analiza_layout(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
         $archivo   = $_FILES[ "archivo" ][ "name" ];
         $partes = explode( ".", $archivo );
         $extension = array_pop( $partes );
@@ -62,14 +95,14 @@ class Bancos extends BaseController
 
             foreach( $excel as $line ){
                 $respuesta[ "conteo" ][ "lineas" ]++;
-                if( strlen( $line[ 3 ] ) < 9 && strlen( $line[ 3 ] ) > 1 ){
+                if( strlen( $line[ 3 ] ) < 10){
                     $respuesta[ "conteo" ][ "pagos" ]++;
                     $valido = 1;
 
                     $l = [
                         "original" => $line,
                         "fecha" => date( "Y-m-d", strtotime( $line[ 1 ] ) ),
-                        "pedido" => substr( $line[ 3 ], 0, -1 ),
+                        "pedido" => strlen( $line[ 3 ] ) > 6 ? substr( $line[ 3 ], 0, -1 ) : null,
                         "referencia" => $line[ 3 ],
                         "folio" => $line[ 6 ],
                         "cantidad" => filter_var( $line[ 4 ], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
@@ -155,9 +188,13 @@ class Bancos extends BaseController
             
         foreach( $respuesta[ "pagos" ] as $refe => $dat ){
 
-            $p = model( "PedidoModel" )->find( $dat[ "pedido" ] );
+            $p = $dat[ "pedido" ] ? model( "PedidoModel" )->find( $dat[ "pedido" ] ) : null;
+
+            $respuesta[ "pagos" ][ $refe ][ "banco" ]  = $respuesta[ "banco" ];
 
             if( $p ){
+                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "modelo" ] = $p[ "modelo_codigo" ];
+
                 $k = substr( $p[ "modelo_codigo" ], 0, 1 );
                 $metodopago = model( "MetodopagoModel" )->find( "1{$k}-REFERENCIA" );
         
@@ -169,7 +206,7 @@ class Bancos extends BaseController
 
                 if( !$f ){
 
-                    model( "FondeoModel" )->save( [
+                    model( "FondeoModel" )->ignore( true )->save( [
                         "id" => null,
                         "operacion" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ],
                         "fecha" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ],
@@ -190,33 +227,50 @@ class Bancos extends BaseController
                                 $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
                                 $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
 
+                                $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+
                                 if( $u->data->saldo->{$p[ "modelo_codigo" ]} ){
                                     $p[ "data" ][ "saldo" ] = $u->data->saldo->{$p[ "modelo_codigo" ]};
 
                                     $data = $u->data;                                    
                                     $data->saldo->{$p[ "modelo_codigo" ]} = 0;
                                     $u->data = $data;
-                                    model( "UsuarioModel" )->save( $u );
                                 }
 
                                 model( "PedidoModel" )->save( $p );
+                               
+                                $respuesta[ "conteo" ][ "pagados" ]++;
+                                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-teal\">Pagado OK</span>";
+
+                                $data = $u->data;                                    
+                                $historial = $u->historial;  
+                            
+                                foreach( $p[ "PTS" ] as $promo => $pts ){
+                                    if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
+                                        $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+                                    }
+                    
+                                    if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                                        $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                                    }
+                                } 
+
+                                $historial->modelos->{$modelo}->ultimacompra = $p[ "fechas" ][ "califica" ];
+
+                                if( ( $total + $metodopago[ "settings" ][ "comision" ] ) < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $metodopago[ "settings" ][ "comision" ] ) );
+
+                                    $u->data = $data;
+                                    $u->historial = $historial;
+                                }
+
+                                model( "UsuarioModel" )->save( $u );    
 
                                 $db = db_connect();
                                 $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
                                 $db->query( "select f_get_estatus( {$u->id}, 0 )" );
-                                $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();
-                            
-                                $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+                                $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();                                    
 
-                                $respuesta[ "conteo" ][ "pagados" ]++;
-                                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-teal\">Pagado OK</span>";
-
-                                if( ( $total + $metodopago[ "settings" ][ "comision" ] ) < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
-                                    $data = $u->data;                                    
-                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $metodopago[ "settings" ][ "comision" ] ) );
-                                    $u->data = $data;
-                                    model( "UsuarioModel" )->save( $u );    
-                                }
                             }
                             else{
                                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-red\">Previo pagado</span>";
@@ -227,7 +281,7 @@ class Bancos extends BaseController
                             $u->data = $data;
                             model( "UsuarioModel" )->save( $u );    
 
-                            $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-orange\">Insuficiente</span>";
+                            $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "( {$total} + {$metodopago[ "settings" ][ "comision" ]} ) <= {$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ]}<span class=\"badge bg-orange\">Insuficiente</span>";
                         }
                     }
                     else{
@@ -241,12 +295,12 @@ class Bancos extends BaseController
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "socio" ] = $u->avatar( 24 )." ".$u->id( $p[ "modelo_codigo" ] )." ".$u->nombre( 2 );
             }
             else{
-                model( "FondeoModel" )->save( [
+                model( "FondeoModel" )->ignore( true )->save( [
                     "id" => null,
                     "operacion" => $respuesta[ "pagos" ][ $refe ][ "folio" ],
                     "fecha" => $respuesta[ "pagos" ][ $refe ][ "fecha" ],
                     "estatus_codigo" => "330-EN-ESPERA",
-                    "metodopago_codigo" => $metodopago[ "codigo" ],
+                    "metodopago_codigo" => null,
                     "usuario_id" => null,
                     "cantidad" => $respuesta[ "pagos" ][ $refe ][ "cantidad" ],
                     "extras" => $respuesta[ "pagos" ][ $refe ]

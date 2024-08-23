@@ -140,7 +140,44 @@ class Pedidos extends BaseController
     public function reparte(){
         $db = db_connect();
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $modelo = $pedido[ "modelo_codigo" ];
+
+        $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+        $data = $u->data;                                   
+        $historial = $u->historial;  
+    
+        foreach( $pedido[ "PTS" ] as $promo => $pts ){
+            if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
+                $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+            }
+
+            if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+            }
+        } 
+
+        $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
+
+        if( !sizeof( $historial->modelos->{$modelo}->calificaciones ) ){
+            $historial->modelos->{$modelo}->calificaciones = json_decode( "{}" );
+        }
+        
+
+        $u->data = $data;
+        $u->historial = $historial;
+
+        model( "UsuarioModel" )->save( $u );
+
+
+        $db = db_connect();
+        $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
+        $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+        $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();    
+        
         $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 ) as afectados" );
+
+        $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '".date( "", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
+        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
 
         // BITACORA Actualizar reparto de comisiones
         bitacora( 31, $this->data[ "usuario" ]->id, [ 

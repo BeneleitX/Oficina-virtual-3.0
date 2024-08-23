@@ -3,13 +3,17 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
 
 <div class="row">
-    <div class="col-6">
-    <button class="btn btn-lg my-4 btn-primary" onclick="modal_analiza()"><i class="fa fa-arrow-up-from-bracket"></i> Cargar layout</button>
+    <div class="col-lg-6">
+    
     </div>
-    <div class="col-6 text-end">
-    <a class="d-none btn btn-lg my-4 btn-warning" href="#"><i class="fa fa-hourglass-start"></i> Pagos perdidos</a>
+    <div class="col-6 col-lg-3 text-end">
+        <a class="btn col-12 btn-lg mb-4 btn-danger" href="<?php echo base_url( "pagos_pendientes" ); ?>"><i class="fa fa-hourglass-start"></i> Pagos sin destino</a>
+    </div>
+    <div class="col-6 col-lg-3 text-end">
+        <button class="btn btn-lg mb-4 col-12 btn-primary" onclick="modal_analiza()"><i class="fa fa-arrow-up-from-bracket"></i> Cargar layout</button>
     </div>
 </div>
 

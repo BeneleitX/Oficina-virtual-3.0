@@ -52,7 +52,7 @@ $(document).ready(function(){
 						var p = [
 							n++,
 							'<img style="width:50px; border-radius:5px" src="' + respuesta.logo_banco + '">',
-							'<a target="_blank" href="' +base_url + 'pedido/' + data.referencia + '" class="btn btn-sm btn-secondary">' + data.referencia + '</a>',
+							'<a style="padding:1px; border-radius:5px;" target="_blank" href="' +base_url + 'pedido/' + data.referencia + '" class="btn col-12 btn-sm btn-secondary">' + data.referencia + '</a>',
 							data.socio ?? '<span class="text-red"><i class="fa fa-warning"></i> Pedido no encontrado</span>',
 							data.fecha,
 							Moneda.format( data.cantidad ),

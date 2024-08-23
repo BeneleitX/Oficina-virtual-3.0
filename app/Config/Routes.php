@@ -48,6 +48,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "tickets",                "Soporte::tickets" );    
 
     $routes->get( "layout_bancos",          "Bancos::layout" );    
+    $routes->get( "pagos_pendientes",       "Bancos::pendientes" );    
     $routes->post( "analiza_layout",        "Bancos::analiza_layout" );    
 
     $routes->get( "ticket/(:any)",          "Pedidos::ticket/$1" ); 
