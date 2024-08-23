@@ -191,6 +191,7 @@ class Bancos extends BaseController
             $p = $dat[ "pedido" ] ? model( "PedidoModel" )->find( $dat[ "pedido" ] ) : null;
 
             $respuesta[ "pagos" ][ $refe ][ "banco" ]  = $respuesta[ "banco" ];
+            $respuesta[ "pagos" ][ $refe ][ "costo" ]  = null;
 
             if( $p ){
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "modelo" ] = $p[ "modelo_codigo" ];
@@ -199,8 +200,13 @@ class Bancos extends BaseController
                 $metodopago = model( "MetodopagoModel" )->find( "1{$k}-REFERENCIA" );
         
                 $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
-        
-                $total = $p[ "data" ][ "comisionentrega" ] + $p[ "data" ][ "total" ] - $u->data->saldo->{$p[ "modelo_codigo" ]};
+
+                $total = floatval( $p[ "data" ][ "comisionentrega" ] )
+                        +floatval( $p[ "data" ][ "total" ] ) 
+                        -floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} ) 
+                        +floatval( $p[ "data" ][ "comisionbanco" ] );
+                        
+                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "costo" ] = $total;
 
                 $f = model( "FondeoModel" )->where( "fecha = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ]}' AND operacion = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ]}'" )->first();
 
@@ -218,11 +224,14 @@ class Bancos extends BaseController
                     ] );
 
                     if( $p[ "data" ][ "productos" ] > 0 ){
-                        if( ( $total + $metodopago[ "settings" ][ "comision" ] ) <= $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+
+                        // SI LA CANTIDAD CUBRE EL COSTO
+
+                        if( $total <= $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
                             if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 300 ){
 
                                 $p[ "estatus_codigo" ] = "420-PAGADO";
-                                $p[ "data" ][ "comisionbanco" ] = $metodopago[ "settings" ][ "comision" ];
+                                $p[ "data" ][ "comisionbanco" ] = $p[ "data" ][ "comisionbanco" ];
                                 $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
                                 $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
                                 $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
@@ -257,8 +266,8 @@ class Bancos extends BaseController
 
                                 $historial->modelos->{$modelo}->ultimacompra = $p[ "fechas" ][ "califica" ];
 
-                                if( ( $total + $metodopago[ "settings" ][ "comision" ] ) < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
-                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $metodopago[ "settings" ][ "comision" ] ) );
+                                if( $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $p[ "data" ][ "comisionbanco" ] ) );
 
                                     $u->data = $data;
                                     $u->historial = $historial;
@@ -281,7 +290,7 @@ class Bancos extends BaseController
                             $u->data = $data;
                             model( "UsuarioModel" )->save( $u );    
 
-                            $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "( {$total} + {$metodopago[ "settings" ][ "comision" ]} ) <= {$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ]}<span class=\"badge bg-orange\">Insuficiente</span>";
+                            $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-orange\">Insuficiente</span>";
                         }
                     }
                     else{

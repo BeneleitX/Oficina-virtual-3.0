@@ -24,10 +24,11 @@
         <tr>
             <th>No.</th>
             <th>Banco</th>
-            <th>Pedido</th>
+            <th>Referencia</th>
             <th>Socio</th>
             <th>Fecha pago</th>
-            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Depositado</th>
             <th>Folio</th>
             <th>Acción</th>
         </tr>
