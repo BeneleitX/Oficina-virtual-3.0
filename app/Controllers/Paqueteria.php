@@ -12,7 +12,6 @@ class Paqueteria extends BaseController
     public function listado( $modelo ){
         if( !(
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
@@ -41,7 +40,6 @@ class Paqueteria extends BaseController
     public function detalle( $paqueteria ){
         if( !(
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
@@ -75,7 +73,6 @@ class Paqueteria extends BaseController
     public function entrega(){
             if( !(
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
@@ -118,7 +115,6 @@ class Paqueteria extends BaseController
     public function marca_enviado(){
         if( !(
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 

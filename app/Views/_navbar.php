@@ -74,6 +74,7 @@
 		$usuario->permiso( "20-ALMACEN" ) ||
 		$usuario->permiso( "34-VALIDACION" ) ||
 		$usuario->permiso( "38-CONTABILIDAD" ) ||
+		$usuario->permiso( "25-PAQUETERIA" ) ||
 		$usuario->permiso( "32-EDICION" ) ||
 		$usuario->permiso( "40-ADMIN" )
 	){ ?>
