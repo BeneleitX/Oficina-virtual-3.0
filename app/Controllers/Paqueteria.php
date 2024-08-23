@@ -90,6 +90,11 @@ class Paqueteria extends BaseController
         $this->data[ "cliente" ] = model( "UsuarioModel" )->find( $this->data[ "pedido"  ][ "usuario_id" ] );
 
         $d = $this->data[ "cliente" ]->getDomicilios();
+
+        if( !$this->data[ "pedido"  ][ "data" ][ "entrega" ] ){
+            $k = array_keys( $d );
+            $this->data[ "pedido"  ][ "data" ][ "entrega" ] = $k[0];
+        }
         $this->data[ "d" ] = $d[ $this->data[ "pedido"  ][ "data" ][ "entrega" ] ];
         $this->data[ "pedido" ][ "productos" ] = [];
         foreach( $this->data[ "pedido" ][ "promociones" ] as $promo ){
