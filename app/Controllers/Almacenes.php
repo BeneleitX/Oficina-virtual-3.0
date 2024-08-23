@@ -43,13 +43,13 @@ class Almacenes extends BaseController
         ) ){
             return redirect()->to( "inicio" ); 
         }
- 
+
 
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
         $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $almacen );
 
-        if( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
+        if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
             return redirect()->to( "inicio" ); 
         }
 
