@@ -61,12 +61,14 @@
                 
                 echo "</td>
                     <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
-                    <td class=\"text-end\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 400 ? "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
+                    <td class=\"text-end\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 255 ? "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
                     <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? "<span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) ) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
-                    <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\"><span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span>".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "" )."</td>
-                    <td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
+                    
+                    <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span><span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\">".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "<span class=\"d-none\">".date( "Y-m-d H:i:s" )."</span>" )."</td>
 
-<td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( $modelo == '20-TELEFONIA' ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( substr( $p[ "metodoentrega_codigo" ], 0, 2 ) == 11 ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> dato pendiente</span>" )."</strong>" : "" )."</td>
+                    <td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 250 && $p[ "metodopago_codigo" ] ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
+
+                    <td nowrap>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 250 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( $modelo == '20-TELEFONIA' ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( substr( $p[ "metodoentrega_codigo" ], 0, 2 ) == 11 ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> dato pendiente</span>" )."</strong>" : "" )."</td>
 
                     <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";

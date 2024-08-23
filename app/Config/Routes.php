@@ -134,6 +134,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "apikeys",                "Admin::apikeys" ); 
     $routes->get( "variables",              "Admin::variables" ); 
     $routes->get( "estatus",                "Admin::estatus" ); 
+    $routes->get( "isr",                    "Admin::isr" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 
     $routes->get( "promociones/(:any)",     "Admin::promociones/$1" ); 
     $routes->get( "productos/(:any)",       "Admin::productos/$1" ); 

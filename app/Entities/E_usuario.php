@@ -567,14 +567,15 @@ class E_usuario extends Entity
     }
 
     
-    public function fondeo( $modelo, $metodo, $cantidad, $mes = null ){
+    public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
 
         if( $mes && $mes == date( "Ym" ) ) $mes = null;
 
-        $pedido         = $this->getPedido( $modelo, false );
+        $pedido = model( "PedidoModel" )->find( $pedido );
+        $modelo = $pedido[ "modelo_codigo" ];
 
-        if( !$pedido ){
-            return null;
+        if( !$pedido || $pedido[ "usuario_id"] != $this->id ){
+            return 0;
         }
         
         $saldo          = $this->data->saldo->{$modelo};
@@ -715,8 +716,6 @@ class E_usuario extends Entity
             }
             else{
                 // $domicilios = $socio->getDomicilios();
-                
-
                 $d = $pedido[ "data" ][ "domicilio" ];
 
                 $message .= "\n<div style=\"width:60%; font-size:0.6rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0; padding:5px 15px\">

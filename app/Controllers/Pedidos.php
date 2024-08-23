@@ -35,7 +35,7 @@ class Pedidos extends BaseController
         $this->data[ "navbar" ]  = true;
         $this->data[ "modelo" ] = $modelo;
         $this->data[ "titulo" ]  = "Mis pedidos";
-        $this->data[ "pedidos" ] = model( "PedidoModel" )->where( "substring( estatus_codigo, 1, 3 ) > 400  AND modelo_codigo = '{$modelo}' AND usuario_id = ".$this->data[ "socio" ]->id , null, false )->findAll();
+        $this->data[ "pedidos" ] = model( "PedidoModel" )->where( "substring( estatus_codigo, 1, 3 ) > 250  AND modelo_codigo = '{$modelo}' AND usuario_id = ".$this->data[ "socio" ]->id , null, false )->findAll();
 
         echo template( "pedidos/historial", $this->data );
     }
@@ -97,6 +97,7 @@ class Pedidos extends BaseController
 
             $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
             $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
+            $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 ? 1 : 0;
             $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500 ? 1 : 0;
             $this->data[ "titulo" ]    = "Detalles de pedido";
         }
@@ -104,8 +105,9 @@ class Pedidos extends BaseController
             $this->data[ "socio" ] = $this->data[ "usuario" ];
 
             $this->data[ "modelo" ] = $data;
-            $this->data[ "pagado" ]    = 0;
-            $this->data[ "cancelado" ]    = 0;
+            $this->data[ "pagado" ] = 0;
+            $this->data[ "bloqueado" ] = 0;
+            $this->data[ "cancelado" ] = 0;
             $this->data[ "entregado" ] = 0;
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
 
@@ -222,7 +224,7 @@ class Pedidos extends BaseController
         extract( $this->request->getPost() );
 
         $socio = $this->data[ "usuario" ];
-        echo $socio->fondeo( $modelo, $metodo, $cantidad );
+        echo $socio->fondeo( $pedido, $metodo, $cantidad );
     }
 
 
@@ -301,19 +303,33 @@ class Pedidos extends BaseController
 
 
     public function checkout(){
-        $this->data[ "modelo" ]     = $this->request->getPost( "modelo" );
         $this->data[ "metodopago" ] = model( "MetodopagoModel" )->find( $this->request->getPost( "metodopago" ) );
         $this->data[ "socio" ]      = $this->data[ "usuario" ];
+        $this->data[ "pedido" ]     = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
 
-        if( !( $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ], false ) ) || $this->data[ "pedido" ][ "estatus_codigo" ] != "250-EN-PROCESO" ){ 
+        if( !$this->data[ "pedido" ] || !in_array( $this->data[ "pedido" ][ "estatus_codigo" ], [ "250-EN-PROCESO", "255-PENDIENTE" ] ) ){ 
             return redirect()->to( 'historial' );
+        }
+
+        $this->data[ "modelo" ]     = $this->data[ "pedido" ][ "modelo_codigo" ];
+
+        if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
+
+            $domicilios = $this->data[ "socio" ]->getDomicilios();
+
+            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
+
+
+            $this->data[ "pedido" ][ "estatus_codigo" ] = "255-PENDIENTE";
+            $this->data[ "pedido" ][ "metodopago_codigo" ] = $this->data[ "metodopago" ][ "codigo" ];
+            $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $pre * 2 / 100 : 20;
+            model( "PedidoModel" )->save( $this->data[ "pedido" ] );
         }
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
-
-        $pre = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ]};
-        $this->data[ "cantidad" ] = $pre + ( $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $pre * 2 / 100 : 20 );
+        
+        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ] } + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
 
         echo template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );
     }

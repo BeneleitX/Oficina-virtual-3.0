@@ -151,36 +151,106 @@ class Bancos extends BaseController
                 }
             }
         }
-
-        $pedidos = model( "PedidoModel" )->find( $referencias );
+ 
             
-        if( $pedidos ){
-            
-            foreach( $pedidos as $p ){
+        foreach( $respuesta[ "pagos" ] as $refe => $dat ){
 
+            $p = model( "PedidoModel" )->find( $dat[ "pedido" ] );
+
+            if( $p ){
+                $k = substr( $p[ "modelo_codigo" ], 0, 1 );
+                $metodopago = model( "MetodopagoModel" )->find( "1{$k}-REFERENCIA" );
+        
                 $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+        
+                $total = $p[ "data" ][ "comisionentrega" ] + $p[ "data" ][ "total" ] - $u->data->saldo->{$p[ "modelo_codigo" ]};
 
-                if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 300 ){
+                $f = model( "FondeoModel" )->where( "fecha = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ]}' AND operacion = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ]}'" )->first();
 
-                    $p[ "estatus_codigo" ] = "420-PAGADO";
-                    $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
-                    $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
+                if( !$f ){
 
-                    model( "PedidoModel" )->save( $p );
+                    model( "FondeoModel" )->save( [
+                        "id" => null,
+                        "operacion" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ],
+                        "fecha" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ],
+                        "estatus_codigo" => "620-RECIBIDO",
+                        "metodopago_codigo" => $metodopago[ "codigo" ],
+                        "usuario_id" => $u->id ?? null,
+                        "cantidad" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ],
+                        "extras" => $respuesta[ "pagos" ][ $p[ "referencia" ] ]
+                    ] );
 
-                    $db = db_connect();
-                    $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
-                    $db->query( "select f_get_estatus( {$u->id}, 0 )" );
-                    $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();
-                
-                    $respuesta[ "conteo" ][ "pagados" ]++;
-                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-teal\">pagado</span>";
+                    if( $p[ "data" ][ "productos" ] > 0 ){
+                        if( ( $total + $metodopago[ "settings" ][ "comision" ] ) <= $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+                            if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 300 ){
+
+                                $p[ "estatus_codigo" ] = "420-PAGADO";
+                                $p[ "data" ][ "comisionbanco" ] = $metodopago[ "settings" ][ "comision" ];
+                                $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
+                                $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
+                                $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
+
+                                if( $u->data->saldo->{$p[ "modelo_codigo" ]} ){
+                                    $p[ "data" ][ "saldo" ] = $u->data->saldo->{$p[ "modelo_codigo" ]};
+
+                                    $data = $u->data;                                    
+                                    $data->saldo->{$p[ "modelo_codigo" ]} = 0;
+                                    $u->data = $data;
+                                    model( "UsuarioModel" )->save( $u );
+                                }
+
+                                model( "PedidoModel" )->save( $p );
+
+                                $db = db_connect();
+                                $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
+                                $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+                                $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();
+                            
+                                $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+
+                                $respuesta[ "conteo" ][ "pagados" ]++;
+                                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-teal\">Pagado OK</span>";
+
+                                if( ( $total + $metodopago[ "settings" ][ "comision" ] ) < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+                                    $data = $u->data;                                    
+                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $metodopago[ "settings" ][ "comision" ] ) );
+                                    $u->data = $data;
+                                    model( "UsuarioModel" )->save( $u );    
+                                }
+                            }
+                            else{
+                                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-red\">Previo pagado</span>";
+                            }
+                        }else{
+                            $data = $u->data;                                    
+                            $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"];
+                            $u->data = $data;
+                            model( "UsuarioModel" )->save( $u );    
+
+                            $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-orange\">Insuficiente</span>";
+                        }
+                    }
+                    else{
+                        $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-mustard\">Pedido vacío</span>";
+                    }
                 }
                 else{
-                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-red\">ya procesado</span>";
+                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-gray-600\">Ya procesada</span>";
                 }
 
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "socio" ] = $u->avatar( 24 )." ".$u->id( $p[ "modelo_codigo" ] )." ".$u->nombre( 2 );
+            }
+            else{
+                model( "FondeoModel" )->save( [
+                    "id" => null,
+                    "operacion" => $respuesta[ "pagos" ][ $refe ][ "folio" ],
+                    "fecha" => $respuesta[ "pagos" ][ $refe ][ "fecha" ],
+                    "estatus_codigo" => "330-EN-ESPERA",
+                    "metodopago_codigo" => $metodopago[ "codigo" ],
+                    "usuario_id" => null,
+                    "cantidad" => $respuesta[ "pagos" ][ $refe ][ "cantidad" ],
+                    "extras" => $respuesta[ "pagos" ][ $refe ]
+                ] );
             }
         }
 

@@ -15,6 +15,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
             $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
@@ -232,6 +233,26 @@ class Admin extends BaseController
         $this->data[ "estatuses" ] = $db->query( "SELECT * from t_estatus" )->getResultArray();
 
         echo template( "admin/estatus", $this->data );
+    } 
+    
+
+
+    public function isr(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Tablas de ISR SEMANAL";
+
+        $db = db_connect();
+        $this->data[ "isr" ] = $db->query( "SELECT * from t_isr" )->getResultArray();
+
+        echo template( "admin/isr", $this->data );
     } 
     
     

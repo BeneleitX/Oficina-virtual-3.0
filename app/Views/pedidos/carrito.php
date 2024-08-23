@@ -8,7 +8,7 @@
 
     <div class="row">
 	    <div class="col-md-6 mb-3">
-        <?php if( !$pagado && !$cancelado ){ 
+        <?php if( !$pagado && !$bloqueado && !$cancelado ){ 
             echo "\n<ul class=\"nav nav-pills my-4\">";
             
             foreach( MODELOS as $m ){
@@ -26,7 +26,7 @@
 
         </div>
 
-        <?php if( !$pagado && !$cancelado ){ ?>
+        <?php if( !$pagado && !$bloqueado && !$cancelado ){ ?>
         <div class="col-md-6 mb-3 pt-4 text-end">
             <p><button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button></p>
             <table align="right"><tr>
@@ -75,7 +75,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 			foreach( PROMOCIONES as $p ){
                 if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
-                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\"><div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\"><div class=\"row\"><div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-7\"><small conteo>{$cant_productos} productos</small>".( $pagado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."</div></div></div><table productos class=\"w-100\"></table><div class=\"card-footer bg-gray-300 text-end\"><table align=\"right\"><tr><td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td><td><h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5></td></tr>
+                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\"><div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\"><div class=\"row\"><div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-7\"><small conteo>{$cant_productos} productos</small>".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."</div></div></div><table productos class=\"w-100\"></table><div class=\"card-footer bg-gray-300 text-end\"><table align=\"right\"><tr><td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td><td><h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5></td></tr>
                     </table></div></div>";
                 }
 			}
@@ -99,7 +99,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
         }
 
         // Si ya esta pagado, avisar que hay un problema con el pedido
-        elseif(  $pagado && $pedido[ "metodoentrega_codigo" ] == null ){
+        elseif( ( $bloqueado || $pagado ) && $pedido[ "metodoentrega_codigo" ] == null ){
             echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
         }
  
@@ -108,7 +108,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
             // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
             if( $me[ "settings" ][ "tipocosto" ] == "almacen" || ( $me[ "settings" ][ "tipocosto" ] == "efectivo" /* && sizeof( $domicilios ) */ ) || ( $me[ "settings" ][ "tipocosto" ] == "recarga" /* && sizeof( $celulares ) */ ) ){
-                echo "\n<input type=\"radio\" class=\"".( ( $pagado  || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
             }
         }
         
@@ -132,7 +132,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                             $existe_almacen = 1;
                         }
                         
-                        if( ( !$pagado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
                         echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                     }
                 ?>
@@ -140,7 +140,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
             </div>
             <div class="col-lg-6">
                 <?php 
-                if(0 &&  $pagado  && !$entregado ){ ?>
+                if(0 &&  $pagado  && $bloqueado && !$entregado ){ ?>
                     <form method="post" action="<?php echo base_url("entrega"); ?>">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
@@ -165,11 +165,11 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
             $existe_almacen = 1;
         }
         
-        if( ( !$pagado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
+        if( ( !$pagado && !$bloqueado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
             echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
         }
 
-        if( !$pagado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
+        if(  !$pagado &&!$bloqueado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
             $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
         }
     }
@@ -179,7 +179,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 <?php
                     }
                     else{
-                        if( ( $pagado || $cancelado ) ){
+                        if( ( $pagado || $bloqueado || $cancelado ) ){
                             echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Por el momento no se cuenta con información relacionada con el número celular al cual fue aplicado el servicio</div>";
                         }
                         else{
@@ -198,9 +198,9 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
                     if( sizeof( $domicilios ) ){
 
-                    if( ( $pagado || $cancelado ) ){
+                    if( ( $pagado || $bloqueado || $cancelado ) ){
 
-                        if( isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                        if( isset( $pedido[ "data" ][ "entrega" ] ) ){
                             $domicilios[ 0 ] = $pedido[ "data" ][ "domicilio" ];
                             $dom = 0;
                         }
@@ -216,7 +216,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                                 $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
                             }
 
-                            $d = $pedido[ "data" ][ "entrega" ];
+                            $d = $pedido[ "data" ][ "domicilio" ];
                         }
                     }
 
@@ -228,7 +228,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         else{
                             $d = array_values( $domicilios )[ 0 ];
                         }
-                            
+                          
                         echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
                         {$d[ "calleynumero" ]}<br>
                                                 Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Domicilio con errores" )."<br>
@@ -245,7 +245,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                     ?>
                     <div class="row">
                         
-                            <?php if( ( $pagado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
+                            <?php if( ( $pagado || $bloqueado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
                                 if( $entregado ){ ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">
@@ -280,7 +280,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
             default   : $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
         }
 
-        if( $costoentrega && !( $pagado || $cancelado ) ){ 
+        if( $costoentrega && !( $pagado || $bloqueado || $cancelado ) ){ 
          
         ?>
         <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>><?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( $costoentrega, 2 ); ?></div>
@@ -297,7 +297,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
     </div>
 
     <div id="puntajes" class="mb-3"><?php
-    if( ( $pagado || $cancelado ) ){
+    if( ( $pagado || $bloqueado || $cancelado ) ){
         foreach( PROMOCIONES as $p ){
             if( isset( $pedido[ "PTS" ][ $p[ "codigo" ] ] ) and $pedido[ "PTS" ][ $p[ "codigo" ] ] > 0 ){
 
@@ -313,7 +313,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
         <?php 
         $pc = $socio->getPrimerCompra( $modelo );
-        if( $modelo == '10-NUTRICION' &&  !( $pagado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
+        if( $modelo == '10-NUTRICION' &&  !( $pagado || $bloqueado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
                 <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
@@ -348,7 +348,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         
                         <?php 
                         $comisionbanco = floatval( $pedido[ "data"][ "comisionbanco" ] ); //!( $pagado || $cancelado ) ? $pedido[ "data"][ "comisionbanco" ] : 0;
-                        if( ( $pagado || $cancelado ) ){ ?>
+                        if( ( $pagado || $bloqueado || $cancelado ) ){ ?>
 
                             <tr><td valign="middle" class="">Comision bancaria</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5></td></tr>
 
@@ -362,10 +362,10 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
             <div class="col-lg-6">
                 <form method="post" action="<?php echo base_url( "checkout" ); ?>">
                     <?php echo csrf_field(); ?>
-                    <input type="hidden" name="modelo" value="<?php echo $pedido[ "modelo_codigo" ]; ?>">
+                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                     <?php 
-                    if( ( $pagado || $cancelado ) ){
+                    if( $pagado || $cancelado ){
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
@@ -374,24 +374,28 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                             </table>
                         </div>
 
-                        <?php if( ( $pagado || $cancelado ) ){ ?>
-                            <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
-                        <?php }
+                        <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
+                    <?php
                     }
                     else{
                         foreach( METODOSPAGO as $mp ){
-                            echo "\n<button class=\"btn col-12 mb-3 ";
-                            if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
-                                echo " btn-warning ";
 
-                                if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
-                                    // echo " d-none ";
-                                }
-                            }else{
-                                echo " btn-primary ";
-                            } 
-                            
-                            echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
+                            if( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ){
+
+                                echo "\n<button class=\"btn col-12 mb-3 ";
+
+                                if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
+                                    echo " btn-warning ";
+
+                                    if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
+                                        // echo " d-none ";
+                                    }
+                                }else{
+                                    echo " btn-primary ";
+                                } 
+                                
+                                echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
+                            }
                         }
                     }
                     ?>
@@ -552,7 +556,7 @@ else{ ?>
             </div>
             <div class="modal-body">
                 <?php 
-                if( sizeof( $domicilios ) ){
+                if( sizeof( $domicilios ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
 
                 foreach( $domicilios as $d ){
                     echo "\n<button domicilio_id=\"{$d[ "id" ]}\" class=\"w-100 btn btn-outline-success text-start mb-3\"><p><strong>{$d[ "nombre" ]}</strong></p>
@@ -656,6 +660,7 @@ foreach( $productos as $p ){
 			pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
 			tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
             pagado 		    = <?php echo $pagado; ?>,
+            bloqueado 	    = <?php echo $bloqueado; ?>,
             cancelado 	    = <?php echo $cancelado; ?>,
             mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
             domicilios      = <?php echo json_encode( $domicilios ); ?>,

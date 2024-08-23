@@ -3,7 +3,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
 
 <?php echo pills( "periodos", $modelo ); ?>
 
@@ -27,7 +27,7 @@
     <?php 
         foreach( $periodos as $periodo ){
             echo "<tr>
-                <td><span class=\"badge bg-marine\">".periodo( $periodo[ "codigo" ] )."</span></td>
+                <td><span class=\"badge bg-marine\"><span class=\"d-none\">{$periodo[ "codigo"]}</span>".periodo( $periodo[ "codigo" ] )."</span></td>
                 <td><span class=\"d-none\">{$periodo[ "inicia" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "inicia" ] ) )."</td>
                 <td><span class=\"d-none\">{$periodo[ "termina" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "termina" ] ) )."</td>
                 <td>".( $periodo[ "data" ][ "pedidos" ] ?? 0 )."</td>

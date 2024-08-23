@@ -36,6 +36,6 @@
 
 <?php if( $usuario->permiso( "50-ROOT" ) ){ ?>
 <div class="alert alert-danger mt-5">
-    Marcar como pagado (solo pruebas) <button onclick="fondeo( '<?php echo $pedido[ "modelo_codigo" ]."', '".$metodopago[ "codigo" ]."', ".$cantidad; ?> );" class="btn btn-danger">PAGAR PEDIDO <?php echo $pedido[ "referencia" ]; ?></button>
+    Marcar como pagado (solo pruebas) <button onclick="fondeo( '<?php echo $pedido[ "id" ]."', '".$metodopago[ "codigo" ]."', ".$cantidad; ?> );" class="btn btn-danger">PAGAR PEDIDO <?php echo $pedido[ "referencia" ]; ?></button>
 </div>
 <?php } ?>

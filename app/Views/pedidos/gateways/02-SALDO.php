@@ -5,7 +5,7 @@
 
 <script>
 $(document).ready(function(){
-    fondeo( '30-ALIMENTOS', '02-SALDO', 0 );
+    fondeo( <?php echo $pedido[ "id" ]; ?>, '<?php echo $metodopago[ "codigo" ]; ?>', 0 );
 });
    
 </script>

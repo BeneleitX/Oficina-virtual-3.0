@@ -72,7 +72,8 @@
 	<?php if(
 		$usuario->permiso( "18-STOCK" ) ||
 		$usuario->permiso( "20-ALMACEN" ) ||
-		$usuario->permiso( "32-EDICION" )
+		$usuario->permiso( "38-CONTABILIDAD" ) ||
+		$usuario->permiso( "32-EDICION" ) 
 	){ ?>
     <a data-bs-toggle="tooltip" 
 		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 

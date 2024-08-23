@@ -32,11 +32,11 @@
     </div>
 </div>
 
-<a href="<?php echo base_url( "tienda/".$modelo ); ?>"><i class="fa fa-undo"></i> Regresar al pedido <?php echo $pedido[ "referencia" ]; ?></a><br>
+<a href="<?php echo base_url( "pedido/".$pedido[ "referencia" ] ); ?>"><i class="fa fa-undo"></i> Regresar al pedido <?php echo $pedido[ "referencia" ]; ?></a><br>
 <a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-store"></i> ir a mis pedidos</a>
 
 <?php if( $usuario->permiso( "50-ROOT" ) || $usuario->id == 55 ){ ?>
 <div class="alert alert-danger mt-5">
-    Marcar como pagado (solo pruebas) <button onclick="fondeo( '<?php echo $pedido[ "modelo_codigo" ]."', '".$metodopago[ "codigo" ]."', ".$cantidad; ?> );" class="btn btn-danger">PAGAR PEDIDO <?php echo $pedido[ "referencia" ]; ?></button>
+    Marcar como pagado (solo pruebas) <button onclick="fondeo( '<?php echo $pedido[ "id" ]."', '".$metodopago[ "codigo" ]."', ".$cantidad; ?> );" class="btn btn-danger">PAGAR PEDIDO <?php echo $pedido[ "referencia" ]; ?></button>
 </div>
 <?php } ?>
