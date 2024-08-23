@@ -196,7 +196,7 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 
                     $dom = $usuario->data->domicilio ?? 0;
 
-                    if( sizeof( $domicilios ) ){
+                    if( sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
 
                     if( ( $pagado || $bloqueado || $cancelado ) ){
 
