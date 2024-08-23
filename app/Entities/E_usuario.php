@@ -283,8 +283,8 @@ class E_usuario extends Entity
     }
 
 
-    public function permiso( $rol ){
-        return in_array( $rol, $this->rol_codigos ) OR in_array( "50-ROOT", $this->rol_codigos ); 
+    public function permiso( $rol, $forzado = false ){
+        return in_array( $rol, $this->rol_codigos ) OR ( !$forzado && in_array( "50-ROOT", $this->rol_codigos ) ); 
     }
 
 
