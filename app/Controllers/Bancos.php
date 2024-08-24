@@ -255,16 +255,16 @@ class Bancos extends BaseController
                                 $historial = $u->historial;  
                             
                                 foreach( $p[ "PTS" ] as $promo => $pts ){
-                                    if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
-                                        $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+                                    if( !is_object( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra ) ){
+                                        $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
                                     }
                     
-                                    if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
-                                        $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                                    if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) ){
+                                        $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
                                     }
                                 } 
 
-                                $historial->modelos->{$modelo}->ultimacompra = $p[ "fechas" ][ "califica" ];
+                                $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
 
                                 if( $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
                                     $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $p[ "data" ][ "comisionbanco" ] ) );
