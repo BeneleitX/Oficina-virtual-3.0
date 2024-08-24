@@ -38,6 +38,7 @@ function regresar_colonia(){
 function edita_domicilio( dom_id ){
 	var dom = $( '[dom_id=' + dom_id + ']' );
 
+	$( '[value=borra]' ).show();
 	$( '[name=dom_id]' ).val( dom_id );
 
 	$( '[name=n_nombre]' ).val( dom.find( '.d_nombre' ).text() );
@@ -166,6 +167,7 @@ $(document).ready(function(){
 
 	$( '#nuevo_domicilio' ).on( 'click', function(){
 		$( '[name=dom_id]' ).val( 0 );
+		$( '[value=borra]' ).hide();
 
 		$( '#modal_domicilio' ).modal( 'show' );
 	});
@@ -245,6 +247,24 @@ $(document).ready(function(){
 				}
 			});
 		}
+	});
+
+
+	$( '#delete_domicilio' ).on( 'click', function(){
+		formData = new FormData( $( '#form_domicilio' )[0] );
+
+		$.ajax({
+			url: base_url + "delete_domicilio", 
+			type: "POST",
+			contentType: false,
+			processData: false,			
+			data: formData,
+			success: function( result ){
+				if( result > 0 ){
+					window.location.href = base_url + "perfil";
+				}
+			}
+		});
 	});
 
 

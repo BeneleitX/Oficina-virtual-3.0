@@ -24,7 +24,7 @@ class ColoniaModel extends Model
     protected bool $allowEmptyInserts = false;
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat    = "datetime";
     protected $createdField  = "created_at";
     protected $updatedField  = "updated_at";

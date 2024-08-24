@@ -337,7 +337,11 @@ if( !$socio->data->verificacion->correo ){ ?>
 							
 									<div class=\"col-xl-12  mb-3\">
 										<div class=\"alert alert-".( $d[ "colonia" ] ? "info" : "danger")." mb-0\" dom_id=\"{$d[ "id" ]}\" colonia_id=\"{$d[ "colonia_id" ]}\" referencias=\"{$d[ "referencias" ]}\">
-											<h5 class=\"d_nombre\">{$d[ "nombre" ]} <a style=\"float:right\" class=\"text-teal\" href=\"javascript:edita_domicilio({$d[ "id" ]})\"><i class=\"fa fa-edit\"></i></a></h5>
+											<h5 class=\"d_nombre\">{$d[ "nombre" ]} 
+												<div style=\"float:right\">
+													<a class=\"text-teal\" href=\"javascript:edita_domicilio({$d[ "id" ]})\"><i class=\"fa fa-edit\"></i></a>
+												</div>
+											</h5>
 											
 											<p class=\"mb-0\">
 												<span class=\"d_calle\">{$d[ "calleynumero" ]}</span><br>
@@ -614,7 +618,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 				
 			</div>
 			<div class="modal-footer">
-				<button id="submit_domicilio" class="btn btn-primary"><i class="fa fa-check"></i> Guardar</button>
+				<button id="delete_domicilio" class="btn btn-danger"  value="borra"><i class="fa fa-trash"></i> Eliminar</button>
+				<button id="submit_domicilio" class="btn btn-primary" value="edita"><i class="fa fa-check"></i> Guardar</button>
 			</div>
 			
 		</div>

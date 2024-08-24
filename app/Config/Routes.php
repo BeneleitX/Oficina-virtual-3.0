@@ -107,6 +107,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "guarda_rfc",            "Socio::guarda_rfc" );
     $routes->post( "valida_cp",             "Socio::valida_cp" );
     $routes->post( "create_domicilio",      "Socio::create_domicilio" );
+    $routes->post( "delete_domicilio",      "Socio::delete_domicilio" );
     $routes->post( "create_numero",         "Socio::create_numero" );
     $routes->post( "check_csf",             "Socio::check_csf" );
     $routes->post( "carga_csf",             "Socio::carga_csf" );

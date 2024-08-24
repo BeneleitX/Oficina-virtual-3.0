@@ -493,6 +493,9 @@ class Socio extends BaseController
 
             $coloniamodel = model( "ColoniaModel" );
             $x = $coloniamodel->insert( $nueva );
+
+            // BITACORA Creación de colonia
+            bitacora( 54, $this->data[ "socio" ]->id, $nueva );            
         }
         else{
             $x = $n_colonia;
@@ -527,7 +530,7 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
 
-        // BITACORA Creación de cuenta de usuario
+        // BITACORA Crea/edita domicilio
         bitacora( $dom_id ? 39 : 20, $this->data[ "socio" ]->id, [ 
             "domicilio_id" => $id,
             "usuario" => $this->data[ "usuario" ]->id
@@ -535,6 +538,36 @@ class Socio extends BaseController
 
         echo $id ?? 0;
     }
+
+
+    public function delete_domicilio(){
+        extract( $this->request->getPost() );
+
+        $domiciliomodel = model( "DomicilioModel" )->find( $dom_id );
+        $domiciliomodel[ "estatus_codigo" ] = "110-ELIMINADO";
+        model( "DomicilioModel" )->save( $domiciliomodel );
+
+        $socio = $this->data[ "usuario" ];
+        $d = $socio->getDomicilios();
+
+        if( !sizeof( $d ) ){
+
+            $json = $socio->data;
+            $json->verificacion->domicilio = false;
+
+            $socio->data = $json; 
+            model( "UsuarioModel" )->save( $socio );    
+        }
+
+        // BITACORA Borra domicilio
+        bitacora( 55, $socio->id, [ 
+            "domicilio_id" => $dom_id,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        echo $dom_id;
+    }
+
 
 
     public function create_numero(){
