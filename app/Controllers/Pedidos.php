@@ -79,6 +79,10 @@ class Pedidos extends BaseController
                 return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
             }
 
+            if( $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){ 
+                return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
+            }
+
             $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
             $encrypter = service( "encrypter" );
@@ -125,7 +129,6 @@ class Pedidos extends BaseController
             $this->data[ "titulo" ] = "Tienda en línea";
             $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $this->data[ "modelo" ] ][ "settings" ][ "pesoxbulto" ];
         }
-
         echo template( "pedidos/carrito", $this->data );
     }
 
