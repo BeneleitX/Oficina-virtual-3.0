@@ -192,6 +192,7 @@ class Bancos extends BaseController
 
             $respuesta[ "pagos" ][ $refe ][ "banco" ]  = $respuesta[ "banco" ];
             $respuesta[ "pagos" ][ $refe ][ "costo" ]  = null;
+            $respuesta[ "pagos" ][ $refe ][ "comision" ]  = $p[ "data" ][ "comisionbanco" ] ?? null;
 
             if( $p ){
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "modelo" ] = $p[ "modelo_codigo" ];
@@ -206,7 +207,7 @@ class Bancos extends BaseController
                         -floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} ) 
                         +floatval( $p[ "data" ][ "comisionbanco" ] );
                         
-                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "costo" ] = $total;
+                $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "costo" ] = $total; //"{$total} = ".floatval( $p[ "data" ][ "comisionentrega" ] )." + ".floatval( $p[ "data" ][ "total" ] )." + ".floatval( $p[ "data" ][ "comisionbanco" ] )." - ".floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} );
 
                 $f = model( "FondeoModel" )->where( "fecha = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ]}' AND operacion = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ]}'" )->first();
 
@@ -231,7 +232,6 @@ class Bancos extends BaseController
                             if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 300 ){
 
                                 $p[ "estatus_codigo" ] = "420-PAGADO";
-                                $p[ "data" ][ "comisionbanco" ] = $p[ "data" ][ "comisionbanco" ];
                                 $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
                                 $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
                                 $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
@@ -267,7 +267,7 @@ class Bancos extends BaseController
                                 $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
 
                                 if( $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
-                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + ( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - ( $total + $p[ "data" ][ "comisionbanco" ] ) );
+                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - $total;
 
                                     $u->data = $data;
                                     $u->historial = $historial;

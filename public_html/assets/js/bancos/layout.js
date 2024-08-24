@@ -56,6 +56,7 @@ $(document).ready(function(){
 							data.socio ?? '<span class="text-red"><i class="fa fa-warning"></i> Pedido no encontrado</span>',
 							data.fecha,
 							data.costo ? Moneda.format( data.costo ) : '<span class="text-red">???</span>',
+							data.comision, 
 							Moneda.format( data.cantidad ),
 							data.folio,
 							data.accion ?? 'ninguna'

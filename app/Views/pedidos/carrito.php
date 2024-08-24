@@ -1,82 +1,135 @@
 <h4 class="mt-1 mb-0">
-    <?php echo $titulo; ?> - <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
+    <?php echo $titulo; ?> - 
+    <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> 
+    <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
 </h4>
 
-<p><a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a></p>
+<p>
+    <a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a>
+</p>
 
-
-
-    <div class="row">
-	    <div class="col-md-6 mb-3">
-        <?php if( !$pagado && !$bloqueado && !$cancelado ){ 
+<div class="row">
+    <div class="col-md-6 mb-3">
+    
+        <?php 
+        if( !$pagado && !$bloqueado && !$cancelado ){ 
             echo "\n<ul class=\"nav nav-pills my-4\">";
             
             foreach( MODELOS as $m ){
                 if( $m[ "settings" ][ "efectivo" ] && ( $m[ "codigo" ] != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ) ){
-                    echo "\n<li class=\"nav-item\"><a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</a></li>";
+                    echo "\n<li class=\"nav-item\">
+                                <a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\">
+                                    <i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}
+                                </a>
+                            </li>";
                 }
             }
-           
+            
             echo "</ul>";
         }
-            ?>
+        ?>
 
-<p><?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?></p>
+        <p>
+            <?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?>
+        </p>
+    </div>
 
-
-        </div>
-
-        <?php if( !$pagado && !$bloqueado && !$cancelado ){ ?>
+    <?php 
+    if( !$pagado && !$bloqueado && !$cancelado ){ 
+        ?>
+        
         <div class="col-md-6 mb-3 pt-4 text-end">
-            <p><button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button></p>
-            <table align="right"><tr>
-                <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
-                <td id="pre_puntajes">
-                    <?php
-                    $k = 0;
+            <p>
+                <button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
+            </p>
 
-                    foreach( PROMOCIONES as $p ){
-                        if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
-                            $k++;
-                            echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div></div>";
+            <table align="right">
+                <tr>
+                    <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
+                    <td id="pre_puntajes">
+                        <?php
+                        $k = 0;
+
+                        foreach( PROMOCIONES as $p ){
+                            if( isset( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
+                                $k++;
+
+                                echo "\n<div class=\"pts text-white bg-white\">
+                                            <div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div>
+                                            <div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$usuario->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div>
+                                        </div>";
+                            }
                         }
-                    }
 
-                    if( !$k ){
-                        echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-gray-400\">PTS</div><div class=\"pts-numero bg-gray-400\">0</div></div>";
-                    }
-                    ?>
-                </td>
-            </tr></table>
+                        if( !$k ){
+                            echo "\n<div class=\"pts text-white bg-white\">
+                                <div class=\"pts-titulo bg-gray-400\">PTS</div>
+                                <div class=\"pts-numero bg-gray-400\">0</div>
+                            </div>";
+                        }
+                        ?>
+                    </td>
+                </tr>
+            </table>
         </div>
-    
-<?php 
-}
-else{
-    if( intval( $pedido[ "data" ][ "mesanterior" ] ) ){
-        echo "<div class=\"alert alert-danger\"><i class=\"fa fa-circle-info\"></i> Los puntos generados por esta compra son abonados al mes anterior de la fecha de pago.</div>";
+        
+    <?php 
     }
-    if( $cancelado ){
-        echo "<div class=\"alert alert-danger\"><i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.</div>";
-    }    
-}
-?>
+    else{
+        if( intval( $pedido[ "data" ][ "mesanterior" ] ) ){
+            echo "\n<div class=\"alert alert-danger\">
+                        <i class=\"fa fa-circle-info\"></i> Los puntos generados por esta compra son abonados al mes anterior de la fecha de pago.
+                    </div>";
+        }
+        if( $cancelado ){
+            echo "\n<div class=\"alert alert-danger\">
+                        <i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.
+                    </div>";
+        }    
+    }
+    ?>
 </div>
+
 <div class="row">
 	<div class="col-lg-6">
 		<div id="shoppingcart">
 			<?php
 
-if( !sizeof( $pedido[ "promociones" ] ) ){
-    echo "<div class=\"alert alert-light text-center text-mustard\"><p><i class=\"fa fa-triangle-exclamation\" style=\"font-size:200px\"></i></p><p>Hay un problema con este pedido, parece estar vacío.<br>porfavor reportalo a soporte técnico</p></div>";
-}
-
+            if( !sizeof( $pedido[ "promociones" ] ) ){
+                echo "\n<div class=\"alert alert-light text-center text-mustard\">
+                            <p><i class=\"fa fa-triangle-exclamation\" style=\"font-size:200px\"></i></p>
+                            <p>Hay un problema con este pedido, parece estar vacío.<br>porfavor reportalo a soporte técnico</p>
+                        </div>";
+            }
 
 			foreach( PROMOCIONES as $p ){
                 if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
-                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\"><div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\"><div class=\"row\"><div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div><div class=\"col-md-7\"><small conteo>{$cant_productos} productos</small>".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."</div></div></div><table productos class=\"w-100\"></table><div class=\"card-footer bg-gray-300 text-end\"><table align=\"right\"><tr><td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td><td><h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5></td></tr>
-                    </table></div></div>";
+
+                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\">
+                                <div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\">
+                                    <div class=\"row\">
+                                        <div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div>
+                                        <div class=\"col-md-7\">
+                                            <small conteo>{$cant_productos} productos</small>
+                                            ".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <table productos class=\"w-100\"></table>
+                                
+                                <div class=\"card-footer bg-gray-300 text-end\">
+                                    <table align=\"right\">
+                                        <tr>
+                                            <td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td>
+                                            <td>
+                                                <h5 class=\"m-0 total_promo\">$".number_format( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0, 2 )."</h5>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>";
                 }
 			}
 
@@ -86,141 +139,155 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
 		</div>
 	</div>
 
-<div class="col-lg-6">
-   	<div class="card mb-3">
-        <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
-        <div class="card-body m-0 ">
-        <?php 
-        // Si no hay metodos de entrega para este modelo de negocio, no es requerido para finalizar compra
-        // Al colocar metodo de entrega CELULAR a telefonía, ya todos los modelos tienen, por lo que
-        // esta situación nunca debe presentarse
-        if(  !sizeof( METODOSENTREGA ) ){
-            echo "<div class=\"alert alert-info m-0 text-marine\"><i class=\"fa fa-circle-info\"></i> Este pedido no requiere datos de entrega</div>";
-        }
-
-        // Si ya esta pagado, avisar que hay un problema con el pedido
-        elseif( ( $bloqueado || $pagado ) && $pedido[ "metodoentrega_codigo" ] == null ){
-            echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
-        }
- 
-        // botones para metodo de entrega
-        foreach( METODOSENTREGA as $me ){
-
-            // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
-            if( $me[ "settings" ][ "tipocosto" ] == "almacen" || ( $me[ "settings" ][ "tipocosto" ] == "efectivo" /* && sizeof( $domicilios ) */ ) || ( $me[ "settings" ][ "tipocosto" ] == "recarga" /* && sizeof( $celulares ) */ ) ){
-                echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
-            }
-        }
-        
-        $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
-        ?>
-    </div>       
-
-    <div class="card-body me_respuesta" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
-    <p class="me_descripcion mb-3"><?php if( $pedido[ "metodoentrega_codigo" ] ) echo METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "descripcion" ]; ?></p>
-
-    <div class="me_formulario" mp="almacen"  <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <select class="form-select" name="select_almacen">
-                <?php
-                    $existe_almacen = 0;
-
-                    foreach( ALMACENES as $a ){
-                        if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
-                            $existe_almacen = 1;
-                        }
-                        
-                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
-                        echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
-                    }
-                ?>
-                </select>
-            </div>
-            <div class="col-lg-6">
+    <div class="col-lg-6">
+        <div class="card mb-3">
+            <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
+            <div class="card-body m-0 ">
                 <?php 
-                if(0 &&  $pagado  && $bloqueado && !$entregado ){ ?>
-                    <form method="post" action="<?php echo base_url("entrega"); ?>">
-                        <?php echo csrf_field(); ?>
-                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                        <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?> class="btn col-12 btn-warning">Entregar Pedido en Almacen</button>
-                    </form>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
+                // Si no hay metodos de entrega para este modelo de negocio, no es requerido para finalizar compra
+                // Al colocar metodo de entrega CELULAR a telefonía, ya todos los modelos tienen, por lo que
+                // esta situación nunca debe presentarse
+                if(  !sizeof( METODOSENTREGA ) ){
+                    echo "<div class=\"alert alert-info m-0 text-marine\"><i class=\"fa fa-circle-info\"></i> Este pedido no requiere datos de entrega</div>";
+                }
 
-    <div class="me_formulario" mp="celular"  <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
+                // Si ya esta pagado, avisar que hay un problema con el pedido
+                elseif( ( $bloqueado || $pagado ) && $pedido[ "metodoentrega_codigo" ] == null ){
+                    echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
+                }
         
-        <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" && sizeof( $celulares ) ){ ?>
-            <div class="row"><div class="col-lg-6">
+                // botones para metodo de entrega
+                foreach( METODOSENTREGA as $me ){
+
+                    // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
+                    if( $me[ "settings" ][ "tipocosto" ] == "almacen" || ( $me[ "settings" ][ "tipocosto" ] == "efectivo" /* && sizeof( $domicilios ) */ ) || ( $me[ "settings" ][ "tipocosto" ] == "recarga" /* && sizeof( $celulares ) */ ) ){
+                        echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                    }
+                }
                 
-<select class="form-select form-select-lg fw-bold" name="select_celular">
-<?php
-    $existe_almacen = 0;
+                $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
+                ?>
+            </div>       
 
-    foreach( $celulares as $c ){
-        if( !$existe_almacen && $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
-            $existe_almacen = 1;
-        }
-        
-        if( ( !$pagado && !$bloqueado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
-            echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
-        }
+            <div class="card-body me_respuesta" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
+                <p class="me_descripcion mb-3">
+                    <?php 
+                    if( $pedido[ "metodoentrega_codigo" ] ){ 
+                        echo METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "descripcion" ];
+                    }
+                    ?>
+                </p>
 
-        if(  !$pagado &&!$bloqueado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
-            $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
-        }
-    }
-?>
-</select>
-</div></div>
-<?php
+                <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-select" name="select_almacen">
+                                <?php
+                                $existe_almacen = 0;
+
+                                foreach( ALMACENES as $a ){
+                                    if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                        $existe_almacen = 1;
+                                    }
+                                    
+                                    if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                                    echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <?php 
+                            if(0 && $pagado  && $bloqueado && !$entregado ){ 
+                                ?>
+                                <form method="post" action="<?php echo base_url("entrega"); ?>">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                                    <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?> class="btn col-12 btn-warning">Entregar Pedido en Almacen</button>
+                                </form>
+                                <?php 
+                            } 
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
+                    
+                    <?php 
+                    if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" && sizeof( $celulares ) ){ 
+                        ?>
+                        <div class="row">
+                            <div class="col-lg-6">
+                            
+                                <select class="form-select form-select-lg fw-bold" name="select_celular">
+                                    <?php
+                                    $existe_almacen = 0;
+
+                                    foreach( $celulares as $c ){
+                                        if( !$existe_almacen && $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            $existe_almacen = 1;
+                                        }
+                                        
+                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
+                                        }
+
+                                        if( !$pagado &&!$bloqueado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
+                                            $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <?php
                     }
                     else{
                         if( ( $pagado || $bloqueado || $cancelado ) ){
                             echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Por el momento no se cuenta con información relacionada con el número celular al cual fue aplicado el servicio</div>";
                         }
                         else{
-                            echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.</div><p class=\"m-0\"><a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a></p>";
+                            echo "\n<div class=\"alert alert-danger\">
+                                        <i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.
+                                    </div>
+                                    <p class=\"m-0\">
+                                        <a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a>
+                                    </p>";
                         }
                     }
-                ?>
-        
-    </div>
+                    ?>
+                </div>
 
-    <div class="me_formulario" mp="domicilio" <?php if( in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), ["00","11"] ) ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="domicilio" <?php if( in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), ["00","11"] ) ) echo "style=\"display:none\""; ?>>
                     <?php 
-
-
                     $dom = $usuario->data->domicilio ?? 0;
 
                     if( sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
-
-                    if( ( $pagado || $bloqueado || $cancelado ) ){
-
-                        if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
-                            $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "domicilio" ] ];
-                            $dom = 0;
-                        }
-                        elseif( ( $pedido[ "data" ][ "entrega_xpace" ] ?? 0 ) > 0 ){
-                            $dom = $pedido[ "data" ][ "entrega" ];
-                        }
-                    }
-                    else{
-                        if( $pedido[ "metodoentrega_codigo" ] )
-                        if( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ]["tipocosto" ] == "efectivo" ){
-
-                            if( !$pedido[ "data" ][ "entrega" ] ){
-                                $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
+                        if( ( $pagado || $bloqueado || $cancelado ) ){
+                            if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                                $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "domicilio" ] ];
+                                
+                                $dom = 0;
                             }
-
-                            $d = $pedido[ "data" ][ "domicilio" ];
+                            elseif( ( $pedido[ "data" ][ "entrega_xpace" ] ?? 0 ) > 0 ){
+                                $dom = $pedido[ "data" ][ "entrega" ];
+                            }
                         }
-                    }
+                        else{
+                            if( $pedido[ "metodoentrega_codigo" ] ){
+                                if( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ]["tipocosto" ] == "efectivo" ){
 
+                                    if( !$pedido[ "data" ][ "entrega" ] ){
+                                        $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
+                                    }
 
+                                    $d = $pedido[ "data" ][ "domicilio" ];
+                                }
+                            }
+                        }
                         
                         if( isset($domicilios[ $dom ]) ){
                             $d = $domicilios[ $dom ];
@@ -228,140 +295,206 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         else{
                             $d = array_values( $domicilios )[ 0 ];
                         }
-                          
-                        echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\"><p><strong>{$d[ "nombre" ]}</strong></p>
-                        {$d[ "calleynumero" ]}<br>
-                                                Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Domicilio con errores" )."<br>
-                                                ".( $d[ "colonia" ] ? "
-                                                {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                                                C.P. {$d[ "codigopostal" ]} " : "" )."
-                        </div>
-                        ";
+                        
+                        echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\">
+                                    <p><strong>{$d[ "nombre" ]}</strong></p>
+                                    {$d[ "calleynumero" ]}<br>
+                                    Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Domicilio con errores" )."<br>
+                                    ".( $d[ "colonia" ] ? "
+                                    {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+                                    C.P. {$d[ "codigopostal" ]} " : "" )."
+                                </div>";
                     }
                     else{
-                       echo "<div domicilio_id=\"0\" class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.</div>";
+                        echo "\n<div domicilio_id=\"0\" class=\"alert alert-danger\">
+                                    <i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio.
+                                </div>";
 
                     }
                     ?>
-                    <div class="row">
-                        
-                            <?php if( ( $pagado || $bloqueado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
-                                if( $entregado ){ ?>
+                    <div class="row">           
+                        <?php if( ( $pagado || $bloqueado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
+                            if( $entregado ){ 
+                                ?>
                                 <div class="col-12">
                                     <div class="alert alert-warning m-0">
-                                        Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.<br>Guía de rastreo: <span class="badge bg-mustard fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
+                                        Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.
+                                        <br>Guía de rastreo: 
+                                        <span class="badge bg-mustard fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
                                     </div>
                                 </div>
-                                <?php }
-                                elseif( 0 && $d[ "colonia" ] ?? 0 ) {
+                                <?php 
+                            }
+                            elseif( 0 && $d[ "colonia" ] ?? 0 ) {
                                 ?>
                                 <div class="col-lg-6">
-                                <form method="post" action="<?php echo base_url("envia"); ?>">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                                    <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?>  class="btn col-12 btn-warning">Enviar pedido por paquetería</button>
-                                </form>
+                                    <form method="post" action="<?php echo base_url("envia"); ?>">
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                                        <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?>  class="btn col-12 btn-warning">Enviar pedido por paquetería</button>
+                                    </form>
                                 </div>
-                            <?php } 
-                                }
-                                else{ ?>
-                                <div class="col-lg-6"><button class="btn btn-secondary col-12" onclick="$( '#modal_domicilios' ).modal( 'show' )">Ver mis domicilios</button></div>
-                            <?php } ?>
+                                <?php 
+                            } 
+                        }
+                        else{ 
+                            ?>
+                            <div class="col-lg-6">
+                                <button class="btn btn-secondary col-12" onclick="$( '#modal_domicilios' ).modal( 'show' )">Ver mis domicilios</button>
+                            </div>
+                            <?php 
+                        } 
+                        ?>
                     </div>
                 </div>
 
-        <div class="alert alert-danger mt-3" id="no_stock" style="display:none"><p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p><ul class="m-0"></ul></div>
+                <div class="alert alert-danger mt-3" id="no_stock" style="display:none">
+                    <p><i class="fa fa-warning"></i> El almacen no cuenta con producto suficiente para surtir tu pedido</p>
+                    <ul class="m-0"></ul>
+                </div>
 
-        <?php 
+                <?php 
+                switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) ){
+                    case "00" : 
+                        $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; 
+                        break;
+                    case "11" : 
+                        $costoentrega = 0; 
+                        break;
+                    default   : 
+                        $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
+                }
 
-        switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) ){
-            case "00" : $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; break;
-            case "11" : $costoentrega = 0; break;
-            default   : $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
-        }
+                if( $costoentrega && !( $pagado || $bloqueado || $cancelado ) ){ 
+                    ?>
+                    <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
+                        <?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( $costoentrega, 2 ); ?>
+                    </div>
+                    <?php 
+                } 
+                ?>
+            </div>
 
-        if( $costoentrega && !( $pagado || $bloqueado || $cancelado ) ){ 
-         
-        ?>
-        <div class="alert p-2 alert-info me_costo mt-3 mb-0" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>><?php if( $pedido[ "metodoentrega_codigo" ] ) echo "Utilizar este método de entrega, genera un costo de $".number_format( $costoentrega, 2 ); ?></div>
-        <?php } ?>
+            <?php
+            /* if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
+                echo "<div domicilio_id=\"0\" class=\"alert alert-danger m-3 mt-0\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio. Puedes editar tus domicilios o agregar uno nuevo desde tu perfil de socio.<p class=\"mt-3 mb-0\"><a class=\"btn btn-danger btn-sm\" href=\"".base_url( "perfil" )."\">Ir a perfil de socio</a></p></div>";
+            } */
+            ?>
 
-    </div>
+        </div>
 
-    <?php
-/*     if( !sizeof( $domicilios ) && !( $pagado  || $cancelado ) ){
-        echo "<div domicilio_id=\"0\" class=\"alert alert-danger m-3 mt-0\"><i class=\"fa fa-warning\"></i> Para utilizar paquetería como tipo de entrega, primero necesitas dar de alta un domicilio. Puedes editar tus domicilios o agregar uno nuevo desde tu perfil de socio.<p class=\"mt-3 mb-0\"><a class=\"btn btn-danger btn-sm\" href=\"".base_url( "perfil" )."\">Ir a perfil de socio</a></p></div>";
-    } */
-    ?>
-
-    </div>
-
-    <div id="puntajes" class="mb-3"><?php
-    if( ( $pagado || $bloqueado || $cancelado ) ){
-        foreach( PROMOCIONES as $p ){
-            if( isset( $pedido[ "PTS" ][ $p[ "codigo" ] ] ) and $pedido[ "PTS" ][ $p[ "codigo" ] ] > 0 ){
-
-                echo "\n<div class=\"pts text-white bg-white\"><div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div><div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$pedido[ "PTS" ][ $p[ "codigo" ] ]}</div></div>";
+        <div id="puntajes" class="mb-3">
+            <?php
+            if( ( $pagado || $bloqueado || $cancelado ) ){
+                foreach( PROMOCIONES as $p ){
+                    if( isset( $pedido[ "PTS" ][ $p[ "codigo" ] ] ) and $pedido[ "PTS" ][ $p[ "codigo" ] ] > 0 ){
+                        echo "\n<div class=\"pts text-white bg-white\">
+                                    <div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div>
+                                    <div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$pedido[ "PTS" ][ $p[ "codigo" ] ]}</div>
+                                </div>";
+                    }
+                }
             }
-        }
-
-    }
-
-    
-
-    ?></div>
+            ?>
+        </div>
 
         <?php 
         $pc = $socio->getPrimerCompra( $modelo );
-        if( $modelo == '10-NUTRICION' &&  !( $pagado || $bloqueado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ ?>
+
+        if( $modelo == '10-NUTRICION' &&  !( $pagado || $bloqueado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ 
+            ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
-                <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
-                <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica"><?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?></span>
-                <button onclick="$( '#mes_califica' ).modal( 'show' )" class="btn btn-outline-info btn-sm">Cambiar</buttn>
+                <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de 
+                <div class="input-group mb-0 input-group-sm" style="display:inline-flex; width:auto">
+                    <span style="font-weight:bold" class="input-group-text <?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "bg-red border-red"; ?>" id="mescalifica">
+                        <?php echo strtoupper( mes( date( "m" ) - intval( $pedido[ "data" ][ "mesanterior" ] ) ) ); ?>
+                    </span>
+                    <button onclick="$( '#mes_califica' ).modal( 'show' )" class="btn btn-outline-info btn-sm">Cambiar</buttn>
                 </div> 
             </div>
-        <?php } 
+            <?php 
+        } 
         ?>
 
         <div class="row">
             <div class="col-lg-6">
                 <div class="card mb-3" style="overflow:hidden">
                     <table class="table rounded-3 m-0">
-                        <tr><td valign="middle" class="">Total de productos</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_productos="<?php echo $pedido[ "data" ][ "total" ]; ?>">$<?php echo number_format( $pedido[ "data" ][ "total" ], 2 ); ?></h5></td></tr>
-
+                        <tr>
+                            <td valign="middle" class="">Total de productos</td>
+                            
+                            <td valign="middle" class="text-end">
+                                <h5 class="m-0 text-teal" total_productos="<?php echo $pedido[ "data" ][ "total" ]; ?>">
+                                    $<?php echo number_format( $pedido[ "data" ][ "total" ], 2 ); ?>
+                                </h5>
+                            </td>
+                        </tr>
                         
                         <tr class="<?php echo sizeof( METODOSENTREGA ) ? "" : "d-none"; ?>">
-                            <td valign="middle" class="">Gastos de entrega <span id="bultos_cantidad"></span> <br>
-                            <div class="row g-1" id="bultos" style="margin-top:1px"></div>
+                            <td valign="middle" class="">
+                                Gastos de entrega <span id="bultos_cantidad"></span> <br>
+                                <div class="row g-1" id="bultos" style="margin-top:1px"></div>
                             </td>
-                            <td valign="middle" class="text-end"><h5 class="m-0 text-teal" total_entrega="<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr>
-                        <?php
+                            
+                            <td valign="middle" class="text-end">
+                                <h5 class="m-0 text-teal" total_entrega="<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>">
+                                    $<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?>
+                                </h5>
+                            </td>
+                        </tr>
                         
-                            if( ( $pagado || $cancelado ) ){
-                                $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
-                            }
-                            else{
-                                $saldo = $socio->data->saldo->{$modelo} ?? 0;
-                            }
+                        <?php
+                        if( ( $pagado || $cancelado ) ){
+                            $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
+                        }
+                        else{
+                            $saldo = $socio->data->saldo->{$modelo} ?? 0;
+                        }
                         ?>
-                        <tr><td valign="middle" class="">Saldo a favor</td><td valign="middle" class="text-end"><h5 class="m-0 text-<?php echo $saldo > 0 ? "red" : "gray-500"; ?>" total_saldo="<?php echo $saldo; ?>">$<?php echo number_format(  $saldo, 2 ); ?></h5></td></tr>
+
+                        <tr>
+                            <td valign="middle" class="">Saldo a favor</td>
+                            
+                            <td valign="middle" class="text-end">
+                                <h5 class="m-0 text-<?php echo $saldo > 0 ? "red" : "gray-500"; ?>" total_saldo="<?php echo $saldo; ?>">
+                                    $<?php echo number_format(  $saldo, 2 ); ?>
+                                </h5>
+                            </td>
+                        </tr>
                         
                         <?php 
                         $comisionbanco = floatval( $pedido[ "data"][ "comisionbanco" ] ); //!( $pagado || $cancelado ) ? $pedido[ "data"][ "comisionbanco" ] : 0;
-                        if( ( $pagado || $bloqueado || $cancelado ) ){ ?>
+                        
+                        if( ( $pagado || $bloqueado || $cancelado ) ){ 
+                            ?>
+                            <tr>
+                                <td valign="middle" class="">Comision bancaria</td>
+                                
+                                <td valign="middle" class="text-end">
+                                    <h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5>
+                                </td>
+                            </tr>
+                            <?php 
+                        } 
+                        ?>
 
-                            <tr><td valign="middle" class="">Comision bancaria</td><td valign="middle" class="text-end"><h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5></td></tr>
-
-                        <?php } ?>
-
-                        <tr><td valign="middle" class="text-white" style="background:var(--bs-marine) !important">Total de pedido</td><td valign="middle" class="text-end" style="background:var(--bs-marine) !important"><h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo; ?>">$<?php echo number_format( $tt, 2 ); ?></h5></td></tr>
+                        <tr>
+                            <td valign="middle" class="text-white" style="background:var(--bs-marine) !important">Total de pedido</td>
+                            
+                            <td valign="middle" class="text-end" style="background:var(--bs-marine) !important">
+                                <h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo; ?>">
+                                    $<?php echo number_format( $tt, 2 ); ?>
+                                </h5>
+                            </td>
+                        </tr>
                     </table>
                 </div>
-                
             </div>
+
             <div class="col-lg-6">
                 <form method="post" action="<?php echo base_url( "checkout" ); ?>">
                     <?php echo csrf_field(); ?>
+            
                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                     <?php 
@@ -369,19 +502,34 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
-                                <tr><td valign="middle" class="">Fecha de pago</td><td valign="middle" class="text-end"><h5 class="m-0"><?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?></h5></td></tr>
-                                <tr><td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td><td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end"><h5 class="m-0" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>"><?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?></h5></td></tr>
+                                <tr>
+                                    <td valign="middle" class="">Fecha de pago</td>
+                                    
+                                    <td valign="middle" class="text-end">
+                                        <h5 class="m-0">
+                                            <?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?>
+                                        </h5>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
+                                    
+                                    <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
+                                        <h5 class="m-0" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
+                                            <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
+                                        </h5>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
 
                         <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
-                    <?php
+                        <?php
                     }
                     else{
                         foreach( METODOSPAGO as $mp ){
-
                             if( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ){
-
                                 echo "\n<button class=\"btn col-12 mb-3 ";
 
                                 if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
@@ -399,41 +547,47 @@ if( !sizeof( $pedido[ "promociones" ] ) ){
                         }
                     }
                     ?>
-
                 </form>
             </div>
         </div>
-	</div>
+    </div>
 </div>
 
 <?php 
-
-
-
 if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
     if( $pagado ){
-        echo "<div class=\"card mb-5\"><div class=\"card-header bg-blue\"><h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5></div><table class=\"table m-0\"><thead><tr>
-        <th class=\"text-center\">Folio</th>
-        <th>Esquema</th>
-        <th>Nivel</th>
-        <th class=\"text-end\">Comisión</th>
-        <th>Estatus</th>
-        <th>Socio</th>
-        </tr></thead><tbody>";  
+        echo "\n<div class=\"card mb-5\">
+                    <div class=\"card-header bg-blue\">
+                        <h5 class=\"m-0 text-white\">Comisiones generadas por esta compra</h5>
+                    </div>
+                    
+                    <table class=\"table m-0\">
+                        <thead><tr>
+                            <th class=\"text-center\">Folio</th>
+                            <th>Esquema</th>
+                            <th>Nivel</th>
+                            <th class=\"text-end\">Comisión</th>
+                            <th>Estatus</th>
+                            <th>Socio</th>
+                        </tr></thead>
+                        
+                        <tbody>";  
+                        
         $db = db_connect();
 
         $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
 
         foreach( $comisiones as $c ){
             $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
-            echo "<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
-            <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
-            <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
-            <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
-            <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
-            <td>".estatus( $c->estatus_codigo )."</td>
-            <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
-            </tr>"; 
+
+            echo "\n<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
+                        <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
+                        <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
+                        <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
+                        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
+                        <td>".estatus( $c->estatus_codigo )."</td>
+                        <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
+                    </tr>"; 
         }
 
         echo "</tbody></table></div>"; 
@@ -441,36 +595,48 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
     ?>
 
     <div class="alert alert-danger">
-        <table><tr><td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td><td><ul class="m-0"><li>Modificar los siguientes parámetros puede ocasionar que las calificaciones y comisiones generadas por este pedido sufran cambios permanentes.</li><li>Una vez cerrado el periodo al que pertenece la fecha de compra, estas opciones serán bloqueadas.</li></ul></td></tr></table>
+        <table>
+            <tr>
+                <td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td>
+                <td><ul class="m-0">
+                    <li>Modificar los siguientes parámetros puede ocasionar que las calificaciones y comisiones generadas por este pedido sufran cambios permanentes.</li>
+                    <li>Una vez cerrado el periodo al que pertenece la fecha de compra, estas opciones serán bloqueadas.</li>
+                </ul></td>
+            </tr>
+        </table>
     </div>  
+
     <div class="card border-red my-3">
         <div class="card-header">
             <h5 class="text-red mb-0">Administración</h5>
         </div>
+
         <div class="card-body">
-        
             <div class="row">
-                <?php if( $pagado ){ ?>
-                <div class="col-lg-4 m-0">
-                    <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
-                </div>
+                <?php 
+                if( $pagado ){ 
+                    ?>
+                    <div class="col-lg-4 m-0">
+                        <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
+                    </div>
 
-                <div class="col-lg-4 m-0">
-                    <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
-                </div>
+                    <div class="col-lg-4 m-0">
+                        <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
+                    </div>
 
-                <div class="col-lg-4 m-0">
-                    <form method="post" action="<?php echo base_url( "reparte" ); ?>">
-                        <?php echo csrf_field(); ?>
-                        <button type="submit" class="btn btn-danger col-12"><i class="fa fa-cog"></i> Recalcular comisiones</button>
-                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                    </form>
-                </div>
-                <php } ?>
+                    <div class="col-lg-4 m-0">
+                        <form method="post" action="<?php echo base_url( "reparte" ); ?>">
+                            <?php echo csrf_field(); ?>
+                            <button type="submit" class="btn btn-danger col-12"><i class="fa fa-cog"></i> Recalcular comisiones</button>
+                            <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                        </form>
+                    </div>
+                    <?php 
+                } 
+                ?>
             </div>
         </div>
     </div>
-
 
     <div class="modal" tabindex="-1" id="cambia_fecha">
         <div class="modal-dialog">
@@ -542,10 +708,9 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
     </div>
 
     <?php
-
-    }
 }
-else{ ?>
+?>
+
 <div class="modal" tabindex="-1" id="modal_domicilios">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -639,7 +804,7 @@ else{ ?>
 	</div>
 </div>
 
-<?php } 
+<?php 
 $pedido[ "no_stock" ] = false;
 
 $prods = [];

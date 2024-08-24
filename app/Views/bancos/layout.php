@@ -28,6 +28,7 @@
             <th>Socio</th>
             <th>Fecha pago</th>
             <th>Precio</th>
+            <th>Comisión</th>
             <th>Depositado</th>
             <th>Folio</th>
             <th>Acción</th>

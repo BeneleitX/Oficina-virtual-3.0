@@ -359,10 +359,9 @@ class Pedidos extends BaseController
 
             $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
 
-
             $this->data[ "pedido" ][ "estatus_codigo" ] = "255-PENDIENTE";
             $this->data[ "pedido" ][ "metodopago_codigo" ] = $this->data[ "metodopago" ][ "codigo" ];
-            $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $pre * 2 / 100 : 20;
+            $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $pre * $this->data[ "metodopago" ][ "settings" ][ "comision" ] / 100 : $this->data[ "metodopago" ][ "settings" ][ "comision" ];
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
         }
 
