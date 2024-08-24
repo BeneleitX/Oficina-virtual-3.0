@@ -811,30 +811,29 @@ $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;
 }
-
 ?>
 
-	<script>
-        
-		var modelo 			= '<?php echo $modelo; ?>',
-            usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
-			cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
-			cat_productos   = <?php echo json_encode( $prods ); ?>,
-			metodosentrega	= <?php echo json_encode( METODOSENTREGA ) ?>,
-			metodospago		= <?php echo json_encode( METODOSPAGO ) ?>,
-            premieres       = <?php echo sizeof( $socio->getPremieres() ); ?>,
-        	almacenes	    = <?php echo json_encode( ALMACENES ) ?>,			
-			pedido  		= <?php echo json_encode( $pedido ); ?>,
-			pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
-			tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
-            pagado 		    = <?php echo $pagado; ?>,
-            bloqueado 	    = <?php echo $bloqueado; ?>,
-            cancelado 	    = <?php echo $cancelado; ?>,
-            mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
-            domicilios      = <?php echo json_encode( $domicilios ); ?>,
-            hoy = new Date();
+<script>
+    
+    var modelo 			= '<?php echo $modelo; ?>',
+        usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
+        cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
+        cat_productos   = <?php echo json_encode( $prods ); ?>,
+        metodosentrega	= <?php echo json_encode( METODOSENTREGA ) ?>,
+        metodospago		= <?php echo json_encode( METODOSPAGO ) ?>,
+        premieres       = <?php echo sizeof( $socio->getPremieres() ); ?>,
+        almacenes	    = <?php echo json_encode( ALMACENES ) ?>,			
+        pedido  		= <?php echo json_encode( $pedido ); ?>,
+        pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
+        tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
+        pagado 		    = <?php echo $pagado; ?>,
+        bloqueado 	    = <?php echo $bloqueado; ?>,
+        cancelado 	    = <?php echo $cancelado; ?>,
+        mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
+        domicilios      = <?php echo json_encode( $domicilios ); ?>,
+        hoy = new Date();
 
-        if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
+    if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
 
-	</script>
+</script>
 
