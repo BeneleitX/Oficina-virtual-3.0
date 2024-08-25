@@ -227,9 +227,9 @@ class Almacenes extends BaseController
 
         $html .= "<tr><td nowrap class=\"w-100\">Productos entregados</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "622" ][ $producto ] ?? 0 )."</td></tr>";
         $html .= "<tr><td nowrap class=\"w-100\">Productos pendientes de entrega</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 )."</td></tr>";
-        $html .= "<tr><td nowrap class=\"w-100\">Productos disponibles para venta</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 )."</td></tr>";
-
         $html .= "</table></div>";
+
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-cash-register\"></i> Productos disponibles para venta</div><div class=\"text-end text-white col-4\">".number_format( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 )."</div></div></div></div>";        
 
         $html .= "<div class=\"card mb-0\" style=\"overflow:hidden\"><div class=\"card-header bg-red\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-boxes-stacked\"></i> Inventario físico</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 ) + ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div></div>";
 
