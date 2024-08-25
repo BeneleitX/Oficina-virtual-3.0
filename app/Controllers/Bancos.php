@@ -268,10 +268,10 @@ class Bancos extends BaseController
 
                                 if( $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
                                     $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - $total;
-
-                                    $u->data = $data;
-                                    $u->historial = $historial;
                                 }
+
+                                $u->data = $data;
+                                $u->historial = $historial;
 
                                 model( "UsuarioModel" )->save( $u );    
 

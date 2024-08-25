@@ -35,6 +35,8 @@ class Admin extends BaseController
 
         $sql = "substring(estatus_codigo , 1, 3 ) > 200";
         
+        $this->data[ "saldos"   ]     = $db->query( "select count(id) as uss from t_usuarios where DATA->>'$.saldo.\"10-NUTRICION\"' > 0 or DATA->>'$.saldo.\"20-TELEFONIA\"' > 0 or DATA->>'$.saldo.\"30-ALIMENTOS\"' > 0" )->getRow()->uss;
+
         $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
         $this->data[ "pasarelas" ]    = model( "MetodopagoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "paqueterias" ]  = model( "MetodoentregaModel" )->where( $sql , null, false )->findAll();
@@ -43,9 +45,9 @@ class Admin extends BaseController
         $this->data[ "productos" ]    = model( "ProductoModel" )->where( $sql , null, false )->findAll();
         $this->data[ "usuarios" ]     = $db->query( "select count(id) as uss from t_usuarios" )->getRow()->uss;
         $this->data[ "roles" ]        = model( "RolModel" )->findAll();
-        $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( $sql , null, false )->findAll();
+        $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( "substring(estatus_codigo , 1, 3 ) > 200 and inicia > '2024-08-06' " , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
-         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); 
+        $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); 
        
         echo template( "admin/dashboard", $this->data );
     }
@@ -236,6 +238,25 @@ class Admin extends BaseController
 
         echo template( "admin/estatus", $this->data );
     } 
+
+    public function saldos(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Socios con saldo a favor";
+
+        $db = db_connect();
+
+        $this->data[ "saldos" ] = model( "UsuarioModel" )->where( "data->>'$.saldo.\"10-NUTRICION\"' > 0 or data->>'$.saldo.\"20-TELEFONIA\"' > 0 or data->>'$.saldo.\"30-ALIMENTOS\"' > 0" )->findAll(); 
+
+        echo template( "admin/saldos", $this->data );
+    } 
     
 
 
@@ -296,6 +317,30 @@ class Admin extends BaseController
             "valor" => $valor
         ] );        
     }
+
+
+    public function quita_saldo(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+        $variable = $this->request->getPost( "socio" );
+
+        $db = db_connect();
+        $db->query( "update t_variables set valor = '{$valor}' where codigo = '{$variable}'" );
+
+        // BITACORA Creación de cuenta de usuario
+        bitacora( 26, $this->data[ "usuario" ]->id, [ 
+            "variable" => $variable,
+            "valor" => $valor
+        ] );        
+    }
+
+
 
     public function apikeys(){
         if( !(

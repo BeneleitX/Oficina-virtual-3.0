@@ -613,26 +613,34 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
 
         <div class="card-body">
             <div class="row">
+
+                <div class="col-lg-4 m-0">
+                    <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-trash"></i> Cancelar pedido</button>
+                </div>
+
                 <?php 
                 if( $pagado ){ 
                     ?>
                     <div class="col-lg-4 m-0">
-                        <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar fecha de compra</button>
-                    </div>
-
-                    <div class="col-lg-4 m-0">
-                        <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-cog"></i> Cancelar pedido</button>
+                        <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-calendar"></i> Cambiar fecha de compra</button>
                     </div>
 
                     <div class="col-lg-4 m-0">
                         <form method="post" action="<?php echo base_url( "reparte" ); ?>">
                             <?php echo csrf_field(); ?>
-                            <button type="submit" class="btn btn-danger col-12"><i class="fa fa-cog"></i> Recalcular comisiones</button>
+                            <button type="submit" class="btn btn-danger col-12"><i class="fa fa-calculator"></i> Recalcular comisiones</button>
                             <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
                         </form>
                     </div>
                     <?php 
                 } 
+                else{
+                    ?>
+                    <div class="col-lg-4 m-0">
+                        <button class="btn btn-danger col-12" onclick="$( '#marca_pagado' ).modal( 'show' );"><i class="fa fa-cash-register"></i> Marcar como pagado</button>
+                    </div>
+                    <?php
+                }
                 ?>
             </div>
         </div>
@@ -644,10 +652,11 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
                 <form method="post" action="<?php echo base_url( "cambia_fecha" ); ?>">
                     <?php echo csrf_field() ?>
                     <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
                     <input type="hidden" name="old_beneficiario"  value="">
 
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-clock-rotate-left"></i> Cambiar fecha de compra</h5>
+                        <h5 class="modal-title"><i class="fa fa-calendar"></i> Cambiar fecha de compra</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -656,9 +665,6 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
                             <li>Los beneficios generados por este pedido, aplicarán para las calificaciones del mes al que corresponde la fecha que se aplique.</li>
                             <li>Un cambio de fecha de compra altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
                         </ul></div>
-
-                        <?php echo csrf_field(); ?>
-                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                         <label class="form-label">Actualiza la fecha y guarda los cambios usando el botón</label>
                         <div class="row">
@@ -671,6 +677,40 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-<?php echo $pedido[ "data" ][ "mesanterior" ] == "1" ? "info" : "danger"; ?>">Aplicar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="marca_pagado">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "paga_pedido" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Marcar pedido como pagado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-3"><ul class="m-0">
+                            <li>El pedido será marcado como pagado y aparecerá en los pendientes de entrega/envío.</li>
+                            <li>Se repartirán comisiones</li>
+                            <li>Se actualizarán estatus y calificaciones del socio</lo>
+                        </ul></div>
+
+                        <label class="form-label">Elige la fecha de compra y que se aplicará para calificación</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input class="form-control col-6" type="date" name="fecha" value="<?php echo date( "Y-m-d" ); ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-<?php echo $pedido[ "data" ][ "mesanterior" ] == "1" ? "info" : "danger"; ?>">Marcar pagado</button>
                     </div>
                 </form>
             </div>
@@ -692,7 +732,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
                     <div class="modal-body">
                         <div class="alert alert-danger m-0"><ul class="m-0">
                             <li>Al cancelar el pedido se eliminarán todas las comisiones y puntos generados para calificación y recompensas.</li>
-                            <li>Cancelar un pedido altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
+                            <li>Cancelar un pedido ya pagado altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
                         </ul></div>
 
                         <?php echo csrf_field(); ?>
@@ -806,7 +846,6 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
 
 <?php 
 $pedido[ "no_stock" ] = false;
-
 $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;

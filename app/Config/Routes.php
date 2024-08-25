@@ -66,8 +66,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "cambia_fecha",          "Pedidos::cambia_fecha" ); 
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
-    $routes->get( "beneleit_movil",        "Pedidos::beneleit_movil" ); 
-    
+    $routes->get( "beneleit_movil",         "Pedidos::beneleit_movil" ); 
+    $routes->post( "paga_pedido",           "Pedidos::paga_pedido" ); 
+
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
 
@@ -136,6 +137,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "apikeys",                "Admin::apikeys" ); 
     $routes->get( "variables",              "Admin::variables" ); 
     $routes->get( "estatus",                "Admin::estatus" ); 
+    $routes->get( "saldos",                 "Admin::saldos" );     
     $routes->get( "isr",                    "Admin::isr" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 
     $routes->get( "promociones/(:any)",     "Admin::promociones/$1" ); 

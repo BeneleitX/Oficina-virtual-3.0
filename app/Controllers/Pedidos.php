@@ -161,7 +161,7 @@ class Pedidos extends BaseController
 
         $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
 
-        if( !sizeof( $historial->modelos->{$modelo}->calificaciones ) ){
+        if( !sizeof( (array)$historial->modelos->{$modelo}->calificaciones ) ){
             $historial->modelos->{$modelo}->calificaciones = json_decode( "{}" );
         }
         
@@ -267,6 +267,54 @@ class Pedidos extends BaseController
         echo $socio->fondeo( $pedido, $metodo, $cantidad );
     }
 
+
+    public function paga_pedido(){
+        extract( $this->request->getPost() );
+        $p = model( "PedidoModel" )->find( $pedido );
+
+        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha && $p[ "estatus_codigo" ] == "255-PENDIENTE" ){
+
+            $p[ "estatus_codigo" ] = "420-PAGADO";
+            $p[ "fechas" ][ "pagado" ]   = $fecha;     
+            $p[ "fechas" ][ "califica" ] = $fecha;    
+
+            model( "PedidoModel" )->save( $p );
+
+            $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+            $data = $u->data;                                    
+            $historial = $u->historial;  
+        
+            foreach( $p[ "PTS" ] as $promo => $pts ){
+                if( !is_object( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra ) ){
+                    $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
+                }
+
+                if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) ){
+                    $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
+                }
+            } 
+
+            $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
+
+            $u->data = $data;
+            $u->historial = $historial;
+
+            model( "UsuarioModel" )->save( $u );    
+
+            $db = db_connect();
+            $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
+            $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
+        
+            // BITACORA Marcar pedido como pagado
+            bitacora( 56, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $p[ "id" ],
+                "fecha"  => $fecha
+            ] );
+        }
+        
+        return redirect()->to( 'pedido/'.$p[ "referencia"] );
+    }
 
     public function compra_demo( $usuario, $modelo, $mes ){
         extract( $this->request->getPost() );

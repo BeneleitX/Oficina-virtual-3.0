@@ -112,6 +112,7 @@ class Almacenes extends BaseController
     }
 
 
+
     public function marca_entregado(){
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
@@ -163,10 +164,12 @@ class Almacenes extends BaseController
     }
 
 
+
     public function get_inventario(){
         $almacen = model( "AlmacenModel" )->find( $this->request->getPost( "almacen" ) );
         echo json_encode( $almacen[ "inventario" ][ "balance" ] );
     }
+
 
 
     public function get_data_producto(){
@@ -188,7 +191,9 @@ class Almacenes extends BaseController
         $sql = "SELECT id, notas, fecha, cantidad from t_transferencias where estatus_codigo = '620-RECIBIDO' and producto_codigo = '{$producto}' and destino = '{$almacen[ "codigo" ]}'";
         $transfers = $db->query( $sql );
 
-        $html = "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><span class=\"text-white m-0\"><i class=\"fa fa-right-to-bracket\"></i> Tranferencias recibidas</span></div><table class=\"w-100 m-0 table table-striped\">";
+
+
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><span class=\"text-white m-0\"><i class=\"fa fa-right-to-bracket\"></i> Tranferencias recibidas</span></div><table class=\"w-100 m-0 table table-striped\">";
 
         if( $transfers->getNumRows() ){
             foreach( $transfers->getResult() as $t ){
@@ -199,11 +204,13 @@ class Almacenes extends BaseController
             $html .= "<tr><td colspan=\"3\" class=\"text-end pe-3 text-gray-600\">0</td></tr>";
         }
         $html .= "</table></div>";
-         
+
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-right-from-bracket\"></i> Tranferencias enviadas</div><div class=\"text-end text-white col-4\">".number_format($almacen[ "inventario" ][ "transfers_origen"][ $producto ] ?? 0 )."</div></div></div></div>";
+
         $sql = "SELECT id, notas, fecha, cantidad from t_transferencias where estatus_codigo = '530-ENVIADO' and producto_codigo = '{$producto}' and destino = '{$almacen[ "codigo" ]}'";
         $transfers = $db->query( $sql );
 
-        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-marine\"><span class=\"text-white m-0\"><i class=\"fa fa-truck-arrow-right\"></i> Tranferencias en tránsito</span></div><form method=\"post\" action=\"".base_url( "recibe_transfer" )."\"><table class=\"w-100 m-0 table table-striped\">";
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-mustard\"><span class=\"text-white m-0\"><i class=\"fa fa-truck-arrow-right\"></i> Tranferencias por recibir (en tránsito)</span></div><form method=\"post\" action=\"".base_url( "recibe_transfer" )."\"><table class=\"w-100 m-0 table table-striped\">";
         $html .= csrf_field(); 
 
         if( $transfers->getNumRows() ){
@@ -216,7 +223,7 @@ class Almacenes extends BaseController
         }       
         $html .= "</table></form></div>"; 
         
-        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers"][ "620" ][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers_destino"][ "620" ][ $producto ] - $almacen[ "inventario" ][ "transfers_origen"][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
 
         $html .= "<tr><td nowrap class=\"w-100\">Productos entregados</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "622" ][ $producto ] ?? 0 )."</td></tr>";
         $html .= "<tr><td nowrap class=\"w-100\">Productos pendientes de entrega</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 )."</td></tr>";
@@ -228,6 +235,7 @@ class Almacenes extends BaseController
 
         echo $html;
     }
+
 
 
     public function addstock(){

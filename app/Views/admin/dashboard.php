@@ -31,6 +31,7 @@ $menu = [
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR", 0,[ "38-CONTABILIDAD" ] ],     
     [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos", 0,[ "38-CONTABILIDAD" ] ],     
     [ "danger", "apikeys", "network-wired", "API keys", 0,[] ],     
+    [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,[] ],     
 ];
 
 foreach( $menu as $opcion ){
