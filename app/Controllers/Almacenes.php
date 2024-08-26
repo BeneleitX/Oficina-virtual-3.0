@@ -223,7 +223,7 @@ class Almacenes extends BaseController
         }       
         $html .= "</table></form></div>"; 
         
-        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers_destino"][ "620" ][ $producto ] - $almacen[ "inventario" ][ "transfers_origen"][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
+        $html .= "<div class=\"card mb-3\" style=\"overflow:hidden\"><div class=\"card-header bg-teal\"><div class=\"row\"><div class=\"text-white col-8\"><i class=\"fa fa-shopping-cart\"></i> Productos vendidos</div><div class=\"text-end text-white col-4\">".number_format( ( $almacen[ "inventario" ][ "transfers_destino"][ "620" ][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "transfers_origen"][ $producto ] ?? 0 ) - ( $almacen[ "inventario" ][ "balance" ][ $producto ] ?? 0 ) )."</div></div></div><table class=\"w-100 m-0 table table-striped\">";
 
         $html .= "<tr><td nowrap class=\"w-100\">Productos entregados</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "622" ][ $producto ] ?? 0 )."</td></tr>";
         $html .= "<tr><td nowrap class=\"w-100\">Productos pendientes de entrega</td><td class=\"text-end pe-3\" nowrap>".number_format( $almacen[ "inventario" ][ "venta"][ "420" ][ $producto ] ?? 0 )."</td></tr>";
