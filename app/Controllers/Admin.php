@@ -319,7 +319,7 @@ class Admin extends BaseController
     }
 
 
-    public function quita_saldo(){
+    public function edita_saldos(){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -328,16 +328,28 @@ class Admin extends BaseController
         
         /**********************************/
 
-        $variable = $this->request->getPost( "socio" );
+        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio_saldo" ) );
+        $data  = $socio->data;
 
-        $db = db_connect();
-        $db->query( "update t_variables set valor = '{$valor}' where codigo = '{$variable}'" );
+        foreach( $this->request->getPost( "saldo" ) as $m => $s ){
+            if( $data->saldo->{$m} != $s ){
 
-        // BITACORA Creación de cuenta de usuario
-        bitacora( 26, $this->data[ "usuario" ]->id, [ 
-            "variable" => $variable,
-            "valor" => $valor
-        ] );        
+                // BITACORA Edita saldo a favor
+                bitacora( 57, $this->data[ "usuario" ]->id, [ 
+                    "socio"    => $socio->id,
+                    "anterior" => $data->saldo->{$m},
+                    "nuevo"    => $s,
+                    "modelo"   => $m
+                ] );        
+
+                $data->saldo->{$m} = $s;
+            }
+        }
+
+        $socio->data = $data;
+        model( "UsuarioModel" )->save( $socio );
+        
+        return redirect()->to( "saldos" );    
     }
 
 
