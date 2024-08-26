@@ -320,9 +320,11 @@ function update_pedido( flag = null ){
         caption  = Moneda.format( total_productos + total_entrega );
         b.find( '.cantidad' ).html( caption );
         b.show();
+        console.log( 'show' );
     }
     else{
         b.hide();
+        console.log( b, 'hide' );
     }
       
     $( '[name=metodopago]' ).each( function( a, b){
@@ -645,12 +647,12 @@ $(document).ready(function()
         update_pedido( "mesanterior" );
     });
 
+    $( '#no_pago' ).hide();
+    $( 'button[name=metodopago]' ).show();
+    
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
 
     if( $( '[name=metodosentrega]' ).length == 1 ){
         $( '[name=metodosentrega]' ).click();
     }    
-
-    $( '#no_pago' ).hide();
-    $( 'button[name=metodopago]' ).show();
 });
