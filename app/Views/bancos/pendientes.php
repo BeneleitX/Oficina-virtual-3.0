@@ -28,7 +28,7 @@
                 <td><span class=\"d-none\">{$p->fecha}</span>".date( "d-m-Y", strtotime( $p->fecha ) )."</td>
                 <td>{$p->operacion}</td>
                 <td>{$p->extras->referencia}</td>
-                <td><span class=\"badge border border-red text-red\">Desconocido</span></td>
+                <td><span class=\"badge border border-".( $p->pedido_estatus ? "teal text-teal\">Encontrado" : "red text-red\">Desconocido" )."</span></td>
                 <td><span class=\"badge border border-red text-red\">Desconocido</span></td>
                 <td class=\"text-end\">$".number_format( $p->cantidad, 2  )."</td>
             </tr>";

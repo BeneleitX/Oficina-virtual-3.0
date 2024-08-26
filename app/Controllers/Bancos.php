@@ -36,7 +36,10 @@ class Bancos extends BaseController
         $this->data[ "titulo" ] = "Pagos ingresados sin destino";
 
         $db  = db_connect();
-        $sql = "select * from t_fondeos where estatus_codigo = '330-EN-ESPERA' order by fecha desc";
+        $sql = "SELECT f.id, f.operacion, f.fecha, f.estatus_codigo, f.metodopago_codigo, f.usuario_id, f.referencia, f.cantidad, f.extras, p.estatus_codigo AS pedido_estatus
+                from t_fondeos f 
+                left join t_pedidos p ON f.extras->>'$.referencia' = p.referencia 
+                WHERE f.estatus_codigo = '330-EN-ESPERA' order BY f.fecha desc";
         $this->data[ "pendientes" ] = $db->query( $sql );
 
         echo template( "bancos/pendientes", $this->data );
@@ -220,6 +223,7 @@ class Bancos extends BaseController
                         "estatus_codigo" => "620-RECIBIDO",
                         "metodopago_codigo" => $metodopago[ "codigo" ],
                         "usuario_id" => $u->id ?? null,
+                        "referencia" => $p[ "referencia" ],
                         "cantidad" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ],
                         "extras" => $respuesta[ "pagos" ][ $p[ "referencia" ] ]
                     ] );
@@ -311,6 +315,7 @@ class Bancos extends BaseController
                     "estatus_codigo" => "330-EN-ESPERA",
                     "metodopago_codigo" => null,
                     "usuario_id" => null,
+                    "referencia" => $refe,
                     "cantidad" => $respuesta[ "pagos" ][ $refe ][ "cantidad" ],
                     "extras" => $respuesta[ "pagos" ][ $refe ]
                 ] );

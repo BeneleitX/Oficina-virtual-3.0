@@ -19,6 +19,7 @@ class FondeoModel extends Model
         "estatus_codigo",
         "metodopago_codigo",
         "usuario_id",
+        "referencia",
         "cantidad",
         "extras"
     ];
