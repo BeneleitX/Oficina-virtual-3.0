@@ -118,6 +118,10 @@ function cambia_cantidad( promocion, producto ){
 
 
 function update_pedido( flag = null ){
+    if( pedido.estatus_codigo != '250-EN-PROCESO' ){
+      // return;
+    }
+
     pedido.data.total     = 0;
     pedido.data.productos = 0;
     pedido.data.peso      = 0;
@@ -342,7 +346,7 @@ function update_pedido( flag = null ){
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
-        permitepagos = !pedido.no_stock && total_productos_pedido > 0 && ( subtotal > 0  || total_saldo > 0) && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
+        permitepagos = !pedido.no_stock && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
         $( this ).prop( 'disabled',  !permitepagos || pendientes );
     });
@@ -355,7 +359,7 @@ function update_pedido( flag = null ){
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: { [csrf_token] : csrf_hash, json : json },
         success: function( result ){
-            // console.log( json );
+            console.log( result );
         }
     });
 }

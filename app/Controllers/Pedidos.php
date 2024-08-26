@@ -80,7 +80,7 @@ class Pedidos extends BaseController
             }
 
             if( $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){ 
-                return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
+                // return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
             }
 
             $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
@@ -135,6 +135,8 @@ class Pedidos extends BaseController
         $pedido = json_decode( $this->request->getPost( "json" ) );
 
         model( "PedidoModel" )->save( $pedido );
+
+        echo json_encode( [ "ok" ] );
     }
 
 

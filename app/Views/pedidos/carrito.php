@@ -299,11 +299,14 @@
                         
                         echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\">
                                     <p><strong>{$d[ "nombre" ]}</strong></p>
-                                    {$d[ "calleynumero" ]}<br>
+                                    
+                                    <p>{$d[ "calleynumero" ]}<br>
                                     Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Domicilio con errores" )."<br>
                                     ".( $d[ "colonia" ] ? "
                                     {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                                    C.P. {$d[ "codigopostal" ]} " : "" )."
+                                    C.P. {$d[ "codigopostal" ]} " : "" )."</p>
+                                    <p>".( strlen( trim( $d[ "referencias" ] ) ) ? $d[ "referencias" ] : "<div class=\"alert alert-warning\"><i class=\"fa fa-warning\"></i> Tu domicilio no tiene referencias, es MUY IMPORTANTE que nos proporciones este dato para darte un mejor servicio de entrega. Antes de finalizar tu compra, ingresa a la sección de MI PERFIL y edita el domicilio.</div>" )."</p>
+                                    <p><i class=\"fa fa-mobile-retro\"></i> {$socio->telefono}</p>
                                 </div>";
                     }
                     else{

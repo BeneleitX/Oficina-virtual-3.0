@@ -33,7 +33,8 @@
                             {$d[ "calleynumero" ]}<br>
                             Colonia {$d[ "colonia" ]}<br>
                             {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                            C.P. {$d[ "codigopostal" ]}";
+                            C.P. {$d[ "codigopostal" ]}<br><br>".( strlen( trim( $d[ "referencias" ] ) ) ? $d[ "referencias" ] : "Sin referencias" )
+                            ."<br><br><i class=\"fa fa-mobile-retro\"></i> {$cliente->telefono}";
                         }
                         else{
                             echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> No se han podido recuperar datos del domicilio destino</span>";

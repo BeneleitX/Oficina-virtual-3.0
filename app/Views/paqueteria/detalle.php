@@ -33,7 +33,7 @@
                     echo "\n<tr almacen=\"{$p[ "id" ]}\">
                         <td><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
                         <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id()." ".$p[ "socio" ]->nombre(2)."</td>
-                        <td>".estatus( "330-EN-ESPERA" )."</td>
+                        <td>".estatus( $p[ "estatus_codigo" ] )."</td>
 
                         <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
                         <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? substr( $p[ "fechas" ][ "pagado" ], 0, 10) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
