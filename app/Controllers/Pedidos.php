@@ -272,7 +272,7 @@ class Pedidos extends BaseController
         extract( $this->request->getPost() );
         $p = model( "PedidoModel" )->find( $pedido );
 
-        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha && $p[ "estatus_codigo" ] == "255-PENDIENTE" ){
+        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
 
             $p[ "estatus_codigo" ] = "420-PAGADO";
             $p[ "fechas" ][ "pagado" ]   = $fecha;     
