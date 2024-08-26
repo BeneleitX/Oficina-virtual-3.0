@@ -6,7 +6,7 @@
     margin: 12mm 12mm 12mm 12mm;
     
 }
-</style>
+</style> 
 <pre style="overflow:inherit"><div class="row"><div class="col-6"><h4 class="mt-4">Pedido # <span style="border:1px solid black" class="badge bg-white text-black"><?php echo $pedido[ "referencia" ]; ?></span></h4></div><div class="col-6 text-end">
     <img src="<?php echo base_url(); ?>assets/img/logo_color.png" style="width:120px;"></div></div>
 <div class="card mb-3" style="overflow:hidden"><table class="table rounded-3 m-0">
