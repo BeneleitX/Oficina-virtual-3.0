@@ -85,9 +85,7 @@ class Pedidos extends BaseController
 
             $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
-            $encrypter = service( "encrypter" );
-            $tado = $encrypter->encrypt( $this->data[ "pedido" ][ "id" ] , [ "key" => $this->data[ "socio" ]->id ] );
-            $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $tado ) ) );
+            $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
             $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
             $sql = "/* estatus_codigo = '201-ACTIVO' AND  */modelo_codigo = '{$this->data[ "modelo" ]}'";
@@ -423,10 +421,7 @@ class Pedidos extends BaseController
 
 
     public function ticket( $link ){
-        $encrypter = service( "encrypter" );
-        $d = base64_decode( urldecode( str_replace( "___", "%", $link ) ) );
-
-        $p = intval( $encrypter->decrypt( $d, [ "key" => $this->data[ "usuario" ]->id ] ) );
+        $p = base64_decode( urldecode( str_replace( "___", "%", $link ) ) );
 
         $this->data[ "pedido" ] = model( "PedidoModel" )->find( $p );
         $this->data[ "print" ]  = true;

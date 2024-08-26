@@ -53,17 +53,24 @@
             if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
                 $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
             }
-            else{
-                // $domicilios = $socio->getDomicilios();
-                
+            else{                
+                if( !is_array( $pedido[ "data" ][ "domicilio" ] ) ){
+                    $domicilios = $socio->getDomicilios();
+
+                    $pedido[ "data" ][ "domicilio" ] = $domicilios[ $pedido[ "data" ][ "entrega" ] ];
+                    model( "PedidoModel" )->save( $pedido );
+                }
 
                 $d = $pedido[ "data" ][ "domicilio" ];
 
                 echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card border-black mb-3 p-2\">
+                ".$socio->nombre(2)."<strong>
                 {$d[ "calleynumero" ]}
                 Colonia {$d[ "colonia" ]}
                 {$d[ "localidad" ]}, {$d[ "entidad" ]}
-                C.P. {$d[ "codigopostal" ]}
+                C.P. {$d[ "codigopostal" ]}</strong>
+                {$d[ "referencias" ]}
+                {$socio->telefono}
                 </div>";
 
                 $entrega = $d[ "nombre" ];
