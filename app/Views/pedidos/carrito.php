@@ -268,7 +268,8 @@
                     if( sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
                             if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
-                                $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "domicilio" ] ];
+
+                                $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 
                                 $dom = 0;
                             }
