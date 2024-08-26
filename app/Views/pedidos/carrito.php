@@ -546,9 +546,13 @@
                                     echo " btn-primary ";
                                 } 
                                 
-                                echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
+                                echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
+
+                               
                             }
                         }
+
+                        echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
                     }
                     ?>
                 </form>

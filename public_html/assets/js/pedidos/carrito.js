@@ -650,4 +650,7 @@ $(document).ready(function()
     if( $( '[name=metodosentrega]' ).length == 1 ){
         $( '[name=metodosentrega]' ).click();
     }    
+
+    $( '#no_pago' ).hide();
+    $( 'button[name=metodopago]' ).show();
 });

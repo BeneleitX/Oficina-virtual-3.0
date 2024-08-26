@@ -99,7 +99,7 @@ class Pedidos extends BaseController
 
             $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
             $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
-            $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 ? 1 : 0;
+            $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 || ($this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id )  ? 1 : 0;
             $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500 ? 1 : 0;
             $this->data[ "titulo" ]    = "Detalles de pedido";
         }
