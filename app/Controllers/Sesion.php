@@ -116,6 +116,9 @@ class Sesion extends BaseController
             $db = db_connect();
             $db->query( "select f_get_estatus(  {$usuario->id}, 1 )" );
             $db->query( "select f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
+
+            // si el PADRE es inactivo, comprimir red
+            $db->query( "select f_get_estatus( {$usuario->redes->modelos->{'10-NUTRICION'}->padre}, 0 )" );
             
             // UPDATE t_usuarios SET redes = JSON_SET( redes, CONCAT('$.modelos."', i_modelo ,'".profundidad'), f_get_niveles( id, i_modelo ) ) WHERE id = socio->>'$.id';
             

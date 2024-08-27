@@ -70,7 +70,7 @@
                     echo "\n<tr almacen=\"{$p[ "id" ]}\">
                         <td><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
                         <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id( $p[ "modelo_codigo" ] )." ".$p[ "socio" ]->nombre(2)."</td>
-                        <td>".estatus( "330-EN-ESPERA" )."</td>
+                        <td>".estatus( $p[ "estatus_codigo" ] )."</td>
 
                         <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
 

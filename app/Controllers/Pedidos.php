@@ -24,7 +24,7 @@ class Pedidos extends BaseController
         }
         
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodosentrega", "codigo = '00-ALMACEN' OR modelo_codigo = '{$modelo}'");
         load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
 
         if( $this->data[ "usuario" ] === null ){
@@ -93,7 +93,7 @@ class Pedidos extends BaseController
     
             load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodosentrega", "codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
@@ -119,7 +119,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}' )");
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ] );
