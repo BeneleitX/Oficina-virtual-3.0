@@ -502,7 +502,7 @@
                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                     <?php 
-                    if( $pagado || $cancelado ){
+                    if( $pagado ){
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">

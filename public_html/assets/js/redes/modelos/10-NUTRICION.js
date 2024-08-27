@@ -481,8 +481,9 @@ nodeEnter.append('svg:circle')
     root = treeData[ 0 ];
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
+    
 
     update( root );  
 
-    $( canvas + ' svg' ).attr( 'width', final_x + 60 ).attr( 'height', final_y + 100 ); 
+    $( canvas + ' svg' ).attr( 'width', final_x + 60 ).attr( 'height', final_y + 120 ); 
 }

@@ -137,11 +137,11 @@ a.menu-opcion:not(:first-child).selected{
     border:1px solid white;
     border-radius: 8px;
     background:white;
-    padding:15px;
+    padding: 0 15px !important;
     overflow:auto;
-    height: calc( 100vh - 135px );
-    min-height: calc( 100vh - 135px );
-    margin-bottom: 0;
+    height: calc( 100vh - 140px );
+    min-height: calc( 100vh - 140px );
+    margin: -15px -15px -15px -15px !important;
 }
 
 .btn .contador{
@@ -226,8 +226,8 @@ a.mini{
     }
 
     #downline{
-        height: calc( 100vh - 255px );
-        min-height: calc( 100vh - 255px );
+        height: calc( 100vh - 65px );
+        min-height: calc( 100vh - 65px );
     }
 
 
