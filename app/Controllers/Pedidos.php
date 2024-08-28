@@ -83,7 +83,8 @@ class Pedidos extends BaseController
                 // return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
             }
 
-            $this->data[ "socio"  ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
+            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
+            $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
 
             $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
             $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
@@ -97,6 +98,7 @@ class Pedidos extends BaseController
             load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
+            $this->data[ "enproceso" ] = 0;
             $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
             $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
             $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 || ($this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id )  ? 1 : 0;
@@ -108,6 +110,7 @@ class Pedidos extends BaseController
 
             $this->data[ "modelo" ] = $data;
             $this->data[ "pagado" ] = 0;
+            $this->data[ "enproceso" ] = 1;
             $this->data[ "bloqueado" ] = 0;
             $this->data[ "cancelado" ] = 0;
             $this->data[ "entregado" ] = 0;

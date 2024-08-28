@@ -158,9 +158,9 @@
         
                 // botones para metodo de entrega
                 foreach( METODOSENTREGA as $me ){
-
+                    // PROBLEMA PARA STAFF
                     // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
-                    if( $me[ "settings" ][ "tipocosto" ] == "almacen" || ( $me[ "settings" ][ "tipocosto" ] == "efectivo" /* && sizeof( $domicilios ) */ ) || ( $me[ "settings" ][ "tipocosto" ] == "recarga" /* && sizeof( $celulares ) */ ) ){
+                    if( in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
                         echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                     }
                 }
@@ -285,7 +285,7 @@
                                         $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
                                     }
 
-                                    $d = $pedido[ "data" ][ "domicilio" ];
+                                    $d = is_array( $pedido[ "data" ][ "domicilio" ] ?? "" ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 }
                             }
                         }

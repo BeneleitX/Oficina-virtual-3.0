@@ -12,6 +12,7 @@
         <tr>
             <th>Código</th>
             <th>Nombre</th>
+            <th>Descripcion</th>
             <th>Estatus</th>
             <th>Comisión</th>
             <th></th>
@@ -21,11 +22,17 @@
     <tbody>
         <?php 
             foreach( $pasarelas as $metodopago ){
+
+                if( !isset( $metodopago[ "settings" ][ "tipocomision" ] ) ){
+                    $metodopago[ "settings" ][ "tipocomision" ] = "";
+                }
+
                 echo "\n<tr pasarela=\"{$metodopago[ "codigo" ]}\">
-                    <td>{$metodopago[ "codigo" ]}</td>
+                    <td><span class=\"badge bg-marine\">{$metodopago[ "codigo" ]}</span></td>
                     <td>{$metodopago[ "nombre" ]}</td>
+                    <td>{$metodopago[ "settings" ][ "descripcion" ]}</td>
                     <td>".estatus( $metodopago[ "estatus_codigo" ] )."</td>
-                    <td class=\"text-end\">$".number_format( $metodopago[ "settings" ][ "comision" ], 2 )."</td>
+                    <td class=\"text-end\">".( $metodopago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $metodopago[ "settings" ][ "comision" ], 2 ).( $metodopago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "" )."</td>
                     <td class=\"text-end\"><a href=\"".base_url( "promo_detalle/".$metodopago[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
                 </tr>";
             }

@@ -11,6 +11,14 @@ class Rangos extends BaseController
 
     
     public function catalogo( $modelo ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+                
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Entrega de pines de rango";
         $this->data[ "modelo" ] = $modelo;

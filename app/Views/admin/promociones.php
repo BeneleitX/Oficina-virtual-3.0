@@ -25,8 +25,8 @@
         <?php 
             foreach( $promociones as $promocion ){
                 echo "\n<tr socio=\"{$promocion[ "codigo" ]}\">
-                    <td><span class=\"badge bg-{$promocion[ "settings" ][ "clase" ]}\">{$promocion[ "settings" ][ "siglas" ]}</span> {$promocion[ "codigo" ]}</td>
-                    <td>{$promocion[ "settings" ][ "nombre" ]}</td>
+                    <td nowrap><span class=\"badge bg-{$promocion[ "settings" ][ "clase" ]}\">{$promocion[ "settings" ][ "siglas" ]}</span> {$promocion[ "codigo" ]}</td>
+                    <td nowrap>{$promocion[ "settings" ][ "nombre" ]}</td>
                     <td>{$promocion[ "settings" ][ "descripcion" ]}</td>
                     <td>".estatus( $promocion[ "estatus_codigo" ] )."</td>
                     <td nowrap>".substr( $promocion[ "inicia" ], 0, 10 )."</td>

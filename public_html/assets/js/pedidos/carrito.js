@@ -142,7 +142,7 @@ function update_pedido( flag = null ){
             total_comisionable = 0,
             promocion        = $( this ).attr( 'promocion' ),
             disponible       = false;
-            
+
         disponible = eval( cat_promociones[ promocion ].formulas.disponible );
 
         pedido.promociones[ promocion ] = {
@@ -327,7 +327,7 @@ function update_pedido( flag = null ){
         console.log( b, 'hide' );
     }
       
-    $( '[name=metodopago]' ).each( function( a, b){
+    $( 'button[name=metodopago]' ).each( function( a, b){
         var metodopago  = $( this ).attr( 'value' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),

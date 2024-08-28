@@ -36,7 +36,7 @@
     <div class="card-header bg-gray-600">
         <div class="row">
             <div class="col-6">
-                <h5 class="text-white mb-0">API key <?php echo "<span class=\"badge bg-mustard fs-5\">********".substr( $k[ "apikey" ], 8 )."</span>"; ?></h5>
+                <h5 class="text-white mb-0">API key <?php echo "<span class=\"badge bg-mustard fs-5\">****".substr( $k[ "apikey" ], 4 )."</span>"; ?></h5>
             </div>
             <div class="col-6 text-end">
                 <button class="btn btn-sm btn-danger">Desactivar</button>
@@ -46,12 +46,12 @@
 
     <div class="card-body">
         <div class="row">
-            <div class="col-lg-2">
+            <div class="col-lg-3">
                 <p>Cliente: <strong><?php echo $k[ "cliente" ]; ?></strong></p>
                 <p>Estatus: <span class="badge bg-teal">ACTIVO</span></p>
             </div>
-            <div class="col-lg-10 text-center">
-                <h1 class="text-gray-300 mt-3">No hay datos para mostrar en la gráfica</h1>
+            <div class="col-lg-9 text-center">
+                <h1 class="text-gray-300 my-5">No hay datos para mostrar en la gráfica</h1>
             </div>
         </div>
     </div>
