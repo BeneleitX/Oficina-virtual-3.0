@@ -157,14 +157,21 @@
                 }
         
                 // botones para metodo de entrega
-                foreach( METODOSENTREGA as $me ){
-                    // PROBLEMA PARA STAFF
-                    // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
-                    if( in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
-                        echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                if( $pedido[ "metodoentrega_codigo" ] ){
+
+                    foreach( METODOSENTREGA as $me ){
+                        // PROBLEMA PARA STAFF
+                        // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
+    
+                        if(  in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
+                            echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                        }
                     }
                 }
-                
+                else{
+                    echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> Este pedido aun no cuenta con información para entrega</span>";
+                }                    
+            
                 $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
                 ?>
             </div>       
@@ -717,6 +724,9 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
                                     echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
                                     $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
+                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+
+                                    $pago = METODOSPAGO[ "1".substr( $modelo, 0, 1 )."-REFERENCIA" ];
                                     echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
                                         ?>

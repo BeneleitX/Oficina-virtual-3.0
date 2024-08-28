@@ -76,7 +76,8 @@ class Pedidos extends BaseController
             $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
 
             if( !$this->data[ "pedido" ] ){ 
-                return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
+                // return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
+                return template( "pedidos/no_pedido", $this->data );
             }
 
             if( $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){ 
