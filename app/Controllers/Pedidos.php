@@ -118,7 +118,7 @@ class Pedidos extends BaseController
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
             load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodospago",    " modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}' )");
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
@@ -274,14 +274,23 @@ class Pedidos extends BaseController
 
         if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
 
+            load_catalogo( "metodospago", "modelo_codigo = '{$p[ "modelo_codigo" ]}'");
+
+            $metodopago = METODOSPAGO[ $metodopago ];
+            $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+
             $p[ "estatus_codigo" ] = "420-PAGADO";
-            $p[ "metodopago_codigo" ] = "9".substr( $p[ "modelo_codigo" ], 0, 1 )."-CONTADO";
-            $p[ "fechas" ][ "pagado" ]   = $fecha;     
-            $p[ "fechas" ][ "califica" ] = $fecha;    
+            $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
+
+            $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $u->data->saldo->{$p[ "modelo_codigo" ]} ?? 0;
+            
+            $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ( $total * $metodopago[ "settings" ][ "comision" ] / 100 );
+
+            $p[ "fechas" ][ "pagado" ]   = $fecha;
+            $p[ "fechas" ][ "califica" ] = $fecha;
 
             model( "PedidoModel" )->save( $p );
 
-            $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
             $data = $u->data;                                    
             $historial = $u->historial;  
         

@@ -533,7 +533,7 @@
                     }
                     else{
                         foreach( METODOSPAGO as $mp ){
-                            if( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ){
+                            if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
                                 echo "\n<button class=\"btn col-12 mb-3 ";
 
                                 if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
@@ -709,6 +709,19 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
                             <li>Se actualizarán estatus y calificaciones del socio</lo>
                         </ul></div>
 
+                        <label class="form-label">Elige el tipo de pago</label>
+                                <select class="form-select mb-3" name="metodopago">
+                                    <?php
+
+                                    $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
+                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+
+                                    $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
+                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+
+                                        ?>
+                                </select>
+
                         <label class="form-label">Elige la fecha de compra y que se aplicará para calificación</label>
                         <div class="row">
                             <div class="col-6">
@@ -754,8 +767,7 @@ if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
             </div>
         </div>
     </div>
-
-    <?php
+    <?php 
 }
 ?>
 

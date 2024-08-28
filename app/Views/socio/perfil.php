@@ -348,7 +348,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 												Colonia ".( $d[ "colonia" ] ?? "DESCONOCIDA * Editar para corregir errores" )."<br>
 												".( $d[ "colonia" ] ? "
 												{$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-												C.P. <span class=\"d_cp\">{$d[ "codigopostal" ]}</span>" : "" )."
+												C.P. <span class=\"d_cp\">{$d[ "codigopostal" ]}</span><br><br><i>{$d[ "referencias"]}</i>" : "" )."
 											</p>
 										</div>
 									</div>
