@@ -434,9 +434,9 @@ class Pedidos extends BaseController
         $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
         load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-        load_catalogo( "metodospago",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-        load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
-        load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+        load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
+        load_catalogo( "metodosentrega", "modelo_codigo = '{$this->data[ "modelo" ]}'");
+        load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
         echo template( "pedidos/ticket", $this->data );
     }
 }
