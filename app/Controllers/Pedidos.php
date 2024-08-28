@@ -275,6 +275,7 @@ class Pedidos extends BaseController
         if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
 
             $p[ "estatus_codigo" ] = "420-PAGADO";
+            $p[ "metodopago_codigo" ] = substr( $p[ "modelo_codigo" ], 0, 1 )."1-CONTADO";
             $p[ "fechas" ][ "pagado" ]   = $fecha;     
             $p[ "fechas" ][ "califica" ] = $fecha;    
 
