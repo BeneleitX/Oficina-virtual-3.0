@@ -110,7 +110,6 @@
 	</div>
 </div>
 
-
 <script>
 var cat_productos   = <?php echo json_encode( $productos ); ?>,
     total_productos = <?php echo $pedido[ "data" ][ "productos" ]; ?>,

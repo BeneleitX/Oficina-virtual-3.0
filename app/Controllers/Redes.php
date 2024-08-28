@@ -46,6 +46,7 @@ class Redes extends BaseController
         echo $socio->getUplineJSON( $modelo );
     }    
 
+
     public function userdata(){
         extract( $this->request->getPost() );
         $d = model( "UsuarioModel" )->find( $socio );
@@ -60,25 +61,48 @@ class Redes extends BaseController
             f_get_calificacion( {$d->id}, '{$m_2}', '{$modelo}' ) as '{$m_2}', 
             f_get_calificacion( {$d->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', 
             f_get_calificacion( {$d->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
-        $calificaciones = $db->query($sql)->getRowArray();
+        
+            $calificaciones = $db->query($sql)->getRowArray();
+            load_catalogo( "calificaciones");
 
         $html = "\n
             <div>
                 <table class=\"w-100 m-0\"><tr><td><svg width=\"120\" style=\"zoom:2\" height=\"125\"><g class=\"vaciado\"></g></svg></td><td class=\"text-center w-100\"><h5>".$d->nombre(2)."<br>".$d->id( null, "marine" )."</h5>
                 <p class=\"text-".$e[ "color" ]." \">".$e[ "descripcion" ]."</p>
-                <h5>
-                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_2 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_2 ], 3, 2 )."</span>
-                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_1 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_1 ], 3, 2 )."</span>
-                    <span class=\"badge bg-".( intval( substr( $calificaciones[ $m_0 ], 0, 2 ) ) >= 10 ? "teal" : "gray-300" )."\">".substr( $calificaciones[ $m_0 ], 3, 2 )."</span>
-                </h5>
+                <h5>";
+
+                $html .= "<span class=\"badge bg-".( intval( substr( $calificaciones[ $m_0 ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\">".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ]."</span>";
+
+        $html .= "</h5>
                 </tr></table>
-                <table class=\"table small w-50\">
+
+<div class=\"row\">
+    <div class=\"col-6\">
+
+                    <table class=\"table small w-100\">
                 <tr><td>Nacimiento</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->fechanac ) )."</td></tr>
                 <tr><td>Registro</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->historial->registro ) )."</td></tr>
-                <tr><td>Verificación</td><td class=\"text-end\">".( $d->historial->validacion ? date( "d-m-Y", strtotime( $d->historial->validacion ) ) : "" )."</td></tr>
+                
                 <tr><td>Primer compra</td><td class=\"text-end\">".( $d->getPrimerCompra( $modelo ) ? date( "d-m-Y", strtotime( $d->getPrimerCompra( $modelo ) ) ) : "" )."</td></tr>
                 <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
-                </table>";
+                </table>
+
+
+    </div>
+    <div class=\"col-6\">";
+
+    if( $d->redes->modelos->{$modelo}->padre == $this->data[ "usuario" ]->id or $d->id == $this->data[ "usuario" ]->id ){
+        $html .= "\n<table class=\"table small w-100\">
+                    <tr><td>Telefono</td><td class=\"text-end\">".$d->telefono."</td></tr>
+                    <tr><td>Correo</td><td class=\"text-end\">".$d->correo."</td></tr>
+                    <tr><td>CURP</td><td class=\"text-end\">".$d->curp."</td></tr>
+                    <tr><td>Verificación</td><td class=\"text-end\">".( $d->historial->validacion ? date( "d-m-Y", strtotime( $d->historial->validacion ) ) : "no" )."</td></tr>
+                    </table>";
+    }
+
+    $html .= "</div>
+            </div>
+            ";
 
 
             if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
