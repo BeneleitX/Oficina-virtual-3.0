@@ -88,7 +88,7 @@ abstract class BaseController extends Controller
         load_catalogo( "modelos", "estatus_codigo = '201-ACTIVO'" );
         load_catalogo( "estatus" );
         load_catalogo( "rangos" );
-        load_catalogo( "variables", null );
+        load_catalogo( "variables" );
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
