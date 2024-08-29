@@ -16,33 +16,14 @@ function AESdesencriptar($encodedInitialData, $key128){
   }
 
 function getCadenaXML( $pedido, $socio ){
-
-    $sandbox = [
-        "empresa"  => "SNBX",
-        "sucursal" => "01SNBXBRNCH",
-        "usuario"  => "SNBXUSR0123",
-        "password" => "SECRETO",
-        "key128"   => "5DCC67393750523CD165F17E1EFADD21",
-        "cadena"   => "SNDBX123",
-        "url"      => "https://sandboxpo.mit.com.mx/gen"
-    ];
-
-    $beneleit = [
-        "empresa"  => "6422",
-        "sucursal" => "0003",
-        "usuario"  => "6422SIUS0",
-        "password" => "9ON9SF7YYU",
-        "key128"   => "E2DC8AFBF99F6E298C813F4BD572D688",
-        "cadena"   => "9265655162",
-        "url"      => "https://bc.mitec.com.mx/p/gen"
-    ];    
+    $getnet = VARIABLES[ "getnet" ][ "valor" ];
 
     // Elegir ambiente
-    $AES = $beneleit;
+    $AES = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
 
     $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $pedido[ "data" ][ "saldo" ];
     $comisionbanco = $subtotal * 2 / 100;
-    $total = $subtotal + $comisionbanco;
+    $total = 2; //$subtotal + $comisionbanco;
 
     $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>{$socio->correo}</mail_cliente><version>IntegraWPP</version></url></P>";
 
