@@ -14,7 +14,7 @@ class Gateway extends BaseController
         $AES = $getnet[ "ambientes" ][ "sandbox" ];
 
         $respuesta = $this->request->getPost( "strResponse" );
-
+        
         /* test exito     
         [reference] => MIFACTURA001
         [response] => approved
@@ -24,7 +24,7 @@ class Gateway extends BaseController
         [amount] => 2500.00
         [cc_mask] => 545454XXXXXX1234
         */
-        $respuestax = "DwANrZGeJ2SYkemnSKEr5L%2BEUAADf3ZRApy%2B8rA9%2FeV7snCbbCprpMpT84vdB3lDMKBfDzg6mBe4mD6xyG1h%2BHFCuUdTXntkqzNgEUISF2WuiWdjD9byoBcOp783oJ5c2E%2FA8hGUbeDrBLbypghf73ShzM8IaXi8FfTrc0uGNfIOeZ7iVnJCoAqCZpTjP%2FhyhdwBTCyH7IOwRmvmi174GJJDhRGA%2F%2Bhrx01mhqJb%2Bcr9EtJcqZugy7IZ9dPfLTG5XlDu4xaKPg3%2B3PFPInMbVAIHAwpmEUoLMR%2BB4IBDifrEIfarzT8v2i5zMH%2BgDBmvimD7AAc06eZFsWsLxNmPDk3iGEUCIZ9pUgLwbgVRbfknAdLaw86IeTOjMCjKL%2F4RP4RsF%2FHN%2BV5Q4wXMSid5Kc0h3L%2Fta%2FXFesHcgnZh9yP8t87roShe4UiOJNK8wrRbuMWtI7zf0ltwAACK7T3EAGdsJV7vkByHualMnLfcO%2BjAjSq2vPyfj0y%2B4f%2BQBE8HXvs%2BFlq7dxfNwX0LzhbwZ1bPzoUm%2FeSF4D%2FM5j%2B6fnyZRE0wRn%2BdOWP4jxq06LJSWddzWw6gx5pT%2F3rYTLF%2BLAYSmKsUxdQY39AAkixigQw3NCVqhZG7jWHfF%2Fhj%2FE4BdePWCrssYIAMNZP87kl5SvWlLw0087MR1DyDNIZLhXNZvcRAhtDtsCvuNDgMRcbHqCqMfwJkQ63XNgWV9l55rsSe9vkOezqMwyGrAZcqUqTDnfMTVUCw62SC6KlZy1wGIlfsD9JuZQmFTNByouhxX7nTp3tJhWuKdRlkUChg9SJ2ghLBPnVrtbjx6raE%2BI9oz0KilwHSrWSoyPlXiWR%2FgryxHzvJgpGqn6DWXEBp5NkYqWz5x5TryPnv3IXHOtjG2iHI4EHVit5iTK4Yp%2BZhkP5mmulrLdqPnhNaOUV4iSF1k6QgZm9ExhdCq9PwhGlMz9HH12xRDKpGm6T62MsT0uSx02Y182IbnlPLdlZujAXUb1RQyb%2BIWHcu52hWRcSIcOK7hAXMBkK%2F7KUGiInlXD3WIDAyExo7lFhQcru3dDOZj5WQHXRgVnQIotG2Wn%2BjHW8nrvdhBVU%2BjjjqI3T4sfsob7SK6PgaN%2BZORtGH%2FxcdAGLXv2Ty9sfSfqLwx%2Frk";
+        $respuesta = "DwANrZGeJ2SYkemnSKEr5L%2BEUAADf3ZRApy%2B8rA9%2FeV7snCbbCprpMpT84vdB3lDMKBfDzg6mBe4mD6xyG1h%2BHFCuUdTXntkqzNgEUISF2WuiWdjD9byoBcOp783oJ5c2E%2FA8hGUbeDrBLbypghf73ShzM8IaXi8FfTrc0uGNfIOeZ7iVnJCoAqCZpTjP%2FhyhdwBTCyH7IOwRmvmi174GJJDhRGA%2F%2Bhrx01mhqJb%2Bcr9EtJcqZugy7IZ9dPfLTG5XlDu4xaKPg3%2B3PFPInMbVAIHAwpmEUoLMR%2BB4IBDifrEIfarzT8v2i5zMH%2BgDBmvimD7AAc06eZFsWsLxNmPDk3iGEUCIZ9pUgLwbgVRbfknAdLaw86IeTOjMCjKL%2F4RP4RsF%2FHN%2BV5Q4wXMSid5Kc0h3L%2Fta%2FXFesHcgnZh9yP8t87roShe4UiOJNK8wrRbuMWtI7zf0ltwAACK7T3EAGdsJV7vkByHualMnLfcO%2BjAjSq2vPyfj0y%2B4f%2BQBE8HXvs%2BFlq7dxfNwX0LzhbwZ1bPzoUm%2FeSF4D%2FM5j%2B6fnyZRE0wRn%2BdOWP4jxq06LJSWddzWw6gx5pT%2F3rYTLF%2BLAYSmKsUxdQY39AAkixigQw3NCVqhZG7jWHfF%2Fhj%2FE4BdePWCrssYIAMNZP87kl5SvWlLw0087MR1DyDNIZLhXNZvcRAhtDtsCvuNDgMRcbHqCqMfwJkQ63XNgWV9l55rsSe9vkOezqMwyGrAZcqUqTDnfMTVUCw62SC6KlZy1wGIlfsD9JuZQmFTNByouhxX7nTp3tJhWuKdRlkUChg9SJ2ghLBPnVrtbjx6raE%2BI9oz0KilwHSrWSoyPlXiWR%2FgryxHzvJgpGqn6DWXEBp5NkYqWz5x5TryPnv3IXHOtjG2iHI4EHVit5iTK4Yp%2BZhkP5mmulrLdqPnhNaOUV4iSF1k6QgZm9ExhdCq9PwhGlMz9HH12xRDKpGm6T62MsT0uSx02Y182IbnlPLdlZujAXUb1RQyb%2BIWHcu52hWRcSIcOK7hAXMBkK%2F7KUGiInlXD3WIDAyExo7lFhQcru3dDOZj5WQHXRgVnQIotG2Wn%2BjHW8nrvdhBVU%2BjjjqI3T4sfsob7SK6PgaN%2BZORtGH%2FxcdAGLXv2Ty9sfSfqLwx%2Frk";
 
         /* test denegado emisor
         [reference] => MIFACTURA001
@@ -53,7 +53,10 @@ class Gateway extends BaseController
 
             // test
             $respuesta[ "reference" ] = "10828796";
-
+            $d = array_reverse(explode( "/", $respuesta[ "date" ] ) );
+            $d[0] += 2000;
+            $respuesta[ "date" ] = date( "Y-m-d", strtotime( implode( "/", $d ) ) );
+    
             $p = model( "PedidoModel" )->find( substr( $respuesta[ "reference" ], 0, -1 ) );
 
             $p[ "estatus_codigo" ] = "420-PAGADO";
@@ -90,7 +93,7 @@ class Gateway extends BaseController
             $db->query( "select f_get_estatus( {$u->id}, 0 )" );
             $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" );    
 
-            model( "FondeoModel" )->save( [
+            model( "FondeoModel" )->ignore( true )->save( [
                 "operacion" => $respuesta[ "foliocpagos" ],
                 "fecha" => $respuesta[ "date" ]." ".$respuesta[ "time" ],
                 "estatus_codigo" => "620-RECIBIDO",
