@@ -16,9 +16,9 @@ function AESdesencriptar($encodedInitialData, $key128){
   }
 
 function getCadenaXML( $pedido, $socio ){
-    $getnet = VARIABLES[ "getnet" ][ "valor" ];
 
     // Elegir ambiente
+    $getnet = VARIABLES[ "getnet" ][ "valor" ];
     $AES = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
 
     $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $pedido[ "data" ][ "saldo" ];
@@ -27,16 +27,24 @@ function getCadenaXML( $pedido, $socio ){
 
     $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>{$socio->correo}</mail_cliente><version>IntegraWPP</version></url></P>";
 
-    $cifrado = AESencriptar( $xml, $AES[ "key128" ] );
-    $encodedString = "<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>";
-    
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $AES[ "url" ] );
-    curl_setopt($curl, CURLOPT_POST, true );
-    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "xml" => $encodedString ] ) );
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
-    $respuesta = curl_exec( $curl );
-    curl_close($curl);
+    return $xml;
+}
 
-    return simplexml_load_string( AESdesencriptar( $respuesta, $AES[ "key128" ] ) )->nb_url;
+function getCadenaURL( $xml ){
+  // Elegir ambiente
+  $getnet = VARIABLES[ "getnet" ][ "valor" ];
+  $AES = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
+
+  $cifrado = AESencriptar( $xml, $AES[ "key128" ] );
+  $encodedString = "<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>";
+  
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $AES[ "url" ] );
+  curl_setopt($curl, CURLOPT_POST, true );
+  curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "xml" => $encodedString ] ) );
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+  $respuesta = curl_exec( $curl );
+  curl_close($curl);
+
+  return simplexml_load_string( AESdesencriptar( $respuesta, $AES[ "key128" ] ) )->nb_url;
 }

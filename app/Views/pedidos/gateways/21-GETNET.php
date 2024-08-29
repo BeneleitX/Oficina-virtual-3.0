@@ -1,6 +1,8 @@
 <?php 
 helper( "getnet_helper" );
-$xurl = getCadenaXML( $pedido, $socio );
+
+echo $xml  = getCadenaXML( $pedido, $socio );
+$xurl = getCadenaURL( $xml );
 ?>
 
 
