@@ -49,13 +49,18 @@
         if( isset( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){
             $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ];
             
+            $domicilios = $socio->getDomicilios();
+
+            if( !$pedido[ "data" ][ "entrega" ] ){
+                $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
+            }
 
             if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
                 $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
             }
             else{                
-                if( !is_array( $pedido[ "data" ][ "domicilio" ] ) ){
-                    $domicilios = $socio->getDomicilios();
+                if( !isset( $pedido[ "data" ][ "domicilio" ] ) || !is_array( $pedido[ "data" ][ "domicilio" ] ) ){
+                    
 
                     $pedido[ "data" ][ "domicilio" ] = $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                     model( "PedidoModel" )->save( $pedido );
