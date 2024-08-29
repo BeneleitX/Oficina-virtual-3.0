@@ -1,7 +1,7 @@
 <?php 
 helper( "getnet_helper" );
 
-echo $xml  = getCadenaXML( $pedido, $socio );
+$xml  = getCadenaXML( $pedido, $socio );
 $xurl = getCadenaURL( $xml );
 ?>
 

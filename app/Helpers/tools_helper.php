@@ -136,6 +136,8 @@ function estatus( $codigo, $bn = false ){
 
 function mes($mesnum, $ext = 0)
 {
+    $mesnum = intval( $mesnum );
+
     if($mesnum < 1) $mesnum += 12;
     if($mesnum > 12) $mesnum -= 12;
 
