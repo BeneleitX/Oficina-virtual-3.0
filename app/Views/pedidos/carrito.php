@@ -328,10 +328,10 @@
                             if( $entregado ){ 
                                 ?>
                                 <div class="col-12">
-                                    <div class="alert alert-warning m-0">
+                                    <div class="alert alert-info m-0">
                                         Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.
                                         <br>Guía de rastreo: 
-                                        <span class="badge bg-mustard fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
+                                        <span class="badge bg-marine fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
                                     </div>
                                 </div>
                                 <?php 
