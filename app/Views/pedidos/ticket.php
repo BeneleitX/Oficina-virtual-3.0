@@ -86,10 +86,17 @@
 <div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de entrega</h5></div>
     <div class="card-footer"><table class="w-100"><tr><td><?php echo $me[ "nombre" ]; ?></td><td><?php echo $entrega; ?></td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionentrega" ], 2 ); ?></h5></td></tr></table></div>
-<?php } ?>
+</div>
+<?php }
+else{
+    echo "<div class=\"alert alert-danger mt-3 mb-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
+}
 
 
-</div><div class="card mb-3">
+ ?>
+
+
+<div class="card mb-3">
     <div class="card-header bg-gray-300"><h5 class="m-0">Método de pago</h5></div>
     <div class="card-footer"><table class="w-100"><tr><td><?php echo $mp[ "nombre" ]; ?></td><td class="text-end">Comision</td><td class="text-end" style="width:120px"><h5 class="m-0">$<?php echo number_format( $pedido[ "data" ][ "comisionbanco" ], 2 ); ?></h5></td></tr></table></div>
 </div>
