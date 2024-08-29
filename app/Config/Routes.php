@@ -22,7 +22,6 @@ $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
 $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
-$routes->post( "GetnetGatewayResponse",     "Gateway::GetnetGatewayResponse" ); 
 $routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" ); 
 
 $routes->get( "kkk",                        "Tools::kkk" );   
