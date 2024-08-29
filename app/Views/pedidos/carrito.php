@@ -157,7 +157,7 @@
                 }
         
                 // botones para metodo de entrega
-                if( $pedido[ "metodoentrega_codigo" ] ){
+               // if( $pedido[ "metodoentrega_codigo" ] ){
 
                     foreach( METODOSENTREGA as $me ){
                         // PROBLEMA PARA STAFF
@@ -167,10 +167,10 @@
                             echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                         }
                     }
-                }
+                /* }
                 else{
                     echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> Este pedido aun no cuenta con información para entrega</span>";
-                }                    
+                }      */               
             
                 $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
                 ?>
