@@ -247,13 +247,7 @@ class Registro extends BaseController
             return json_encode( $respuesta );
         }
 
-        // temporal.. hay que usar el estatus directo de la tabla
-        // pero ese se debe actualizar con la función f_get_estatus que está pendiente de revisar
-        if( 
-            substr( $patrocinador->data->estatus->modelos->{"10-NUTRICION"}, 0, 3 ) < 200 &&
-            substr( $patrocinador->data->estatus->modelos->{"20-TELEFONIA"}, 0, 3 ) < 200 &&
-            substr( $patrocinador->data->estatus->modelos->{"30-ALIMENTOS"}, 0, 3 ) < 200 
-        ){
+        if( substr( $patrocinador->estatus_codigo, 0, 3 ) < 200 ){
             $respuesta[ "error" ] = "El patrocinador no está activo";
             return json_encode( $respuesta );
         }
