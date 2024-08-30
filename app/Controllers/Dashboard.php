@@ -23,7 +23,7 @@ class Dashboard extends BaseController
 
     public function sociodata( $request = null ){
         
-        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
             return redirect()->to( "inicio" ); 
         }
 
@@ -38,6 +38,13 @@ class Dashboard extends BaseController
             $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
         }
+
+        elseif( $this->request->getPost( "busca_id" ) ){
+            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+        }
+
+
+
         elseif( $this->request->getPost( "socio" ) ){
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
         }
@@ -123,6 +130,7 @@ class Dashboard extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
     }
+
 
     public function splash(){
         $html = "";
@@ -325,46 +333,46 @@ class Dashboard extends BaseController
 
                     $( document ).ready(function(){
 
-                    var count = 200;
-var defaults = {
-  origin: { y: 0.7 }
-};
+                        var count = 200;
+                        var defaults = {
+                        origin: { y: 0.7 }
+                        };
 
-function fire(particleRatio, opts) {
-  confetti({
-    ...defaults,
-    ...opts,
-    particleCount: Math.floor(count * particleRatio),
-    origin: { y: 1 }
-  });
-}
+                        function fire(particleRatio, opts) {
+                        confetti({
+                            ...defaults,
+                            ...opts,
+                            particleCount: Math.floor(count * particleRatio),
+                            origin: { y: 1 }
+                        });
+                        }
 
-                        ( function call_confetti() {
-                        
+                                                ( function call_confetti() {
+                                                
 
 
-fire(0.25, {
-  spread: 26,
-  startVelocity: 45,
-});
-fire(0.2, {
-  spread: 60,
-});
-fire(0.35, {
-  spread: 100,
-  decay: 0.91,
-  scalar: 0.8
-});
-fire(0.1, {
-  spread: 300,
-  startVelocity: 15,
-  decay: 0.92,
-  scalar: 1.2
-});
-fire(0.1, {
-  spread: 120,
-  startVelocity: 30,
-});                            
+                            fire(0.25, {
+                            spread: 26,
+                            startVelocity: 45,
+                            });
+                            fire(0.2, {
+                            spread: 60,
+                            });
+                            fire(0.35, {
+                            spread: 100,
+                            decay: 0.91,
+                            scalar: 0.8
+                            });
+                            fire(0.1, {
+                            spread: 300,
+                            startVelocity: 15,
+                            decay: 0.92,
+                            scalar: 1.2
+                            });
+                            fire(0.1, {
+                            spread: 120,
+                            startVelocity: 30,
+                            });                            
                         
                             timeout = setTimeout(call_confetti, randomInRange(100, 2000));
                         }() ); 

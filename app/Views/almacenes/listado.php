@@ -45,9 +45,9 @@
                 $socio = $socios[ $a[ "settings" ][ "socio" ] ];
 
                 echo "\n<tr almacen=\"{$a[ "codigo" ]}\">
-                    <td>{$a[ "codigo" ]}</td>
+                    <td><span style=\"display:inline-block\" class=\"w-100 badge bg-teal\">{$a[ "codigo" ]}</a></td>
                     <td class=\"text-center\">{$a[ "settings" ][ "tipo" ]}</td>
-                    <td>{$a[ "nombre" ]}</td>
+                    <td><strong>{$a[ "nombre" ]}</strong></td>
                     <td>".( $socio ? $socio->avatar(24)." ".$socio->id( null, "marine" )." ".$socio->nombre(2) : "" )."</td>
                     <td class=\"text-center\">".( $a[ "pedidos" ] ? "<i class=\"text-teal fa fa-cart-shopping\"></i> {$a[ "pedidos" ]}" : "" )."</td>
                     <td class=\"text-center\">".( $a[ "transferencias" ] ? "<i class=\"text-red fa fa-truck-arrow-right\"></i> {$a[ "transferencias" ]}" : "" )."</td>

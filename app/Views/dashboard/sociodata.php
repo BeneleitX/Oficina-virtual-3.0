@@ -9,7 +9,7 @@
             <?php echo csrf_field(); ?>
             <div class="input-group mb-3">
                 <span class="input-group-text bg-marine" id="basic-addon1"><i class="fa fa-magnifying-glass"></i></span>
-                <input type="text" class="form-control" placeholder="No. de socio" name="socio" value="<?php echo $socio->id ?? "" ?>">
+                <input type="text" class="form-control" placeholder="No. de socio" name="busca_id" value="<?php echo $socio->id ?? "" ?>">
             </div>
         </form>
     </div>
