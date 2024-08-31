@@ -540,23 +540,28 @@
                     }
                     else{
                         foreach( METODOSPAGO as $mp ){
+                            $imagen = "";
+                            $boton  = "";
+
                             if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
-                                echo "\n<button class=\"btn col-12 mb-3 ";
+                                $boton .= "\n<button class=\"btn col-12 m-0 rounded-bottom-0";
 
                                 if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
-                                    echo " btn-warning ";
+                                    $boton .= " btn-warning ";
 
                                     if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
-                                        // echo " d-none ";
+                                        // $boton .= " d-none ";
                                     }
                                 }else{
-                                    echo " btn-primary ";
+                                    $boton .= " btn-primary ";
+
+                                    $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-2\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"display:none\">" : "<div class=\"mb-3\"></div>";
                                 } 
                                 
-                                echo "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\"></span><h4 class=\"cantidad m-0 mt-1 text-white\"></h4></button>";
-
-                               
+                                $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
                             }
+
+                            echo $boton.$imagen;
                         }
 
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";

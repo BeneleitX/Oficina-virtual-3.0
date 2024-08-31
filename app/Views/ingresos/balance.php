@@ -22,7 +22,7 @@
 <?php 
     $ingresosxdia = $socio->getIngresosPorDia( $modelo );
 
-    $inicia = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
+    $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
 
 
     while( $inicia <= date( "Y-m-d") ){

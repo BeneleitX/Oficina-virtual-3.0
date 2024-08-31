@@ -350,7 +350,16 @@ function update_pedido( flag = null ){
 
         permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
-        $( this ).prop( 'disabled',  !permitepagos || pendientes );
+        if( !permitepagos || pendientes ){
+            $( this ).prop( 'disabled', true );
+            $( this ).removeClass( 'btn-primary' );
+            $( this ).addClass( 'btn-light2 text-gray-500' );
+        }
+        else{
+            $( this ).prop( 'disabled', false );
+            $( this ).removeClass( 'btn-light2 text-gray-500' );
+            $( this ).addClass( 'btn-primary' );
+        }
     });
     
     json = JSON.stringify( pedido );
@@ -649,6 +658,7 @@ $(document).ready(function()
 
     $( '#no_pago' ).hide();
     $( 'button[name=metodopago]' ).show();
+    $( 'img[metodopago]' ).show();
 
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
 

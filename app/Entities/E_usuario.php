@@ -854,6 +854,7 @@ class E_usuario extends Entity
                 AND esquema.settings->>'$.reparto' != 'puntos'
                 AND esquema.settings->>'$.periodo' = 'SEMANAL'
                 and substring( comision.estatus_codigo, 1, 3 ) > 200
+                and comision.fecha >= '2024-08-12'
                 GROUP BY DATE_FORMAT(comision.fecha, '%Y-%m-%d')";
 
         $db     = db_connect();
