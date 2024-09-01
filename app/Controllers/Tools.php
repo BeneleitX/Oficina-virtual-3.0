@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class Tools extends BaseController 
 {
-    public function compresion( $limit = 1000, $offset = 0 )
+    public function compresion( $limit = 500, $offset = 0 )
     {
         $db = db_connect();
 
