@@ -11,7 +11,7 @@ class Tools extends BaseController
         $db->query( "CALL p_mass( '10-NUTRICION', {$offset}, {$limit}); " );
         $db->query( "CALL p_mass( '20-TELEFONIA', {$offset}, {$limit}); " );
 
-        if( sizeof( $socios->getResultArray() ) ){
+        if( $limit < 165000 ){
             echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
         }
         else{
