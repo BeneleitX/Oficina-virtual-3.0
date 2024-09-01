@@ -4,10 +4,10 @@ namespace App\Controllers;
 
 class Tools extends BaseController 
 {
-    public function compresion( $limit = 500, $offset = 0 )
+    public function compresion( $limit = 200, $offset = 0 )
     {
         $db = db_connect();
-        $limit = 400;
+        $limit = 200;
         $db->query( "CALL p_mass( '10-NUTRICION', {$offset}, {$limit}); " );
         $db->query( "CALL p_mass( '20-TELEFONIA', {$offset}, {$limit}); " );
 
