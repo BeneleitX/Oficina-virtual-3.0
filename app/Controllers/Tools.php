@@ -4,22 +4,14 @@ namespace App\Controllers;
 
 class Tools extends BaseController 
 {
-    public function compresion( $limit = 100, $offset = 0 )
+    public function compresion( $limit = 1000, $offset = 0 )
     {
         $db = db_connect();
 
-        $sql = "
-            SELECT id
-            FROM t_usuarios
-            WHERE SUBSTRING( DATA->>'$.estatus.modelos.\"10-NUTRICION\"',1 ,3 ) < 200
-            LIMIT {$offset}, {$limit}
-        ";
+        $db->query( "CALL p_mass( '10-NUTRICION', {$offset}, {$limit}); " );
+        $db->query( "CALL p_mass( '20-TELEFONIA', {$offset}, {$limit}); " );
 
-        $socios = $db->query( $sql );
-
-        foreach( $socios->getResultArray() as $s ){
-            $db->query( "do f_compresion_de_red( {$s[ "id" ]}, \"10-NUTRICION\" );" );
-        }
+        echo $offset;
 
         if( sizeof( $socios->getResultArray() ) ){
             echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
