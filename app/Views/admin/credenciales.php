@@ -49,7 +49,10 @@
                 <td>{$socio->data->genero}</td>
                 <td>{$socio->fechanac}</td>
                 <td><div class=\"row\"><div class=\"col-6\">".( $socio->es_menor() && ($socio->data->credencial->acta ?? $socio->data->credencial->acta = null ) ? "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">ACTA</a>" : "<a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">FRENTE</a></div><div class=\"col-6\"><a href=\"".base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}\" target=\"_blank\" class=\"btn btn-xs btn-outline-secondary col-12\">REVERSO</a>" )."</div></div></td>
-                <td class=\"text-end\"><button class=\"btn btn-xs btn-primary aprueba\">APROBAR</button> <button class=\"btn btn-xs btn-danger rechaza\">RECHAZAR</button></td>
+                <td class=\"text-end\">
+                    <button onclick=\"aprueba({$socio->id})\" class=\"btn btn-xs btn-primary xaprueba\">APROBAR</button> 
+                    <button onclick=\"rechaza({$socio->id})\" class=\"btn btn-xs btn-danger xrechaza\">RECHAZAR</button>
+                </td>
             </tr>";
 
             

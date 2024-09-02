@@ -378,9 +378,15 @@ class Periodos extends BaseController
 
         $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
         $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
-        $worksheet[ 2 ]->getStyle( "D" )->getNumberFormat()->setFormatCode('@');
+        $worksheet[ 2 ]->getStyle( "D" )->getNumberFormat()->setFormatCode( "#" );
+        $worksheet[ 2 ]->getStyle( "A:B" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $worksheet[ 2 ]->getStyle( "D:G" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
         $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+
+
+        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('000000');
+        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFont()->getColor()->setARGB('009779');
 
         foreach( $worksheet as $k => $ws ){
             foreach( $ws->getColumnIterator() as $column ){
