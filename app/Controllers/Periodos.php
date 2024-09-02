@@ -223,7 +223,6 @@ class Periodos extends BaseController
     }   
     
     
-    
     public function abre_periodo(){
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
