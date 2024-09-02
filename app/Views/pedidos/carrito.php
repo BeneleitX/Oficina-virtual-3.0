@@ -272,7 +272,7 @@
                     <?php 
                     $dom = $usuario->data->domicilio ?? 0;
 
-                    if( sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
+                    if( $pedido[ "metodoentrega_codigo" ] && sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
                             if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
 
