@@ -90,7 +90,7 @@ class Pedidos extends BaseController
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
             ) ){
-                return redirect()->to( "nistorial/".$this->data[ "pedido" ][ "modelo_codigo" ] ); 
+                return redirect()->to( "historial/".$this->data[ "pedido" ][ "modelo_codigo" ] ); 
             }
             
             /**********************************/
