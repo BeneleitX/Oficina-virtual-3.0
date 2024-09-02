@@ -7,7 +7,7 @@ class Tools extends BaseController
     public function compresion( $modelo, $limit = 500, $offset = 0 )
     {
         $db = db_connect();
-        $limit = 500;
+
         $db->query( "CALL p_mass( '{$modelo}', {$offset}, {$limit}); " );
 
         if( $limit < 1500 ){
