@@ -103,7 +103,7 @@ class Pedidos extends BaseController
 
                 $ff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
 
-                if( !( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){
+                if( !( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){
                     $staff = false;
                 }
             }
