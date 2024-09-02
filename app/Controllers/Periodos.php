@@ -25,7 +25,7 @@ class Periodos extends BaseController
         $this->data[ "navbar" ]   = true;
         $this->data[ "modelo" ]   = $modelo;
         $this->data[ "titulo" ]   = "Periodos";
-        $this->data[ "periodos" ] = model( "PeriodoModel" )->where( "modelo_codigo = '{$modelo}'" )->findAll();
+        $this->data[ "periodos" ] = model( "PeriodoModel" )->where( "inicia > '2024-08-05' and modelo_codigo = '{$modelo}'" )->findAll();
 
         echo template( "periodos/listado", $this->data );
     }
@@ -47,7 +47,7 @@ class Periodos extends BaseController
 
         $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
 
-        $sql = "substring(estatus_codigo, 1, 3) < 400 AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $sql = "inicia > '2024-08-05' and substring(estatus_codigo, 1, 3) < 400 AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
         $this->data[ "pendientes" ] = sizeof( model( "PeriodoModel" )->where( $sql )->findAll() );
 
 
