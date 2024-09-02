@@ -25,7 +25,7 @@ $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 $routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" ); 
 
 $routes->get( "kkk",                        "Tools::kkk" );   
-$routes->get( "compresion/(:num)/(:num)",   "Tools::compresion/$1/$2" );     
+$routes->get( "compresion/(:any)/(:num)/(:num)",   "Tools::compresion/$1/$2/$3" );     
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                 "Sesion::logout" );

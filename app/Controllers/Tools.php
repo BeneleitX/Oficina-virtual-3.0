@@ -4,12 +4,11 @@ namespace App\Controllers;
 
 class Tools extends BaseController 
 {
-    public function compresion( $limit = 200, $offset = 0 )
+    public function compresion( $modelo, $limit = 500, $offset = 0 )
     {
         $db = db_connect();
-        $limit = 200;
-        $db->query( "CALL p_mass( '10-NUTRICION', {$offset}, {$limit}); " );
-        $db->query( "CALL p_mass( '20-TELEFONIA', {$offset}, {$limit}); " );
+        $limit = 500;
+        $db->query( "CALL p_mass( '{$modelo}', {$offset}, {$limit}); " );
 
         if( $limit < 165000 ){
             echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
