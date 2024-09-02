@@ -304,9 +304,9 @@ class Periodos extends BaseController
         $pagos = $db->query( $sql )->getResultArray();
 
         $sheetData = [ 
-            0 => [ [ "PAGO", "ID", "SOCIO", "RFC", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ],
+            0 => [ [ "PAGO", "ID", "SOCIO", "RFC","CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ],
             1 => [ [ "PAGO", "ID", "BENEFICIARIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "SUBTOTAL", "IMPORTE", "RETENCIÓN DE IVA 10.66%", "IVA 16%", "TOTAL", "DESCRIPCIÓN", "CONCEPTO DE FACTURA" ] ],
-            2 => [ [ "PAGO", "ID", "SOCIO", "RFC", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ] 
+            2 => [ [ "PAGO", "ID", "SOCIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ] 
         ];
 
         foreach( $pagos as $pago ){
@@ -327,9 +327,9 @@ class Periodos extends BaseController
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 2 ),
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "isr" ], 2 ),
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "total" ], 2 ),
+                     $pago[ "p_data" ][ "cantidades" ][ "subtotal" ],
+                     $pago[ "p_data" ][ "cantidades" ][ "isr" ],
+                     $pago[ "p_data" ][ "cantidades" ][ "total" ],
                     strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
                 ];
             }
@@ -343,9 +343,9 @@ class Periodos extends BaseController
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 2 ),
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "isr" ], 2 ),
-                    number_format( $pago[ "p_data" ][ "cantidades" ][ "total" ], 2 ),
+                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "isr" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "total" ],
                     strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
                 ];
             }
@@ -378,7 +378,9 @@ class Periodos extends BaseController
 
         $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
         $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
-        $worksheet[ 2 ]->getStyle( "I:K" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet[ 2 ]->getStyle( "D" )->getNumberFormat()->setFormatCode('@');
+        $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
 
         foreach( $worksheet as $k => $ws ){
             foreach( $ws->getColumnIterator() as $column ){

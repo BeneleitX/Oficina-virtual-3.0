@@ -574,7 +574,7 @@
 </div>
 
 <?php 
-if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
     if( $pagado ){
         echo "\n<div class=\"card mb-5\">
                     <div class=\"card-header bg-blue\">
