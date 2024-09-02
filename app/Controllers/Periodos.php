@@ -385,8 +385,8 @@ class Periodos extends BaseController
         $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
 
 
-        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('000000');
-        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFont()->getColor()->setARGB('009779');
+        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFont()->getColor()->setARGB('ffffff');
 
         foreach( $worksheet as $k => $ws ){
             foreach( $ws->getColumnIterator() as $column ){

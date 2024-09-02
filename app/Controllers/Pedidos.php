@@ -86,11 +86,25 @@ class Pedidos extends BaseController
                 // return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
             }
 
-            if( $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
+            $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
+            
+            load_catalogo( "metodosentrega", "codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
+
+            $staff = null;
+            if( $this->data[ "pedido" ][ "metodoentrega_codigo" ] == "00-ALMACEN" ){
+                $staff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
+            }
+
+            if( !in_array( $this->data[ "usuario" ]->id, $staff ) && $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+                $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
             ) ){
-                return redirect()->to( "historial/".$this->data[ "pedido" ][ "modelo_codigo" ] ); 
+                return template( "pedidos/no_permiso", $this->data );
             }
             
             /**********************************/
@@ -100,17 +114,11 @@ class Pedidos extends BaseController
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
 
             $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
-            $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
+            
 
             $sql = "/* estatus_codigo = '201-ACTIVO' AND  */modelo_codigo = '{$this->data[ "modelo" ]}'";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
-            load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
-
             $this->data[ "enproceso" ] = 0;
             $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
             $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
