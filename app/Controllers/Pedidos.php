@@ -73,7 +73,8 @@ class Pedidos extends BaseController
         $this->data[ "navbar" ] = true;
 
         if( $tipo == "pedido" ){
-            $this->data[ "titulo" ]    = "Detalles de pedido";
+
+            $this->data[ "titulo" ] = "Detalles de pedido";
             $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
 
             if( !$this->data[ "pedido" ] ){ 
@@ -84,6 +85,16 @@ class Pedidos extends BaseController
             if( $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){ 
                 // return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
             }
+
+            if( $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
+                $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+                $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+            ) ){
+                return redirect()->to( "nistorial/".$this->data[ "pedido" ][ "modelo_codigo" ] ); 
+            }
+            
+            /**********************************/
+
 
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
