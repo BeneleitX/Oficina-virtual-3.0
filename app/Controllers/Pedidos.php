@@ -87,19 +87,23 @@ class Pedidos extends BaseController
             }
 
             $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
-            
+
             load_catalogo( "metodosentrega", "codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "almacenes",      "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
-            $staff = null;
+            $staff = true;
             if( $this->data[ "pedido" ][ "metodoentrega_codigo" ] == "00-ALMACEN" ){
-                $staff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
+                $ff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
+
+                if( !( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){
+                    $staff = false;
+                }
             }
 
-            if( !in_array( $this->data[ "usuario" ]->id, $staff ) && $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
+            if( !$staff && $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
                 $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
