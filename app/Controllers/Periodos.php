@@ -130,6 +130,19 @@ class Periodos extends BaseController
             AND pe.modelo_codigo = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
             AND CAST( pd.fechas->>'$.pagado' AS DATE ) between pe.inicia AND pe.termina;" )->getRow()->pedidos;
 
+        $db->query( "CALL p_avance_corte( json_object( 'periodo', '".$this->request->getPost( "periodo" )."',
+                    'pedidos', 0,
+                    'pagos', 0,
+                    'socios', 0,
+                    'comisiones', 0,
+                    'isr', 0,
+                    'total', 0,
+                    'total_pedidos', {$pedidos}, 
+                    'total_pagos', 0,
+                    'porcentaje_comisiones', 0,
+                    'porcentaje_pagos', 0 ) );
+                " );
+
         return json_encode( [ "pedidos" => $pedidos ] );
     }
 
@@ -142,7 +155,7 @@ class Periodos extends BaseController
         }
         /**********************************/
 
-
+        extract( $this->request->getPost() );
         $db = db_connect();
         
         /*
@@ -157,10 +170,11 @@ class Periodos extends BaseController
 
         // BITACORA corte parcial / corte semanal      
         bitacora( 43, $this->data[ "usuario" ]->id, [
-            "periodo" => $this->request->getPost( "periodo" )
+            "periodo" => $periodo,
+            "avance" => $avance
         ] );
 
-        $db->query( "call p_genera_pagos( '".$this->request->getPost( "periodo" )."' )" );
+        $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
     } 
     
     

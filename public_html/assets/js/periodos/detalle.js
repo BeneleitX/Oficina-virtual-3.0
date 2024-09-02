@@ -18,9 +18,11 @@ function lanza_corte(){
 }
 
 
-function getStatus() { 
+function getStatus(total) { 
     //$( '#modal_corte .progress-bar' ).css( 'width', '100%' );
-   
+    var timer = parseInt(total) + Math.floor( Math.random() * 1000 );
+    console.log(timer);
+
     setTimeout(function() {
 
         fetch( base_url + 'assets/corte_check.php?p=' + periodo, {
@@ -45,14 +47,37 @@ function getStatus() {
                 $( '#dato_total' ).text( Moneda.format( respuesta.total ) );
 
                 if( respuesta.porcentaje_pagos < 100 ){
-                    getStatus();
+                    getStatus(total);
                 }
             }
         })
-    }, 2000 + Math.floor( Math.random() * 1000 ) );
+    }, timer );
 }
 
+function do_corte( total, avance = 0 ){
+    var step = 100;
 
+    $.ajax({
+        url: base_url + 'corte',
+        data: { periodo: periodo, [csrf_token] : csrf_hash, avance : avance, step : step },
+        type: 'POST',
+        async: true,
+        success: function(){
+            avance += step;
+            if( avance < total ){
+                do_corte( total, avance );
+            }
+            else{
+                $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
+                $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
+
+                $( '#modal_corte .modal-footer' ).show();
+                $( 'button[disabled]' ).prop( 'disabled', false);
+            }
+        }
+    });            
+
+}
 
 $(document).ready(function(){
 
@@ -128,44 +153,22 @@ $(document).ready(function(){
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
 
-        var avance  = 0, 
-            pedidos = 0,
-            step    = 500;
+        var pedidos = 0;
 
         $.ajax({
             type: 'POST',
 			url: base_url + 'reset_corte',
             dataType: "json",
-            async: false,
+            async: true,
 			data: { periodo: periodo, [csrf_token] : csrf_hash },
             success: function(r){ console.log(r);
                 pedidos = r.pedidos;
+
+                getStatus(pedidos);        
+                do_corte( pedidos );                
             }
 		});
 
-        getStatus();        
-        
-        do{
-            $.ajax({
-                url: base_url + 'corte',
-                data: { periodo: periodo, [csrf_token] : csrf_hash, avance : avance, step : step },
-                type: 'POST',
-                async: false,
-                success: function(){
-                    if( avance < pedidos ){
-                        avance += step;
-                    }
-                    else{
-                        $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
-                        $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
-        
-                        $( '#modal_corte .modal-footer' ).show();
-                        $( 'button[disabled]' ).prop( 'disabled', false);
- 
-                        getStatus();
-                    }
-                }
-            });            
-        }while( avance < pedidos );
+
     });
 });
