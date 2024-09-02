@@ -555,7 +555,7 @@
                                 }else{
                                     $boton .= " btn-primary ";
 
-                                    $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-2\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"display:none\">" : "<div class=\"mb-3\"></div>";
+                                    $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-2\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
                                 } 
                                 
                                 $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
