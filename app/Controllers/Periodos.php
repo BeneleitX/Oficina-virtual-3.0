@@ -51,13 +51,16 @@ class Periodos extends BaseController
         $this->data[ "pendientes" ] = sizeof( model( "PeriodoModel" )->where( $sql )->findAll() );
 
 
-        $sql = "modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $sql = "( modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
 
+        // cerrado
         if( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 ){
             $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' )";
         }
+
+        // abierto
         else{
-            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( SUBSTRING( estatus_codigo,1,3) < 300 AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ;
+            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( estatus_codigo = '330-EN-ESPERA' AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ;
         }
 
         $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}'";
@@ -92,7 +95,9 @@ class Periodos extends BaseController
                     $this->data[ "t" ][ "siguiente" ][] = $p;
                 }
                 else{
-                    $this->data[ "t" ][ "extras" ][] = $p;
+                    if( $p[ "s" ]->verificado->estatus ){
+                        $this->data[ "t" ][ "extras" ][] = $p;
+                    }
                 }            
     
             }
@@ -118,7 +123,14 @@ class Periodos extends BaseController
 
         $db = db_connect();
         $db->query( "UPDATE t_variables SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) WHERE codigo = 'avance_corte'" );
-        return "{}";
+
+        $pedidos = $db->query( "
+            SELECT count(*) as pedidos FROM t_pedidos pd JOIN t_periodos pe ON codigo = '".$this->request->getPost( "periodo" )."'
+            WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
+            AND pe.modelo_codigo = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
+            AND CAST( pd.fechas->>'$.pagado' AS DATE ) between pe.inicia AND pe.termina;" )->getRow()->pedidos;
+
+        return json_encode( [ "pedidos" => $pedidos ] );
     }
 
 

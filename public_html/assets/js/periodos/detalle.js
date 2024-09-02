@@ -128,30 +128,44 @@ $(document).ready(function(){
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
 
-        
+        var avance  = 0, 
+            pedidos = 0,
+            step    = 500;
+
         $.ajax({
             type: 'POST',
 			url: base_url + 'reset_corte',
             dataType: "json",
             async: false,
-			data: { [csrf_token] : csrf_hash },
-            success: function(r){ console.log(r); }
+			data: { periodo: periodo, [csrf_token] : csrf_hash },
+            success: function(r){ console.log(r);
+                pedidos = r.pedidos;
+            }
 		});
 
-        $.ajax({
-            url: base_url + 'corte',
-            data: { periodo: periodo, [csrf_token] : csrf_hash },
-            type: 'POST',
-            async: true,
-            success: function(){
-                $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
-                $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
-
-                $( '#modal_corte .modal-footer' ).show();
-                $( 'button[disabled]' ).prop( 'disabled', false);
-            }
-        });
-
         getStatus();        
+        
+        do{
+            $.ajax({
+                url: base_url + 'corte',
+                data: { periodo: periodo, [csrf_token] : csrf_hash, avance : avance, step : step },
+                type: 'POST',
+                async: false,
+                success: function(){
+                    if( avance < pedidos ){
+                        avance += step;
+                    }
+                    else{
+                        $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
+                        $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-teal' ).text( 'Corte finalizado' );
+        
+                        $( '#modal_corte .modal-footer' ).show();
+                        $( 'button[disabled]' ).prop( 'disabled', false);
+ 
+                        getStatus();
+                    }
+                }
+            });            
+        }while( avance < pedidos );
     });
 });
