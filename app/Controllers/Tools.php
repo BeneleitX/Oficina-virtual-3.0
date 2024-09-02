@@ -10,7 +10,7 @@ class Tools extends BaseController
         $limit = 500;
         $db->query( "CALL p_mass( '{$modelo}', {$offset}, {$limit}); " );
 
-        if( $limit < 165000 ){
+        if( $limit < 1500 ){
             echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$limit}/".( $limit + $offset )."\" />";
         }
         else{
