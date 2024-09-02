@@ -96,6 +96,11 @@ class Pedidos extends BaseController
 
             $staff = true;
             if( $this->data[ "pedido" ][ "metodoentrega_codigo" ] == "00-ALMACEN" ){
+                if( !$this->data[ "pedido" ][ "data" ][ "entrega" ] ){
+                    $this->data[ "pedido" ][ "data" ][ "entrega" ] = "010-PUEBLA";
+                    model( "PedidoModel" )->save( $this->data[ "pedido" ] );
+                }
+
                 $ff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
 
                 if( !( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){
