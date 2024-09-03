@@ -355,7 +355,7 @@ class Pedidos extends BaseController
             ] );
         }
         
-       // return redirect()->to( 'pedido/'.$p[ "referencia"] );
+        return redirect()->to( 'pedido/'.$p[ "referencia"] );
     }
 
     public function compra_demo( $usuario, $modelo, $mes ){
