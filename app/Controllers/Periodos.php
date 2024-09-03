@@ -43,9 +43,9 @@ class Periodos extends BaseController
         $this->data[ "navbar" ]  = true;
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
         $estatus = ESTATUS[ $this->data[ "periodo" ][ "estatus_codigo" ] ];
+        $modelo = MODELOS[ $this->data[ "periodo" ][ "modelo_codigo" ] ];
 
-
-        $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-teal\">{$this->data[ "periodo" ][ "modelo_codigo" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
+        $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$modelo[ "settings" ][ "icono" ]}\"></i> {$modelo[ "nombre" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
 
         $sql = "inicia > '2024-08-05' and substring(estatus_codigo, 1, 3) < 400 AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
         $this->data[ "pendientes" ] = sizeof( model( "PeriodoModel" )->where( $sql )->findAll() );

@@ -218,7 +218,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 						<li>Debe tener un mínimo de 6 caracteres</li>
 						<li>Debe tener al menos un número</li>
 						<lI>No uses nombres propios ni fechas</li>
-						<li>GUarda una copia en un lugar seguro</li>
+						<li>Guarda una copia en un lugar seguro</li>
 					</ul>
 
 					<label>Escribe tu nuevo password</label>
