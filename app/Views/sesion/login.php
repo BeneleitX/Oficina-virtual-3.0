@@ -15,10 +15,14 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"></button>
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"></button>
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5"></button>
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6"></button>
 				</div>	
 				<div class="carousel-inner rounded">
-					<div class="carousel-item active"><img src="<?php echo base_url()."assets/img/slides/1.jpg"; ?>" class="d-block w-100" alt="">
+					<div class="carousel-item active"><img src="<?php echo base_url()."assets/img/slides/8.jpg"; ?>" class="d-block w-100" alt="">
 					</div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/7.jpg"; ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/1.jpg"; ?>" class="d-block w-100" alt=""></div>
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/2.jpg"; ?>" class="d-block w-100" alt=""></div>
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/3.jpg"; ?>" class="d-block w-100" alt=""></div>
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/4.jpg"; ?>" class="d-block w-100" alt=""></div>

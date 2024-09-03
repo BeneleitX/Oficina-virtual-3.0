@@ -1,7 +1,7 @@
 <?php 
 
 $datetime1 = new DateTime( $nuevo->historial->reset );
-$datetime1->add(date_interval_create_from_date_string('5 minutes'));
+$datetime1->add(date_interval_create_from_date_string('25 minutes'));
 $datetime2 = new DateTime( date( "Y-m-d H:i:s" ) );
 
 $visible = $datetime1->format("Y-m-d H:i") > $datetime2->format("Y-m-d H:i") ? true : false;
