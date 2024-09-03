@@ -24,7 +24,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/3.jpg"; ?>" class="d-block w-100" alt=""></div>
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/4.jpg"; ?>" class="d-block w-100" alt=""></div>
 					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/5.jpg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/6.jpg"; ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/6.jpeg"; ?>" class="d-block w-100" alt=""></div>
 				</div>
 
 				<button class="carousel-control-prev" type="button" data-bs-target="#carrusel" data-bs-slide="prev">
