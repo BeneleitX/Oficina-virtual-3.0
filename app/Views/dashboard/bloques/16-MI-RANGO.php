@@ -25,7 +25,7 @@
         <?php
 
         $ingresos_mes = $checks[ date( "Ym" ) ][ "ingresos" ]; // $total[ "10-NUTRICION" ][ 0 ];
-        $porc_rango = ceil( $ingresos_mes * 100 / $new_rango[ "cantidades" ][ 0 ] );
+        $porc_rango = $new_rango[ "cantidades" ][ 0 ] > 0 ? ceil( $ingresos_mes * 100 / $new_rango[ "cantidades" ][ 0 ] ) : 0;
 
         ?>
     </div>
