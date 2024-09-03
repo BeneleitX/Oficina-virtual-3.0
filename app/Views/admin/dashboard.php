@@ -26,12 +26,12 @@ $menu = [
     [ "secondary", "tickets", "ticket", "Tickets de soporte", 0,[] ],  
     [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", $almacenes, ["20-ALMACEN", "18-STOCK", "40-ADMIN"] ],    
     [ "secondary", "bloques", "table-cells", "Bloques de inicio", 0,[] ],    
-    [ "secondary", "facturacion", "file-invoice-dollar", "Facturacion y pagos", 0,["40-ADMIN"] ],    
+    [ "danger", "facturacion", "file-invoice-dollar", "Facturacion y pagos", 0,["38-CONTABILIDAD", "40-ADMIN"] ],    
     [ "success", "estatus", "layer-group", "Estatus de socios", 0,[] ],  
     [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ), ["40-ADMIN"] ], 
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR", 0,[ "38-CONTABILIDAD", "40-ADMIN" ] ],     
     [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos", 0,[ "38-CONTABILIDAD" ] ],     
-    [ "danger", "apikeys", "network-wired", "API keys", 0,["40-ADMIN"] ],     
+    [ "info", "apikeys", "network-wired", "API keys", 0,["40-ADMIN"] ],     
     [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],     
 ];
 

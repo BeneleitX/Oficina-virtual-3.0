@@ -112,6 +112,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "check_csf",             "Socio::check_csf" );
     $routes->post( "carga_csf",             "Socio::carga_csf" );
 
+    $routes->get( "facturacion",            "Facturacion::listado" ); 
+    $routes->post( "poner_ventas",          "Facturacion::poner_ventas" ); 
+    $routes->post( "quitar_ventas",         "Facturacion::quitar_ventas" ); 
+
     $routes->get( "transferencias/(:any)",  "Almacenes::transferencias/$1" ); 
     $routes->get( "almacenes/(:any)",       "Almacenes::listado/$1" ); 
     $routes->get( "almacen/(:any)",         "Almacenes::detalle/$1" );  
