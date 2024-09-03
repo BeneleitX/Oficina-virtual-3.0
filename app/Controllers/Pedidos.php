@@ -304,7 +304,11 @@ class Pedidos extends BaseController
         extract( $this->request->getPost() );
         $p = model( "PedidoModel" )->find( $pedido );
 
-        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
+        if( (
+                $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+                $this->data[ "usuario" ]->permiso( "28-INGRESA" )
+            )        
+            && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
 
             load_catalogo( "metodospago", "modelo_codigo = '{$p[ "modelo_codigo" ]}'");
 
