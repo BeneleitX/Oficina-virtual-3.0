@@ -114,10 +114,14 @@ class Sesion extends BaseController
             bitacora( 1, $usuario->id );
 
             $db = db_connect();
-            $db->query( "select f_update_PTS( {$usuario->id}, '10-NUTRICION', '".date( "Ym" )."' )" );  
+            foreach( MODELOS as $m ){
+                $db->query( "select f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+                $db->query( "call p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
+            }
+
             $db->query( "select f_get_estatus(  {$usuario->id}, 1 )" );
             $db->query( "select f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
-            
+
             return redirect()->route( "inicio" ); 
         }
     }
