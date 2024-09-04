@@ -167,17 +167,27 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 				<div class="row">
 					<div class="col-6 text-center ct_frente">
-						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&  $socio->data->credencial->frente ){ ?>
+						<?php 
+						if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&  $socio->data->credencial->frente )
+						{ 
+							?>
+				
 							<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}"; ?>" alt="" class="img-fluid rounded-3">
-							
+				
 							<?php 
-							if( $socio->data->credencial->estatus <= 0 ){ echo "<a href=\"".base_url("cancela_ine/frente")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
-							} else { ?>
-								<button tipo="frente" onclick="$( 'input[tipo=frente]' ).click()" class="btn btn-outline-success col-12 py-4">Cargar foto del <h5 class="text-green m-0">frente</h5>de credencial</button>
-							<?php } ?>
-						</div>
-						<div class="col-6 text-center ct_reverso">
-							<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) && $socio->data->credencial->frente ){ ?>
+							if( $socio->data->credencial->estatus <= 0 ){ 
+								echo "<a href=\"".base_url("cancela_ine/frente")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
+							}
+						} 
+						else { ?>
+							<button tipo="frente" onclick="$( 'input[tipo=frente]' ).click()" class="btn btn-outline-success col-12 py-4">Cargar foto del <h5 class="text-green m-0">frente</h5>de credencial</button>
+						<?php 
+						} 
+						?>
+					</div>
+					
+					<div class="col-6 text-center ct_reverso">
+						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) && $socio->data->credencial->frente ){ ?>
 								<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}"; ?>" alt="" class="img-fluid rounded-3">
 							<?php 
 								if( $socio->data->credencial->estatus <= 0 ) echo "<a href=\"".base_url("cancela_ine/reverso")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
