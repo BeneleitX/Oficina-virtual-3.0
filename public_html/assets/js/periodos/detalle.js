@@ -55,7 +55,7 @@ function getStatus(total) {
 }
 
 function do_corte( total, avance = 0 ){
-    var step = 100;
+    var step = 50;
 
     $.ajax({
         url: base_url + 'corte',
@@ -65,7 +65,10 @@ function do_corte( total, avance = 0 ){
         success: function(){
             avance += step;
             if( avance < total ){
-                do_corte( total, avance );
+                setTimeout(function(){
+                    do_corte( total, avance );
+                }, 1000);   
+                
             }
             else{
                 $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'far fa-circle-check text-teal' );
