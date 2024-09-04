@@ -19,14 +19,14 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6"></button>
 				</div>	
 				<div class="carousel-inner rounded">
-					<div class="carousel-item active"><img src="<?php echo base_url()."assets/img/slides/7.jpeg"; ?>" class="d-block w-100" alt="">
+					<div class="carousel-item active"><img src="<?php echo base_url()."assets/img/slides/7.jpeg?".filemtime( "assets/img/slides/7.jpeg" ); ?>" class="d-block w-100" alt="">
 					</div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/8.jpeg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/1.jpg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/2.jpg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/3.jpg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/4.jpg"; ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/5.jpg"; ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/8.jpeg?".filemtime( "assets/img/slides/8.jpeg" ); ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/1.jpg?".filemtime( "assets/img/slides/1.jpg" ); ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/2.jpg?".filemtime( "assets/img/slides/2.jpg" ); ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/3.jpg?".filemtime( "assets/img/slides/3.jpg" ); ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/4.jpg?".filemtime( "assets/img/slides/4.jpg" ); ?>" class="d-block w-100" alt=""></div>
+					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/5.jpeg?".filemtime( "assets/img/slides/5.jpeg" ); ?>" class="d-block w-100" alt=""></div>
 				</div>
 
 				<button class="carousel-control-prev" type="button" data-bs-target="#carrusel" data-bs-slide="prev">
