@@ -73,6 +73,10 @@ class Dashboard extends BaseController
         $r   = $this->request->getPost();
         $socio = model( "UsuarioModel" )->find( $r[ "id" ] );
 
+        if( !isset( $r[ "genero" ] ) ){
+            $r[ "genero" ] = null;
+        }
+
         $data = $socio->data;
         $cambios = [];
 
