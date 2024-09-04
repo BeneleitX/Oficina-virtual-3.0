@@ -89,10 +89,18 @@
                                 <tr><td class="text-end">RFC</td>
                                 <td><input name="rfc" disabled class="form-control" value="<?php echo $socio->data->sat->rfc; ?>"></td></tr>
 
+                                <tr><td class="text-end">SEXO</td>
+                                <td>
+                                    <input disabled type="radio" class="btn-check" name="genero" id="MASCULINO" value="MASCULINO" autocomplete="off" <?php echo $socio->data->genero == "MASCULINO" ? "checked" : "" ?>>
+                                    <label style="padding:4px 20px" class="btn btn-outline-success" for="MASCULINO"><i style="font-size:26px"  class="fa fa-person"></i></label>
+                                    <input disabled type="radio" class="btn-check" name="genero" id="FEMENINO" value="FEMENINO" autocomplete="off" <?php echo $socio->data->genero == "FEMENINO" ? "checked" : "" ?>>
+                                    <label style="padding:4px 20px" class="btn btn-outline-danger" for="FEMENINO"><i style="font-size:26px" class="fa fa-person-dress"></i></label>
+                                </td></tr>
+
                                 <tr><td class="text-end">CLABE</td>
                                 <td><table style="border:none;margin:0"><tr>
                                     <td style="padding:0; width:90%"><input name="clabe" disabled class="form-control" value="<?php echo $socio->data->clabe; ?>"></tD>
-                                    <td><img style="width:100px; height:50px;margin-left:10px" src="<?php echo base_url()."assets/img/".( strlen( $socio->data->clabe ) == 18 ? "bancos/002" : "blank" ); ?>.png"></td>
+                                    <td><img style="height:30px;margin-left:10px" src="<?php echo base_url()."assets/img/".( strlen( $socio->data->clabe ) == 18 ? "bancos/002" : "blank" ); ?>.png"></td>
                                 </tr></table></td></tr>
 
                             </table>
