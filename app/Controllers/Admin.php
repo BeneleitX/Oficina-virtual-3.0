@@ -90,7 +90,7 @@ class Admin extends BaseController
         $socio = model( "UsuarioModel" )->find( $socio );
 
         $json = $socio->data;
-        $json->credencial->estatus = $accion == "acepta" ? 2 : -1;
+        $json->credencial->estatus = $accion == "acepta" ? "2" : "-1";
         $json->credencial->motivo  = $motivo;
         $json->verificacion->credencial = $accion == "acepta";
         

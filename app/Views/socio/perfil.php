@@ -191,7 +191,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 						<h5>2. Envíalas a revisión</h5>
 						<p>Click en el botón para enviarlas. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-						<a class="btn btn-primary <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+						<a class="btn btn-primary <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para revisión</a>
 					<?php } ?>
 			</div>
         </div>

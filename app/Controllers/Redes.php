@@ -57,6 +57,9 @@ class Redes extends BaseController
 		$m_2 = date('Ym', strtotime( date('Y-m').'-01'. ' -2 month' ) );
 
         $db  = db_connect();
+
+        $db->query( "select f_get_estatus( {$d->id}, 0 )" );
+
         $sql = "select 
             f_get_calificacion( {$d->id}, '{$m_2}', '{$modelo}' ) as '{$m_2}', 
             f_get_calificacion( {$d->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', 
@@ -65,6 +68,9 @@ class Redes extends BaseController
             $calificaciones = $db->query($sql)->getRowArray();
             load_catalogo( "calificaciones");
 
+        $d = model( "UsuarioModel" )->find( $socio );
+        $e = ESTATUS[ $d->data->estatus->modelos->{$modelo} ];
+    
         $html = "\n
             <div>
                 <table class=\"w-100 m-0\"><tr><td><svg width=\"120\" style=\"zoom:2\" height=\"125\"><g class=\"vaciado\"></g></svg></td><td class=\"text-center w-100\"><h5>".$d->nombre(2)."<br>".$d->id( null, "marine" )."</h5>
