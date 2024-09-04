@@ -98,12 +98,12 @@ class Sesion extends BaseController
 
             if( $usuario->data->credencial->estatus > 0 ){
                 if( 
-                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) ||
-                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
+                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}" ) ||
+                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->reverso}" ) 
                 ){
-                    $data = $socio->data;
+                    $data = $usuario->data;
                     $data->credencial->estatus = "-2";
-                    $socio->data = $data;
+                    $usuario->data = $data;
                     model( "UsuarioModel" )->save( $usuario );
                 }
             }
