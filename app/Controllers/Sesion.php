@@ -95,6 +95,20 @@ class Sesion extends BaseController
                 model( "UsuarioModel" )->save( $usuario );
             }
 
+
+            if( $usuario->data->credencial->estatus > 0 ){
+                if( 
+                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) ||
+                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
+                ){
+                    $data = $socio->data;
+                    $data->credencial->estatus = "-2";
+                    $socio->data = $data;
+                    model( "UsuarioModel" )->save( $usuario );
+                }
+            }
+            
+
             if( ( $usuario->password != $data[ "socio_password" ] && base64_decode( VARIABLES[ "master_key" ][ "valor" ] ) != $data[ "socio_password" ] ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
 
                 // BITACORA inicio de sesión fallido

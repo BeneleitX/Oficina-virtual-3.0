@@ -70,3 +70,9 @@ foreach( MODELOS as $m ){
         <tr><?php echo $cal; ?></tr>
     </table>
 </div>
+
+<?php
+if( $usuario->data->credencial->estatus == "-2" ){
+    echo "\n<div class=\"alert alert-danger mx-3 p-3 text-center\"><p class=\"text-red\">Tus documentos para la validación de cuenta requieren atención en el perfil de datos</p><p class=\"text-center\"><span class=\"badge bg-red\">Ir a mi perfil</span></p></div>";
+}
+?>

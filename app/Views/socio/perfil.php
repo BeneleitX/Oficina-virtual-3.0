@@ -145,17 +145,22 @@ if( !$socio->data->verificacion->correo ){ ?>
             <div class="card-body">
 				
 				<?php 
+
+			
 				switch( $socio->data->credencial->estatus ){
-					case -1 : 
-						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tu credencial fue rechazada por el siguiente motivo: <strong>{$socio->data->credencial->motivo}</strong>. Por favor carga nuevas imagenes de tu credencial.</div>";
+					case "-2" : 
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tenemos un problema con tus documentos. Por favor carga las imagenes faltantes.</div>";
 						break; 
-					case 0 : 
+					case "-1" : 
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tu credencial fue rechazada por el siguiente motivo: <strong>{$socio->data->credencial->motivo}</strong>. Por favor carga nuevas imagenes de tu credencial.</div>";
+						break; 						
+					case "0" : 
 						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Verifica tu cuenta cargando fotografías de tu credencial de elector (INE) por ambos lados.</div>";
 						break; 
-					case 1 : 
+					case "1" : 
 						echo "<div class=\"alert alert-info\"><i class=\"fa fa-address-card\"></i> Tu identificación oficial se encuentra en proceso de validación.</div>";
 						break; 
-					case 2 : 
+					case "2" : 
 						echo "<div class=\"alert alert-success\"><i class=\"fa fa-address-card\"></i> Tu identificación oficial ha sido validada.</div>";
 						break; 
 					}												
