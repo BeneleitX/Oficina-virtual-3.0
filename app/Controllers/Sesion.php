@@ -97,15 +97,15 @@ class Sesion extends BaseController
 
             if( $usuario->data->credencial->estatus > 0 ){
                 if( 
-                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}" ) ||
+                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}"  ) ||
                     !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->reverso}" ) ||
-                    $usuario->data->credencial->frente == null ||
+                    $usuario->data->credencial->frente  == null ||
                     $usuario->data->credencial->reverso == null
                 ){
                     $data = $usuario->data;
 
-                    if( !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}" ) ) $data->credencial->frente = null;
-                    if( !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->reverso}" ) ) $data->credencial->reverso = null;
+                    if( !file_exists( "data/{$usuario->id}/ine/{$data->credencial->frente}"  ) ) $data->credencial->frente  = null;
+                    if( !file_exists( "data/{$usuario->id}/ine/{$data->credencial->reverso}" ) ) $data->credencial->reverso = null;
 
                     $data->credencial->estatus = "-2";
                     $usuario->data = $data;
