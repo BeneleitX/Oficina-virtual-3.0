@@ -248,5 +248,6 @@ foreach( $t[ "siguiente" ] as $g ){
 </div> 
 
 <script>
-    var periodo = '<?php echo $periodo[ "codigo" ]; ?>';
+    var periodo = '<?php echo $periodo[ "codigo" ]; ?>',
+        modelo  = '<?php echo $periodo[ "modelo_codigo" ]; ?>';
 </script>
