@@ -21,7 +21,6 @@ function lanza_corte(){
 function getStatus(total) { 
     //$( '#modal_corte .progress-bar' ).css( 'width', '100%' );
     var timer = parseInt(total) + Math.floor( Math.random() * 1000 );
-    console.log(timer);
 
     setTimeout(function() {
 
@@ -63,7 +62,10 @@ function do_corte( total, avance = 0 ){
         type: 'POST',
         async: true,
         success: function(){
+            console.log( 'procesados pedidos del ' + ( avance + 1 ) + ' al ' + ( avance + step ) );
+
             avance += step;
+            
             if( avance < total ){
                 setTimeout(function(){
                     do_corte( total, avance );
