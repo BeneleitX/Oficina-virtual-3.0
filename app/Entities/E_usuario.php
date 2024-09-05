@@ -848,6 +848,7 @@ class E_usuario extends Entity
         $sql = "SELECT SUM(comision.cantidad) as comisiones, 
                 DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
                 FROM t_comisiones comision
+                JOIN t_pedidos pedido ON pedido.id = comision.pedido_id
                 join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                 WHERE esquema.modelo_codigo = '{$modelo}' 
                 and comision.usuario_id = {$this->id} 
