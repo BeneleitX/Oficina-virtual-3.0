@@ -461,6 +461,9 @@
                         else{
                             $saldo = $socio->data->saldo->{$modelo} ?? 0;
                         }
+
+                        if( $saldo == "" ) $saldo = 0;
+
                         ?>
 
                         <tr>
