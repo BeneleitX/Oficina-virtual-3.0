@@ -190,7 +190,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					</div>
 					
 					<div class="col-6 text-center ct_reverso">
-						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) && $socio->data->credencial->frente ){ 
+						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) && $socio->data->credencial->reverso ){ 
 							?>
 							
 							<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}"; ?>" alt="" class="img-fluid rounded-3">
