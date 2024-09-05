@@ -42,9 +42,6 @@ class Dashboard extends BaseController
         elseif( $this->request->getPost( "busca_id" ) ){
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
         }
-
-
-
         elseif( $this->request->getPost( "socio" ) ){
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
         }
@@ -52,12 +49,30 @@ class Dashboard extends BaseController
             $this->data[ "socio" ] = null;
         }
         
-        if( $this->data[ "socio" ] && !$request ){
+        if( $this->data[ "socio" ] ){
             
+            if( !$request ){
             // BITACORA Consulta de datos
             bitacora( 50, $this->data[ "usuario" ]->id, [ 
                 "socio" => $this->data[ "socio" ]->id
             ] );
+            }
+
+            load_catalogo( "metodosentrega");
+            load_catalogo( "almacenes");
+            
+            $db = db_connect();
+            
+            $sql = "select JSON_OBJECTAGG( modelo_codigo, json_array( referencia, fecha, metodoentrega, entrega) ) as data
+                    FROM ( SELECT  @prev := '' ) init
+                    JOIN
+                    ( SELECT modelo_codigo != @prev AS first, @prev := modelo_codigo, modelo_codigo, referencia, metodoentrega_codigo as metodoentrega, data->>'$.entrega' as entrega, CAST( fechas->>'$.pagado' AS DATE ) as fecha
+                            FROM  t_pedidos where usuario_id = {$this->data[ "socio" ]->id} AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
+                            ORDER BY modelo_codigo, id DESC, CAST( fechas->>'$.pagado' AS DATE ) DESC LIMIT 999999
+                    ) x
+                    WHERE  first ORDER BY modelo_codigo;";
+
+            $this->data[ "pedidos" ] = json_decode( $db->query( $sql )->getRow()->data, 1 );
         }
 
         echo template( "dashboard/sociodata", $this->data );

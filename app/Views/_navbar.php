@@ -60,7 +60,7 @@
     <a data-bs-toggle="tooltip" 
 		title="Redes" class="menu-opcion <?php echo $menu == "redes" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "red/".getModeloPrincipal() ); ?>">
-		<i class="fa fa-diagram-project"></i>
+		<i class="fa fa-sitemap"></i>
 	</a>
 
 	<a data-bs-toggle="tooltip" 

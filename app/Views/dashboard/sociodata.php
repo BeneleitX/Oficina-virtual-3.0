@@ -16,7 +16,17 @@
 
     <?php if( $socio ){ ?>
         <div class="col-4 col-lg-2">
-        <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
+            <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
+        </div>
+
+        <div class="d-none col-4 offset-lg-2 col-lg-2">
+            <button class="btn btn-warning w-100"><i class="fa fa-key"></i> Reset password</button>
+        </div>
+        <div class="d-none col-4 col-lg-2">
+            <button class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</button>
+        </div>
+        <div class="d-none col-4 col-lg-2">
+            <button class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</button>
         </div>
     <?php } ?>
 
@@ -53,8 +63,10 @@
                 ?>
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="card" style="overflow:hidden">
-                            <table class="table table-striped m-0">
+                        <div class="card mb-4" style="overflow:hidden">
+                            <table class="table table-striped mb-0">
+                                <tr><td class="text-end">ID</td>
+                                <td><h4 class="mb-1"><?php echo $socio->id( null, "marine"); ?></h4></td></tr>
 
                                 <tr><td class="text-end">NOMBRE</td>
                                 <td><input name="nombre" disabled class="form-control" value="<?php echo $socio->data->nombre; ?>"></td></tr>
@@ -70,7 +82,6 @@
 
                                 <tr><td class="text-end">CORREO</td>
                                 <td><input name="correo" disabled class="form-control" value="<?php echo $socio->correo; ?>"></td></tr>
-
                             </table>
                         </div>
                     </div>
@@ -108,6 +119,69 @@
                     </div>           
                 </div>
 
+                <div class="mb-4">
+                        <?php
+                        foreach( VARIABLES[ "puntos_verificacion" ][ "valor" ] as $codigo => $punto){
+
+                                $p = $socio->verificado->puntos->{$codigo};
+        
+                                if( $p->requerido ){ 
+                                    if( $p->checked ){
+                                        echo "<span class=\"badge text-teal border border-teal\"><i class=\"fas fa-square-check text-teal\"></i> {$punto[ "nombre" ]}</span> &nbsp;";
+                                    }
+                                    else{
+                                        echo "<span class=\"badge text-red border border-red\"><i class=\"far fa-square\"></i> {$punto[ "nombre" ]}</span> &nbsp;"; 
+                                    }
+                                }
+                              
+                            } 
+                        ?>
+                </div>
+
+                <div class="card" style="overflow:hidden">
+                    <table class="table table-striped m-0">
+                        <tr><th>Red</th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
+
+                    <?php 
+                    
+                    foreach( MODELOS as $m ){
+
+                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
+                        
+                        if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
+                            $p = $pedidos[ $m[ "codigo" ] ];
+
+                            switch( substr( $p[2], 3 ) ){
+                                case "ALMACEN":
+                                    $entrega = "<span class=\"badge bg-lime\">ALMACEN</span> ".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "-- sin datos --" );
+                                    break;
+
+                                case "PAQUETERIA":
+                                    $domicilios = $socio->getDomicilios();
+                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".$domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ];
+                                    break;                                    
+
+                                case "CELULAR":
+                                    $entrega = "<span class=\"badge bg-purple\">RECARGA</span> ".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );
+                                    break;        
+
+                                default:
+                                    $entrega = "-- sin datos --";
+                                    break;                                                                
+                            }
+
+                            echo "<td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td>{$entrega}</td>";
+                        }
+                        else{
+                            echo "<td></td><td></td><td></td>";
+                        }
+                        
+                        echo "</tr>";
+                    }
+                    ?>
+                    </table>
+                </div>
+                
                 <div id="edicion" class="card border-red mt-3" style="display:none">
                     
                     <div class="card-header">
