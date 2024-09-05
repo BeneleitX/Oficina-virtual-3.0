@@ -168,8 +168,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 				<div class="row">
 					<div class="col-6 text-center ct_frente">
 						<?php 
-						if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&  $socio->data->credencial->frente )
-						{ 
+						if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&  $socio->data->credencial->frente ){ 
 							?>
 				
 							<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->frente}"; ?>" alt="" class="img-fluid rounded-3">
@@ -179,35 +178,50 @@ if( !$socio->data->verificacion->correo ){ ?>
 								echo "<a href=\"".base_url("cancela_ine/frente")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
 							}
 						} 
-						else { ?>
+						else {
+							 ?>
+							
 							<button tipo="frente" onclick="$( 'input[tipo=frente]' ).click()" class="btn btn-outline-success col-12 py-4">Cargar foto del <h5 class="text-green m-0">frente</h5>de credencial</button>
-						<?php 
+							
+							<?php 
 						} 
 						?>
 					</div>
 					
 					<div class="col-6 text-center ct_reverso">
-						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) && $socio->data->credencial->frente ){ ?>
-								<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}"; ?>" alt="" class="img-fluid rounded-3">
+						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) && $socio->data->credencial->frente ){ 
+							?>
+							
+							<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}"; ?>" alt="" class="img-fluid rounded-3">
+							
 							<?php 
-								if( $socio->data->credencial->estatus <= 0 ) echo "<a href=\"".base_url("cancela_ine/reverso")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
-							} else { ?>							
-								<button tipo="reverso" onclick="$( 'input[tipo=reverso]' ).click()" class="btn btn-outline-success col-12 py-4">Cargar foto del <h5 class="text-green m-0">reverso</h5>de credencial</button>
-							<?php } ?>
-						</div>
+							if( $socio->data->credencial->estatus <= 0 ){ 
+								echo "<a href=\"".base_url("cancela_ine/reverso")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
+							}
+						} 
+						else { 
+							?>							
+							
+							<button tipo="reverso" onclick="$( 'input[tipo=reverso]' ).click()" class="btn btn-outline-success col-12 py-4">Cargar foto del <h5 class="text-green m-0">reverso</h5>de credencial</button>
+							
+							<?php 
+						} 
+						?>
+
 					</div>
+				</div>
 					
-					<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
-						<input type="file" class="d-none upload" tipo="frente"  Xaccept="image/jpeg">
-						<input type="file" class="d-none upload" tipo="reverso" xaccept="image/jpeg">
+				<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
+					<input type="file" class="d-none upload" tipo="frente"  Xaccept="image/jpeg">
+					<input type="file" class="d-none upload" tipo="reverso" xaccept="image/jpeg">
 
-						<h5 class="mt-4">1. Carga de fotografías</h5>
-						<p>Click en los botones para carga fotografías de tu credencial del INE vigente por ambos lados. Cancelala si deseas repetir el proceso con una nueva foto.</p>
+					<h5 class="mt-4">1. Carga de fotografías</h5>
+					<p>Click en los botones para carga fotografías de tu credencial del INE vigente por ambos lados. Cancelala si deseas repetir el proceso con una nueva foto.</p>
 
-						<h5>2. Envíalas a revisión</h5>
-						<p>Click en el botón para enviarlas. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-						<a class="btn btn-primary <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para revisión</a>
-					<?php } ?>
+					<h5>2. Envíalas a revisión</h5>
+					<p>Click en el botón para enviarlas. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
+					<a class="btn btn-primary <?php echo $socio->data->credencial->frente && $socio->data->credencial->reverso ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para revisión</a>
+				<?php } ?>
 			</div>
         </div>
 		<?php } ?>
