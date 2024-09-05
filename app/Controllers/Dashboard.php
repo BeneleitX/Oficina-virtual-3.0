@@ -21,9 +21,29 @@ class Dashboard extends BaseController
     }
 
 
-    public function sociodata( $request = null ){
+    public function reset_password(){
         
-        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Password temporal generado";
+        $this->data[ "admin" ]  = true;
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+
+        $this->data[ "nuevo" ]->resetPassword();
+        model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
+
+        echo template( "sesion/reset", $this->data );
+    }
+
+
+    public function sociodata( $request = null ){
+    
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
             return redirect()->to( "inicio" ); 
         }
 

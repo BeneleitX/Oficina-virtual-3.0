@@ -26,6 +26,11 @@ $visible = $datetime1->format("Y-m-d H:i") > $datetime2->format("Y-m-d H:i") ? t
             </div>
         </div>
 
-        <p class="text-center"><a href="<?php echo base_url( "login/".$nuevo->id ); ?>">Ingresar <i class="fa fa-right-to-bracket"></i></a></p>
+        <p class="text-center">
+        <?php if( $admin ?? 0 ){
+            echo "<a href=\"".base_url( "sociodata/".urlencode( base64_encode( $nuevo->password_original() ) ) )."\"><i class=\"fa fa-undo\"></i> Regresar a datos de socio</a> | ";
+        } ?>
+        <a href="<?php echo base_url( "login/".$nuevo->id ); ?>">Ingresar <i class="fa fa-right-to-bracket"></i></a>
+        </p>
     </div>
 </div>

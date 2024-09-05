@@ -40,6 +40,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "sociodata",             "Dashboard::sociodata" );
     $routes->post( "update_sociodata",      "Dashboard::update_sociodata" );
     $routes->post( "save_layout",           "Dashboard::save_layout" );
+    $routes->post( "reset_password",        "Dashboard::reset_password" );
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 

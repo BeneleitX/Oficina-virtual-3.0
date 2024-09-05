@@ -19,13 +19,13 @@
             <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
 
-        <div class="d-none col-4 offset-lg-2 col-lg-2">
-            <button class="btn btn-warning w-100"><i class="fa fa-key"></i> Reset password</button>
+        <div class="col-4 offset-lg-2 col-lg-2">
+            <button class="btn btn-warning w-100" onclick="$( '#resetpass' ).modal( 'show' );"><i class="fa fa-key"></i> Reset password</button>
         </div>
-        <div class="d-none col-4 col-lg-2">
+        <div class="col-4 col-lg-2">
             <button class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</button>
         </div>
-        <div class="d-none col-4 col-lg-2">
+        <div class="col-4 col-lg-2">
             <button class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</button>
         </div>
     <?php } ?>
@@ -198,6 +198,35 @@
         </div>
 
     </form>
+
+    <div class="modal" tabindex="-1" id="resetpass">
+        <div class="modal-dialog">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+                <img src="<?php echo base_url(); ?>assets/img/gatos/cat3.png" style="z-index:10; width:200px; position:absolute; bottom:0; left:0px">
+                <form method="post" action="<?php echo base_url( "reset_password" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+                    <input type="hidden" name="old_beneficiario"  value="">
+
+                    <div class="modal-header bg-mustard">
+                        <h5 class="modal-title text-white m-0"><i class="fa fa-key"></i> Reset password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-red text-center pb-5">
+                        <p class="mt-5"><i class="fa fa-warning"></i> ATENCION:</p>
+                        <p class="mb-5">Al continuar, el password actual será eliminado de manera irreversible y se creará un nuevo password aleatorio para<br>el socio <?php echo $socio->id(); ?></p>
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <button type="submit" class="btn btn-warning"><i class="fa fa-key"></i> Continuar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
 
 <?php } ?>
     
