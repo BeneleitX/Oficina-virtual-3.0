@@ -158,7 +158,8 @@
 
                                 case "PAQUETERIA":
                                     $domicilios = $socio->getDomicilios();
-                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".$domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ];
+
+                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".( intval( $p[3] ) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
                                     break;                                    
 
                                 case "CELULAR":
