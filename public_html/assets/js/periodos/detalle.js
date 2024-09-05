@@ -9,7 +9,7 @@ function lanza_corte(){
     $( '#dato_total' ).text( '' );
     $( '#dato_bolsa' ).text( '' );
     $( '.icon_gira' ).addClass( 'fa fa-repeat text-red' ).removeClass( 'far fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
-    $( '.corte_aviso' ).removeClass( 'text-teal text-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios '.( modelo == '20-TELEFONIA' ? 'minutos' : 'segundos') );
+    $( '.corte_aviso' ).removeClass( 'text-teal text-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios ' + ( modelo == '20-TELEFONIA' ? 'minutos' : 'segundos') );
     $( '.pe1' ).show();
     $( '.pe2' ).hide();
     
