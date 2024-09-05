@@ -162,7 +162,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 					case "2" : 
 						echo "<div class=\"alert alert-success\"><i class=\"fa fa-address-card\"></i> Tu identificación oficial ha sido validada.</div>";
 						break; 
-					}												
+					}		
+					
 				 ?>
 
 				<div class="row">
@@ -189,7 +190,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					</div>
 					
 					<div class="col-6 text-center ct_reverso">
-						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) && $socio->data->credencial->frente ){ 
+						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) && $socio->data->credencial->frente ){ 
 							?>
 							
 							<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->reverso}"; ?>" alt="" class="img-fluid rounded-3">
