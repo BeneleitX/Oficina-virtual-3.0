@@ -16,8 +16,8 @@ function pago( $g ){
     <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
     <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
     <td width=\"12%\">".estatus( $g[ "estatus_codigo" ] )."</td>
-    <td width=\"29%\">".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
-    <td width=\"14%\">".( $g[ "data" ][ "retencion"] == 0 ? "" : "<i class=\"fa fa-filter-circle-dollar text-".( $g[ "data" ][ "retencion"] == 2 ? "pink" : "blue" )."\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."{$g[ "clabe" ]}</td>
+    <td width=\"29%\" nowrap>".$g[ "s" ]->avatar( 24 )." ".$g[ "s" ]->id( $g[ "modelo_codigo" ], null, 1 )." ".$g[ "s" ]->nombre( 2 )."</td>
+    <td width=\"14%\">{$g[ "clabe" ]} ".( $g[ "data" ][ "retencion"] == 0 ? "" : "<i class=\"fa fa-filter-circle-dollar text-".( $g[ "data" ][ "retencion"] == 2 ? "pink" : "blue" )."\"></i> " ).( $g[ "data" ][ "menor"] ? "<i class=\"fa fa-child-reaching text-pink\"></i> " : "" )."</td>
     <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "subtotal" ], 2)."</td>
     <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "isr" ], 2)."</td>
     <td width=\"9%\">$".number_format($g[ "data" ][ "cantidades"][ "total" ], 2)."</td></tr>";    
