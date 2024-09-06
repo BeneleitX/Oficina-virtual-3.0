@@ -328,7 +328,7 @@ class Periodos extends BaseController
                     $pago[ "usuario_id" ],
                     $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
                     //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
-                    $pago[ "clabe" ],
+                    strval( $pago[ "clabe" ] ),
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $promo = $importe * .1, // promo
@@ -347,7 +347,7 @@ class Periodos extends BaseController
                     $pago[ "usuario_id" ],
                     $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
                     //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
-                    $pago[ "clabe" ],
+                    strval( $pago[ "clabe" ] ),
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $subt = $pago[ "p_data" ][ "cantidades" ][ "subtotal" ] / 1.16, // subtotal
@@ -364,7 +364,7 @@ class Periodos extends BaseController
                     $pago[ "pago_id" ],
                     $pago[ "usuario_id" ],
                     $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
-                    $pago[ "clabe" ],
+                    strval( $pago[ "clabe" ] ),
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
