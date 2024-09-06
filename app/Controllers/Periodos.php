@@ -60,7 +60,7 @@ class Periodos extends BaseController
 
         // abierto
         else{
-            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( estatus_codigo = '330-EN-ESPERA' AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ;
+            $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( estatus_codigo = '250-EN-PROCESO' AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ; // 330-EN-ESPERA
         }
 
         $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}'";

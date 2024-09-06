@@ -23,10 +23,10 @@
             <button class="btn btn-warning w-100" onclick="$( '#resetpass' ).modal( 'show' );"><i class="fa fa-key"></i> Reset password</button>
         </div>
         <div class="col-4 col-lg-2">
-            <button class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</button>
+            <a href="<?php echo base_url( "update_estatus/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</a>
         </div>
         <div class="col-4 col-lg-2">
-            <button class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</button>
+            <a href="<?php echo base_url( "oauth/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</a>
         </div>
     <?php } ?>
 

@@ -12,7 +12,7 @@ $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );
 $routes->get( "recover/(:any)",             "Sesion::recover/$1" );
 $routes->get( "login/(:num)",               "Sesion::login/$1" );
-$routes->get( "oauth/(:num)/(:any)",        "Sesion::procesa_login/$1/$2" );
+$routes->get( "oauth/(:any)",               "Sesion::procesa_login/$1" );
 $routes->get( "pass_catch/(:any)",          "Sesion::pass_catch/$1" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
 $routes->post( "pass_request",              "Sesion::pass_request" );
@@ -36,6 +36,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "inicio",                 "Dashboard::inicio" );
     $routes->post( "splash",                "Dashboard::splash" );
     $routes->get( "sociodata",              "Dashboard::sociodata" );
+    $routes->get( "update_estatus/(:any)",  "Dashboard::update_estatus/$1" );
     $routes->get( "sociodata/(:any)",       "Dashboard::sociodata/$1" );
     $routes->post( "sociodata",             "Dashboard::sociodata" );
     $routes->post( "update_sociodata",      "Dashboard::update_sociodata" );

@@ -36,6 +36,12 @@ class Dashboard extends BaseController
         $this->data[ "nuevo" ]->resetPassword();
         model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
 
+        // BITACORANuevo password
+        bitacora( 63, $this->data[ "usuario" ]->id, [ 
+            "socio"   => $this->data[ "nuevo" ]->id,
+            "cambios" => $this->data[ "nuevo" ]->password
+        ] );
+        
         echo template( "sesion/reset", $this->data );
     }
 
@@ -96,6 +102,38 @@ class Dashboard extends BaseController
         }
 
         echo template( "dashboard/sociodata", $this->data );
+    }
+
+
+    public function update_estatus( $request ){
+
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        $request = base64_decode( urldecode( $request ) );
+        $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+
+        model( "UsuarioModel" )->save( $socio );
+
+
+        $db = db_connect();
+        foreach( MODELOS as $m ){
+            $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+            $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+        }
+
+        $db->query( "select f_get_estatus(  {$socio->id}, 1 )" );
+        $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
+
+
+        // BITACORA Forzar update
+        bitacora( 62, $this->data[ "usuario" ]->id, [ 
+            "socio"   => $socio->id
+        ] );
+
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
     }
 
 

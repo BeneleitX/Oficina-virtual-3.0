@@ -47,14 +47,16 @@ class Sesion extends BaseController
 
 
     // validar formulario de login
-    public function procesa_login( $socio = null, $modelo = null )
+    public function procesa_login( $socio = null )
     {
         // SI es un login autom´tico de switch de admin
-        if( $socio && $modelo ){
-            $usuario = model( "UsuarioModel" )->find( $socio );
-            $this->session->set( "usuario", $usuario->id );
+        if( $socio ){
+            $request = base64_decode( urldecode( $socio ) );
+            $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
-            return redirect()->to( "red/".$modelo );
+            $this->session->set( "usuario", $socio->id );
+            
+            return redirect()->to( "inicio" );
         }
 
         // Si es un login normal,proceder a validar datos
