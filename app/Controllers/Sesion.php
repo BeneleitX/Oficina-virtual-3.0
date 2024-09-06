@@ -98,17 +98,31 @@ class Sesion extends BaseController
             }
 
             if( $usuario->data->credencial->estatus > 0 ){
-                if( 
-                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}"  ) ||
-                    !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->reverso}" ) ||
-                    $usuario->data->credencial->frente  == null ||
-                    $usuario->data->credencial->reverso == null
-                ){
-                    $data = $usuario->data;
+                if( $usuario->es_menor() ){
+                    if( 
+                        !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->acta}"  ) ||
+                        $usuario->data->credencial->acta == null
+                    ){
+                        $data = $usuario->data;
 
-                    $data->credencial->estatus = "-2";
-                    $usuario->data = $data;
-                    model( "UsuarioModel" )->save( $usuario );
+                        $data->credencial->estatus = "-2";
+                        $usuario->data = $data;
+                        model( "UsuarioModel" )->save( $usuario );
+                    }
+                }
+                else{
+                    if( 
+                        !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->frente}"  ) ||
+                        !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->reverso}" ) ||
+                        $usuario->data->credencial->frente  == null ||
+                        $usuario->data->credencial->reverso == null
+                    ){
+                        $data = $usuario->data;
+
+                        $data->credencial->estatus = "-2";
+                        $usuario->data = $data;
+                        model( "UsuarioModel" )->save( $usuario );
+                    }
                 }
             }
             
