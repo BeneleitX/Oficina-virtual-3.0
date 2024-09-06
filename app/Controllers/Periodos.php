@@ -365,7 +365,7 @@ class Periodos extends BaseController
                     $pago[ "usuario_id" ],
                     $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
                     strval( $pago[ "clabe" ] ),
-                    "'".$pago[ "clabe" ],
+                    30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
                     $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
