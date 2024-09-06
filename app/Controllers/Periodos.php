@@ -54,7 +54,7 @@ class Periodos extends BaseController
         $sql = "( modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
 
         // cerrado
-        if( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 ){
+        if( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 300 ){
             $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' )";
         }
 
