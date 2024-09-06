@@ -341,21 +341,6 @@ class Periodos extends BaseController
                     strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
                 ];
             }
-            elseif( $pago[ "p_data" ][ "retencion" ] == 0 ){
-                $sheetData[ 2 ][] = [
-                    $pago[ "pago_id" ],
-                    $pago[ "usuario_id" ],
-                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
-                    $pago[ "clabe" ],
-                    30,
-                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
-                    $pago[ "banco" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
-                    $pago[ "p_data" ][ "cantidades" ][ "isr" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "total" ],
-                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
-                ];
-            }
             elseif( $pago[ "p_data" ][ "retencion" ] == 1 ){
                 $sheetData[ 1 ][] = [
                     $pago[ "pago_id" ],
@@ -374,6 +359,21 @@ class Periodos extends BaseController
                     "PAGO DE COMISIONES"
                 ];
             }
+            elseif( $pago[ "p_data" ][ "retencion" ] == 0 ){
+                $sheetData[ 2 ][] = [
+                    $pago[ "pago_id" ],
+                    $pago[ "usuario_id" ],
+                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
+                    $pago[ "clabe" ],
+                    30,
+                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
+                    $pago[ "banco" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
+                    $pago[ "p_data" ][ "cantidades" ][ "isr" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "total" ],
+                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
+                ];
+            }            
         }
 
         $data = $periodo[ "data" ];
@@ -394,8 +394,14 @@ class Periodos extends BaseController
         ];
 
         $mySpreadsheet->addSheet( $worksheet[ 0 ], 0 );
+        $mySpreadsheet->addSheet( $worksheet[ 1 ], 0 );
+        $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
+
         $worksheet[ 0 ]->fromArray( $sheetData[ 0 ] );
-        $worksheet[ 0 ]->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
+        $worksheet[ 1 ]->fromArray( $sheetData[ 1 ] );
+        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
+
+/*         $worksheet[ 0 ]->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
         $worksheet[ 0 ]->getStyle( "A:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 0 ]->getStyle( "F:H" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 0 ]->getStyle( "I:O" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
@@ -403,8 +409,6 @@ class Periodos extends BaseController
         $worksheet[ 0 ]->getStyle( "I1:O1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
         $worksheet[ 0 ]->getStyle( "A1:P1" )->getFont()->getColor()->setARGB('ffffff');
 
-        $mySpreadsheet->addSheet( $worksheet[ 1 ], 0 );
-        $worksheet[ 1 ]->fromArray( $sheetData[ 1 ] );
         $worksheet[ 1 ]->getStyle( "D" )->getNumberFormat()->setFormatCode( "#" );
         $worksheet[ 1 ]->getStyle( "A:B" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 1 ]->getStyle( "D:G" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -413,8 +417,6 @@ class Periodos extends BaseController
         $worksheet[ 1 ]->getStyle( "G1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
         $worksheet[ 1 ]->getStyle( "A1:M1" )->getFont()->getColor()->setARGB('ffffff');
 
-        $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
-        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
         $worksheet[ 2 ]->getStyle( "D" )->getNumberFormat()->setFormatCode( "#" );
         $worksheet[ 2 ]->getStyle( "A:B" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 2 ]->getStyle( "D:G" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -427,7 +429,7 @@ class Periodos extends BaseController
             foreach( $ws->getColumnIterator() as $column ){
                 $worksheet[ $k ]->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
             }
-        }
+        } */
 
         // BITACORA descarga excel de corte
         bitacora( 46, $this->data[ "usuario" ]->id, [
