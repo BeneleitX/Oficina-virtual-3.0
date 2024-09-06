@@ -83,7 +83,7 @@ if( !$socio->data->verificacion->correo ){ ?>
             <div class="card-body">
 				<div class="row">
 						<div class="col-4 text-center ct_acta">
-							<?php if( $socio->data->credencial->acta ?? false ){ ?>
+						<?php if( file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->acta}" ) &&  $socio->data->credencial->acta ){ ?>
 								<img src="<?php echo base_url()."data/{$socio->id}/ine/{$socio->data->credencial->acta}"; ?>" alt="" class="img-fluid rounded-3">
 							<?php 
 								if( $socio->data->credencial->estatus <= 0 ) echo "<a href=\"".base_url("cancela_ine/acta")."\" class=\"small\"><i class=\"fa fa-trash\"></i> Cancelar esta foto</a>";
@@ -94,6 +94,9 @@ if( !$socio->data->verificacion->correo ){ ?>
 						<div class="col-8">
 						<?php 
 				switch( $socio->data->credencial->estatus ){
+					case "-2" : 
+						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tenemos un problema con tus documentos. Por favor carga las imagenes faltantes.</div>";
+						break; 					
 					case -1 : 
 						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tu Acta de nacimiento fue rechazada por el siguiente motivo: <strong>{$socio->data->credencial->motivo}</strong>. Por favor carga una nueva imagen.</div>";
 						break; 
@@ -106,25 +109,25 @@ if( !$socio->data->verificacion->correo ){ ?>
 					case 2 : 
 						echo "<div class=\"alert alert-success\"><i class=\"fa fa-address-card\"></i> Tu Acta de nacimiento ha sido validada.</div>";
 						break; 
-					}												
-				 ?>
-				 							
-						<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
-							<input type="file" class="d-none upload" tipo="acta" accept="image/jpeg">
+				}												
+				?>
+										
+					<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
+						<input type="file" class="d-none upload" tipo="acta" accept="image/jpeg">
 
-							<h5 class="mt-4">1. Carga de fotografía</h5>
-							<p>Click en el botón para carga fotografía de tu Acta de nacimiento. Cancelala si deseas repetir el proceso con una nueva foto.</p>
+						<h5 class="mt-4">1. Carga de fotografía</h5>
+						<p>Click en el botón para carga fotografía de tu Acta de nacimiento. Cancelala si deseas repetir el proceso con una nueva foto.</p>
 
-							<h5>2. Envíala a revisión</h5>
-							<p>Click en el botón para enviarla. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
-							<a class="btn btn-primary <?php echo $socio->data->credencial->acta ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
-						<?php } ?>
+						<h5>2. Envíala a revisión</h5>
+						<p>Click en el botón para enviarla. Personal de la empresa validará los datos y se te notificará cuando hayas terminado el proceso.</p>
+						<a class="btn btn-primary <?php echo $socio->data->credencial->acta ? "" : "disabled" ?>" id="valida_credencial" href="<?php echo base_url( "valida_credencial" ); ?>"><i class="fa fa-paper-plane"></i> Enviar para validación</a>
+					<?php } ?>
 
 
-						<p class="mt-4"><small><i class="fa fa-circle-info"></i> El <strong>Acta de nacimiento</strong> es el documento que valida las cuentas de menores de edad. Al cumplir 18 años, deberás revalidar tu cuenta con tu credencial de elector.</small></p>
+					<p class="mt-4"><small><i class="fa fa-circle-info"></i> El <strong>Acta de nacimiento</strong> es el documento que valida las cuentas de menores de edad. Al cumplir 18 años, deberás revalidar tu cuenta con tu credencial de elector.</small></p>
 
-						</div>
 					</div>
+				</div>
 					
 
 			</div>
@@ -162,7 +165,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					case "2" : 
 						echo "<div class=\"alert alert-success\"><i class=\"fa fa-address-card\"></i> Tu identificación oficial ha sido validada.</div>";
 						break; 
-					}		
+				}		
 					
 				 ?>
 
