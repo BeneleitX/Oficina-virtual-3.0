@@ -397,11 +397,27 @@ class Periodos extends BaseController
         $mySpreadsheet->addSheet( $worksheet[ 1 ], 0 );
         $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
 
-        $worksheet[ 0 ]->fromArray( $sheetData[ 0 ] );
+/*         $worksheet[ 0 ]->fromArray( $sheetData[ 0 ] );
         $worksheet[ 1 ]->fromArray( $sheetData[ 1 ] );
-        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] );
+        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] ); */
 
-/*         $worksheet[ 0 ]->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
+        foreach( $sheetData as $k => $s ){
+            $row = 0;
+            foreach( $s as $bloque ){
+                $col = 0;
+                $row++;
+                foreach( $bloque as $dato){
+                    if( strlen( $dato ) == 18 ){
+                        $worksheet[ $k ]->setCellValueExplicit( chr(65 + $col++).$row, $dato, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    }
+                    else{
+                        $worksheet[ $k ]->setCellValue( chr(65 + $col++).$row, $dato );
+                    }
+                }
+            }
+        }
+
+        $worksheet[ 0 ]->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
         $worksheet[ 0 ]->getStyle( "A:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 0 ]->getStyle( "F:H" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $worksheet[ 0 ]->getStyle( "I:O" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
@@ -429,7 +445,7 @@ class Periodos extends BaseController
             foreach( $ws->getColumnIterator() as $column ){
                 $worksheet[ $k ]->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
             }
-        } */
+        } 
 
         // BITACORA descarga excel de corte
         bitacora( 46, $this->data[ "usuario" ]->id, [
