@@ -281,7 +281,7 @@ class Bancos extends BaseController
 
                                 $db = db_connect();
                                 $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
-                                $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+                                $db->query( "select f_get_estatus( {$u->id}, 1 )" );
                                 $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();                                    
 
                             }

@@ -58,7 +58,7 @@ class Redes extends BaseController
 
         $db  = db_connect();
 
-        $db->query( "select f_get_estatus( {$d->id}, 0 )" );
+        $db->query( "select f_get_estatus( {$d->id}, 1 )" );
 
         $sql = "select 
             f_get_calificacion( {$d->id}, '{$m_2}', '{$modelo}' ) as '{$m_2}', 
@@ -113,6 +113,7 @@ class Redes extends BaseController
 
             if( $this->data[ "usuario" ]->permiso( "40-ADMIN") ){
 
+                $id = urlencode( base64_encode( $d->password_original() ) );
                 $html .= "<br><div class=\"card border-red\"><div class=\"card-header\"><h5 class=\"m-0 text-red\">Admin tools</h5><small>Usar con cuidado</small></div><div class=\"card-body\">
                 
                     <div class=\"row mb-1\">
@@ -128,7 +129,7 @@ class Redes extends BaseController
                     </div>
 
                     <div class=\"row\">
-                        <div class=\"col-4\"><a href=\"".base_url()."oauth/{$d->id}/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Switch login</a></div>
+                        <div class=\"col-4\"><a href=\"".base_url()."oauth/{$id}/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Switch login</a></div>
                         <div class=\"col-4\"><a href=\"".base_url()."logout/1/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-key\"></i> Toda la red</a></div>
                         <div class=\"col-4\"><a href=\"".base_url()."upline/{$modelo}\" class=\"btn btn-danger col-12 btn-sm\"><i class=\"fa fa-diagram-project\"></i> ver Upline</a></div>
                     </div>

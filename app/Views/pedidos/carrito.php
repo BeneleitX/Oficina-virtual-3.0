@@ -541,6 +541,23 @@
                         <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
                         <?php
                     }
+                    elseif( $cancelado ){
+                        ?>
+                        <div class="card mb-3" style="overflow:hidden">
+                            <table class="table rounded-3 m-0">
+                                <tr>
+                                    <td valign="middle" class="">Cancelación</td>
+                                    
+                                    <td valign="middle" class="text-end">
+                                        <h5 class="m-0">
+                                            <?php echo $pedido[ "fechas" ][ "cancelado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancelado" ] ) ) : ""; ?>
+                                        </h5>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <?php
+                    }
                     else{
                         foreach( METODOSPAGO as $mp ){
                             $imagen = "";

@@ -101,7 +101,8 @@ class Registro extends BaseController
                     "ciclo"  => 1,
                     "inicia" => null,
                     "estrellas" => 0
-                ]
+                ],
+                "checks" => null
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
             "telefono"      => $data[ "celular" ],

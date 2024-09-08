@@ -97,7 +97,7 @@
 	<p class="my-5 text-center">
 		<i style="font-size:100px" class="fa-solid fa-circle-notch fa-spin"></i>
 		<br><br>
-		En redes extensas este proceso puede durar varios minutos, te pedimos paciencia
+		En redes extensas este proceso puede durar varios segundos, te pedimos paciencia
 	</p>
 </div>
 

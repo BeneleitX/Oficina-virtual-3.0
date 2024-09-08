@@ -12,7 +12,7 @@ $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );
 $routes->get( "recover/(:any)",             "Sesion::recover/$1" );
 $routes->get( "login/(:num)",               "Sesion::login/$1" );
-$routes->get( "oauth/(:any)",               "Sesion::procesa_login/$1" );
+$routes->get( "oauth/(:any)/(:any)",        "Sesion::procesa_login/$1/$2" );
 $routes->get( "pass_catch/(:any)",          "Sesion::pass_catch/$1" );
 $routes->post( "oauth",                     "Sesion::procesa_login" );
 $routes->post( "pass_request",              "Sesion::pass_request" );

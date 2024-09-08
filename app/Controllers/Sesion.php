@@ -47,12 +47,21 @@ class Sesion extends BaseController
 
 
     // validar formulario de login
-    public function procesa_login( $socio = null )
+    public function procesa_login( $socio = null, $modelo = null )
     {
         // SI es un login autom´tico de switch de admin
         if( $socio ){
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+
+            $db = db_connect();
+            foreach( MODELOS as $m ){
+                $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+            }
+
+            $db->query( "do f_get_estatus(  {$socio->id}, 1 )" );
+            $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
 
             $this->session->set( "usuario", $socio->id );
             
@@ -87,8 +96,8 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $data    = $this->request->getPost();
-            $usuario = model( "UsuarioModel" )->find( $data[ "socio_id" ] );
+            $datax    = $this->request->getPost();
+            $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
 
             // Password corrompido, debe generar uno nuevo
 
@@ -97,7 +106,7 @@ class Sesion extends BaseController
                 model( "UsuarioModel" )->save( $usuario );
             }
 
-            if( $usuario->data->credencial->estatus > 0 ){
+            if( $usuario->data->credencial->estatus == 1 ){
                 if( $usuario->es_menor() ){
                     if( 
                         !file_exists( "data/{$usuario->id}/ine/{$usuario->data->credencial->acta}"  ) ||
@@ -127,11 +136,11 @@ class Sesion extends BaseController
             }
             
 
-            if( ( $usuario->password != $data[ "socio_password" ] && base64_decode( VARIABLES[ "master_key" ][ "valor" ] ) != $data[ "socio_password" ] ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
+            if( ( $usuario->password != $datax[ "socio_password" ] && base64_decode( VARIABLES[ "master_key" ][ "valor" ] ) != $datax[ "socio_password" ] ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
 
                 // BITACORA inicio de sesión fallido
                 bitacora( 2, $usuario->id, [ 
-                    "password" => $data[ "socio_password" ] 
+                    "password" => $datax[ "socio_password" ] 
                 ] );
 
                 return redirect()
@@ -147,12 +156,12 @@ class Sesion extends BaseController
 
             $db = db_connect();
             foreach( MODELOS as $m ){
-                $db->query( "select f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+                $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
                 $db->query( "call p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
             }
 
-            $db->query( "select f_get_estatus(  {$usuario->id}, 1 )" );
-            $db->query( "select f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
+            $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
+            $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
             return redirect()->route( "inicio" ); 
         }

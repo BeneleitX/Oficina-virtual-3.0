@@ -118,12 +118,9 @@ class Pedidos extends BaseController
             
             /**********************************/
 
-
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
-
             $this->data[ "link" ] = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
-            
 
             $sql = "/* estatus_codigo = '201-ACTIVO' AND  */modelo_codigo = '{$this->data[ "modelo" ]}'";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
@@ -173,51 +170,47 @@ class Pedidos extends BaseController
 
 
     public function reparte(){
-        $db = db_connect();
-        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-        $modelo = $pedido[ "modelo_codigo" ];
+        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ){
 
-        $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
-        $data = $u->data;                                   
-        $historial = $u->historial;  
-    
-        foreach( $pedido[ "PTS" ] as $promo => $pts ){
-            if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
-                $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+            $db = db_connect();
+            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+            $modelo = $pedido[ "modelo_codigo" ];
+
+            $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+            $data = $u->data;                                   
+            $historial = $u->historial;  
+        
+            foreach( $pedido[ "PTS" ] as $promo => $pts ){
+                if( !is_object( $historial->modelos->{$modelo}->primercompra ) ){
+                    $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
+                }
+
+                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                    $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                }
+            } 
+
+            $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
+
+            if( !sizeof( (array)$historial->modelos->{$modelo}->calificaciones ) ){
+                $historial->modelos->{$modelo}->calificaciones = json_decode( "{}" );
             }
 
-            if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
-                $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
-            }
-        } 
+            $u->data = $data;
+            $u->historial = $historial;
 
-        $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
+            model( "UsuarioModel" )->save( $u );
 
-        if( !sizeof( (array)$historial->modelos->{$modelo}->calificaciones ) ){
-            $historial->modelos->{$modelo}->calificaciones = json_decode( "{}" );
+            $db = db_connect();
+            $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
+            $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();    
+
+            // BITACORA Actualizar reparto de comisiones
+            bitacora( 31, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $pedido[ "id" ]
+            ] );
         }
-        
-
-        $u->data = $data;
-        $u->historial = $historial;
-
-        model( "UsuarioModel" )->save( $u );
-
-
-        $db = db_connect();
-        $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
-        $db->query( "select f_get_estatus( {$u->id}, 0 )" );
-        $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();    
-        
-        $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 ) as afectados" );
-
-        $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '".date( "", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
-        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
-
-        // BITACORA Actualizar reparto de comisiones
-        bitacora( 31, $this->data[ "usuario" ]->id, [ 
-            "pedido" => $pedido[ "id" ]
-        ] );
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
             "clase" => "success", 
@@ -227,8 +220,8 @@ class Pedidos extends BaseController
 
 
     public function cambia_fecha(){
-
-        if( validafecha( $this->request->getPost( "nueva" ) ) ){
+        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || $this->data[ "usuario" ]->permiso( "28-INGRESA" ) &&
+        validafecha( $this->request->getPost( "nueva" ) ) ){
 
             $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
             $fechas = $pedido[ "fechas" ];
@@ -251,10 +244,14 @@ class Pedidos extends BaseController
 
             $db = db_connect();
 
-            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );  
-            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
-            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
-            $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();            
+            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" ); 
+
+            if( $mescalifica != $mesprevio ){
+                $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
+            }
+
+            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
+            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();            
         }
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
@@ -265,25 +262,26 @@ class Pedidos extends BaseController
 
 
     public function cancela_pedido(){
+        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ){
+            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+            $fechas = $pedido[ "fechas" ];
+            $fechas[ "cancela" ]  = date( "Y-m-d H:i:s" );
+            $pedido[ "fechas" ]   = $fechas;
+            $pedido[ "estatus_codigo" ] = "150-CANCELADO";
 
-        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-        $fechas = $pedido[ "fechas" ];
-        $fechas[ "cancela" ]  = date( "Y-m-d H:i:s" );
-        $pedido[ "fechas" ]   = $fechas;
-        $pedido[ "estatus_codigo" ] = "150-CANCELADO";
+            model( "PedidoModel" )->save( $pedido );
 
-        model( "PedidoModel" )->save( $pedido );
+            $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
 
-        $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
+            $db = db_connect();
+            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
+            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
 
-        $db = db_connect();
-        $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
-        $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
-
-        // BITACORA Cancelar pedido
-        bitacora( 33, $this->data[ "usuario" ]->id, [ 
-            "pedido" => $pedido[ "id" ]
-        ] );
+            // BITACORA Cancelar pedido
+            bitacora( 33, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $pedido[ "id" ]
+            ] );
+        }
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
             "clase" => "success", 
@@ -349,7 +347,7 @@ class Pedidos extends BaseController
 
             $db = db_connect();
             $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
-            $db->query( "select f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "select f_get_estatus( {$u->id}, 1 )" );
             $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
         
             // BITACORA Marcar pedido como pagado

@@ -115,7 +115,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<?php if( $socio->data->credencial->estatus <= 0 ){ ?>
 						<input type="file" class="d-none upload" tipo="acta" accept="image/jpeg">
 
-						<h5 class="mt-4">1. Carga de fotografía</h5>
+						<h5 class="mt-4">1. Toma de fotografía</h5>
 						<p>Click en el botón para carga fotografía de tu Acta de nacimiento. Cancelala si deseas repetir el proceso con una nueva foto.</p>
 
 						<h5>2. Envíala a revisión</h5>
@@ -219,7 +219,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 					<input type="file" class="d-none upload" tipo="frente"  Xaccept="image/jpeg">
 					<input type="file" class="d-none upload" tipo="reverso" xaccept="image/jpeg">
 
-					<h5 class="mt-4">1. Carga de fotografías</h5>
+					<h5 class="mt-4">1. Toma de fotografías</h5>
 					<p>Click en los botones para carga fotografías de tu credencial del INE vigente por ambos lados. Cancelala si deseas repetir el proceso con una nueva foto.</p>
 
 					<h5>2. Envíalas a revisión</h5>
