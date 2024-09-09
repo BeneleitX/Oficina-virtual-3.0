@@ -30,7 +30,15 @@ class Admin extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Administración de sistema";
 
-        $sql = "( ( data->>'$.credencial.frente' != 'null' and data->>'$.credencial.reverso' != 'null' ) OR data->>'$.credencial.acta' != 'null' ) and data->>'$.credencial.estatus' = 1";
+        $sql = "( 
+                    ( 
+                        data->>'$.credencial.frente' != 'null' and data->>'$.credencial.reverso' != 'null' 
+                    ) 
+                    OR  
+                    data->>'$.credencial.acta' != 'null' 
+                ) 
+                and data->>'$.credencial.estatus' = 1";
+                
         $this->data[ "credenciales" ] = model( "UsuarioModel" )->where( $sql , null, false )->findAll();
 
         $sql = "substring(estatus_codigo , 1, 3 ) > 200";

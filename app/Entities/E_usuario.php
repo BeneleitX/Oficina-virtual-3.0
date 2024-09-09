@@ -888,7 +888,7 @@ class E_usuario extends Entity
                     FROM t_comisiones comision
                     join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                     join t_periodos periodo on periodo.codigo = '{$periodo}'
-                    join t_pedidos pedido on pedido.id = comision.pedido_id
+                    join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
                     WHERE comision.usuario_id = {$this->id} 
                     and substring( comision.estatus_codigo, 1, 3 ) > 200
                     AND esquema.settings->>'$.reparto' != 'puntos'
@@ -899,7 +899,7 @@ class E_usuario extends Entity
         else{
             $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
                     FROM t_comisiones comision
-                    join t_pedidos pedido on pedido.id = comision.pedido_id
+                    join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
                     WHERE comision.usuario_id = {$this->id} 
                     and comision.esquema_codigo = '{$esquema}'
                     ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" )."
