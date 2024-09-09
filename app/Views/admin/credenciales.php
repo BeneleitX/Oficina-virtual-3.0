@@ -43,6 +43,23 @@
             foreach( $socios as $socio ){
                 if( !is_dir( "data/{$socio->id}/ine" ) ) mkdir( "data/{$socio->id}/ine", 0755, true);
 
+                if( $socio->es_menor() ){
+                    if( 
+                        !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->acta}" ) 
+                    ){
+                        $data  = $socio->data;
+
+                        $files = scandir( "data/{$socio->id}/ine" );
+                        foreach( $files as $file ){
+                            if( strpos( $file, "acta"  ) !== false ){ $data->credencial->acta =  $file; }
+                        }
+
+                        $socio->data = $data;
+                        model( "UsuarioModel" )->save( $socio );
+                    }
+                }
+                else{
+
                 if( 
                     !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) ||
                     !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
@@ -58,10 +75,16 @@
                     $socio->data = $data;
                     model( "UsuarioModel" )->save( $socio );
                 }
-
+            }
                 if( 
+                   ( !$socio->es_menor() &&
                     file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&
                     file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
+                    )
+                    ||
+                    ( $socio->es_menor() &&
+                    file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->acta}" ) 
+                    )
                 ){            
                     echo "\n<tr socio=\"{$socio->id}\">
                         <td>{$socio->id()}</td>
