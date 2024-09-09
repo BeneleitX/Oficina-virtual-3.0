@@ -50,7 +50,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 						<div class="card-body">
 							<h5 class="text-center py-2 text-marine">Oficina virtual</h5>
 
-							<form method="post" action="<?php echo base_url( "oauth" ); ?>">
+							<form id="login_bsumbit" method="post" action="<?php echo base_url( "oauth" ); ?>">
 								<?php echo csrf_field() ?>
 								<input type="text" class="form-control ps-4 rounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo $id ?? old( "socio_id" ); ?>" placeholder="Socio">
 								<p class="small text-danger"><?php echo session( "errors.socio_id" ); ?></p>

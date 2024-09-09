@@ -1,10 +1,13 @@
 <?php
 
-$esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
-$bono = $usuario->getBonoPromos();
+$mes = "202408"; // date( "Ym" );
 
-$date1 = new DateTime( date( "Y-m-01" ) );
-$date2 = new DateTime( date( "Y-m-01" )." + 1 month" );
+$m_inicia = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01";
+$esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
+$bono = $usuario->getBonoPromos( $mes );
+
+$date1 = new DateTime( date( $m_inicia ) );
+$date2 = new DateTime( date( $m_inicia )." + 1 month" );
 $interval   = $date1->diff( $date2 );
 
 $total_dias = $interval->days;
@@ -15,7 +18,7 @@ $transcurridos = ( ($interval->days ) * 24 * 60 ) + ( $interval->h * 60 ) + $int
 $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
 
 
-$premieres = $usuario->getPremieres();
+$premieres = $usuario->getPremieres( $mes );
 
 $p_factor = 2.5;
 $p_clase  = "red";

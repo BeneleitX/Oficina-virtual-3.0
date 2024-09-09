@@ -198,6 +198,7 @@ class E_usuario extends Entity
         }
 
         $sql = "SELECT 
+            DATE_FORMAT( historial->>'$.modelos.\"10-NUTRICION\".primercompra.\"010-DISTRIBUIDOR\"', '%Y%m' ) AS primercompra,
             historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"010-DISTRIBUIDOR\"' AS biex,
             historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"030-PLUS\"' AS plus,
             redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
@@ -205,7 +206,7 @@ class E_usuario extends Entity
             FROM t_usuarios
             WHERE 
             redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
-            HAVING biex >= 6 AND plus >= 3";  
+            HAVING biex >= 6 AND plus >= 3 and primercompra = '{$mes}'";  
             
         $db  = db_connect();
         return $db->query($sql)->getResultArray();
