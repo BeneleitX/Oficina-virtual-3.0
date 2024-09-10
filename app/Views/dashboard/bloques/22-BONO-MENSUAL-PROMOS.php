@@ -1,6 +1,6 @@
 <?php
 
-$mes = "202408"; // date( "Ym" );
+$mes = date( "Ym" );
 
 $m_inicia = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01";
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
