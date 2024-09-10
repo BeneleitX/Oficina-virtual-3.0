@@ -9,7 +9,7 @@ class Gateway extends BaseController
         $respuesta = $this->request->getGet();
 
         $this->data["respuesta"] = $respuesta;
-        $this->data[ "navbar" ]  = true;
+        $this->data[ "navbar" ]  = false;
 
         echo template( "gateway/getnet", $this->data );
 
