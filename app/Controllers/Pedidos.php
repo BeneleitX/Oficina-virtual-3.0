@@ -148,7 +148,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago",    ( $this->data[ "usuario"]->id == 55 ? "codigo = '21-GETNET' OR " : "" )." modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( ".( $this->data[ "modelo" ] != "20-TELEFONIA" ? "codigo = '00-ALMACEN' OR" : "" )." modelo_codigo = '{$this->data[ "modelo" ]}' )");
+            load_catalogo( "metodosentrega", "json_unquote( json_extract( settings, '$.tipo' ) ) != 'ALMACEN' AND estatus_codigo = '201-ACTIVO' AND ( ".( $this->data[ "modelo" ] != "20-TELEFONIA" ? "codigo = '00-ALMACEN' OR" : "" )." modelo_codigo = '{$this->data[ "modelo" ]}' )");
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ] );

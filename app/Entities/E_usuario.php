@@ -891,7 +891,6 @@ class E_usuario extends Entity
                     join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
                     WHERE comision.usuario_id = {$this->id} 
                     and substring( comision.estatus_codigo, 1, 3 ) > 200
-                    AND esquema.settings->>'$.reparto' != 'puntos'
                     AND esquema.settings->>'$.periodo' = 'SEMANAL'
                     AND comision.fecha between periodo.inicia and periodo.termina
                     AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
@@ -901,9 +900,9 @@ class E_usuario extends Entity
                     FROM t_comisiones comision
                     join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
                     WHERE comision.usuario_id = {$this->id} 
+                    and substring( comision.estatus_codigo, 1, 3 ) > 200
                     and comision.esquema_codigo = '{$esquema}'
-                    ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" )."
-                    and substring( comision.estatus_codigo, 1, 3 ) > 200";
+                    ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" );
 
         }
 
