@@ -3,8 +3,8 @@
         <h1 class="mt-1 mb-0">
             <?php
                 echo $respuesta[ "nbResponse" ] == "Aprobado" ? 
-                "<p><i class=\"fa fa-check text-teal\" style=\"font-size:300px\"></i></p>¡Listo!" : 
-                "<p><i class=\"fa fa-xmark text-red\" style=\"font-size:300px\"></i></p>Pago rechazado";
+                "<p><i class=\"fa fa-circle-check text-teal\" style=\"font-size:300px\"></i></p>¡Listo!" : 
+                "<p><i class=\"fa fa-circle-xmark text-red\" style=\"font-size:300px\"></i></p>Pago rechazado";
             ?>
         </h1>
 
