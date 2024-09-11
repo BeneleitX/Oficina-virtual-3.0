@@ -14,7 +14,7 @@
         </div>
 
 
-        <p><a href="<?php echo base_url( "pedido/{$respuesta[ "referencia" ]}" ); ?>" class="btn btn-secondary"><i class="fa fa-undo"></i> Regresar al pedido</a></p>
+        <p><button onclick="top.location.href = '<?php echo base_url( "pedido/{$respuesta[ "referencia" ]}" ); ?>';" class="btn btn-secondary"><i class="fa fa-undo"></i> Regresar al pedido</a></button>
 
     </div>
 </div>
