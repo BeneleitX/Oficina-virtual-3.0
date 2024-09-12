@@ -53,29 +53,31 @@
                         foreach( $files as $file ){
                             if( strpos( $file, "acta"  ) !== false ){ $data->credencial->acta =  $file; }
                         }
-
+                        
+                        $data->credencial->estatus = "-2";
                         $socio->data = $data;
                         model( "UsuarioModel" )->save( $socio );
                     }
                 }
                 else{
 
-                if( 
-                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) ||
-                    !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
-                ){
-                    $data  = $socio->data;
+                    if( 
+                        !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) ||
+                        !file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->reverso}" ) 
+                    ){
+                        $data  = $socio->data;
 
-                    $files = scandir( "data/{$socio->id}/ine" );
-                    foreach( $files as $file ){
-                        if( strpos( $file, "frente"  ) !== false ){ $data->credencial->frente =  $file; }
-                        if( strpos( $file, "reverso" ) !== false ){ $data->credencial->reverso = $file; }
+                        $files = scandir( "data/{$socio->id}/ine" );
+                        foreach( $files as $file ){
+                            if( strpos( $file, "frente"  ) !== false ){ $data->credencial->frente =  $file; }
+                            if( strpos( $file, "reverso" ) !== false ){ $data->credencial->reverso = $file; }
+                        }
+
+                        $data->credencial->estatus = "-2";
+                        $socio->data = $data;
+                        model( "UsuarioModel" )->save( $socio );
                     }
-
-                    $socio->data = $data;
-                    model( "UsuarioModel" )->save( $socio );
                 }
-            }
                 if( 
                    ( !$socio->es_menor() &&
                     file_exists( "data/{$socio->id}/ine/{$socio->data->credencial->frente}" ) &&
