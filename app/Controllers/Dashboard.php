@@ -464,13 +464,35 @@ class Dashboard extends BaseController
             case "cash":
                 $pago = model( "PagoModel")->find( $parametros[0] );
 
+                switch( $pago[ "data" ][ "retencion" ] ){
+                    case 2: 
+                        $subt  = $pago[ "data" ][ "cantidades" ][ "subtotal" ] / 1.16;                        
+                        $promo = $subt * .1; // promo
+                        $sub   = $subt - $promo;  // subtotal
+                        $iva   = $sub * .16; // iva
+                        $ret   = $sub * 0.0125; //( retencion)
+                        $total = $pago[ "data" ][ "cantidades" ][ "subtotal" ] - $promo + $iva - $ret;
+                        break;
+                    case 1:
+                        $subt  = $pago[ "data" ][ "cantidades" ][ "subtotal" ] / 1.16; // subtotal
+                        $rete  = $subt * 0.1066; // retencion
+                        $iva   = $subt * 0.16;  // iva
+                        $total = $subt - $rete + $iva; // total
+                        break;
+                    default:
+                        $total = $pago[ "data" ][ "cantidades" ][ "total" ];
+                }
+
+                
+
+
                 $html .= "
                     <div class=\"text-center\">
 
                     
-                    <h3 class=\"mt-4\">¡FELICIDADES!</h3>
-                    <p class=\"mb-4\">Estos son tus ingresos de <span class=\"text-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $pago[ "modelo_codigo" ] ][ "nombre" ]."</span><br>para la semana <span class=\"badge bg-gray-500\">".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] )."</span></p>
-                    <p class=\"display-1 mb-4\"><span class=\"badge bg-marine\">$".number_format( $pago[ "data" ][ "cantidades" ][ "total" ], 2 )."</span></p>
+                    <h3 class=\"mt-4\">¡FELICIDADES!</h3>{$pago[ "data" ][ "retencion" ]}
+                    <p class=\"mb-4\">Estos son tus ingresos de <span class=\"text-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $pago[ "modelo_codigo" ] ][ "nombre" ]."</span><br>para la semana <span class=\"badge bg-gray-600\">".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] )."</span></p>
+                    <p class=\"display-1 mb-4\"><span class=\"badge bg-marine\">$".number_format( $total, 2 )."</span></p>
                     <p class=\"mb-5\">Los cuales estan siendo transferidos a la<br>cuenta CLABE ".mask( $pago[ "clabe" ], "clabe" )."</p>
                     <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
                     </div>

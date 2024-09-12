@@ -239,6 +239,8 @@ class Periodos extends BaseController
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
 
+            // agregar el splash de "cash" a socios
+
             // BITACORA marca periodo como pagado
             bitacora( 45, $this->data[ "usuario" ]->id, [
                 "periodo" => $periodo[ "codigo" ]

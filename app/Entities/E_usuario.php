@@ -258,7 +258,7 @@ class E_usuario extends Entity
 
     public function nombre( $apellidos = 0, $mask = false ): string
     {
-        $nombre = $this->data->nombre;
+        $nombre = "<strong>{$this->data->nombre}</strong>";
         for( $a = 0; $a < $apellidos; $a++ ){
             $nombre .= " ".( $mask ? mask( $this->data->apellidos[ $a ] ) : $this->data->apellidos[ $a ] );
         }
