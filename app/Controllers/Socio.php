@@ -373,8 +373,11 @@ class Socio extends BaseController
 
     public function update_estatus( $s ){
         $db = db_connect();
-        
+        $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
+
+        $db->query( "select f_update_PTS( {$s}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
         $db->query( "select f_update_PTS( {$s}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+
         $db->query( "select f_get_estatus( {$s}, 1 )" );
 
         return redirect()->to( "red" );

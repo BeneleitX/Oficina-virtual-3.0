@@ -154,8 +154,10 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
+            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
             $db = db_connect();
             foreach( MODELOS as $m ){
+                $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '{$mes_anterior}' )" );  
                 $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
                 $db->query( "call p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
             }
