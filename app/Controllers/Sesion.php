@@ -153,14 +153,11 @@ class Sesion extends BaseController
 
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
-
-            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
             $db = db_connect();
-            foreach( MODELOS as $m ){
-                $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '{$mes_anterior}' )" );  
-                $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
-                $db->query( "call p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
-            }
+            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
+
+            $db->query( "do f_update_PTS( {$s}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "do f_update_PTS( {$s}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
 
             $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
             $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
