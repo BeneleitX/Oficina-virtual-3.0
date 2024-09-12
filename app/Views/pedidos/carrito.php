@@ -550,7 +550,7 @@
                                     
                                     <td valign="middle" class="text-end">
                                         <h5 class="m-0">
-                                            <?php echo $pedido[ "fechas" ][ "cancelado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancelado" ] ) ) : ""; ?>
+                                            <?php echo $pedido[ "fechas" ][ "cancela" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancela" ] ) ) : ""; ?>
                                         </h5>
                                     </td>
                                 </tr>
