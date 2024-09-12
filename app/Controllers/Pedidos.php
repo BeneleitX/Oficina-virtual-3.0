@@ -318,7 +318,7 @@ class Pedidos extends BaseController
 
             $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $u->data->saldo->{$p[ "modelo_codigo" ]} ?? 0;
             
-            $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ( $total * $metodopago[ "settings" ][ "comision" ] / 100 );
+            $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
 
             $p[ "fechas" ][ "pagado" ]   = $fecha;
             $p[ "fechas" ][ "califica" ] = $fecha;
@@ -455,7 +455,7 @@ class Pedidos extends BaseController
 
             $this->data[ "pedido" ][ "estatus_codigo" ] = "255-PENDIENTE";
             $this->data[ "pedido" ][ "metodopago_codigo" ] = $this->data[ "metodopago" ][ "codigo" ];
-            $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? $total * $this->data[ "metodopago" ][ "settings" ][ "comision" ] / 100 : $this->data[ "metodopago" ][ "settings" ][ "comision" ];
+            $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? ceil( $total * $this->data[ "metodopago" ][ "settings" ][ "comision" ] / 100 ) : $this->data[ "metodopago" ][ "settings" ][ "comision" ];
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
         }
 

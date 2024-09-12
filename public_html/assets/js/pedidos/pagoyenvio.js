@@ -37,7 +37,7 @@ $(document).ready(function()
         $( '.mp_respuesta' ).show();
 
         if( metodospago[ metodopago_activo ].settings.tipocomision == 'porcentaje'){
-            comision = metodospago[ metodopago_activo ].settings.comision * $( '[total_productos]' ).attr( 'total_productos' ) / 100;
+            comision = Math.ceil( metodospago[ metodopago_activo ].settings.comision * $( '[total_productos]' ).attr( 'total_productos' ) / 100 );
         }
         else{
             comision = metodospago[ metodopago_activo ].settings.comision;

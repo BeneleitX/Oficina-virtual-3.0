@@ -600,7 +600,7 @@ class E_usuario extends Entity
                 "cantidad"   => $cantidad
             ];
 
-            $comisionbanco  = $metodopago[ "settings" ][ "tipocomision" ] == "porcentaje" ? ( $subtotal - $saldo ) * $metodopago[ "settings" ][ "comision" ] / 100 : $metodopago[ "settings" ][ "comision" ];
+            $comisionbanco  = $metodopago[ "settings" ][ "tipocomision" ] == "porcentaje" ? ceil( ( $subtotal - $saldo ) * $metodopago[ "settings" ][ "comision" ] / 100 ) : $metodopago[ "settings" ][ "comision" ];
         }
 
         $total = $subtotal + $comisionbanco;
