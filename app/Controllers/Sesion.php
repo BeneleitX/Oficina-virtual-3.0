@@ -156,8 +156,8 @@ class Sesion extends BaseController
             $db = db_connect();
             $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
-            $db->query( "do f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-            $db->query( "do f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
 
             $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
             $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
