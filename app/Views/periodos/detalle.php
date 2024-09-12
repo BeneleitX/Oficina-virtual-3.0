@@ -2,7 +2,15 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+<div class="row">
+    <div class="col-lg-6">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+    </div>
+    <div class="col-lg-6 text-end">
+        <h5 class="mt-3 mb-0"><?php echo "Del ".fecha( $periodo[ "inicia" ] )." al ".fecha( $periodo[ "termina" ] ); ?></h5>
+    </div>
+</div>
+
 <p class="mb-5"><a href="<?php echo base_url( "periodos/".$periodo[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a periodos</a></p>
 
 <?php

@@ -134,6 +134,13 @@ function estatus( $codigo, $bn = false ){
 }
 
 
+function fecha( $fecha ){
+    $f = explode( "-", $fecha );
+
+    return $f[2]." de ".mes( $f[ 1 ] ).", ".$f[ 0 ];
+}
+
+
 function mes($mesnum, $ext = 0)
 {
     $mesnum = intval( $mesnum );

@@ -625,7 +625,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
                         <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
                         <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promos" ) )."</td>
-                        <td>".estatus( $c->estatus_codigo )."</td>
+                        <td>".estatus( $c->estatus_codigo )." ".( $c->periodo_codigo ? "<span class=\"badge bg-marine\">".periodo( $c->periodo_codigo )."</span>" : "")."</td>
                         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
                     </tr>"; 
         }
