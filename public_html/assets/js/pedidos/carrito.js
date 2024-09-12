@@ -335,7 +335,7 @@ function update_pedido( flag = null ){
 
         switch( metodospago[ metodopago ].settings.tipocomision ){
             case 'porcentaje':
-                comision = subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100;
+                comision = Math.ceil( subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100 );
                 break;
             case 'efectivo':
                 comision = parseFloat( metodospago[ metodopago ].settings.comision );
