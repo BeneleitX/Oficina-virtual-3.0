@@ -292,7 +292,7 @@
                                         $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
                                     }
 
-                                    $d = is_array( $pedido[ "data" ][ "domicilio" ] ?? "" ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
+                                    $d = !isset($domicilios[ $pedido[ "data" ][ "entrega" ] ]) || is_array( $pedido[ "data" ][ "domicilio" ] ?? "" ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 }
                             }
                         }
