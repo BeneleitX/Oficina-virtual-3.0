@@ -5,10 +5,23 @@
         <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
     </div>
     <div class="col-6 text-end">
-        <button class="btn btn-warning" id="nuevo_banner"><i class="fa fa-file-upload"></i> Nuevo banner</button>
+        <button class="btn btn-secondary" id="nuevo_banner"><i class="fa fa-file-upload"></i> Nuevo banner</button>
     </div>
 </div>
 
+<div class="alert alert-info mb-4">
+    <div class="row">
+    <div class="col-lg-4">
+            <ul><li>Las imagenes del carrusel deben tener un tamaño en pixeles de <strong>1200x850</strong></li></ul>
+        </div>
+        <div class="col-lg-4">
+            <ul><li>El orden define cómo se mostrarán al usuario los banners, el que se encuentra en la primera posición será el banner de inicio que tendrá mayor exposición.</li></ul>
+        </div>
+        <div class="col-lg-4">
+        <ul><li>Las fechas determinan el estatus. La fecha de inicio siempre debe ser menor a la fecha de vigencia.</li></ul>
+        </div>
+    </div>
+</div>
 
 <table class="table table-display table-striped">
     <thead>

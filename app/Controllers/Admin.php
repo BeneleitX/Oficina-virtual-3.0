@@ -14,6 +14,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
+            $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" ) ||
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||

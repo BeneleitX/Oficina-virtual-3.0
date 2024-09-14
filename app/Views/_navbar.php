@@ -72,6 +72,7 @@
 	<?php if(
 		$usuario->permiso( "18-STOCK" ) ||
 		$usuario->permiso( "20-ALMACEN" ) ||
+		$usuario->permiso( "22-IMAGEN" ) ||
 		$usuario->permiso( "34-VALIDACION" ) ||
 		$usuario->permiso( "38-CONTABILIDAD" ) ||
 		$usuario->permiso( "25-PAQUETERIA" ) ||

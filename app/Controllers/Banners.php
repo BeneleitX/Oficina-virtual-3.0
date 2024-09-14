@@ -17,7 +17,7 @@ class Banners extends BaseController
         }
 
         $this->data[ "navbar" ]  = true;
-        $this->data[ "titulo" ]  = "Banners";
+        $this->data[ "titulo" ]  = "Carrusel de banners";
 
         $db  = db_connect();
         $sql = "SELECT * from t_banners where estatus_codigo = '201-ACTIVO' order by posicion asc";
