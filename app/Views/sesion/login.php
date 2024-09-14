@@ -8,25 +8,27 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 <div id="login-form">
 	<div class="row">
 		<div class="col-lg-7 px-5">
+
+		<?php
+		if( sizeof( $banners ) ){
+			?>
+
 			<div id="carrusel" class="carousel slide mb-3" data-bs-ride="carousel">
 				<div class="carousel-indicators">
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6"></button>
+					<?php
+					$active = 0;
+					foreach( $banners as $k => $b ){
+						echo "\n<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"{$k}\" ".( $active++ ? "" : "  class=\"active\" aria-current=\"true\"" )."></button>";
+					}
+					?>
 				</div>	
 				<div class="carousel-inner rounded">
-					<div class="carousel-item active"><img src="<?php echo base_url()."assets/img/slides/7.jpeg?".filemtime( "assets/img/slides/7.jpeg" ); ?>" class="d-block w-100" alt="">
-					</div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/8.jpeg?".filemtime( "assets/img/slides/8.jpeg" ); ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/1.jpg?".filemtime( "assets/img/slides/1.jpg" ); ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/2.jpg?".filemtime( "assets/img/slides/2.jpg" ); ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/3.jpg?".filemtime( "assets/img/slides/3.jpg" ); ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/4.jpg?".filemtime( "assets/img/slides/4.jpg" ); ?>" class="d-block w-100" alt=""></div>
-					<div class="carousel-item"><img src="<?php echo base_url()."assets/img/slides/5.jpeg?".filemtime( "assets/img/slides/5.jpeg" ); ?>" class="d-block w-100" alt=""></div>
+					<?php
+					$active = 0;
+					foreach( $banners as $b ){
+						echo "\n<div class=\"carousel-item ".( $active++ ? "" : "active")."\"><img src=\"".base_url()."assets/img/banners/{$b[ "archivo" ]}\" class=\"d-block w-100\" alt=\"\"></div>";
+					}
+					?>
 				</div>
 
 				<button class="carousel-control-prev" type="button" data-bs-target="#carrusel" data-bs-slide="prev">
@@ -38,6 +40,12 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 					<span class="visually-hidden">Next</span>
 				</button>
 			</div>
+
+			<?php
+		}
+
+		?>
+			
 		</div>
 		<div class="col-lg-1">
 

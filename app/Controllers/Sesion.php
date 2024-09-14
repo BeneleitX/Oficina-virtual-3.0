@@ -18,6 +18,8 @@ class Sesion extends BaseController
             $this->data[ "fondo" ]  = "marine";
             $this->data[ "id" ]     = $id;
 
+            $this->data[ "banners" ] = model( "BannerModel" )->where( "estatus_codigo = '201-ACTIVO'" )->orderby( "posicion" )->findAll();
+
             echo template( "sesion/login", $this->data );
         }
 

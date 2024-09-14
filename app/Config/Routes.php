@@ -99,7 +99,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "valida_credencial",      "Socio::valida_credencial" );
     $routes->get( "valida_correo",          "Socio::valida_correo" ); 
     $routes->get( "update_estatus/(:num)",  "Socio::update_estatus/$1" );
-    $routes->get( "nuevo_password/(:num)/(:any)/(:any)",        "Socio::nuevo_password/$1/$2/$3" );
+    $routes->get( "nuevo_password/(:num)/(:any)/(:any)",   "Socio::nuevo_password/$1/$2/$3" );
     $routes->post( "nuevo_password",        "Socio::nuevo_password" );
     $routes->post( "credencial",            "Socio::credencial" );
     $routes->post( "guarda_avatar",         "Socio::guarda_avatar" );
@@ -137,6 +137,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "roles",                  "Roles::listado" ); 
 
     $routes->get( "esquemas/(:any)",        "Esquemas::listado/$1" );
+    
+    $routes->get( "banners",                "Banners::listado" );
+    $routes->get( "mueve_banner/(:any)/(:num)",   "Banners::mueve/$1/$2" );
+    $routes->post( "save_banner",           "Banners::save" );
+    $routes->post( "upload_banner",         "Banners::upload_banner" );
 
     $routes->get( "admin",                  "Admin::dashboard" ); 
     $routes->get( "apikeys",                "Admin::apikeys" ); 

@@ -56,6 +56,8 @@ class Admin extends BaseController
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( "substring(estatus_codigo , 1, 3 ) > 200 and inicia > '2024-08-06' " , null, false )->findAll();
         $this->data[ "esquemas" ]     = model( "EsquemaModel" )->where( $sql , null, false )->findAll();
         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); 
+        $this->data[ "banners" ]      = model( "BannerModel" )->where( $sql, null, false )->findAll();
+
        
         echo template( "admin/dashboard", $this->data );
     }

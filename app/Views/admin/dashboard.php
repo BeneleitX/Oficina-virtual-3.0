@@ -32,7 +32,8 @@ $menu = [
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR", 0,[ "38-CONTABILIDAD", "40-ADMIN" ] ],     
     [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos", 0,[ "38-CONTABILIDAD" ] ],     
     [ "info", "apikeys", "network-wired", "API keys", 0,["40-ADMIN"] ],     
-    [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],     
+    [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],   
+    [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],
 ];
 
 foreach( $menu as $opcion ){
