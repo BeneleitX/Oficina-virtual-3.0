@@ -23,7 +23,7 @@
                     <tr>
                         <td valign="top">Entrega:</td>
                         <td><input name="entrega" type="hidden" value="<?php echo $socio->id; ?>">
-                        <div class="alert alert-info"><?php echo $socio->nombre(2); ?></div>
+                        <div class="alert alert-info py-1"><?php echo $socio->nombre(2); ?></div>
                         </td>
                     </tr>
                     <tr>
