@@ -77,14 +77,14 @@
     }
     else{
         if( intval( $pedido[ "data" ][ "mesanterior" ] ) ){
-            echo "\n<div class=\"alert alert-danger\">
+            echo "\n<div class=\"col-12\"><div class=\"alert alert-danger\">
                         <i class=\"fa fa-circle-info\"></i> Los puntos generados por esta compra son abonados al mes anterior de la fecha de pago.
-                    </div>";
+                    </div></div>";
         }
         if( $cancelado ){
-            echo "\n<div class=\"alert alert-danger\">
+            echo "\n<div class=\"col-12\"><div class=\"alert alert-danger\">
                         <i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.
-                    </div>";
+                    </div></div>";
         }    
     }
     ?>
@@ -194,12 +194,15 @@
                                 $existe_almacen = 0;
 
                                 foreach( ALMACENES as $a ){
-                                    if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
-                                        $existe_almacen = 1;
+
+                                    if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
+                                        if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            $existe_almacen = 1;
+                                        }
+                                        
+                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                                        echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                                     }
-                                    
-                                    if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
-                                    echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                                 }
                                 ?>
                             </select>
@@ -272,7 +275,8 @@
                     <?php 
                     $dom = $usuario->data->domicilio ?? 0;
 
-                    if( $pedido[ "metodoentrega_codigo" ] && sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
+//                    if( $pedido[ "metodoentrega_codigo" ] && sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
+    if( sizeof( $domicilios) ){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
                             if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
 
@@ -586,8 +590,14 @@
 
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
                     }
+
+                    
                     ?>
                 </form>
+
+                <?php if( $bloqueado ){
+                    echo "\n<button class=\"btn btn-danger col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
+                } ?>
             </div>
         </div>
     </div>
@@ -805,6 +815,34 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
     <?php 
 }
 ?>
+
+<div class="modal" tabindex="-1" id="cancela_pedido2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "cancela_pedido" ); ?>">
+                    <?php echo csrf_field() ?>
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-xmark"></i> Cancelar pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger m-0"><ul class="m-0">
+                            <li>Al cancelar el pedido se liberarán todas las promociones incluídas por acumulación de puntos, como bono de lealtad o productos de regalo. Para obtenerlas deberá crear un nuevo pedido.</li>
+                            <li>Esta acción no es reversible.</li>
+                        </ul></div>
+
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Cancelar pedido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 <div class="modal" tabindex="-1" id="modal_domicilios">
 	<div class="modal-dialog">

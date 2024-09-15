@@ -1,6 +1,6 @@
 
 function load_inventario( entrega ){
-
+console.log( almacenes[ entrega ], entrega );
     if( entrega ){
 
         if( typeof(almacenes[ entrega ].productos ) === 'undefined' ){
@@ -34,43 +34,47 @@ function revisa_stock(){
         $( '#no_stock' ).hide();
         pedido.no_stock = false;
 
-    if( metodoentrega_activo && metodoentrega_activo.substring(0,2) == '00'){
-        entrega = $( '[name=select_almacen]' ).val();
-        load_inventario( entrega );
-        
-        if( entrega ){
-            $( '.card[promocion] table[productos] > tr[producto]' ).each( function(){
-                var campo    = $( this ).find( 'input.cantidad' ),
-                    cantidad = parseInt( campo.val() ),
-                    producto = $( this ).attr( 'producto' );
+    if( metodoentrega_activo ){
+        var d = metodoentrega_activo.substring( 3 );
 
-                if( typeof( productos[ producto ] ) === 'undefined' ){
-                    productos[ producto ] = 0;
-                }
+        if( d == 'ALMACEN' || d == 'PAQUETERIA' ){
+            entrega = d == 'ALMACEN' ? $( '[name=select_almacen]' ).val() : ( modelo.substring( 0, 1 ) -1 ) + '10-PUEBLA';
+            load_inventario( entrega );
+            
+            if( entrega ){
+                $( '.card[promocion] table[productos] > tr[producto]' ).each( function(){
+                    var campo    = $( this ).find( 'input.cantidad' ),
+                        cantidad = parseInt( campo.val() ),
+                        producto = $( this ).attr( 'producto' );
 
-                productos[ producto ] += cantidad;
-            });
-
-            $.each( almacenes[ entrega ].productos, function( p, c ){
-
-                if( typeof( productos[ p ] ) !== 'undefined' ){
-                    if( c >= productos[ p ] ){
-                        delete productos[ p ];
+                    if( typeof( productos[ producto ] ) === 'undefined' ){
+                        productos[ producto ] = 0;
                     }
-                    else{
-                        productos[ p ] = productos[ p ] - c;
+
+                    productos[ producto ] += cantidad;
+                });
+
+                $.each( almacenes[ entrega ].productos, function( p, c ){
+
+                    if( typeof( productos[ p ] ) !== 'undefined' ){
+                        if( c >= productos[ p ] ){
+                            delete productos[ p ];
+                        }
+                        else{
+                            productos[ p ] = productos[ p ] - c;
+                        }
                     }
+                });
+
+                $.each( Object.keys( productos ), function( k, p ){
+                    $( '#no_stock ul' ).append( '<li>' + cat_productos[ p ].data.nombre + '</li>' );
+                });
+
+                // si hay faltantes lanzar alerta
+                if( Object.keys( productos ).length ){
+                    $( '#no_stock' ).show();
+                    pedido.no_stock = true;
                 }
-            });
-
-            $.each( Object.keys( productos ), function( k, p ){
-                $( '#no_stock ul' ).append( '<li>' + cat_productos[ p ].data.nombre + '</li>' );
-            });
-
-            // si hay faltantes lanzar alerta
-            if( Object.keys( productos ).length ){
-                $( '#no_stock' ).show();
-                pedido.no_stock = true;
             }
         }
     }
@@ -324,7 +328,6 @@ function update_pedido( flag = null ){
     }
     else{
         b.hide();
-        console.log( b, 'hide' );
     }
       
     $( 'button[name=metodopago]' ).each( function( a, b){
@@ -370,7 +373,7 @@ function update_pedido( flag = null ){
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: { [csrf_token] : csrf_hash, json : json },
         success: function( result ){
-            console.log( result );
+            console.log( 'log' );
         }
     });
 }

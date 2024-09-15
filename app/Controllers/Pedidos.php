@@ -149,7 +149,7 @@ class Pedidos extends BaseController
             load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago", "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( ".( $this->data[ "modelo" ] != "20-TELEFONIA" ? "codigo = '00-ALMACEN' OR" : "" )." modelo_codigo = '{$this->data[ "modelo" ]}' )");
-            load_catalogo( "almacenes",      "json_unquote( json_extract( settings, '$.tipo' ) ) != 'ALMACEN' AND estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+            load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "modelo" ] );
@@ -262,8 +262,13 @@ class Pedidos extends BaseController
 
 
     public function cancela_pedido(){
-        if( $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ){
-            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+
+        if( 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+            $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+            $this->data[ "usuario" ]->id == $pedido[ "usuario_id" ]
+         ){
 
             $previo = $pedido[ "estatus_codigo" ];
 

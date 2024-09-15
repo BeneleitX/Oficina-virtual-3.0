@@ -490,8 +490,8 @@ class Dashboard extends BaseController
                     <div class=\"text-center\">
 
                     
-                    <h3 class=\"mt-4\">¡FELICIDADES!</h3>{$pago[ "data" ][ "retencion" ]}
-                    <p class=\"mb-4\">Estos son tus ingresos de <span class=\"text-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $pago[ "modelo_codigo" ] ][ "nombre" ]."</span><br>para la semana <span class=\"badge bg-gray-600\">".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] )."</span></p>
+                    <h3 class=\"mt-4\">¡FELICIDADES!</h3>
+                    <p class=\"mb-4\">Estos son tus ingresos de <span class=\"text-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $pago[ "modelo_codigo" ] ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $pago[ "modelo_codigo" ] ][ "nombre" ]."</span><br>para la semana <span class=\"badge bg-red\">".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] )."</span></p>
                     <p class=\"display-1 mb-4\"><span class=\"badge bg-marine\">$".number_format( $total, 2 )."</span></p>
                     <p class=\"mb-5\">Los cuales estan siendo transferidos a la<br>cuenta CLABE ".mask( $pago[ "clabe" ], "clabe" )."</p>
                     <p class=\"my-4\"><button type=\"button\" class=\"btn btn-primary\" data-bs-dismiss=\"modal\">Continuar</button></p>
