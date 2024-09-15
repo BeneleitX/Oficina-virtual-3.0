@@ -31,7 +31,7 @@
                                     <table class=\"w-100 m-0 p-0\"><tr class=\"text-{$class}\">
                                         <td class=\"\"><img class=\"m-1\" style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
                                         <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
-                                        <td class=\"pe-2 pb-1\">".( ( $tf = $almacen[ "inventario" ][ "transfers_destino" ][ "530" ][ $k ] ?? 0 ) > 0 ? "<span class=\"badge bg-marine\"><i class=\"fa fa-truck-arrow-right\"></i> {$tf}</span>" : "" )."</td>
+                                        <td class=\"pe-2 pb-1\">".( ( $tf = $almacen[ "inventario" ][ "transfers_destino" ][ "530" ][ $k ] ?? 0 ) != 0 ? "<span class=\"badge bg-marine\"><i class=\"fa fa-truck-arrow-right\"></i> {$tf}</span>" : "" )."</td>
                                         <td nowrap class=\"pe-3 text-end\"><strong class=\"fs-5\">".number_format( $c )."</strong></td>
                                     </tr></table>
                                 </div>
