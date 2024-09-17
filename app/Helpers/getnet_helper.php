@@ -25,7 +25,7 @@ function getCadenaXML( $pedido, $socio ){
     $comisionbanco = ceil( $subtotal * 2 / 100 );
     $total = $subtotal + $comisionbanco;
 
-    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>{$socio->correo}</mail_cliente><version>IntegraWPP</version></url></P>";
+    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>".trim( $socio->correo )."</mail_cliente><version>IntegraWPP</version></url></P>";
 
     return $xml;
 }
