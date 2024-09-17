@@ -595,7 +595,7 @@
                     ?>
                 </form>
 
-                <?php if( $bloqueado ){
+                <?php if( $bloqueado && !$pagado ){
                     echo "\n<button class=\"btn btn-danger col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
                 } ?>
             </div>

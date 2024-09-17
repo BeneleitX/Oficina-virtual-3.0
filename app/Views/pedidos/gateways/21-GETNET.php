@@ -3,6 +3,9 @@ helper( "getnet_helper" );
 
 $xml  = getCadenaXML( $pedido, $socio );
 $xurl = getCadenaURL( $xml );
+
+
+
 ?>
 
 <p class="text-center"><a href="<?php echo base_url( "pedido/{$pedido[ "referencia" ]}" ); ?>" class="btn btn-danger"><i class="fa fa-undo"></i> Regresar al pedido</a></p>

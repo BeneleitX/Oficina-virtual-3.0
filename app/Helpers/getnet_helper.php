@@ -34,10 +34,10 @@ function getCadenaURL( $xml ){
   // Elegir ambiente
   $getnet = VARIABLES[ "getnet" ][ "valor" ];
   $AES = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
-
   $cifrado = AESencriptar( $xml, $AES[ "key128" ] );
   $encodedString = "<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>";
-  
+
+
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $AES[ "url" ] );
   curl_setopt($curl, CURLOPT_POST, true );
@@ -45,8 +45,9 @@ function getCadenaURL( $xml ){
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
   $respuesta = curl_exec( $curl );
   curl_close($curl);
+  $des = AESdesencriptar( $respuesta, $AES[ "key128" ] );
 
-  return simplexml_load_string( AESdesencriptar( $respuesta, $AES[ "key128" ] ) )->nb_url;
+  return simplexml_load_string( $des )->nb_url;
 }
 
 
