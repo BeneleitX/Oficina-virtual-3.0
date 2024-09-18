@@ -212,14 +212,17 @@ class Bancos extends BaseController
                         
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "costo" ] = $total; //"{$total} = ".floatval( $p[ "data" ][ "comisionentrega" ] )." + ".floatval( $p[ "data" ][ "total" ] )." + ".floatval( $p[ "data" ][ "comisionbanco" ] )." - ".floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} );
 
-                $f = model( "FondeoModel" )->where( "fecha = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ]}' AND operacion = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ]}'" )->first();
+                $fecha    = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];
+                $anterior = date( "Y-m-d H:i:s", mktime( 0, 0, 0, date( "m" ), 1, date( "Y" ) ) - 7200 );
+
+                $f = model( "FondeoModel" )->where( "fecha = '{$fecha}' AND operacion = '{$respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ]}'" )->first();
 
                 if( !$f ){
 
                     model( "FondeoModel" )->ignore( true )->save( [
                         "id" => null,
                         "operacion" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "folio" ],
-                        "fecha" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ],
+                        "fecha" => $fecha,
                         "estatus_codigo" => "620-RECIBIDO",
                         "metodopago_codigo" => $metodopago[ "codigo" ],
                         "usuario_id" => $u->id ?? null,
@@ -235,10 +238,11 @@ class Bancos extends BaseController
                         if( $total <= $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
                             if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 300 ){
 
-                                $p[ "estatus_codigo" ] = "420-PAGADO";
-                                $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
-                                $p[ "fechas" ][ "pagado" ]   = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];     
-                                $p[ "fechas" ][ "califica" ] = $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ];    
+                                $p[ "estatus_codigo" ]       = "420-PAGADO";
+                                $p[ "metodopago_codigo" ]    = $metodopago[ "codigo" ];
+                                $p[ "fechas" ][ "pagado" ]   = $fecha;     
+                                $p[ "fechas" ][ "califica" ] = intval( $p[ "data" ][ "mesanterior" ] ) ? $anterior : $fecha;  
+                                $p[ "fechas" ][ "reparte" ]  = $fecha;    
 
                                 $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 

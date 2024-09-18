@@ -48,7 +48,12 @@ if( $usuario ){
                     type: "POST",
                     data: { [csrf_token] : csrf_hash, tipo : tipo, parametros : parametros },
                     success: function( result ){
-                        $( '#modal_splash .modal-body' ).html( result );
+                        if( !result ){
+                            $( '#modal_splash' ).modal( 'hide' );
+                        }
+                        else{
+                            $( '#modal_splash .modal-body' ).html( result );
+                        }
                     }
                 });
             }

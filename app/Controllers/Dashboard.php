@@ -462,6 +462,10 @@ class Dashboard extends BaseController
                 break; 
         
             case "cash":
+                if( substr( $parametros[0], 2, 1 ) == "S"){
+                    return;
+                }
+
                 $pago = model( "PagoModel")->find( $parametros[0] );
 
                 switch( $pago[ "data" ][ "retencion" ] ){

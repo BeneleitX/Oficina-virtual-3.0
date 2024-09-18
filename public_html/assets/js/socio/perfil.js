@@ -75,14 +75,13 @@ function go_cp( colonia = null ){
 				}
 				else{
 					// si hay entidad y localidad
-					
 
 					$( '#n_localidad' ).val( result.localidad.nombre );
 					$( '[name=n_localidad_id]' ).val( result.localidad.id );
 					$( '#n_entidad' ).val( result.entidad.nombre );
 					$( '[name=n_entidad_id]' ).val( result.entidad.id );
 
-					if( result.total > 0){
+				//	if( result.total > 0){
 						$( '#n_colonia').prop( 'disabled', false );
 						$( '#n_colonia' ).append( '<option value="0" selected>SELECCIONA...</option>' );
 
@@ -91,10 +90,10 @@ function go_cp( colonia = null ){
 
 							$( '#n_colonia' ).append( '<option value="' + c.id + '" ' + ( colonia == c.id ? 'selected' : '' ) + '>' + c.nombre + '</option>' );
 						});
-					}
+				/* 	}
 					else{
 						$( '#n_colonia').prop( 'disabled', true );
-					}
+					} */
 				}
 			}
 		});

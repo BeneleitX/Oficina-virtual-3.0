@@ -332,6 +332,7 @@ class Pedidos extends BaseController
 
             $p[ "fechas" ][ "pagado" ]   = $fecha;
             $p[ "fechas" ][ "califica" ] = $fecha;
+            $p[ "fechas" ][ "reparte" ]  = $fecha;
 
             model( "PedidoModel" )->save( $p );
 

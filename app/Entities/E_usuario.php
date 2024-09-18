@@ -610,7 +610,8 @@ class E_usuario extends Entity
         if( $total <= ( $saldo + $cantidad ) ){
             $pedido[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
             $pedido[ "data" ][ "comisionbanco" ] = $comisionbanco;
-            $pedido[ "fechas" ][ "pagado" ] = $fecha;
+            $pedido[ "fechas" ][ "pagado" ]   = $fecha;
+            $pedido[ "fechas" ][ "reparte" ]  = $fecha;
             $pedido[ "fechas" ][ "califica" ] = intval( $pedido[ "data" ][ "mesanterior" ] ) ? $fecha_anterior : $fecha;
             $pedido[ "estatus_codigo" ] = "420-PAGADO";
     

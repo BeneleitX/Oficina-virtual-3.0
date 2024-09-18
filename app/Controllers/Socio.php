@@ -477,7 +477,7 @@ class Socio extends BaseController
                 ];
             }
             else{
-                $respuesta[ "error" ] = true;
+              //  $respuesta[ "error" ] = true;
             }
         }
 
