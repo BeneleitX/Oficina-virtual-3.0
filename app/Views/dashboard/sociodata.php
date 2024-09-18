@@ -94,8 +94,12 @@
                                 <tr><td class="text-end">CURP</td>
                                 <td><input name="curp" disabled class="form-control" value="<?php echo $socio->curp; ?>"></td></tr>
 
+                                <tr><td class="text-end">FECHA REGISRO</td>
+                                <td><h4 class="mb-1"><span class="badge bg-light text-black"><?php echo date( "d/m/Y", strtotime( $socio->historial->registro ) ); ?></span></h4></td></tr>                    
+
                                 <tr><td class="text-end">FECHA NAC</td>
                                 <td><input name="fechanac" type="date" class="form-control" value="<?php echo $socio->fechanac; ?>"></td></tr>                    
+
 
                                 <tr><td class="text-end">RFC</td>
                                 <td><input name="rfc" disabled class="form-control" value="<?php echo $socio->data->sat->rfc; ?>"></td></tr>
