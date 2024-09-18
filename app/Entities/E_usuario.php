@@ -418,8 +418,12 @@ class E_usuario extends Entity
 
     public function password_original(){
         
-      //  dd($this->attributes[ "password"]);
-        //if( $this->attributes[ "password"] )
+      
+        if( !$this->attributes[ "password"] ){
+            $this->password = random_password();
+            model( "UsuarioModel" )->save( $this );
+        }
+
         return $this->attributes[ "password"];
     }
 
