@@ -418,7 +418,7 @@ class E_usuario extends Entity
 
     public function password_original(){
         
-        dd($this->attributes[ "password"]);
+      //  dd($this->attributes[ "password"]);
         //if( $this->attributes[ "password"] )
         return $this->attributes[ "password"];
     }
