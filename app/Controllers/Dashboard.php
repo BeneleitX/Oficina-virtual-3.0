@@ -46,60 +46,42 @@ class Dashboard extends BaseController
     }
 
 
-    public function sociodata( $request = null ){
+    public function sociodata( $request){
     
-        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
-            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+        if( !$request || ( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ) ) {
             return redirect()->to( "inicio" ); 
         }
 
-        $this->data[ "saved" ] = false;
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Administración de usuarios de sistema BENELEIT";
+        $this->data[ "titulo" ] = "Detalles de usuario";
 
-        if( $request ){
+        $request = base64_decode( urldecode( $request ) );
+        $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
-            $request = base64_decode( urldecode( $request ) );
-            $this->data[ "saved" ] = true;
-            $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
-            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
-        }
-
-        elseif( $this->request->getPost( "busca_id" ) ){
-            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
-        }
-        elseif( $this->request->getPost( "socio" ) ){
-            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
-        }
-        else{
-            $this->data[ "socio" ] = null;
-        }
+        // Se hace doble consulta para que carque la validación
+        $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
         
-        if( $this->data[ "socio" ] ){
-            
-            if( !$request ){
-            // BITACORA Consulta de datos
-            bitacora( 50, $this->data[ "usuario" ]->id, [ 
-                "socio" => $this->data[ "socio" ]->id
-            ] );
-            }
+        // BITACORA Consulta de datos
+        bitacora( 50, $this->data[ "usuario" ]->id, [ 
+            "socio" => $this->data[ "socio" ]->id
+        ] );
 
-            load_catalogo( "metodosentrega");
-            load_catalogo( "almacenes");
-            
-            $db = db_connect();
-            
-            $sql = "select JSON_OBJECTAGG( modelo_codigo, json_array( referencia, fecha, metodoentrega, entrega) ) as data
-                    FROM ( SELECT  @prev := '' ) init
-                    JOIN
-                    ( SELECT modelo_codigo != @prev AS first, @prev := modelo_codigo, modelo_codigo, referencia, metodoentrega_codigo as metodoentrega, data->>'$.entrega' as entrega, CAST( fechas->>'$.pagado' AS DATE ) as fecha
-                            FROM  t_pedidos where usuario_id = {$this->data[ "socio" ]->id} AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
-                            ORDER BY modelo_codigo, id DESC, CAST( fechas->>'$.pagado' AS DATE ) DESC LIMIT 999999
-                    ) x
-                    WHERE  first ORDER BY modelo_codigo;";
+        load_catalogo( "metodosentrega");
+        load_catalogo( "almacenes");
+        
+        // Obtenemos sus compras recientes
+        $db = db_connect();
+        $sql = "select JSON_OBJECTAGG( modelo_codigo, json_array( referencia, fecha, metodoentrega, entrega) ) as data
+                FROM ( SELECT  @prev := '' ) init
+                JOIN
+                ( SELECT modelo_codigo != @prev AS first, @prev := modelo_codigo, modelo_codigo, referencia, metodoentrega_codigo as metodoentrega, data->>'$.entrega' as entrega, CAST( fechas->>'$.pagado' AS DATE ) as fecha
+                        FROM  t_pedidos where usuario_id = {$this->data[ "socio" ]->id} AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
+                        ORDER BY modelo_codigo, id DESC, CAST( fechas->>'$.pagado' AS DATE ) DESC LIMIT 999999
+                ) x
+                WHERE  first ORDER BY modelo_codigo;";
 
-            $this->data[ "pedidos" ] = json_decode( $db->query( $sql )->getRow()->data, 1 );
-        }
+        $this->data[ "pedidos" ] = json_decode( $db->query( $sql )->getRow()->data, 1 );
 
         echo template( "dashboard/sociodata", $this->data );
     }

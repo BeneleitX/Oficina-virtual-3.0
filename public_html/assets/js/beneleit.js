@@ -82,6 +82,10 @@ String.prototype.digitoVerificador = function()
 
 
 $(document).ready(function(){
+
+    var myDefaultAllowList = bootstrap.Tooltip.Default.allowList;
+    myDefaultAllowList['*'].push( 'style' );
+
     $('[data-bs-toggle="tooltip"]').tooltip({
         container: 'body',
         html: true,

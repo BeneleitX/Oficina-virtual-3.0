@@ -494,6 +494,8 @@
                             </tr>
                             <?php 
                         } 
+
+                        $tt2 = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $saldo;
                         ?>
 
                         <tr>
@@ -534,11 +536,27 @@
                                     <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
                                     
                                     <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
-                                        <h5 class="m-0" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
+                                        <span class="badge bg-marine" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
                                             <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
-                                        </h5>
+                                        </span>
                                     </td>
                                 </tr>
+
+                                <tr>
+                                    <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Pago comisiones</td>
+                                    
+                                    <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
+                                        
+                                            <small><?php
+                                            $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
+                                                echo estatus( $periodo[ "estatus_codigo" ] );
+                                            ?></small>
+                                        <span class="badge bg-marine">
+                                            <?php echo date( "W-Y", strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
+                                        </span>
+                                        
+                                    </td>
+                                </tr>                                
                             </table>
                         </div>
 
@@ -711,9 +729,8 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-danger mb-3"><ul class="m-0">
-                            <li>La fecha de pago no se modifica, solo la de calificación y reparto de comisiones.</li>
                             <li>Los beneficios generados por este pedido, aplicarán para las calificaciones del mes al que corresponde la fecha que se aplique.</li>
-                            <li>Un cambio de fecha de compra altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
+                            <li>Un cambio de fecha de calificación altera la calificación del socio.</li>
                         </ul></div>
 
                         <label class="form-label">Actualiza la fecha y guarda los cambios usando el botón</label>
@@ -735,42 +752,56 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
     <div class="modal" tabindex="-1" id="marca_pagado">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" style="position:relative; xoverflow:hidden">
+                <img src="<?php echo base_url(); ?>assets/img/gatos/cat4.png" style="position:absolute; bottom:-17px; left:-10px; width:200px; z-index:1">
                 <form method="post" action="<?php echo base_url( "paga_pedido" ); ?>">
                     <?php echo csrf_field() ?>
                     <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Marcar pedido como pagado</h5>
+                    <div class="modal-header bg-red">
+                        <h5 class="modal-title text-white"><i class="fa fa-cash-register"></i> Marcar pedido como pagado</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-danger mb-3"><ul class="m-0">
-                            <li>El pedido será marcado como pagado y aparecerá en los pendientes de entrega/envío.</li>
-                            <li>Se repartirán comisiones</li>
-                            <li>Se actualizarán estatus y calificaciones del socio</lo>
-                        </ul></div>
 
-                        <label class="form-label">Elige el tipo de pago</label>
-                                <select class="form-select mb-3" name="metodopago">
+                        <h1 class="display-4 text-center mb-4"><span class="badge bg-light text-teal" id="calcula_total">$<?php echo number_format( $tt2, 2 ) ?></span></h1>
+                        <label class="form-label"><strong>Elige el tipo de pago:</strong></label>
+                                <select class="form-select mb-3" name="metodopago" id="calcula_pago">
                                     <?php
 
-                                    $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
-                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
-
                                     $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
-                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\" selected>{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+
+                                    $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
+                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
                                     $pago = METODOSPAGO[ "1".substr( $modelo, 0, 1 )."-REFERENCIA" ];
-                                    echo "\n<option value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
                                         ?>
                                 </select>
 
-                        <label class="form-label">Elige la fecha de compra y que se aplicará para calificación</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <input class="form-control col-6" type="date" name="fecha" value="<?php echo date( "Y-m-d" ); ?>">
+
+                        <div class="alert alert-warning mb-0">
+                            <div class="row mb-3">
+                                <label class="col-5 col-form-label text-end">Fecha de pago</label>
+                                <div class="col-6">
+                                    <input class="form-control" type="date" name="fecha_pagado" value="<?php echo date( "Y-m-d" ); ?>">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-5 col-form-label text-end">Calificación</label>
+                                <div class="col-6">
+                                    <input class="form-control" type="date" name="fecha_califica" value="<?php echo date( "Y-m-d" ); ?>">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-5 col-form-label text-end">Reparto de comisiones</label>
+                                <div class="col-6">
+                                    <input class="form-control" type="date" name="fecha_reparte" value="<?php echo date( "Y-m-d" ); ?>">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -959,6 +990,7 @@ foreach( $productos as $p ){
         pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
         tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
         pagado 		    = <?php echo $pagado; ?>,
+        total_pedido    = <?php echo $tt2; ?>,
         bloqueado 	    = <?php echo $bloqueado; ?>,
         cancelado 	    = <?php echo $cancelado; ?>,
         mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],

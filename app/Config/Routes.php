@@ -43,6 +43,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "save_layout",           "Dashboard::save_layout" );
     $routes->post( "reset_password",        "Dashboard::reset_password" );
 
+    $routes->get( "usuarios",               "Usuarios::busqueda" );
+    $routes->get( "usuarios/(:any)",        "Usuarios::busqueda/$1" );
+    $routes->post( "usuarios",              "Usuarios::busqueda" );
+
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 
     $routes->get( "soporte",                "Soporte::inicio" );    
@@ -147,7 +151,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "apikeys",                "Admin::apikeys" ); 
     $routes->get( "variables",              "Admin::variables" ); 
     $routes->get( "estatus",                "Admin::estatus" ); 
-    $routes->get( "usuarios",               "Admin::usuarios" ); 
+//    $routes->get( "usuarios",               "Admin::usuarios" ); 
     $routes->get( "saldos",                 "Admin::saldos" );     
     $routes->get( "isr",                    "Admin::isr" ); 
     $routes->get( "valida_credenciales",    "Admin::credenciales" ); 

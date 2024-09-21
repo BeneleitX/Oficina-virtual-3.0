@@ -92,10 +92,15 @@ function mask( $texto, $tipo = "nombre" ){
         case "nombre":
             $ok = 2;
             $nueva = "";
-         
-            foreach( str_split( $texto ) as $k => $d ){
-                $nueva .= ($k >= $ok ? "*" : $d );
+            $txt = explode( " ", $texto);
+            
+            foreach( $txt as $t ){
+                $nueva .=" ";
+                foreach( str_split( $t ) as $k => $d ){
+                    $nueva .= ($k >= $ok ? "*" : $d );
+                }
             }
+            
             break;
 
         case "clabe":
@@ -191,12 +196,47 @@ function random( $tipo ){
 }
 
 
+function marca( $queries, $texto, $case = null ){
+    $replaces = [];
+    $colores  = [
+        "yellow",
+        "light-pink",
+        "light-green",
+        "cyan",
+        "gray-600"
+    ];
+
+    foreach( $queries as $k => $q){
+        if( $case == "upper" ){
+            $queries[ $k ] = strtoupper( $q );
+            $replaces[] = "<span class=\"bg-{$colores[ $k ]}\">{$queries[ $k ]}</span>";
+        }
+        else{
+            $queries[ $k ] = strtolower( $q );
+            $replaces[] = "<span class=\"bg-{$colores[ $k ]}\">{$queries[ $k ]}</span>";
+        }
+
+
+    }
+
+    if( $case == "upper" ){
+        $texto = strtoupper( $texto );
+    }
+    else{
+        $texto = strtolower( $texto );
+    }
+
+    return str_replace( $queries, $replaces, $texto );
+}
+
+
 function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
     if( null == $fecha ){
         $fecha = date( "Y-m-d" );
     }
     return substr( $modelo, 0, 2 ).substr( $tipo, 0, 1 ).substr( $fecha, 0, 4 ).str_pad( ( date( "W", strtotime( $fecha ) ) ), 2, "0", STR_PAD_LEFT );
 }
+
 
 function periodo( $periodo ){
     return substr( $periodo, 7, 2 )."-".substr( $periodo, 3, 4 );
@@ -207,6 +247,7 @@ function get_datos($month, $year, $day, $x = 1){
     $a = mktime(0,0,0,$month, $day, $year);
     return str_pad((date("W", $a)+$x),2,"0",STR_PAD_LEFT)."-".date("o", $a);
 }
+
 
 function calendario_semanas($month, $year, $comisiones){
     $headings = ["L","M","M","J","V","S", "D"];

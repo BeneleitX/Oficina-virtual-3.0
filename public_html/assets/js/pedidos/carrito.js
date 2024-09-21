@@ -668,4 +668,21 @@ $(document).ready(function()
     if( $( '[name=metodosentrega]' ).length == 1 ){
         $( '[name=metodosentrega]' ).click();
     }    
+
+    $( '#calcula_pago' ).on( 'change', function(){
+        var o = $( this ).val(),
+            t = $( '#calcula_pago > option[value=' + o + ']' ).attr( 'tipo' ),
+            c = parseInt( $( '#calcula_pago > option[value=' + o + ']' ).attr( 'cantidad' ) ),
+            v = 0;
+
+        if( t == 'efectivo' ){
+            v = total_pedido + c;
+        }
+        else if( t == 'porcentaje' ){
+            v = total_pedido + ( total_pedido * c / 100 );
+        }
+
+        console.log(o, t,c, total_pedido, v);
+        $( '#calcula_total' ).text( Moneda.format( v ) );
+    });
 });

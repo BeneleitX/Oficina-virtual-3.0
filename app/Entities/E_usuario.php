@@ -243,7 +243,7 @@ class E_usuario extends Entity
                     break;
             }
 
-            return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>{$calificacion}\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
+            return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>{$calificacion}\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
         elseif( $clase ){
             return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
@@ -258,13 +258,10 @@ class E_usuario extends Entity
 
     public function nombre( $apellidos = 0, $mask = false ): string
     {
-        $nombre = "<strong>{$this->data->nombre}</strong>";
-        for( $a = 0; $a < $apellidos; $a++ ){
-            $nombre .= " ".( $mask ? mask( $this->data->apellidos[ $a ] ) : $this->data->apellidos[ $a ] );
-        }
+        $nombre = "<strong>".(  $mask ? mask( $this->data->nombre ) : $this->data->nombre )."</strong>";
+        $nombre .= " ".( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
         
         return $nombre;
-
     }
 
  
@@ -274,13 +271,13 @@ class E_usuario extends Entity
     }
 
 
-    public function avatar( int $size = 40, string $id = null ): string 
+    public function avatar( int $size = 40, string $id = null, $commmas = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
-            return "<img ".($id ?? "")." class=\"rounded-circle\" style=\"width:{$size}px; height: {$size}px;\" src=\"".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}\">";
+            return "<img ".($id ?? "")." class='rounded-circle' style='width:{$size}px; height: {$size}px;' src='".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}'>";
         }
 
-        return "<div class=\"emoji\"><div style=\"border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%\" class=\"text-teal bg-gray-400\">".$this->iniciales()."</div></div>";
+        return "<div class='emoji'><div style='border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%' class='text-teal bg-gray-400'>".$this->iniciales()."</div></div>";
     }
 
 

@@ -94,8 +94,9 @@ class Pedidos extends BaseController
             load_catalogo( "metodospago",    "modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
-            $staff = true;
+            $staff = false;
             if( $this->data[ "pedido" ][ "metodoentrega_codigo" ] == "00-ALMACEN" ){
+                $staff = true;
                 if( !$this->data[ "pedido" ][ "data" ][ "entrega" ] ){
                     $this->data[ "pedido" ][ "data" ][ "entrega" ] = VARIABLES[ "almacen_principal" ][ "valor" ];
                     model( "PedidoModel" )->save( $this->data[ "pedido" ] );
@@ -108,7 +109,7 @@ class Pedidos extends BaseController
                 }
             }
 
-            if( !$staff && $this->data[ "usuario" ]->id != $this->data[ "pedido" ][ "usuario_id" ] && !(
+            if( !$staff && $this->data[ "usuario" ]->id !=intval(  $this->data[ "pedido" ][ "usuario_id" ] ) && !(
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
                 $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -312,12 +313,10 @@ class Pedidos extends BaseController
         extract( $this->request->getPost() );
         $p = model( "PedidoModel" )->find( $pedido );
 
-        if( (
-                $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
-                $this->data[ "usuario" ]->permiso( "28-INGRESA" )
-            )        
-            && $fecha/*  && $p[ "estatus_codigo" ] == "255-PENDIENTE" */ ){
-
+        if(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+            $this->data[ "usuario" ]->permiso( "28-INGRESA" )
+        ){
             load_catalogo( "metodospago", "modelo_codigo = '{$p[ "modelo_codigo" ]}'");
 
             $metodopago = METODOSPAGO[ $metodopago ];
@@ -330,9 +329,9 @@ class Pedidos extends BaseController
             
             $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
 
-            $p[ "fechas" ][ "pagado" ]   = $fecha;
-            $p[ "fechas" ][ "califica" ] = $fecha;
-            $p[ "fechas" ][ "reparte" ]  = $fecha;
+            $p[ "fechas" ][ "pagado" ]   = $fecha_pagado;
+            $p[ "fechas" ][ "califica" ] = $fecha_califica;
+            $p[ "fechas" ][ "reparte" ]  = $fecha_reparte;
 
             model( "PedidoModel" )->save( $p );
 
@@ -357,14 +356,16 @@ class Pedidos extends BaseController
             model( "UsuarioModel" )->save( $u );    
 
             $db = db_connect();
-            $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
+            $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
             $db->query( "select f_get_estatus( {$u->id}, 1 )" );
             $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
         
             // BITACORA Marcar pedido como pagado
             bitacora( 56, $this->data[ "usuario" ]->id, [ 
-                "pedido" => $p[ "id" ],
-                "fecha"  => $fecha
+                "pedido"   => $p[ "id" ],
+                "pagado"   => $fecha_pagado,
+                "califica" => $fecha_califica,
+                "reparte"  => $fecha_reparte
             ] );
         }
         

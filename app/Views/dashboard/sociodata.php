@@ -1,34 +1,24 @@
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+<p><a href="<?php echo base_url( "usuarios" ); ?>"><i class="fa fa-undo"></i> Regresar a búsqueda de usuarios</a></p>
 
-<div class="row">
-    <div class="col-4 col-lg-2">
-        <form action="<?php echo base_url( "sociodata" ); ?>" method="post">
-            <?php echo csrf_field(); ?>
-            <div class="input-group mb-3">
-                <span class="input-group-text bg-marine" id="basic-addon1"><i class="fa fa-magnifying-glass"></i></span>
-                <input type="text" class="form-control" placeholder="No. de socio" name="socio" value="<?php echo $socio->id ?? "" ?>">
-            </div>
-        </form>
-    </div>
+<div class="row mb-4">
 
-    <?php if( $socio ){ ?>
-        <div class="col-4 col-lg-2">
+        <div class="col-3  offset-lg-4  col-lg-2">
             <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
 
-        <div class="col-4 offset-lg-2 col-lg-2">
+        <div class="col-3 col-lg-2">
             <button class="btn btn-warning w-100" onclick="$( '#resetpass' ).modal( 'show' );"><i class="fa fa-key"></i> Reset password</button>
         </div>
-        <div class="col-4 col-lg-2">
+        <div class="col-3 col-lg-2">
             <a href="<?php echo base_url( "update_estatus/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</a>
         </div>
-        <div class="col-4 col-lg-2">
+        <div class="col-3 col-lg-2">
             <a href="<?php echo base_url( "oauth/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</a>
         </div>
-    <?php } ?>
+
 
 </div>
 
