@@ -59,13 +59,24 @@
         <tbody>
             <?php 
             if( isset( $socios ) ){
-                $historial = $socios;
+                foreach( $socios as $h ){
+                    echo "\n<tr>
+                                <td>".marca( $queries, $h->id() )."</td>
+                                <td>".$h->avatar( 24 )." ".marca( $queries, $h->nombre( 2 ), "upper" )."</td>
+                                <td>".marca( $queries, $h->telefono )."</td>
+                                <td>".marca( $queries, $h->correo, "lower" )."</td>
+                                <td>".marca( $queries, $h->data->clabe, "upper" )."</td>
+                                <td>".marca( $queries, $h->curp, "upper" )."</td>
+                                <td class=\"text-end\"><a href=\"".base_url( "sociodata/".urlencode( base64_encode( $h->password_original() ) ) )."\" class=\"btn btn-sm btn-success\">Detalles</a></td>
+                            </tr>";
+                }                
             }
             else{
                 $queries = [];
             }
 
-            foreach( $historial as $h ){
+            foreach( $bitacoras as $b ){
+                $h = $historial[ $b[ "socio" ] ];
                 echo "\n<tr>
                             <td>".marca( $queries, $h->id() )."</td>
                             <td>".$h->avatar( 24 )." ".marca( $queries, $h->nombre( 2 ), "upper" )."</td>

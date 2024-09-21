@@ -53,7 +53,28 @@ class Usuarios extends BaseController
         else{
             $this->data[ "socios" ] = null;
 
-            $this->data[ "historial" ] = model( "UsuarioModel" )->join( "t_bitacoras", "t_bitacoras.accion_id = 50 AND t_bitacoras.usuario_id = ".$this->data[ "usuario" ]->id )->where( "json_extract( t_bitacoras.variables , '$.socio' ) = t_usuarios.id" )->orderby( "t_bitacoras.fecha", "desc" )->groupby( [ 't_usuarios.id', 't_bitacoras.variables' ] )->findAll( 25 );
+            $sql = "SELECT fecha, JSON_EXTRACT( d.variables, '$.socio' ) AS socio FROM t_bitacoras d
+                WHERE accion_id IN (50) AND usuario_id = 55 
+                and d.fecha IN (
+                    SELECT MAX( d2.fecha ) FROM t_bitacoras d2 WHERE accion_id IN (50) AND usuario_id = 55 and d.variables = d2.variables 
+                ) 
+                ORDER BY fecha desc";
+                
+            $socios = [];
+            $db = db_connect();
+            $this->data[ "bitacoras" ] = $db->query( $sql )->getResultArray();
+
+            foreach( $this->data[ "bitacoras" ] as $b ){
+                $socios[] = $b[ "socio" ];
+            }
+            
+            $socios = model( "UsuarioModel" )->find( $socios );
+
+            foreach( $socios as $b ){
+                $this->data[ "historial" ][ $b->id ] = $b;
+            }
+
+            //$this->data[ "historial" ] = model( "UsuarioModel" )->distinct()->select( 't_usuarios.id' )->join( "t_bitacoras", "t_bitacoras.accion_id = 50 AND t_bitacoras.usuario_id = ".$this->data[ "usuario" ]->id )->where( "json_extract( t_bitacoras.variables , '$.socio' ) = t_usuarios.id" )->orderby( "t_bitacoras.fecha", "desc" )->findAll( 25 );
         }
 
         /*****************************/
