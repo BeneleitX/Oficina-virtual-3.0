@@ -53,7 +53,7 @@ class Usuarios extends BaseController
         else{
             $this->data[ "socios" ] = null;
 
-            $this->data[ "historial" ] = model( "UsuarioModel" )->join( "t_bitacoras", "t_bitacoras.accion_id = 50 AND t_bitacoras.usuario_id = ".$this->data[ "usuario" ]->id )->where( "json_extract( t_bitacoras.variables , '$.socio' ) = t_usuarios.id" )->orderby( "t_bitacoras.fecha", "desc" )->groupby( 't_usuarios.id' )->findAll( 25 );
+            $this->data[ "historial" ] = model( "UsuarioModel" )->join( "t_bitacoras", "t_bitacoras.accion_id = 50 AND t_bitacoras.usuario_id = ".$this->data[ "usuario" ]->id )->where( "json_extract( t_bitacoras.variables , '$.socio' ) = t_usuarios.id" )->orderby( "t_bitacoras.fecha", "desc" )->groupby( [ 't_usuarios.id', 't_bitacoras.variables' ] )->findAll( 25 );
         }
 
         /*****************************/
