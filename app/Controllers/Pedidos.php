@@ -325,7 +325,7 @@ class Pedidos extends BaseController
             $p[ "estatus_codigo" ] = "420-PAGADO";
             $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
 
-            $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $u->data->saldo->{$p[ "modelo_codigo" ]} ?? 0;
+            $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $u->data->saldo->{$p[ "modelo_codigo" ]}->cantidad ?? 0;
             
             $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
 
@@ -474,7 +474,7 @@ class Pedidos extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
         
-        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ] } + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
+        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - ( $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ] }->estatus ? $this->data[ "socio" ]->data->saldo->{$this->data[ "modelo" ] }->cantidad : 0 ) + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
 
         echo template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );
     }

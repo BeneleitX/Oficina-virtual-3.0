@@ -2,8 +2,15 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+<div class="row">
+    <div class="col-lg-9">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+    </div>
+    <div class="col-lg-3 text-end">
+        <button class="btn btn-primary col-12 mt-4" onclick="$( '#nuevo_saldo' ).modal( 'show' )"><i class="fa fa-plus"></i> Agregar saldo</button>
+    </div>
+</div>
 
 
 <table class="table table-striped bg-white" id="tabla_saldos">
@@ -59,7 +66,13 @@
                     <table class="table table-striped w-100">
                         <?php
                         foreach( MODELOS as $m ){
-                            echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><input type=\"number\" modelo=\"{$m[ "codigo" ]}\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control w-50 saldo text-end\"></td></tr>";
+                            echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><input type=\"number\" modelo=\"{$m[ "codigo" ]}\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control w-50 saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
+                            
+                            <div class=\"form-check form-switch\">
+                                <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"flexSwitchCheckDefault\">
+                            </div>
+                            
+                            </td></tr>";
                         }
                         ?>
                     </table>
@@ -79,8 +92,54 @@
 </div>
 
 
+<div class="modal" tabindex="-1" id="nuevo_saldo">
+	<div class="modal-dialog">
+		<div class="modal-content">
+            <form method="post" action="<?php echo base_url( "edita_saldos" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="socio_saldo" value="">
+
+                <div class="modal-header bg-teal">
+                    <h5 class="modal-title text-white"><i class="fa fa-plus"></i> Agregar saldos a favor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contenido" class="mb-3"></div>
+                    <div class="alert alert-success py-2">
+                        <table>
+                        <tr><td style="width:33%">Socio</td><td style="width:33%"><input type="number" name="socio" class="form-control text-end"></td><td style="width:33%">&nbsp;</td></tr>
+                        </table>
+                    </div>
+
+                    <table class="table table-striped w-100">
+                        <?php
+                        foreach( MODELOS as $m ){
+                            echo "\n<tr><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" modelo=\"{$m[ "codigo" ]}\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control col-50 saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
+                            
+                            <div class=\"form-check form-switch\">
+                                <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"flexSwitchCheckDefault\">
+                            </div>
+                            
+                            </td></tr>";
+                        }
+                        ?>
+                    </table>
+
+                    <div class="alert alert-info m-0">
+                        <p>Colocar un saldo en ceros equivale a eliminarlo.</p>
+                        <p class="m-0">Verificar bien el modelo de negocio al cual aplica antes de enviar los cambios.</p>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Aplicar cambios</button>
+                </div>
+            </form>
+		</div>
+	</div>
+</div>
+
 
 <script>
 var modelos = <?php echo json_encode( MODELOS ); ?>;
-
 </script>
