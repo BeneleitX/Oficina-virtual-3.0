@@ -44,7 +44,7 @@ class Admin extends BaseController
 
         $sql = "substring(estatus_codigo , 1, 3 ) > 200";
         
-        $this->data[ "saldos"   ]     = $db->query( "select count(id) as uss from t_usuarios where DATA->>'$.saldo.\"10-NUTRICION\"' > 0 or DATA->>'$.saldo.\"20-TELEFONIA\"' > 0 or DATA->>'$.saldo.\"30-ALIMENTOS\"' > 0" )->getRow()->uss;
+        $this->data[ "saldos"   ]     = $db->query( "select count(id) as uss from t_usuarios where DATA->>'$.saldo.\"10-NUTRICION\".cantidad' > 0 or DATA->>'$.saldo.\"20-TELEFONIA\".cantidad' > 0 or DATA->>'$.saldo.\"30-ALIMENTOS\".cantidad' > 0" )->getRow()->uss;
 
         $this->data[ "promociones" ]  = model( "PromocionModel" )->where( $sql , null, false )->findAll();
         $this->data[ "pasarelas" ]    = model( "MetodopagoModel" )->where( $sql , null, false )->findAll();
@@ -264,7 +264,7 @@ class Admin extends BaseController
 
         $db = db_connect();
 
-        $this->data[ "saldos" ] = model( "UsuarioModel" )->where( "data->>'$.saldo.\"10-NUTRICION\"' > 0 or data->>'$.saldo.\"20-TELEFONIA\"' > 0 or data->>'$.saldo.\"30-ALIMENTOS\"' > 0" )->findAll(); 
+        $this->data[ "saldos" ] = model( "UsuarioModel" )->where( "data->>'$.saldo.\"10-NUTRICION\".cantidad' > 0 or data->>'$.saldo.\"20-TELEFONIA\".cantidad' > 0 or data->>'$.saldo.\"30-ALIMENTOS\".cantidad' > 0" )->findAll(); 
 
         echo template( "admin/saldos", $this->data );
     } 
@@ -343,7 +343,7 @@ class Admin extends BaseController
         $data  = $socio->data;
 
         foreach( $this->request->getPost( "saldo" ) as $m => $s ){
-            if( $data->saldo->{$m} != $s ){
+            if( $data->saldo->{$m}->cantidad != $s ){
 
                 // BITACORA Edita saldo a favor
                 bitacora( 57, $this->data[ "usuario" ]->id, [ 
@@ -353,7 +353,7 @@ class Admin extends BaseController
                     "modelo"   => $m
                 ] );        
 
-                $data->saldo->{$m} = $s;
+                $data->saldo->{$m}->cantidad = $s;
             }
         }
 

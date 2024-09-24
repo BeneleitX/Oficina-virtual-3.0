@@ -29,7 +29,7 @@
                     <td class=\"s_datos\">".$s->avatar( 24 )." ".$s->nombre( 2 )."</td>";
 
                 foreach( MODELOS as $m ){
-                    echo "<td modelo=\"{$m[ "codigo" ]}\" saldo=\"".$s->data->saldo->{$m[ "codigo" ]}."\">".( $s->data->saldo->{$m[ "codigo" ]} > 0 ? "$".number_format( $s->data->saldo->{$m[ "codigo" ]}, 2) : "" )."</td>";
+                    echo "<td modelo=\"{$m[ "codigo" ]}\" saldo=\"".$s->data->saldo->{$m[ "codigo" ]}->cantidad."\">".( $s->data->saldo->{$m[ "codigo" ]}->cantidad > 0 ? "$".number_format( $s->data->saldo->{$m[ "codigo" ]}->cantidad, 2) : "" )."</td>";
                 }
 
                 echo "\n<td class=\"text-end\">
