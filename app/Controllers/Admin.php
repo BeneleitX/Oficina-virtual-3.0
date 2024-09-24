@@ -330,6 +330,45 @@ class Admin extends BaseController
     }
 
 
+    public function agrega_saldos(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+        extract( $this->request->getPost() );
+
+        $socio = model( "UsuarioModel" )->find( $socio_saldo );
+        $data  = $socio->data;
+
+        if( $socio ){
+            foreach( $saldo as $m => $s ){
+                if( $data->saldo->{$m}->cantidad != $s ){
+
+                    // BITACORA Edita saldo a favor
+                    bitacora( 57, $this->data[ "usuario" ]->id, [ 
+                        "socio"    => $socio->id,
+                        "anterior" => $data->saldo->{$m}->cantidad,
+                        "nuevo"    => $s,
+                        "modelo"   => $m
+                    ] );        
+
+                    $data->saldo->{$m}->cantidad = $s ?? 0;
+                    $data->saldo->{$m}->estatus  = 0;
+                }
+            }
+
+            $socio->data = $data;
+            model( "UsuarioModel" )->save( $socio );
+        }
+
+        return redirect()->to( "saldos" );    
+    }
+
+
     public function edita_saldos(){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -339,7 +378,9 @@ class Admin extends BaseController
         
         /**********************************/
 
-        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio_saldo" ) );
+        extract( $this->request->getPost() );
+
+        $socio = model( "UsuarioModel" )->find( $socio_saldo );
         $data  = $socio->data;
 
         foreach( $this->request->getPost( "saldo" ) as $m => $s ){
@@ -348,7 +389,7 @@ class Admin extends BaseController
                 // BITACORA Edita saldo a favor
                 bitacora( 57, $this->data[ "usuario" ]->id, [ 
                     "socio"    => $socio->id,
-                    "anterior" => $data->saldo->{$m},
+                    "anterior" => $data->saldo->{$m}->cantidad,
                     "nuevo"    => $s,
                     "modelo"   => $m
                 ] );        
@@ -357,12 +398,26 @@ class Admin extends BaseController
             }
         }
 
+        foreach( $this->request->getPost( "saldo" ) as $m => $s ){
+            if( $data->saldo->{$m}->estatus != ( $estatus[ $m ] ?? 0 ) ){
+
+                // BITACORA Edita saldo a favor
+                bitacora( 67, $this->data[ "usuario" ]->id, [ 
+                    "socio"    => $socio->id,
+                    "anterior" => $data->saldo->{$m}->estatus,
+                    "nuevo"    => ( $estatus[ $m ] ?? 0 ),
+                    "modelo"   => $m
+                ] );        
+
+                $data->saldo->{$m}->estatus = ( $estatus[ $m ] ?? 0 );
+            }
+        }
+        
         $socio->data = $data;
         model( "UsuarioModel" )->save( $socio );
         
         return redirect()->to( "saldos" );    
     }
-
 
 
     public function apikeys(){

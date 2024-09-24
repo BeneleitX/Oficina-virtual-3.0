@@ -8,7 +8,10 @@ function edita_saldo( socio ){
 
         $.each( modelos, function( a, b ){
             var saldo = tr.find( 'td[modelo=' + a + ']' ).attr( 'saldo' );
-            $( '.saldo[modelo=' + a + ']' ).val( saldo );
+            $( '#edita_saldo tr[modelo=' + a + '] input.saldo' ).val( saldo ?? 0 );
+
+            var estatus = tr.find( 'td[modelo=' + a + ']' ).attr( 'estatus' );
+            $( '#edita_saldo tr[modelo=' + a + '] input.estatus' ).prop( 'checked', (estatus ?? 0 ) == 1 );
         });
 
     $( '#edita_saldo' ).modal( 'show' );

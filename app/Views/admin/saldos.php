@@ -36,7 +36,7 @@
                     <td class=\"s_datos\">".$s->avatar( 24 )." ".$s->nombre( 2 )."</td>";
 
                 foreach( MODELOS as $m ){
-                    echo "<td modelo=\"{$m[ "codigo" ]}\" saldo=\"".$s->data->saldo->{$m[ "codigo" ]}->cantidad."\">".( $s->data->saldo->{$m[ "codigo" ]}->cantidad > 0 ? "$".number_format( $s->data->saldo->{$m[ "codigo" ]}->cantidad, 2) : "" )."</td>";
+                    echo "<td modelo=\"{$m[ "codigo" ]}\" saldo=\"".$s->data->saldo->{$m[ "codigo" ]}->cantidad."\" estatus=\"".$s->data->saldo->{$m[ "codigo" ]}->estatus."\" class=\"text-end\">".( $s->data->saldo->{$m[ "codigo" ]}->cantidad > 0 ? "$".number_format( $s->data->saldo->{$m[ "codigo" ]}->cantidad, 2) : "" )." <i class=\"fa fa-circle-check text-".( $s->data->saldo->{$m[ "codigo" ]}->estatus ? "teal" : "gray-400" )."\"></i></td>";
                 }
 
                 echo "\n<td class=\"text-end\">
@@ -66,10 +66,10 @@
                     <table class="table table-striped w-100">
                         <?php
                         foreach( MODELOS as $m ){
-                            echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><input type=\"number\" modelo=\"{$m[ "codigo" ]}\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control w-50 saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
+                            echo "\n<tr modelo=\"{$m[ "codigo" ]}\"><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
                             
                             <div class=\"form-check form-switch\">
-                                <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"flexSwitchCheckDefault\">
+                                <input class=\"form-check-input\" type=\"checkbox\" value=\"1\" role=\"switch\" estatus name=\"estatus[{$m[ "codigo" ]}]\">
                             </div>
                             
                             </td></tr>";
@@ -95,9 +95,8 @@
 <div class="modal" tabindex="-1" id="nuevo_saldo">
 	<div class="modal-dialog">
 		<div class="modal-content">
-            <form method="post" action="<?php echo base_url( "edita_saldos" ); ?>">
+            <form method="post" action="<?php echo base_url( "agrega_saldos" ); ?>">
                 <?php echo csrf_field() ?>
-                <input type="hidden" name="socio_saldo" value="">
 
                 <div class="modal-header bg-teal">
                     <h5 class="modal-title text-white"><i class="fa fa-plus"></i> Agregar saldos a favor</h5>
@@ -107,26 +106,19 @@
                     <div id="contenido" class="mb-3"></div>
                     <div class="alert alert-success py-2">
                         <table>
-                        <tr><td style="width:33%">Socio</td><td style="width:33%"><input type="number" name="socio" class="form-control text-end"></td><td style="width:33%">&nbsp;</td></tr>
+                        <tr><td style="width:33%">Socio</td><td style="width:33%"><input type="number" name="socio_saldo" class="form-control text-end"></td><td style="width:33%">&nbsp;</td></tr>
                         </table>
                     </div>
 
                     <table class="table table-striped w-100">
                         <?php
                         foreach( MODELOS as $m ){
-                            echo "\n<tr><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" modelo=\"{$m[ "codigo" ]}\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control col-50 saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
-                            
-                            <div class=\"form-check form-switch\">
-                                <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"flexSwitchCheckDefault\">
-                            </div>
-                            
-                            </td></tr>";
+                            echo "\n<tr modelo=\"{$m[ "codigo" ]}\"><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">&nbsp;</td></tr>";
                         }
                         ?>
                     </table>
 
                     <div class="alert alert-info m-0">
-                        <p>Colocar un saldo en ceros equivale a eliminarlo.</p>
                         <p class="m-0">Verificar bien el modelo de negocio al cual aplica antes de enviar los cambios.</p>
                     </div>
 

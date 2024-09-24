@@ -163,6 +163,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "save_variable",         "Admin::save_variable" );
     $routes->post( "save_promo",            "Admin::save_promo" );
     $routes->post( "edita_saldos",          "Admin::edita_saldos" );
+    $routes->post( "agrega_saldos",         "Admin::agrega_saldos" );
 
     $routes->get( "rangos/(:any)",          "Rangos::catalogo/$1" ); 
     $routes->get( "pines/(:any)",           "Rangos::pines/$1" ); 
