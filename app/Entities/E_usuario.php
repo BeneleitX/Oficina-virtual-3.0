@@ -583,7 +583,7 @@ class E_usuario extends Entity
             return 0;
         }
         
-        $saldo          = $this->data->saldo->{$modelo};
+        $saldo          = $this->data->saldo->{$modelo}->estatus ? $this->data->saldo->{$modelo}->cantidad : 0;
         $bultos         = ceil( $pedido[ "data" ][ "peso" ] / $pedido[ "data" ][ "pesoxbulto" ] );
         $productos      = $pedido[ "data" ][ "total" ];
         $metodopago     = model( "MetodopagoModel" )->find( $metodo );
@@ -640,11 +640,11 @@ class E_usuario extends Entity
             } 
 
             if( $saldo >= $total && $metodopago[ "settings" ][ "tipocomision" ] == "saldo" ){
-                $data->saldo->{$modelo} -= $total;
+                $data->saldo->{$modelo}->cantidad -= $total;
                 $pedido[ "data" ][ "saldo" ] = $total;
             }
             else{
-                $data->saldo->{$modelo} = 0;
+                $data->saldo->{$modelo}->cantidad = 0;
                 $pedido[ "data" ][ "saldo" ] = $saldo;
             }
 
@@ -766,7 +766,7 @@ class E_usuario extends Entity
             $afectados = $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();
         }
         else{
-            $data->saldo->{$modelo} += $cantidad;
+            $data->saldo->{$modelo}->cantidad += $cantidad;
 
             $this->data = $data;
             $this->historial = $historial;

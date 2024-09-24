@@ -135,7 +135,10 @@ class Registro extends BaseController
                     ]
                 ];
 
-                $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = 0.00;
+                $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = [
+                    "cantidad" => 0.00,
+                    "estatus"  => 0
+                ];
                 $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
 
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [

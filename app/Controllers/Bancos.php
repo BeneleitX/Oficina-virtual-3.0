@@ -274,7 +274,11 @@ class Bancos extends BaseController
 
                                 $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
 
-                                if( $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
+                                // deshabilitamos en automático la carga de saldo a favor
+                                // se carga solo en el fondeo, en caso de requerirse, se carga manualmente
+                                // desde administración
+
+                                if( 0 && $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
                                     $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - $total;
                                 }
 

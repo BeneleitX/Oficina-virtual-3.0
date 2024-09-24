@@ -463,7 +463,7 @@
                             $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                         }
                         else{
-                            $saldo = $socio->data->saldo->{$modelo} ?? 0;
+                            $saldo = $socio->data->saldo->{$modelo}->estatus ? ( $socio->data->saldo->{$modelo}->cantidad ?? 0 ) : 0;
                         }
 
                         if( $saldo == "" ) $saldo = 0;
@@ -549,7 +549,10 @@
                                         
                                             <small><?php
                                             $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
+
+                                            if( isset( $periodo[ "estatus_codigo" ] ) and $periodo[ "estatus_codigo" ] ){
                                                 echo estatus( $periodo[ "estatus_codigo" ] );
+                                            }
                                             ?></small>
                                         <span class="badge bg-marine">
                                             <?php echo date( "W-Y", strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
@@ -591,7 +594,7 @@
                                 if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
                                     $boton .= " btn-warning ";
 
-                                    if( !$socio->data->saldo->{$modelo} || $socio->data->saldo->{$modelo} < ($tt + $socio->data->saldo->{$modelo}) ){
+                                    if( !$socio->data->saldo->{$modelo}->estatus || $socio->data->saldo->{$modelo}->cantidad < ($tt + $socio->data->saldo->{$modelo}->cantidad) ){
                                         // $boton .= " d-none ";
                                     }
                                 }else{
