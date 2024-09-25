@@ -483,7 +483,7 @@ class Pedidos extends BaseController
             return redirect()->to( 'historial' );
         }
 
-        $this->data[ "modelo" ]     = $this->data[ "pedido" ][ "modelo_codigo" ];
+        $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
         if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
 
@@ -497,11 +497,12 @@ class Pedidos extends BaseController
             $this->data[ "pedido" ][ "metodopago_codigo" ] = $this->data[ "metodopago" ][ "codigo" ];
             $this->data[ "pedido" ][ "data" ][ "comisionbanco" ] = $this->data[ "metodopago" ][ "settings" ][ "tipocomision" ] == "porcentaje" ? ceil( $total * $this->data[ "metodopago" ][ "settings" ][ "comision" ] / 100 ) : $this->data[ "metodopago" ][ "settings" ][ "comision" ];
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
+
+            $this->data[ "cantidad" ] = $total + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
         }
 
         $this->data[ "navbar" ]   = true;
         $this->data[ "titulo" ]   = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
-        $this->data[ "cantidad" ] = $total + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
 
        return template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );
     }

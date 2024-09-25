@@ -18,12 +18,12 @@ function AESdesencriptar($encodedInitialData, $key128){
 function getCadenaXML( $pedido, $socio ){
 
     // Elegir ambiente
-    $getnet = VARIABLES[ "getnet" ][ "valor" ];
-    $AES = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
-
-    $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $pedido[ "data" ][ "saldo" ];
+    $getnet   = VARIABLES[ "getnet" ][ "valor" ];
+    $AES      = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
+    $usuario  = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+    $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
     $comisionbanco = ceil( $subtotal * 2 / 100 );
-    $total = $subtotal + $comisionbanco;
+    $total    = $subtotal + $comisionbanco;
 
     $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>".trim( $socio->correo )."</mail_cliente><version>IntegraWPP</version></url></P>";
 
@@ -47,7 +47,7 @@ function getCadenaURL( $xml ){
   curl_close($curl);
   $des = AESdesencriptar( $respuesta, $AES[ "key128" ] );
 
-  return simplexml_load_string( $des )->nb_url;
+  return simplexml_load_string( $des )->nb_url ?? base_url( "no_internet" );
 }
 
 

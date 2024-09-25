@@ -18,7 +18,9 @@ class Tools extends BaseController
         }      
     }
 
-
+    public function no_internet(){
+        echo "no internet";
+    }
 
     public function kkk(){
 
