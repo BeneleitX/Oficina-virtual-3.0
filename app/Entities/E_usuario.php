@@ -572,6 +572,11 @@ class E_usuario extends Entity
     }
 
     
+    public function saldo( $modelo ){
+        return $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad : 0;
+    }
+
+
     public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
 
         if( $mes && $mes == date( "Ym" ) ) $mes = null;
@@ -583,7 +588,7 @@ class E_usuario extends Entity
             return 0;
         }
         
-        $saldo          = $this->data->saldo->{$modelo}->estatus ? $this->data->saldo->{$modelo}->cantidad : 0;
+        $saldo          = $this->saldo( $modelo );
         $bultos         = ceil( $pedido[ "data" ][ "peso" ] / $pedido[ "data" ][ "pesoxbulto" ] );
         $productos      = $pedido[ "data" ][ "total" ];
         $metodopago     = model( "MetodopagoModel" )->find( $metodo );
@@ -650,108 +655,102 @@ class E_usuario extends Entity
 
             model( "PedidoModel" )->save( $pedido );
 
-        /**************************************************************/
-        // todo bien
-        // ENVIAR CORREO
+            /**************************************************************/
+            // todo bien
+            // ENVIAR CORREO
 
-        $usuario = $this;
+            $usuario = $this;
 
-        load_catalogo( "promociones",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
-        load_catalogo( "metodospago",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
-        load_catalogo( "metodosentrega", "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
-        load_catalogo( "almacenes",      "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
+            load_catalogo( "metodospago",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
+            load_catalogo( "almacenes",      "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
 
-        $subject = "Pago de pedido Beneleit ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." No. {$pedido[ "referencia" ]}";
-        $message = "
-            <p>¡Hola ".$usuario->nombre()."! </p>
-            <P>Hemos recibido tu pago por lo que procedemos preparar la entrega de tus productos. Este es un resumen de los paquetes y productos que incluye tu compra.¡Muchas gracias!</P>
+            $subject = "Pago de pedido Beneleit ".MODELOS[ $pedido[ "modelo_codigo" ] ][ "nombre" ]." No. {$pedido[ "referencia" ]}";
+            $message = "
+                <p>¡Hola ".$usuario->nombre()."! </p>
+                <P>Hemos recibido tu pago por lo que procedemos preparar la entrega de tus productos. Este es un resumen de los paquetes y productos que incluye tu compra.¡Muchas gracias!</P>
 
-            <div style=\"width:60%; font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:15px;\">
-                <div style=\"background:#555;color:white;font-weight:bold;padding:5px 10px\">Pedido No. {$pedido[ "referencia" ]}</div>
-                <table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">
-                    <tr><td style=\"padding:5px 10px; border-bottom:1px solid gray;\">Fecha de pago</td><td style=\"padding:5px 10px; border-bottom:1px solid gray;\" align=\"right\">".date( "d-m-Y", strtotime( substr( $pedido[ "fechas" ][ "pagado" ], 0, 10 ) ) )."</td></tr>           
-                    <tr><td style=\"padding:5px 10px;\">Califica en el mes de</td><td style=\"padding:5px 10px;\" align=\"right\">".strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 )."</td></tr>
-                </table>
-            </div>
-        ";
-
-        $total_prods  = 0;
-        $total_precio = 0;
-        $imagenes = [];
-
-        foreach( PROMOCIONES as $p ){
-            if( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ){
-                $cant_productos = 0;
-                
-                foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $k ){
-                    $cant_productos += $k[ "cantidad" ];
-                }
-
-                if( $cant_productos ){
-                    $message .= "<div style=\"font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:5px;\"><div style=\"background:gray;color:white;font-weight:bold;padding:5px 10px\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse;color:white\"><tr><td width=\"70%\">{$p[ "settings" ][ "nombre" ]}</td><td width=\"30%\" style=\"text-align:right; font-size:0.6rem\">{$cant_productos} producto".( $cant_productos-1 ? "s" : "")."</td></tr></table></div><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">";
-
-                    foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $j => $k ){
-                        if( !isset( $imagenes[ $j ] ) ){
-                            $imagenes[ $j ] = "assets/img/productos/{$j}.png";
-                        }                        
-
-                        $message .= "<tr><td width=\"10%\" style=\"padding:5px text-align:center; font-size:1.6rem\"><img src=\"%%{$j}%%\" width=\"60\" height=\"60\" alt=\"{$j}\"></td><td width=\"50%\" style=\"padding:5px; \"><p style=\"margin:0;font-weight:bold\">{$k[ "cantidad" ]} {$k[ "nombre" ]}</p><p style=\"margin:0; font-size:0.6rem\">{$k[ "descripcion" ]}</p></td><td align=\"right\" valign=\"top\" width=\"20%\" nowrap style=\"padding:10px;\"><p style=\"margin:0; font-size:0.6rem\">P. unitario</p><p style=\"margin:0;font-weight:normal\">$".number_format( $k[ "precio" ], 2 )."</p></td><td align=\"right\" valign=\"top\" width=\"20%\" nowrap style=\"padding:10px;\"><p style=\"margin:0; font-size:0.6rem\">Subtotal</p><p style=\"margin:0; font-weight:bold\">$".number_format( $k[ "precio" ] * $k[ "cantidad" ], 2 )."</p></td></tr>";
-                    }
-
-                    $message .= "\n</table><div style=\"background:#cfcfcf;color:black;padding:5px 10px\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\"><tr><td width=\"80%\" style=\"font-size:0.6rem;text-align:right\">{$p[ "settings" ][ "nombre" ]}</td><td style=\"text-align:right\" width=\"20%\">$".number_format( $subtotal = ( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0 ), 2 )."</td></tr></table></div></div>";
-
-                    $total_precio += $subtotal;
-                    $total_prods  += $cant_productos;
-                }
-            }
-        }        
-
-        $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0;\"><div style=\"background:#555;font-weight:bold;\"><table width=\"100%\" style=\" font-size:0.8rem; border-collapse:collapse\">
-                    <tr><td style=\"color:white;padding:5px 10px; font-size:0.6rem\" width=\"30%\">{$total_prods} producto".( $total_prods-1 ? "s" : "")."</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"50%\">Sub total de productos</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"20%\">$".number_format( $total_precio, 2 )."</td></tr>
-                </table></div></div>";
-
-        $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ?? null;
-        $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
-
-        if( $me ){
-            if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
-                $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
-            }
-            elseif( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" ){
-                $entrega = $pedido[ "data" ][ "entrega" ];
-            }
-            else{
-                // $domicilios = $socio->getDomicilios();
-                $d = $pedido[ "data" ][ "domicilio" ];
-
-                $message .= "\n<div style=\"width:60%; font-size:0.6rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0; padding:5px 15px\">
-                {$d[ "calleynumero" ]}<br>
-                Colonia {$d[ "colonia" ]}<br>
-                {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
-                C.P. {$d[ "codigopostal" ]}
-                </div>";
-
-                $entrega = $d[ "nombre" ];
-            }
-        }
-
-        $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:5px;\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">
-                    ".( $me ? "<tr><td style=\"padding:5px 10px; border-bottom:1px solid gray; font-size:0.6rem\" width=\"50%\">{$me[ "nombre" ]}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"30%\" align=\"right\">{$entrega}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionentrega" ], 2 )."</td></tr>" : "" )."          
-                    <tr><td style=\"padding:5px 10px; font-size:0.6rem\" width=\"50%\">{$mp[ "nombre" ]}</td><td style=\"padding:5px 10px;\" align=\"right\" width=\"30%\">Comisión</td><td style=\"padding:5px 10px;\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionbanco" ], 2 )."</td></tr>
-                </table></div>";
-
-                $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0;\"><div style=\"background:#555;font-weight:bold;\"><table width=\"100%\" style=\" font-size:0.8rem; border-collapse:collapse\">
-                <tr><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"80%\">Total de pedido</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"20%\">$".number_format( $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] + $pedido[ "data" ][ "comisionbanco" ], 2 )."</td></tr>
-            </table></div></div>
-            
-            <p style=\"text-align:right\">
-            <a href=\"".base_url( "pedido/".$pedido[ "referencia" ] )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px; width:60%;font-size:0.8rem;\" value=\"reset password\">Ver pedido en mi oficina virtual</a></p>
+                <div style=\"width:60%; font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:15px;\">
+                    <div style=\"background:#555;color:white;font-weight:bold;padding:5px 10px\">Pedido No. {$pedido[ "referencia" ]}</div>
+                    <table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">
+                        <tr><td style=\"padding:5px 10px; border-bottom:1px solid gray;\">Fecha de pago</td><td style=\"padding:5px 10px; border-bottom:1px solid gray;\" align=\"right\">".date( "d-m-Y", strtotime( substr( $pedido[ "fechas" ][ "pagado" ], 0, 10 ) ) )."</td></tr>           
+                        <tr><td style=\"padding:5px 10px;\">Califica en el mes de</td><td style=\"padding:5px 10px;\" align=\"right\">".strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 )."</td></tr>
+                    </table>
+                </div>
             ";
 
+            $total_prods  = 0;
+            $total_precio = 0;
+            $imagenes     = [];
 
-        $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
+            foreach( PROMOCIONES as $p ){
+                if( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ){
+                    $cant_productos = 0;
+                    
+                    foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $k ){
+                        $cant_productos += $k[ "cantidad" ];
+                    }
 
-        /**************************************************************/
+                    if( $cant_productos ){
+                        $message .= "<div style=\"font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:5px;\"><div style=\"background:gray;color:white;font-weight:bold;padding:5px 10px\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse;color:white\"><tr><td width=\"70%\">{$p[ "settings" ][ "nombre" ]}</td><td width=\"30%\" style=\"text-align:right; font-size:0.6rem\">{$cant_productos} producto".( $cant_productos-1 ? "s" : "")."</td></tr></table></div><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">";
+
+                        foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $j => $k ){
+                            if( !isset( $imagenes[ $j ] ) ){
+                                $imagenes[ $j ] = "assets/img/productos/{$j}.png";
+                            }                        
+
+                            $message .= "<tr><td width=\"10%\" style=\"padding:5px text-align:center; font-size:1.6rem\"><img src=\"%%{$j}%%\" width=\"60\" height=\"60\" alt=\"{$j}\"></td><td width=\"50%\" style=\"padding:5px; \"><p style=\"margin:0;font-weight:bold\">{$k[ "cantidad" ]} {$k[ "nombre" ]}</p><p style=\"margin:0; font-size:0.6rem\">{$k[ "descripcion" ]}</p></td><td align=\"right\" valign=\"top\" width=\"20%\" nowrap style=\"padding:10px;\"><p style=\"margin:0; font-size:0.6rem\">P. unitario</p><p style=\"margin:0;font-weight:normal\">$".number_format( $k[ "precio" ], 2 )."</p></td><td align=\"right\" valign=\"top\" width=\"20%\" nowrap style=\"padding:10px;\"><p style=\"margin:0; font-size:0.6rem\">Subtotal</p><p style=\"margin:0; font-weight:bold\">$".number_format( $k[ "precio" ] * $k[ "cantidad" ], 2 )."</p></td></tr>";
+                        }
+
+                        $message .= "\n</table><div style=\"background:#cfcfcf;color:black;padding:5px 10px\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\"><tr><td width=\"80%\" style=\"font-size:0.6rem;text-align:right\">{$p[ "settings" ][ "nombre" ]}</td><td style=\"text-align:right\" width=\"20%\">$".number_format( $subtotal = ( isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] ) ? $pedido[ "promociones" ][ $p[ "codigo" ] ][ "precio"] : 0 ), 2 )."</td></tr></table></div></div>";
+
+                        $total_precio += $subtotal;
+                        $total_prods  += $cant_productos;
+                    }
+                }
+            }        
+
+            $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0;\"><div style=\"background:#555;font-weight:bold;\"><table width=\"100%\" style=\" font-size:0.8rem; border-collapse:collapse\">
+                        <tr><td style=\"color:white;padding:5px 10px; font-size:0.6rem\" width=\"30%\">{$total_prods} producto".( $total_prods-1 ? "s" : "")."</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"50%\">Sub total de productos</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"20%\">$".number_format( $total_precio, 2 )."</td></tr>
+                    </table></div></div>";
+
+            $me = METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ?? null;
+            $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
+
+            if( $me ){
+                if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
+                    $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
+                }
+                elseif( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" ){
+                    $entrega = $pedido[ "data" ][ "entrega" ];
+                }
+                else{
+                    // $domicilios = $socio->getDomicilios();
+                    $d = $pedido[ "data" ][ "domicilio" ];
+
+                    $message .= "\n<div style=\"width:60%; font-size:0.6rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0; padding:5px 15px\">
+                    {$d[ "calleynumero" ]}<br>
+                    Colonia {$d[ "colonia" ]}<br>
+                    {$d[ "localidad" ]}, {$d[ "entidad" ]}<br>
+                    C.P. {$d[ "codigopostal" ]}
+                    </div>";
+
+                    $entrega = $d[ "nombre" ];
+                }
+            }
+
+            $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden; border:1px solid gray; border-radius:6px; margin-bottom:5px;\"><table width=\"100%\" style=\"font-size:0.8rem; border-collapse:collapse\">
+                ".( $me ? "<tr><td style=\"padding:5px 10px; border-bottom:1px solid gray; font-size:0.6rem\" width=\"50%\">{$me[ "nombre" ]}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"30%\" align=\"right\">{$entrega}</td><td style=\"padding:5px 10px; border-bottom:1px solid gray\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionentrega" ], 2 )."</td></tr>" : "" )."          
+                <tr><td style=\"padding:5px 10px; font-size:0.6rem\" width=\"50%\">{$mp[ "nombre" ]}</td><td style=\"padding:5px 10px;\" align=\"right\" width=\"30%\">Comisión</td><td style=\"padding:5px 10px;\" width=\"20%\" align=\"right\">$".number_format( $pedido[ "data" ][ "comisionbanco" ], 2 )."</td></tr>
+                </table></div>";
+
+            $message .= "\n<div style=\"font-size:0.8rem; overflow:hidden;border:1px solid gray; border-radius:6px; margin:15px 0;\">
+                <div style=\"background:#555;font-weight:bold;\"><table width=\"100%\" style=\" font-size:0.8rem; border-collapse:collapse\"><tr><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"80%\">Total de pedido</td><td style=\"text-align:right; color:white;padding:5px 10px;\" width=\"20%\">$".number_format( $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] + $pedido[ "data" ][ "comisionbanco" ], 2 )."</td></tr></table></div></div><p style=\"text-align:right\"><a href=\"".base_url( "pedido/".$pedido[ "referencia" ] )."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px; width:60%;font-size:0.8rem;\" value=\"reset password\">Ver pedido en mi oficina virtual</a></p>";
+
+            $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
+
+            /**************************************************************/
 
             $this->data = $data;
             $this->historial = $historial;
