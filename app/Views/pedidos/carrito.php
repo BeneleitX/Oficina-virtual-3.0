@@ -86,7 +86,7 @@
                         <i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.
                     </div></div>";
         }
-        elseif( $bloqueado ){
+        elseif( $bloqueado && !$pagado ){
             echo "\n<div class=\"col-12\"><div class=\"alert alert-warning\">
                         <i class=\"fa fa-circle-info\"></i> Este pedido está en espera de pago
                     </div></div>";
@@ -621,7 +621,8 @@
                     ?>
                 </form>
 
-                <?php if( $bloqueado && !$pagado ){
+                <?php 
+                if( $bloqueado && !$pagado ){
                     echo "\n<button class=\"btn btn-warning mb-2 col-12\" onclick=\"$( '#cambia_edicion' ).modal( 'show' );\"><i class=\"fa fa-undo\"></i> Regresar a editar pedido</button>";
                 
                     echo "\n<button class=\"btn btn-danger mb-2 col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
