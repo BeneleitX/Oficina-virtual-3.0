@@ -151,10 +151,10 @@
                                     break;
 
                                 case "PAQUETERIA":
-                                    $domicilios = $socio->getDomicilios();
+                                    $domicilios = $socio->getDomicilios( false, true );
 
                                     $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".( intval( $p[3] ) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
-                                    break;                                    
+                                    break;
 
                                 case "CELULAR":
                                     $entrega = "<span class=\"badge bg-purple\">RECARGA</span> ".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );

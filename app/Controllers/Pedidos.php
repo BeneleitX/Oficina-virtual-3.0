@@ -491,7 +491,7 @@ class Pedidos extends BaseController
 
             $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
 
-            $total = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
+            $total = $this->data[ "pedido" ][ "data" ][ "total" ] - $this->data[ "socio" ]->saldo( $this->data[ "modelo" ] ); // + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
 
             $this->data[ "pedido" ][ "estatus_codigo" ] = "255-PENDIENTE";
             $this->data[ "pedido" ][ "metodopago_codigo" ] = $this->data[ "metodopago" ][ "codigo" ];
@@ -499,13 +499,11 @@ class Pedidos extends BaseController
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
         }
 
-        $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
-        
-        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->saldo($this->data[ "pedido" ][ "modelo_codigo" ]) + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
+        $this->data[ "navbar" ]   = true;
+        $this->data[ "titulo" ]   = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
+        $this->data[ "cantidad" ] = $total + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
 
-
-        echo template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );
+       return template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );
     }
 
 

@@ -679,7 +679,7 @@ $(document).ready(function()
             v = total_pedido + c;
         }
         else if( t == 'porcentaje' ){
-            v = total_pedido + ( total_pedido * c / 100 );
+            v = total_pedido + Math.ceil( ( total_pedido * c / 100 ) );
         }
 
         $( '#calcula_total' ).text( Moneda.format( v ) );

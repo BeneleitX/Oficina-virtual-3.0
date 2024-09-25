@@ -514,7 +514,7 @@ class E_usuario extends Entity
     }
 
 
-    public function getDomicilios( $con_colonia = false ){
+    public function getDomicilios( $con_colonia = false, $todos = false ){
         $db = db_connect();
         $respuesta = [];
         $existe = false;
@@ -525,9 +525,10 @@ class E_usuario extends Entity
                 left JOIN t_colonias c ON c.id = d.colonia_id
                 left JOIN t_localidades l ON l.id = c.localidad_id AND l.entidad_id = c.entidad_id
                 left JOIN t_entidades e ON e.id = c.entidad_id
-                WHERE d.estatus_codigo = '201-ACTIVO' 
+                WHERE d.usuario_id = {$this->id}  
+                ".( $todos ? "" : "and d.estatus_codigo = '201-ACTIVO'" )." 
                 ".( $con_colonia ? "and d.colonia_id is not null" : "" )."
-                AND d.usuario_id = {$this->id} order by d.created_at";
+                order by d.created_at";
 
         $temp = $db->query( $sql )->getResultArray();
 
