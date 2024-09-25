@@ -73,6 +73,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
     $routes->get( "beneleit_movil",         "Pedidos::beneleit_movil" ); 
     $routes->post( "paga_pedido",           "Pedidos::paga_pedido" ); 
+    $routes->post( "cambia_edicion",        "Pedidos::cambia_edicion" ); 
 
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 

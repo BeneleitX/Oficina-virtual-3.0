@@ -262,6 +262,29 @@ class Pedidos extends BaseController
     }
 
 
+    public function cambia_edicion(){
+        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+
+        if( $pedido[ "estatus_codigo" ] == "255-PENDIENTE" && ( 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+            $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+            $this->data[ "usuario" ]->id == $pedido[ "usuario_id" ]
+         ) ){
+
+            $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
+            model( "PedidoModel" )->save( $pedido );
+
+            // BITACORA Cancelar pedido
+            bitacora( 68, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $pedido[ "id" ]
+            ] );
+        }
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] );      
+    }   
+
+
+
     public function cancela_pedido(){
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
 
@@ -325,7 +348,7 @@ class Pedidos extends BaseController
             $p[ "estatus_codigo" ] = "420-PAGADO";
             $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
 
-            $saldo = $u->saldo();
+            $saldo = $u->saldo($p[ "modelo_codigo" ]);
             $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $saldo;
         
             $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
@@ -479,7 +502,7 @@ class Pedidos extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
         
-        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->saldo() + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
+        $this->data[ "cantidad" ] = $this->data[ "pedido" ][ "data" ][ "total" ] + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ] - $this->data[ "socio" ]->saldo($this->data[ "pedido" ][ "modelo_codigo" ]) + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
 
 
         echo template( "pedidos/gateways/".$this->data[ "metodopago" ][ "codigo" ], $this->data );

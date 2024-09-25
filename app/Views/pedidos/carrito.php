@@ -5,7 +5,7 @@
 </h4>
 
 <p>
-    <a href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-receipt"></i> Ir a historial de compras</a>
+    <a class="btn btn-light btn-sm" href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-undo"></i> Regresar a historial de compras</a>
 </p>
 
 <div class="row">
@@ -85,7 +85,12 @@
             echo "\n<div class=\"col-12\"><div class=\"alert alert-danger\">
                         <i class=\"fa fa-circle-info\"></i> Este pedido fue cancelado.
                     </div></div>";
-        }    
+        }
+        elseif( $bloqueado ){
+            echo "\n<div class=\"col-12\"><div class=\"alert alert-warning\">
+                        <i class=\"fa fa-circle-info\"></i> Este pedido está en espera de pago
+                    </div></div>";
+        }  
     }
     ?>
 </div>
@@ -163,7 +168,7 @@
                         // PROBLEMA PARA STAFF
                         // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
     
-                        if(  in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
+                        if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
                             echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                         }
                     }
@@ -617,7 +622,9 @@
                 </form>
 
                 <?php if( $bloqueado && !$pagado ){
-                    echo "\n<button class=\"btn btn-danger col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
+                    echo "\n<button class=\"btn btn-warning mb-2 col-12\" onclick=\"$( '#cambia_edicion' ).modal( 'show' );\"><i class=\"fa fa-undo\"></i> Regresar a editar pedido</button>";
+                
+                    echo "\n<button class=\"btn btn-danger mb-2 col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
                 } ?>
             </div>
         </div>
@@ -850,6 +857,30 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 }
 ?>
 
+<div class="modal" tabindex="-1" id="cambia_edicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="<?php echo base_url( "cambia_edicion" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                <div class="modal-header bg-mustard">
+                    <h5 class="modal-title text-white"><i class="fa fa-undo"></i> Regresar a edición de pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                Al regresar a su modo de edición, se podrán modificar las camtidades de productos, metodos de pago y de entrega.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal" tabindex="-1" id="cancela_pedido2">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -878,7 +909,8 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
         </div>
     </div>
 
-<div class="modal" tabindex="-1" id="modal_domicilios">
+
+    <div class="modal" tabindex="-1" id="modal_domicilios">
 	<div class="modal-dialog">
 		<div class="modal-content">
             <?php echo csrf_field() ?>

@@ -682,7 +682,6 @@ $(document).ready(function()
             v = total_pedido + ( total_pedido * c / 100 );
         }
 
-        console.log(o, t,c, total_pedido, v);
         $( '#calcula_total' ).text( Moneda.format( v ) );
     });
 });
