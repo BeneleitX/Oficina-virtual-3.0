@@ -270,7 +270,7 @@ class Pedidos extends BaseController
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
             $this->data[ "usuario" ]->id == $pedido[ "usuario_id" ]
          ) ){
-
+            echo $pedido[ "estatus_codigo" ];
             echo $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
             model( "PedidoModel" )->save( $pedido );
 
