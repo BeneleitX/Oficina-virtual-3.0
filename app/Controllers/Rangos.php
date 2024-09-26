@@ -27,11 +27,11 @@ class Rangos extends BaseController
 
         $db = db_connect();
         $socios = $db->query( "
-        SELECT u.data->>'$.rango' AS rango_codigo, 
-        COUNT(*) AS cantidad 
-        FROM t_usuarios u
-        WHERE SUBSTRING( u.estatus_codigo, 1,3 ) > 200 
-        GROUP BY u.data->>'$.rango'" );
+            SELECT u.data->>'$.rango' AS rango_codigo, COUNT(*) AS cantidad
+            FROM t_usuarios u
+            WHERE SUBSTRING( u.estatus_codigo, 1,3 ) > 200 
+            GROUP BY u.data->>'$.rango'
+        " );
 
         $pendientes = $db->query( "SELECT rango_codigo, COUNT(*) AS pendientes FROM t_pines
         WHERE estatus_codigo = '225-ALCANZADO'
@@ -42,7 +42,7 @@ class Rangos extends BaseController
         }
 
         foreach( $socios->getResult() as $s ){
-            $this->data[ "socios" ][ $s->rango_codigo ][ $s->estatus ] = $s->cantidad;
+            $this->data[ "socios" ][ $s->rango_codigo ][ "activos" ] = $s->cantidad;
         }
 
         echo template( "rangos/pines", $this->data );
