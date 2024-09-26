@@ -207,7 +207,7 @@ class Bancos extends BaseController
 
                 $total = floatval( $p[ "data" ][ "comisionentrega" ] )
                         +floatval( $p[ "data" ][ "total" ] ) 
-                        -floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} ) 
+                        -floatval( $u->data->saldo->{$p[ "modelo_codigo" ]}->estatus ? $u->data->saldo->{$p[ "modelo_codigo" ]}->cantidad : 0 ) 
                         +floatval( $p[ "data" ][ "comisionbanco" ] );
                         
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "costo" ] = $total; //"{$total} = ".floatval( $p[ "data" ][ "comisionentrega" ] )." + ".floatval( $p[ "data" ][ "total" ] )." + ".floatval( $p[ "data" ][ "comisionbanco" ] )." - ".floatval( $u->data->saldo->{$p[ "modelo_codigo" ]} );
@@ -246,11 +246,12 @@ class Bancos extends BaseController
 
                                 $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
-                                if( $u->data->saldo->{$p[ "modelo_codigo" ]} ){
-                                    $p[ "data" ][ "saldo" ] = $u->data->saldo->{$p[ "modelo_codigo" ]};
+                                if( $u->data->saldo->{$p[ "modelo_codigo" ]}->estatus && $u->data->saldo->{$p[ "modelo_codigo" ]}->cantidad ){
+                                    $p[ "data" ][ "saldo" ] = $u->data->saldo->{$p[ "modelo_codigo" ]}->cantidad;
 
                                     $data = $u->data;                                    
-                                    $data->saldo->{$p[ "modelo_codigo" ]} = 0;
+                                    $data->saldo->{$p[ "modelo_codigo" ]}->estatus  = 0;
+                                    $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = 0;
                                     $u->data = $data;
                                 }
 
@@ -279,7 +280,7 @@ class Bancos extends BaseController
                                 // desde administración
 
                                 if( 0 && $total < $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ] ){
-                                    $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - $total;
+                                    $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = $data->saldo->{$p[ "modelo_codigo" ]}->cantidad + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"] - $total;
                                 }
 
                                 $u->data = $data;
@@ -298,7 +299,7 @@ class Bancos extends BaseController
                             }
                         }else{
                             $data = $u->data;                                    
-                            $data->saldo->{$p[ "modelo_codigo" ]} = $data->saldo->{$p[ "modelo_codigo" ]} + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"];
+                            $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = $data->saldo->{$p[ "modelo_codigo" ]}->cantidad + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"];
                             $u->data = $data;
                             model( "UsuarioModel" )->save( $u );    
 
