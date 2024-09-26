@@ -264,14 +264,14 @@ class Pedidos extends BaseController
 
     public function cambia_edicion(){
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-        echo $pedido[ "estatus_codigo" ];
+        
         if( $pedido[ "estatus_codigo" ] == "255-PENDIENTE" && ( 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
             $this->data[ "usuario" ]->id == $pedido[ "usuario_id" ]
          ) ){
-            echo $pedido[ "estatus_codigo" ];
-            echo $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
+           
+            $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
             model( "PedidoModel" )->save( $pedido );
 
             // BITACORA Cancelar pedido
