@@ -271,7 +271,7 @@ class Pedidos extends BaseController
             $this->data[ "usuario" ]->id == $pedido[ "usuario_id" ]
          ) ){
 
-            $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
+            echo $pedido[ "estatus_codigo" ] = "250-EN-PROCESO";
             model( "PedidoModel" )->save( $pedido );
 
             // BITACORA Cancelar pedido
@@ -280,7 +280,7 @@ class Pedidos extends BaseController
             ] );
         }
 
-        return redirect()->to( "pedido/".$pedido[ "referencia" ] );      
+       // return redirect()->to( "pedido/".$pedido[ "referencia" ] );      
     }   
 
 
@@ -485,7 +485,7 @@ class Pedidos extends BaseController
 
         $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
-     //   if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
+       // if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
 
             $domicilios = $this->data[ "socio" ]->getDomicilios();
 
@@ -499,7 +499,7 @@ class Pedidos extends BaseController
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
 
             $this->data[ "cantidad" ] = $total + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
-   //     }
+     //   }
 
         $this->data[ "navbar" ]   = true;
         $this->data[ "titulo" ]   = "Pago de pedido: ".MODELOS[ $this->data[ "modelo" ] ][ "nombre" ];
