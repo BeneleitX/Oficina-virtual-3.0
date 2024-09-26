@@ -280,7 +280,7 @@ class Pedidos extends BaseController
             ] );
         }
 
-       // return redirect()->to( "pedido/".$pedido[ "referencia" ] );      
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] );      
     }   
 
 
