@@ -10,15 +10,36 @@
         <tr>
             <th>Código</th>
             <th>Descripción</th>
+            <th>Tipo</th>
+            <th>Usuarios</th>
         </tr>
     </thead>
 
     <tbody>
         <?php 
             foreach( $roles as $rol ){
+                $socios = "";
+                
+                switch( $rol[ "tipo" ] ){
+                    case "BLOQUEO": $color = "red"; break; 
+                    case "SOCIO":   $color = "mustard"; break; 
+                    case "PERMANENTE":   $color = "teal"; break; 
+                    case "ADMIN":   $color = "blue"; break; 
+                    case "ROOT":    $color = "magenta"; break; 
+                }
+
+                $json = json_decode( $rol[ "socios" ] );
+                sort( $json );
+
+                foreach( $json as $temp ){
+                    $socios .= "<span class=\"badge bg-{$color}\">{$temp}</span> ";
+                }
+
                 echo "\n<tr pasarela=\"{$rol[ "codigo" ]}\">
-                    <td>{$rol[ "codigo" ]}</td>
-                    <td>{$rol[ "descripcion" ]}</td>
+                    <td><span class=\"badge bg-marine\">{$rol[ "codigo" ]}</span></td>
+                    <td nowrap>{$rol[ "descripcion" ]}</td>
+                    <td><span xclass=\"badge bg-marine\">{$rol[ "tipo" ]}</span></td>
+                    <td class=\"text-start\">{$socios}</td>
                 </tr>";
             }
         ?>

@@ -15,14 +15,17 @@ class Roles extends BaseController
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Roles de usuario";
-        $this->data[ "roles" ] = model( "RolModel" )->findAll();
+        
+        $db = db_connect();
+        
+        $this->data[ "roles" ] = $db->query("
+        SELECT r.codigo, r.descripcion, r.tipo, JSON_ARRAYAGG( u.id ) as socios 
+        FROM t_roles r
+        LEFT JOIN t_usuarios u 
+            ON r.tipo IN ( 'BLOQUEO', 'ADMIN', 'ROOT', 'PERMANENTE' ) 
+            AND u.rol_codigos LIKE CONCAT( '%', r.codigo, '%' )
+        GROUP BY r.codigo" )->getResultArray();
 
-        echo template( "roles/listado", $this->data );
-    }  
-
-
+        return template( "roles/listado", $this->data );
+    }
 }
-
-
-
-

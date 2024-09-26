@@ -168,6 +168,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "rangos/(:any)",          "Rangos::catalogo/$1" ); 
     $routes->get( "pines/(:any)",           "Rangos::pines/$1" ); 
+    $routes->post( "excel_pines_pendientes",     "Rangos::excel_pines_pendientes" ); 
 
 });
 
