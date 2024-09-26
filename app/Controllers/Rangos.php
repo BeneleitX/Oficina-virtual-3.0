@@ -26,7 +26,12 @@ class Rangos extends BaseController
         $this->data[ "rangos" ] = model( "RangoModel" )->where( $sql , null, false )->findAll();
 
         $db = db_connect();
-        $socios = $db->query( "SELECT if( SUBSTRING( u.estatus_codigo, 1,3 ) > 200, \"activos\", \"inactivos\") AS estatus, u.data->>\"$.rango\" AS rango_codigo, COUNT(*) AS cantidad FROM t_usuarios u GROUP BY if( SUBSTRING( u.estatus_codigo, 1,3 ) > 200, \"ACTIVO\", \"INACTIVO\"), u.data->>\"$.rango\"" );
+        $socios = $db->query( "
+        SELECT u.data->>'$.rango' AS rango_codigo, 
+        COUNT(*) AS cantidad 
+        FROM t_usuarios u
+        WHERE SUBSTRING( u.estatus_codigo, 1,3 ) > 200 
+        GROUP BY u.data->>'$.rango'" );
 
         $pendientes = $db->query( "SELECT rango_codigo, COUNT(*) AS pendientes FROM t_pines
         WHERE estatus_codigo = '225-ALCANZADO'
