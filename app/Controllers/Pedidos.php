@@ -264,7 +264,7 @@ class Pedidos extends BaseController
 
     public function cambia_edicion(){
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-
+        echo $pedido[ "estatus_codigo" ];
         if( $pedido[ "estatus_codigo" ] == "255-PENDIENTE" && ( 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
