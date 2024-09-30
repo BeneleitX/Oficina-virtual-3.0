@@ -190,7 +190,7 @@
                     ?>
                 </p>
 
-                <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
 
                     <div class="row">
                         <div class="col-lg-6">
@@ -229,10 +229,10 @@
                     </div>
                 </div>
 
-                <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
                     
                     <?php 
-                    if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" && sizeof( $celulares ) ){ 
+                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) == "11" && sizeof( $celulares ) ){ 
                         ?>
                         <div class="row">
                             <div class="col-lg-6">
@@ -276,7 +276,7 @@
                     ?>
                 </div>
 
-                <div class="me_formulario" mp="domicilio" <?php if( in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), ["00","11"] ) ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="domicilio" <?php if( in_array( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ), ["00","11"] ) ) echo "style=\"display:none\""; ?>>
                     <?php 
                     $dom = $usuario->data->domicilio ?? 0;
 
@@ -374,7 +374,7 @@
                 </div>
 
                 <?php 
-                switch( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) ){
+                switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) ){
                     case "00" : 
                         $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; 
                         break;

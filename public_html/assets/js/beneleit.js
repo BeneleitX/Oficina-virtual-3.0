@@ -98,7 +98,8 @@ $(document).ready(function(){
     if( "Notification" in window ){
 
         // Si no estan activas
-        if( Notification.permission !== "granted" ){  
+        // desactivado temporalmente para revisar por qué edge lo sigue poniendo
+        if( 0 && Notification.permission !== "granted" ){  
             // Notification.requestPermission();
 
             alerta( 'warning', 'warning', 'No has autorizado las notificaciones. <button class="btn btn-sm btn-warning" onclick="activa_notificaciones()">Autorizar</button>', 'no_notifica' );
