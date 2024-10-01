@@ -794,7 +794,8 @@ class E_usuario extends Entity
 
         if( !isset( $checks[ date("Ym") ] ) ){
             $db = db_connect();
-            $checks = $db->query( "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;" )->getRowArray();
+            echo $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
+            $checks = $db->query( $sql )->getRowArray();
             $a = $checks[ "checks" ];
         }
 
