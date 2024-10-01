@@ -798,7 +798,7 @@ class E_usuario extends Entity
             $checks = $db->query( $sql )->getRowArray();
             $a = $checks[ "checks" ];
         }
-dd($a);
+
         return json_decode( $a, 1 );
     }
 
