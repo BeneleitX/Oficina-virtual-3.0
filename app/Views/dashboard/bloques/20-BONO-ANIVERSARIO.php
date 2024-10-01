@@ -1,10 +1,13 @@
 <?php
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
-$bono = $usuario->getBono( $esquema[ "codigo" ] );
 
-$date1 = new DateTime( $esquema[ "inicia" ] );
-$date2 = new DateTime( $esquema[ "termina" ] );
+$y = date( "Y" ) - ( date( "n" ) < 9 ? 1 : 0 );
+
+$bono = $usuario->getBono( $esquema, $y );
+
+$date1 = new DateTime( $y.'-09-01' );
+$date2 = new DateTime( ($y+1).'-08-31' );
 $interval = $date1->diff( $date2 );
 $total_dias = $interval->days;
 
