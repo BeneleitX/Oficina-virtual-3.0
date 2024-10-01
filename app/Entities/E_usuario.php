@@ -576,7 +576,7 @@ class E_usuario extends Entity
     public function saldo( $modelo ){
         return $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad : 0;
     }
-
+ 
 
     public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
 
