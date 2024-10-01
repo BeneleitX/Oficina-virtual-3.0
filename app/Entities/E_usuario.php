@@ -809,7 +809,7 @@ class E_usuario extends Entity
             3 => 0.00
         ];
         $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
-                WHERE esquema_codigo = '116-ANIVERSARIO-24'
+                WHERE esquema_codigo = '116-ANIVERSARIO'
                 AND usuario_id = {$this->id}
                 GROUP BY nivel";
 
