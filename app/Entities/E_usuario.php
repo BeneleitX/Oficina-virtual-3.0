@@ -576,7 +576,7 @@ class E_usuario extends Entity
     public function saldo( $modelo ){
         return $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad : 0;
     }
- 
+
 
     public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
 
@@ -809,7 +809,7 @@ class E_usuario extends Entity
             3 => 0.00
         ];
         $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
-                WHERE esquema_codigo = '116-ANIVERSARIO'
+                WHERE esquema_codigo = '116-ANIVERSARIO'   
                 AND usuario_id = {$this->id}
                 GROUP BY nivel";
 
