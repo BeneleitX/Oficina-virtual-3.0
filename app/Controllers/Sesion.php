@@ -164,6 +164,10 @@ class Sesion extends BaseController
             $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
             $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
+            $db->query( " CALL p_update_padre( {$usuario->id}, '10-NUTRICION' );" );
+            $db->query( " CALL p_update_padre( {$usuario->id}, '20-TELEFONIA' );" );
+            $db->query( " CALL p_update_padre( {$usuario->id}, '30-ALIMENTOS' );" );
+
             return redirect()->route( "inicio" ); 
         }
     }

@@ -205,7 +205,7 @@ class Pedidos extends BaseController
             $db = db_connect();
             $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
             $db->query( "select f_get_estatus( {$u->id}, 0 )" );
-            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();    
+            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    
 
             // BITACORA Actualizar reparto de comisiones
             bitacora( 31, $this->data[ "usuario" ]->id, [ 

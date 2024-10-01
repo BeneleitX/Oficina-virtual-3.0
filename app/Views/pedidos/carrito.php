@@ -507,7 +507,7 @@
                             <td valign="middle" class="text-white" style="background:var(--bs-marine) !important">Total de pedido</td>
                             
                             <td valign="middle" class="text-end" style="background:var(--bs-marine) !important">
-                                <h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo; ?>">
+                                <h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - ( $pagado ? 0 : $saldo ); ?>">
                                     $<?php echo number_format( $tt, 2 ); ?>
                                 </h5>
                             </td>
