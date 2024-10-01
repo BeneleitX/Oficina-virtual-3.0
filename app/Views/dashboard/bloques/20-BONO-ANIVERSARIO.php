@@ -1,6 +1,6 @@
 <?php
 
-$esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
+$esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
 $bono = $usuario->getBono( $esquema[ "codigo" ] );
 
 $date1 = new DateTime( $esquema[ "inicia" ] );

@@ -3,7 +3,7 @@
 $mes = date( "Ym" );
 
 $m_inicia = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01";
-$esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO-24" );
+// $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
 $bono = $usuario->getBonoPromos( $mes );
 
 $date1 = new DateTime( date( $m_inicia ) );
