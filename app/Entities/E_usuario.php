@@ -795,10 +795,10 @@ class E_usuario extends Entity
         if( !isset( $checks[ date("Ym") ] ) ){
             $db = db_connect();
             $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
-            $checks = $db->query( $sql )->getRowArray();
-            $a = $checks[ "checks" ];
+            $check = $db->query( $sql )->getRowArray();
+            $a = $check[ "checks" ];
         }
-
+        dd($a, date("Ym"), $checks[ date("Ym") ], $check);
         return json_decode( $a, 1 );
     }
 
