@@ -792,6 +792,12 @@ class E_usuario extends Entity
 
         $a = json_encode( $this->data->checks );
 
+        if( !isset( $checks[ date("Ym") ] ) ){
+            $db = db_connect();
+            $checks = $db->query( "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;" )->getRowArray();
+            $a = $checks[ "checks" ];
+        }
+
         return json_decode( $a, 1 );
     }
 
