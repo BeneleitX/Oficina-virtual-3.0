@@ -797,9 +797,7 @@ class E_usuario extends Entity
             $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
             $check = $db->query( $sql )->getRowArray();
             $a = $check[ "checks" ];
-            dd(json_decode( $a, 1 ), 1);
         }
-        dd( json_decode( $a, 1 ), 0 );
         return json_decode( $a, 1 );
     }
 
