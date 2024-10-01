@@ -794,11 +794,11 @@ class E_usuario extends Entity
 
         if( !isset( $checks[ date("Ym") ] ) ){
             $db = db_connect();
-            echo $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
+            $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
             $checks = $db->query( $sql )->getRowArray();
             $a = $checks[ "checks" ];
         }
-die();
+dd($a);
         return json_decode( $a, 1 );
     }
 
