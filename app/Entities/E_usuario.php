@@ -792,13 +792,13 @@ class E_usuario extends Entity
 
         $a = json_encode( $this->data->checks );
 
-        if( !isset( $checks[ date("Ym") ] ) ){
+        if( !isset( $a[ date("Ym") ] ) ){
             $db = db_connect();
             $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
             $check = $db->query( $sql )->getRowArray();
             $a = $check[ "checks" ];
         }
-        dd($a, date("Ym"), $checks[ date("Ym") ], $check);
+
         return json_decode( $a, 1 );
     }
 
