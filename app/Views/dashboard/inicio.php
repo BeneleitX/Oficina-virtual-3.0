@@ -32,6 +32,11 @@
                 case "22-BONO-MENSUAL-PROMOS":
                     $b[ "data" ][ "titulo" ] .= " ".mes( date( "m" ) )." ".date( "Y" );
                     break;
+
+                case "20-BONO-ANIVERSARIO":
+                    $y = date( "Y" ) - ( date( "n" ) < 9 ? 1 : 0 );
+                    $b[ "data" ][ "titulo" ] .= " {$y}-".( $y + 1 );
+                    break;
             }
 
             $html .= "<div style=\"cursor:pointer\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
