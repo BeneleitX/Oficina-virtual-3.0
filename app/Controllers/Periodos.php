@@ -232,12 +232,18 @@ class Periodos extends BaseController
 
         if( $periodo[ "estatus_codigo" ] == '306-PERIODO-CERRADO' ){
             $db  = db_connect();
+
             $sql = "UPDATE t_pagos p
                     SET p.estatus_codigo  = '420-PAGADO'
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
                     AND p.estatus_codigo  = '330-EN-ESPERA' 
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
+
+           echo $sql = "UPDATE t_comisiones c
+                    SET c.estatus_codigo  = '420-PAGADO'
+                    WHERE c.periodo_codigo = '{$periodo[ "codigo" ]}'";
+            $db->query( $sql );            
 
             // agregar el splash de "cash" a socios
 
