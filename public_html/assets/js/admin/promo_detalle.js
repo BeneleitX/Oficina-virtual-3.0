@@ -52,6 +52,7 @@ $(document).ready(function(){
                 "exacto": $( '[name=n_exacto]' ).is( ':checked' ),
                 "obligatoria": $( '[name=n_obligatoria]' ).is( ':checked' ),
                 "forced": $( '[name=n_forced]' ).is( ':checked' ),
+                "evento": $( '[name=n_evento]' ).is( ':checked' ),
                 "nombre": $( '[name=n_nombre]' ).val(),
                 "siglas": $( '[name=n_siglas]' ).val(),
                 "modelos": [

@@ -111,20 +111,44 @@
                 if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
 
-                    echo "\n<div class=\"card mb-3\" ".( !$cant_productos ? " style=\"display:none\" " : "")." promocion=\"{$p[ "codigo" ]}\">
-                                <div style=\"position:relative\" class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]}\">
+                    $evento  = "false";
+                    $estatus = "false";
+
+                   //  if( ( $p[ "settings" ][ "evento" ] ?? "false" ) == "true" ){
+                        
+                    if( ( $p[ "settings" ][ "evento" ] ?? "false" )  == "true" ){
+                        $evento = "true";
+
+                        if( ( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "estatus" ] ?? "false" ) == "true" ){
+                            $estatus = "true";
+                        }
+                    }
+                    
+                    echo "\n<div evento=\"{$evento}\" estatus=\"{$estatus}\" class=\"card mb-3 rounded-2\" style=\"overflow:hidden; ".( !$cant_productos ? " display:none" : "")."\"  promocion=\"{$p[ "codigo" ]}\">";
+
+                    if( $evento == "true" ){
+                        echo "\n<div style=\"position:relative;width:100%\">
+                                    <img src=\"".base_url()."assets/img/promociones/{$p[ "codigo" ]}.png\" class=\"img-fluid\">
+                                    <div title=\"Click aquí para agregar o quitar la promoción de tu pedido\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-evento ".( $pagado ? "d-none" : "" )."\">
+                                        <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" >
+                                    </div>
+                                </div>";
+                    }
+
+
+                    echo "<div style=\"position:relative;".( $evento == "true" ? "display:none" : "" )."\" contenido class=\"card-header text-white bg-{$p[ "settings" ][ "clase" ]} ".( $evento == "true" ? "rounded-top-0" : "" )."\">
                                     <div class=\"row\">
                                         <div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div>
                                         <div class=\"col-md-7\">
                                             <small conteo>{$cant_productos} productos</small>
-                                            ".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span class=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."
+                                            ".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span xclass=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <table productos class=\"w-100\"></table>
+                                <table productos contenido style=\"".( $evento == "true" ? "display:none" : "" )."\" class=\"w-100\"></table>
                                 
-                                <div class=\"card-footer bg-gray-300 text-end\">
+                                <div contenido class=\"card-footer bg-gray-300 text-end\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
                                     <table align=\"right\">
                                         <tr>
                                             <td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td>
@@ -592,26 +616,31 @@
                         foreach( METODOSPAGO as $mp ){
                             $imagen = "";
                             $boton  = "";
-
-                            if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
-                                $boton .= "\n<button class=\"btn col-12 m-0 rounded-bottom-0";
-
-                                if( isset( $mp[ "settings" ][ "tipocomision" ] ) && $mp[ "settings" ][ "tipocomision" ] == "saldo"){
-                                    $boton .= " btn-warning ";
-
-                                    if( !$socio->data->saldo->{$modelo}->estatus || $socio->data->saldo->{$modelo}->cantidad < ($tt + $socio->data->saldo->{$modelo}->cantidad) ){
-                                        // $boton .= " d-none ";
-                                    }
-                                }else{
-                                    $boton .= " btn-primary ";
-
-                                    $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
-                                } 
-                                
-                                $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
+                            if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                                $mp[ "settings" ][ "tipocomision" ] = "";
                             }
 
-                            echo $boton.$imagen;
+                            if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                    $boton .= "\n<button class=\"btn col-12 m-0 rounded-bottom-0";
+
+                                    if( $mp[ "settings" ][ "tipocomision" ] == "saldo"){
+                                        $boton .= " btn-warning ";
+
+                                        if( !$socio->data->saldo->{$modelo}->estatus || $socio->data->saldo->{$modelo}->cantidad < ($tt + $socio->data->saldo->{$modelo}->cantidad) ){
+                                            // $boton .= " d-none ";
+                                        }
+                                    }else{
+                                        $boton .= " btn-primary ";
+
+                                        $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
+                                    } 
+                                    
+                                    $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
+                                }
+
+                                echo $boton.$imagen;
+                            }
                         }
 
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";

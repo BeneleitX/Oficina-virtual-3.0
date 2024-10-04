@@ -97,7 +97,7 @@
 </div>
 
 <div class="row mb-1">
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -109,7 +109,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -117,11 +117,11 @@
                     <h5 class="text-teal">Compra obligatoria</h5>
                 </div>                
                 
-                <p>Define si la compra de esta promoción debe ser obligatoria. En caso de apagarse, se considerará opcional y no afectará el proceso de compra el que no se incluyan productos en ella.</p>
+                <p>Define si la compra debe ser obligatoria. En caso de apagarse, será opcional y no afectará el proceso de compra el que no se incluyan productos.</p>
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -133,7 +133,19 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card border-teal">
+            <div class="card-body">
+            <div class="form-check form-switch">
+                <input name="n_evento" class="form-check-input" type="checkbox" role="switch" <?php echo isset( $promocion[ "settings" ][ "evento" ] ) && $promocion[ "settings" ][ "evento" ] == "true" ? "checked" : ""; ?>>
+                    <h5 class="text-teal">Evento</h5>
+                </div>                
+                
+                <p>Esta opción permite al socio encender o apagar la promoción cuando se encuentre disponible.</p>
+            </div>
+        </div>
+    </div> 
+    <div class="col-lg-4 col-md-6 mb-3">
         <div class="card border-teal">
             <div class="card-body">
             <div class="form-check form-switch">
@@ -144,7 +156,7 @@
                 <p>Activa esta opción si la promoción debe llenarse automáticamente con los productos precargados. El socio no podrá quitar o agregar productos.</p>
             </div>
         </div>
-    </div>    
+    </div>        
 </div>
 
 <h5>Productos elegibles</h5>
