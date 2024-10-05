@@ -162,6 +162,23 @@ class Sesion extends BaseController
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
 
             $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
+            $usuario = model( "UsuarioModel" )->find( $usuario->id );
+
+            // si es password original revisa si es activo, si no, rechaza login
+            if( $usuario->password == $datax[ "socio_password" ] && $usuario->estatus_codigo == "120-BAJA" ){
+
+                // BITACORA inicio de sesión fallido
+                bitacora( 2, $usuario->id, [ 
+                    "password" => $datax[ "socio_password" ],
+                    "motivo"   => "baja"
+                ] );
+
+                return redirect()
+                    ->back()
+                    ->with( "errors", [ "socio_id" => "Socio inactivo" ] )
+                    ->withInput();
+            }
+
             $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
             $db->query( " CALL p_update_padre( {$usuario->id}, '10-NUTRICION' );" );
