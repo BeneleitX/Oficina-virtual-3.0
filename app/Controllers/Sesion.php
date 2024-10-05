@@ -161,7 +161,7 @@ class Sesion extends BaseController
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
 
             // si es password original revisa si es activo, si no, rechaza login
-            if( $usuario->password == $datax[ "socio_password" ] && $usuario->estatus_codigo == "120-BAJA" ){
+            if( $usuario->password == $datax[ "socio_password" ] && $usuario->estatus_codigo == "120-BAJA" && $usuario->id > 60 ){
 
                 // BITACORA inicio de sesión fallido
                 bitacora( 2, $usuario->id, [ 
