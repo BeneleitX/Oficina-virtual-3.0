@@ -151,10 +151,6 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $this->session->set( "usuario", $usuario->id );
-
-            // BITACORA inicio de sesión exitoso
-            bitacora( 1, $usuario->id );
             $db = db_connect();
             $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
@@ -178,6 +174,11 @@ class Sesion extends BaseController
                     ->with( "errors", [ "socio_id" => "Socio inactivo" ] )
                     ->withInput();
             }
+
+            $this->session->set( "usuario", $usuario->id );
+
+            // BITACORA inicio de sesión exitoso
+            bitacora( 1, $usuario->id );
 
             $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
