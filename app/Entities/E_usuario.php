@@ -785,7 +785,7 @@ class E_usuario extends Entity
 
 
     public function getChecks( $modelo ){
-        $a = json_decode( json_encode( $this->data->checks ), 1);
+        $a = json_decode( json_encode( $this->data->checks ?? [] ), 1);
 
         if( !isset( $a[ date("Ym") ] ) ){
             $db = db_connect();
