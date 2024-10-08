@@ -11,7 +11,7 @@ $menu = [
     [ "secondary", "pedidodata", "shopping-cart", "Pedidos", 0, ["20-ALMACEN", "25-PAQUETERIA", "32-EDICION", "30-SOPORTE", "40-ADMIN"] ],
     [ "success", "valida_credenciales", "address-card", "Valida credenciales", sizeof( $credenciales ), [ "30-SOPORTE", "34-VALIDACION", "40-ADMIN" ] ],
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ), ["40-ADMIN"] ],
-    [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ), ["40-ADMIN"] ],
+    [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ), ["26-RANGOS", "40-ADMIN"] ],
     [ "warning", "pasarelas/".getModeloPrincipal(), "credit-card", "Métodos de pago", sizeof( $pasarelas ), ["40-ADMIN"] ],
     [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Paquetería", sizeof( $paqueterias ), [ "25-PAQUETERIA", "40-ADMIN"] ],
     [ "danger", "periodos/".getModeloPrincipal(), "calendar-days", "Periodos", sizeof( $periodos ), [ "38-CONTABILIDAD" ] ],

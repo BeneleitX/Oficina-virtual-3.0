@@ -11,6 +11,7 @@ class Rangos extends BaseController
 
     public function catalogo( $modelo ){
         if( !(
+            $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
@@ -51,6 +52,7 @@ class Rangos extends BaseController
 
     public function excel_pines_pendientes(){
         if( !(
+            $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
