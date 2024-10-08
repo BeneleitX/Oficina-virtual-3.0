@@ -162,6 +162,21 @@
                 }
 			}
 
+            if( !($pagado || $bloqueado || $cancelado )){
+            if( isset( $p[ "settings" ][ "extras" ] ) ){
+                echo "\n<div class=\"alert alert-info small\"><ul class=\"m-0\">";
+                foreach( $p[ "settings" ][ "extras" ] as $e ){
+                    echo "<li>{$e}</li>";
+                }
+                echo "</ul></div>";
+            }
+
+
+            if( $modelo == '20-TELEFONIA' ){
+                echo "<a class=\"btn btn-lg my-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\">¿Buscas recargas y activaciones? haz click aqui</a>";
+            }
+        }
+
             $domicilios = $socio->getDomicilios();
             $celulares  = $socio->getCelulares();
 			?>
@@ -188,14 +203,14 @@
                 // botones para metodo de entrega
                // if( $pedido[ "metodoentrega_codigo" ] ){
 
-                    foreach( METODOSENTREGA as $me ){
-                        // PROBLEMA PARA STAFF
-                        // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
-    
-                        if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
-                            echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
-                        }
+                foreach( METODOSENTREGA as $me ){
+                    // PROBLEMA PARA STAFF
+                    // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
+
+                    if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
+                        echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                     }
+                }
                 /* }
                 else{
                     echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> Este pedido aun no cuenta con información para entrega</span>";
@@ -208,7 +223,7 @@
             <div class="card-body me_respuesta" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
                 <p class="me_descripcion mb-3">
                     <?php 
-                    if( $pedido[ "metodoentrega_codigo" ] ){ 
+                    if( $pedido[ "metodoentrega_codigo" ] && isset( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){ 
                         echo METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "descripcion" ];
                     }
                     ?>
@@ -253,10 +268,10 @@
                     </div>
                 </div>
 
-                <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "11" ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "CELULAR" ) echo "style=\"display:none\""; ?>>
                     
                     <?php 
-                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) == "11" && sizeof( $celulares ) ){ 
+                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "CELULAR" && sizeof( $celulares ) ){ 
                         ?>
                         <div class="row">
                             <div class="col-lg-6">
@@ -300,7 +315,7 @@
                     ?>
                 </div>
 
-                <div class="me_formulario" mp="domicilio" <?php if( in_array( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ), ["00","11"] ) ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "PAQUETERIA" ) echo "style=\"display:none\""; ?>>
                     <?php 
                     $dom = $usuario->data->domicilio ?? 0;
 
@@ -318,7 +333,7 @@
                             }
                         }
                         else{
-                            if( $pedido[ "metodoentrega_codigo" ] ){
+                            if( $pedido[ "metodoentrega_codigo" ] && isset(  METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){
                                 if( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ]["tipocosto" ] == "efectivo" ){
 
                                     if( !$pedido[ "data" ][ "entrega" ] ){
@@ -357,7 +372,7 @@
                     }
                     ?>
                     <div class="row">           
-                        <?php if( ( $pagado || $bloqueado || $cancelado ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){ 
+                        <?php if( ( $pagado || $bloqueado || $cancelado ) && substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" ){ 
                             if( $entregado ){ 
                                 ?>
                                 <div class="col-12">

@@ -115,20 +115,26 @@ function update_puntos( promocion ){
 
 function cambia_cantidad( promocion, producto ){
     var cuenta_productos = 0,
-        disponible       = eval( cat_promociones[ promocion ].formulas.disponible );
+        disponible       = eval( cat_promociones[ promocion ].formulas.disponible ),
+        campo = $( '.card[promocion=' + promocion + '] table[productos] > tr[producto=' + producto + '] input.cantidad' );
 
+    // revisar máximos
     if( disponible > 0){
         $( '.card[promocion=' + promocion + '] table[productos] > tr[producto] input.cantidad' ).each( function(){
             cuenta_productos += parseInt( $( this ).val() );
         });
 
-        campo = $( '.card[promocion=' + promocion + '] table[productos] > tr[producto=' + producto + '] input.cantidad' );
         while( disponible < cuenta_productos ){
             campo.val( campo.val() - 1 );
             cuenta_productos--;
         }
     }
-    
+
+    // revisar minimos
+    if( cat_promociones[ promocion ].formulas.minimo !== undefined && campo.val() < cat_promociones[ promocion ].formulas.minimo ){
+        campo.val( cat_promociones[ promocion ].formulas.minimo );
+    }     
+
     update_pedido( "cambia cantidad" );
 }
 
@@ -280,8 +286,7 @@ function update_pedido( flag = null ){
 
     var bultos = bultos2 > bultos1 ? bultos2 : bultos1;
     pluses = 0;
-
-
+    packs  = 0;
 
     if( pedido.PTS["030-PLUS"] > 0 ){
         pluses = Math.floor( pedido.PTS["030-PLUS"] / 3 );
@@ -290,8 +295,13 @@ function update_pedido( flag = null ){
         if( bultos < 0 ){
             bultos = 0;
         }
+    }  
+    if( pedido.PTS["316-SIM-CARD"] > 0 ){
+        bultos = 1;
+        metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
+        pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo / ( pedido.PTS["316-SIM-CARD"] == 5 ? 2 : 1 ), 2 );
+        // packs  = 5;
     }
-
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
 
     $( '[total_entrega]' ).attr( 'total_entrega', pedido.data.comisionentrega );
@@ -304,14 +314,14 @@ function update_pedido( flag = null ){
 
 
     if( 0 && porcentaje2 > porcentaje1 ){
-        $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) ); 
+        $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) + ( packs ? '<small><br>Envío gratis <span class="badge bg-light-blue">CHIPS</span> x' + packs + '</small>' : '' ) ); 
         $( '#bultos' ).empty();
         
         bultos = bultos2;
         porcentaje = porcentaje2;
     }
     else{
-        $( '#bultos_cantidad' ).html( 'x' + bultos1 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) ); 
+        $( '#bultos_cantidad' ).html( 'x' + bultos1 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) + ( packs ? '<small><br>Envío gratis <span class="badge bg-light-blue">CHIPS</span> x' + packs + '</small>' : '' ) ); 
         $( '#bultos' ).empty();
 
         bultos = bultos1;
@@ -441,10 +451,21 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
     }
 
+
     if( existe.length ){
+
         campo.val( parseInt( campo.val() ) + cantidad );
+
+        if( cat_promociones[ promocion ].formulas.minimo !== undefined && campo.val() < cat_promociones[ promocion ].formulas.minimo ){
+            campo.val( cat_promociones[ promocion ].formulas.minimo );
+        }
+
     }
     else{
+
+        if( cat_promociones[ promocion ].formulas.minimo !== undefined && cantidad < cat_promociones[ promocion ].formulas.minimo ){
+            cantidad = cat_promociones[ promocion ].formulas.minimo;
+        }        
         orden  = get_orden_next( promocion );
         
         precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
@@ -583,7 +604,7 @@ $(document).ready(function()
         var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val(),
             entrega = $( 'div[domicilio_id]' ).attr( 'domicilio_id' );
             
-        pedido.data.costoxbulto = metodosentrega[ metodoentrega_activo ].settings.costo;
+        pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo, 2 );
 
         $( '.me_descripcion' ).html( metodosentrega[ metodoentrega_activo ].settings.descripcion );
         $( '.me_formulario, .me_costo' ).hide();
@@ -597,11 +618,11 @@ $(document).ready(function()
             pedido.data.domicilio  = null;
 
             if( entrega ){
-                pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
+                pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
             }
         }  
 
-        else if( metodoentrega_activo.substring(0,2) == '11'){
+        else if( metodoentrega_activo.substring(3) == 'CELULAR'){
             $( '.me_formulario[mp=celular]' ).show();
             entrega = $( '[name=select_celular]' ).val();
             pedido.data.domicilio = null;
@@ -625,7 +646,7 @@ $(document).ready(function()
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
 
         load_inventario( entrega );
-        pedido.data.costoxbulto = tarifas[ almacenes[ entrega ].settings.tarifa ];
+        pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
         pedido.data.entrega = entrega;
         pedido.metodoentrega_codigo = metodoentrega_activo;
         pedido.data.domicilio = null;
@@ -691,7 +712,7 @@ $(document).ready(function()
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
 
     if( $( '[name=metodosentrega]' ).length == 1 ){
-        $( '[name=metodosentrega]' ).click();
+     //   $( '[name=metodosentrega]' ).click();
     }    
 
     $( '#calcula_pago' ).on( 'change', function(){

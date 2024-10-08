@@ -17,7 +17,7 @@
         <link href="<?php echo base_url(); ?>assets/css/OverlayScrollbars.css" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/beneleit.css" rel="stylesheet">
         
-        <meta http-equiv="refresh" content="7200">
+        <!meta http-equiv="refresh" content="7200">
 
         <script src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
