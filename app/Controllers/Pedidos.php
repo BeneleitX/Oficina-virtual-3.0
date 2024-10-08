@@ -304,11 +304,13 @@ class Pedidos extends BaseController
             model( "PedidoModel" )->save( $pedido );
 
             // Actualizar puntajes del mes ya sin el pedido
-            $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
+            if( substr( $previo, 0, 3 ) > 400 ){
+                $mescalifica = date( "Ym", strtotime( $fechas[ "califica" ] ) );
 
-            $db = db_connect();
-            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
-            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
+                $db = db_connect();
+                $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
+                $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
+            }
 
             // BITACORA Cancelar pedido
             bitacora( 33, $this->data[ "usuario" ]->id, [ 
