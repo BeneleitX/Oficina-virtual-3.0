@@ -63,7 +63,7 @@ class Rangos extends BaseController
         $db = db_connect();
 
         $pendientes = $db->query( "
-            SELECT p.rango_codigo AS codigo, r.nombre AS rango, r.hex, p.usuario_id AS socio, CONCAT( u.data->>'$.nombre', ' ', u.data->>'$.apellidos[ 0 ]', ' ', u.data->>'$.apellidos[1]') AS nombre, p.fecha
+            SELECT p.rango_codigo AS codigo, r.nombre AS rango, r.hex, p.usuario_id AS socio, CONCAT( u.data->>'$.nombre', ' ', u.data->>'$.apellidos[ 0 ]', ' ', u.data->>'$.apellidos[1]') AS nombre, p.fecha, json_unquote( json_extract( u.data, concat( '$.avatar.imagenes[ ', IFNULL( CAST( u.data->>'$.avatar.activo' AS unsigned), 0 ) , ' ]' ) ) ) as foto
             FROM t_pines p
             JOIN t_rangos r ON r.codigo = p.rango_codigo
             JOIN t_usuarios u ON u.id = p.usuario_id 
@@ -88,7 +88,7 @@ class Rangos extends BaseController
             }
             $conteo++;
 
-            $sheetData[] = [  strtoupper( $p[ "rango" ] ),  $p[ "socio" ],  strtoupper( $p[ "nombre" ] ), $p[ "fecha" ] ];          
+            $sheetData[] = [  strtoupper( $p[ "rango" ] ),  $p[ "socio" ],  strtoupper( $p[ "nombre" ] ), $p[ "fecha" ], $p[ "foto" ] ? base_url()."data/{$p[ "socio" ]}/avatar/".$p[ "foto" ] : "" ];          
         }
 
         $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -105,6 +105,10 @@ class Rangos extends BaseController
             foreach( $bloque as $dato ){
                 if( strlen( $dato ) == 18 ){
                     $worksheet->setCellValueExplicit( chr( 65 + $col++ ).$row, $dato, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING );
+                }
+                elseif( str_contains( $dato, "https://") ){
+                    $worksheet->setCellValue( chr( 65 + $col ).$row, $dato );
+                    $worksheet->getCell( chr( 65 + $col++ ).$row )->getHyperlink()->setUrl( $dato );
                 }
                 else{
                     $worksheet->setCellValue( chr( 65 + $col++ ).$row, $dato );
