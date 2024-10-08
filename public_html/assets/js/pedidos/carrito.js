@@ -299,7 +299,10 @@ function update_pedido( flag = null ){
     if( pedido.PTS["316-SIM-CARD"] > 0 ){
         bultos = 1;
         metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
-        pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo / ( pedido.PTS["316-SIM-CARD"] == 5 ? 2 : 1 ), 2 );
+
+        if( metodosentrega[ metodoentrega_activo ] ){
+            pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo / ( pedido.PTS["316-SIM-CARD"] == 5 ? 2 : 1 ), 2 );
+        }
         // packs  = 5;
     }
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
