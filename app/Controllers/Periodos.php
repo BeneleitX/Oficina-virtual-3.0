@@ -128,7 +128,7 @@ class Periodos extends BaseController
             SELECT count(*) as pedidos FROM t_pedidos pd JOIN t_periodos pe ON codigo = '".$this->request->getPost( "periodo" )."'
             WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
             AND pe.modelo_codigo = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
-            AND CAST( pd.fechas->>'$.pagado' AS DATE ) between pe.inicia AND pe.termina;" )->getRow()->pedidos;
+            AND CAST( pd.fechas->>'$.reparte' AS DATE ) between pe.inicia AND pe.termina;" )->getRow()->pedidos;
 
         $db->query( "CALL p_avance_corte( json_object( 'periodo', '".$this->request->getPost( "periodo" )."',
                     'pedidos', 0,
