@@ -63,10 +63,9 @@ class Periodos extends BaseController
             $sql = "( json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR ( estatus_codigo = '250-EN-PROCESO' AND json_unquote( json_extract( data, '$.periodos.creacion' ) ) < '{$this->data[ "periodo" ][ "codigo" ]}' )" ; // 330-EN-ESPERA
         }
 
-        $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and usuario_id = 130809";
+        $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}'";
 
         $this->data[ "pagos" ] = model( "PagoModel" )->where( $sql )->findAll();
-        echo $sql;
 
         $this->data[ "t" ] = [
             "previos"   => [],
