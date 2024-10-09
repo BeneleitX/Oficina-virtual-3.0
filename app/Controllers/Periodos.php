@@ -324,6 +324,13 @@ class Periodos extends BaseController
             $pago[ "u_data" ] = json_decode( $pago[ "u_data" ], 1 );
             $pago[ "verificado" ] = json_decode( $pago[ "verificado" ], 1 );
             
+            $k_dia_inicia  = date( "d", strtotime( $periodo[ "inicia" ] ) );
+            $k_mes_inicia  = mes( date( "m", strtotime( $periodo[ "inicia" ] ) ), 3 );
+            $k_dia_termina = date( "d", strtotime( $periodo[ "termina" ] ) );
+            $k_mes_termina = mes( date( "m", strtotime( $periodo[ "termina" ] ) ), 3 );
+
+            $concepto = substr( $periodo[ "modelo_codigo" ], 3, 4 )." ".periodo( $periodo[ "codigo" ] )." ".strtoupper( "{$k_dia_inicia} {$k_mes_inicia}-{$k_dia_termina} {$k_mes_termina}" ); 
+
             if( $pago[ "p_data" ][ "retencion" ] == 2 ){
 
                 $neto = $pago[ "p_data" ][ "cantidades" ][ "subtotal" ];
@@ -346,7 +353,7 @@ class Periodos extends BaseController
                     $iva = $sub * .16, // iva
                     $ret = $sub * 0.0125, //( retencion)
                     $neto - $promo + $iva - $ret,
-                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
+                    $concepto
                 ];
             }
             elseif( $pago[ "p_data" ][ "retencion" ] == 1 ){
@@ -363,7 +370,7 @@ class Periodos extends BaseController
                     $rete = $subt * 0.1066, // retencion
                     $iva  = $subt * 0.16,  // iva
                     $subt - $rete + $iva, // total
-                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) ),
+                    $concepto,
                     "PAGO DE COMISIONES"
                 ];
             }
@@ -379,7 +386,7 @@ class Periodos extends BaseController
                     $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
                     $pago[ "p_data" ][ "cantidades" ][ "isr" ],
                     $pago[ "p_data" ][ "cantidades" ][ "total" ],
-                    strtoupper( "DEL ".date( "d", strtotime( $periodo[ "inicia" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "inicia" ] ) ) )." AL ".date( "d", strtotime( $periodo[ "termina" ] ) )." DE ".mes( date( "m", strtotime( $periodo[ "termina" ] ) ) ) )
+                    $concepto
                 ];
             }            
         }

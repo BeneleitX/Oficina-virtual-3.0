@@ -78,6 +78,7 @@
     foreach( $columnas as $c ){
         echo "\n<div class=\"col-12 col-md-6 col-lg-4\">{$c}</div>";
     }
+
 ?>
 
 

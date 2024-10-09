@@ -300,6 +300,7 @@ function update_pedido( flag = null ){
         bultos = 1;
         metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
 
+        // diferencia de costod e envio si son 5 sims o más
         if( metodosentrega[ metodoentrega_activo ] ){
             pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo - ( pedido.PTS["316-SIM-CARD"] == 5 ? 135 : 0 ), 2 );
         }
