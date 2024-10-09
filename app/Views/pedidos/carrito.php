@@ -125,7 +125,7 @@
                     }
                     
                     echo "\n<div evento=\"{$evento}\" estatus=\"{$estatus}\" class=\"card mb-3 rounded-2\" style=\"overflow:hidden; ".( !$cant_productos ? " display:none" : "")."\"  promocion=\"{$p[ "codigo" ]}\">";
-
+ 
                     if( $evento == "true" ){
                         echo "\n<div style=\"position:relative;width:100%\">
                                     <img src=\"".base_url()."assets/img/promociones/{$p[ "codigo" ]}.jpg?".filemtime( "assets/img/promociones/{$p[ "codigo" ]}.jpg" )."\" class=\"img-fluid\">
