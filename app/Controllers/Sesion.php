@@ -51,6 +51,18 @@ class Sesion extends BaseController
     // validar formulario de login
     public function procesa_login( $socio = null, $modelo = null )
     {
+        // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
+        // esto elimina cualquier intento de ataque por briteforce
+
+        if( session( "login" ) + 3 > time() ){
+            return redirect()
+            ->back()
+            ->with( "errors", [ "socio_id" => "Intente de nuevo, por favor" ] )
+            ->withInput();
+        }
+
+        $this->session->set( "login", time() );
+
         // SI es un login autom´tico de switch de admin
         if( $socio ){
             $request = base64_decode( urldecode( $socio ) );

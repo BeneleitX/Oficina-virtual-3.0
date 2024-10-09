@@ -98,6 +98,9 @@ if( $usuario ){
 
             $includescript = "assets/js/".strtolower( $_controller[3] )."/".strtolower( $_method ).".js";      
             if(file_exists( $includescript )) echo "<script src=\"".base_url().$includescript."?".filemtime( $includescript )."\"></script>"; 
+
+
+            
         ?>
 
     </body>
