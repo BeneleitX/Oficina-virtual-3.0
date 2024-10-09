@@ -62,7 +62,7 @@ function do_corte( total, avance = 0 ){
         type: 'POST',
         async: true,
         success: function(){
-            console.log( 'procesados pedidos del ' + ( avance + 1 ) + ' al ' + ( avance + step ) );
+            console.log( total + ' - procesados pedidos del ' + ( avance + 1 ) + ' al ' + ( avance + step ) );
 
             avance += step;
             
