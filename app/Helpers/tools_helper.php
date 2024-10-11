@@ -179,6 +179,30 @@ function mes($mesnum, $ext = 0)
     return $mespal;
 }
 
+function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
+    if( !$fecha ){
+        $fecha = date( "Y-m-d" );
+    }
+
+
+
+return $cantidad - getISR( $cantidad, date( "Y", strtotime($fecha) ) );
+}
+
+function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
+
+    $sql = "SELECT fijo, porcentaje, minimo 
+            FROM t_isr
+            WHERE tipo = '{$t}' and anio = {$y} and {$cantidad} BETWEEN minimo AND maximo";
+	
+    $db = db_connect();
+
+    $isr = $db->query( $sql )->getRowArray();
+    $excedente = $cantidad - $isr[ "minimo" ];	
+    
+    $entero = 100 * ( $isr[ "fijo" ] + ( ( $excedente *  $isr[ "porcentaje" ] ) / 100 ) );
+    return $entero / 100;
+}
 
 
 function random( $tipo ){

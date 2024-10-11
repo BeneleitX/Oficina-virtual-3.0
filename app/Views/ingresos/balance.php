@@ -8,12 +8,24 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-lg-8">
         <?php echo pills( "balance", $modelo, "codigo_periodo" ); ?>
     </div>
     <div class="col-lg-4 text-end">
         <button class="btn btn-success d-none"><i class="fa fa-file-excel"></i> Descargar Excel</button>
+
+        <div class="row">
+        <div class="col-4">
+                <a href="<?php echo base_url()."balance/{$modelo}/". $periodo[ "codigo" ]; ?>" class="btn btn-secondary"> Detalle SEMANAL</a>
+            </div>
+            <div class="col-4">
+            <a href="#" class="btn btn-outline-secondary"> Detalle MENSUAL</a>
+            </div>
+            <div class="col-4">
+            <a href="<?php echo base_url()."depositos/{$modelo}"; ?>" class="btn btn-outline-secondary"> Depósitos recibidos</a>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -202,7 +202,6 @@ class Pedidos extends BaseController
 
             model( "UsuarioModel" )->save( $u );
 
-            $db = db_connect();
             $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $pedido[ "fechas" ][ "califica" ] ) )."' )" );  
             $db->query( "select f_get_estatus( {$u->id}, 0 )" );
             $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    

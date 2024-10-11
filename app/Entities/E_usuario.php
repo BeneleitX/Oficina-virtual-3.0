@@ -820,6 +820,30 @@ class E_usuario extends Entity
         return $a;
     }
 
+    
+    public function getPagos( $modelo ){
+
+        $sql = "SELECT 
+                    a.id AS folio, 
+                    a.estatus_codigo as estatus, 
+                    a.clabe as clabe, 
+                    a.data->>'$.menor' as menor, 
+                    a.data->>'$.retencion' as impuestos, 
+                    a.data->>'$.periodos.creacion' AS periodo, 
+                    a.data->>'$.cantidades.subtotal' AS total,
+                    IFNULL( a.data->>'$.fechapago', IFNULL( p.termina, e.termina ) ) AS fecha
+                FROM t_pagos a
+                left JOIN t_periodos p ON p.codigo = a.data->>'$.periodos.deposito'
+                left JOIN t_periodos e ON e.codigo = a.data->>'$.periodos.creacion'
+                WHERE a.usuario_id = {$this->id} 
+                AND a.modelo_codigo = '10-NUTRICION' 
+                ORDER BY a.data->>'$.periodos.creacion' desc";
+
+        $db = db_connect();
+        return $db->query($sql)->getResultArray();
+    }
+
+
     public function getBonoPromos( $mes = null ){
         if( !$mes ){
             $mes = date( "Ym" );

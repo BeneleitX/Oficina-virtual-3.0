@@ -43,7 +43,6 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 
 			<?php
 		}
-
 		?>
 			
 		</div>
