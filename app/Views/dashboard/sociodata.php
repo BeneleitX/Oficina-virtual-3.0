@@ -145,13 +145,13 @@
 
                 <div class="card" style="overflow:hidden">
                     <table class="table table-striped m-0">
-                        <tr><th>Red</th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
+                        <tr><th>Red</th><th>Upline</th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
 
                     <?php 
                     
                     foreach( MODELOS as $m ){
-
-                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
+                        $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre);
+                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5><a class=\"\" href=\"".base_url()."/sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$socio->id( $m[ "codigo" ] )."</a></h5></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
                         
                         if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
                             $p = $pedidos[ $m[ "codigo" ] ];
