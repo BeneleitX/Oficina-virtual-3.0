@@ -63,7 +63,7 @@ class Sesion extends BaseController
 
         $this->session->set( "login", time() );
 
-        // SI es un login autom´tico de switch de admin
+        // SI es un login automático de switch de admin
         if( $socio ){
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
@@ -188,6 +188,15 @@ class Sesion extends BaseController
             }
 
             $this->session->set( "usuario", $usuario->id );
+
+            // activa modo admin para staff que trenga permiso de ver cuentas de socios
+            if( 
+                $usuario->permiso( "32-EDICION" ) || 
+                $usuario->permiso( "40-ADMIN" ) 
+            ){
+                $this->session->set( "admin", urlencode( base64_encode( $usuario->password_original() ) ) );
+            }
+
 
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );

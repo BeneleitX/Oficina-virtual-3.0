@@ -46,8 +46,15 @@ class Dashboard extends BaseController
     }
 
 
-    public function sociodata( $request){
-    
+    public function sociodata( $request = null ){
+        if( $this->request->getPost( "search_id" ) ){
+            $temp = model( "UsuarioModel" )->find( $this->request->getPost( "search_id" ) );
+
+            if( $temp->id ){
+                $request = urlencode( base64_encode( $temp->password_original() ) );
+            }
+        }
+
         if( !$request || ( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ) ) {
             return redirect()->to( "inicio" ); 

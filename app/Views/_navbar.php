@@ -34,7 +34,12 @@
 	<li><hr class="dropdown-divider"></li>
     <li class="d-none"><a class="dropdown-item" href="<?php echo base_url( "inicio"); ?>"><i class="fa fa-house"></i> Inicio</a></li>
     <li><a class="dropdown-item" href="<?php echo base_url( "perfil"); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
-    <li><hr class="dropdown-divider"></li>
+    
+	<?php 
+	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+		echo "<li><a class=\"dropdown-item\" href=\"".base_url( "oauth/".session( "admin" ) )."\"><button class=\"btn btn-danger\"><i class=\"fa fa-undo\"></i> Regresar a sesión de ADMIN</button></a></li><li><hr class=\"dropdown-divider\"></li>";
+	}
+	?>
     <li><a class="dropdown-item" href="<?php echo base_url( "logout" ); ?>"><i class="fa fa-right-from-bracket"></i> Cerrar sesión</a></li>
   </ul>
 </div>

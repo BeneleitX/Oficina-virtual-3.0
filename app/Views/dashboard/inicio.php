@@ -1,11 +1,47 @@
 
-<img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
+<div class="row">
+    <div class="col-lg-8 col-sm-6">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
+    </div>
+
+    <div class="col-lg-4 col-sm-6 text-end">
+        <table class="w-100">
+            <tr>
+                <td class="pe-3 pt-3">
+                    <?php
+                    if( 
+                        $usuario->permiso( "32-EDICION" ) || 
+                        $usuario->permiso( "40-ADMIN" ) 
+                    ){
+                    ?>
+                    <form action="<?php echo base_url( "sociodata" ); ?>" method="post" class="m-0">
+                        <?php echo csrf_field(); ?>
+                        <div class="input-group xinput-group-sm">
+                            <input type="text" name="search_id" value="" placeholder="Número de socio" class="form-control">
+                            <span class="input-group-text bg-mustard border-0"><i class="fa fa-magnifying-glass"></i></span>                           
+                        </div>
+                    </form>        
+                    <?php
+                    }     
+                    ?>               
+                </td>
+                
+                <td>
+                    <img style="xposition:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
 
 <div class="row">
 
 <?php
+    // Todo esto es temporal, se debe reemplazar por un grid dinámico 
+    // donde los socios puedan reacomodar los bloques usando drag&drop
+    // y sea 100% personalizable
+
     $columnas = ["","",""];
 
     foreach( $bloques as $b ){

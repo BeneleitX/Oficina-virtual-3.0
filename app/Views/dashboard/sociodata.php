@@ -5,7 +5,18 @@
 
 <div class="row mb-4">
 
-        <div class="col-3  offset-lg-4  col-lg-2">
+<div class="col-3 col-lg-2">
+    <form action="<?php echo base_url( "sociodata" ); ?>" method="post">
+        <?php echo csrf_field(); ?>
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="fa fa-magnifying-glass"></i></span>
+            <input type="text" name="search_id" value="<?php echo $socio->id; ?>" class="form-control">
+        </div>
+    </form>
+</div>
+
+
+        <div class="col-3  offset-lg-2  col-lg-2">
             <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
 
