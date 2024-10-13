@@ -453,6 +453,10 @@ class E_usuario extends Entity
         // checa si ya alcanzó recompensa
         if( $r && $estrellas >= intval( $r[ "estrellas" ] ) ){
 
+            // redención de premio en automático
+            // se debe de cambiar por una pregunta sobre redención del premio seleccionado en primer orden
+
+            /*             
             // update conteo
             $recompensa = $this->redime_recompensa( $r );
 
@@ -466,7 +470,8 @@ class E_usuario extends Entity
             $data->recompensas->estrellas = intval( $estrellas - $r[ "estrellas"] );
             $this->data = $data;
 
-            model( "UsuarioModel" )->save( $this );
+            model( "UsuarioModel" )->save( $this ); 
+            */
         }
         elseif( $estrellas > $data->recompensas->estrellas ){
             // notificación flash
