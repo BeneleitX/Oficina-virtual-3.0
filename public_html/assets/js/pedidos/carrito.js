@@ -302,7 +302,7 @@ function update_pedido( flag = null ){
 
         // diferencia de costod e envio si son 5 sims o más
         if( metodosentrega[ metodoentrega_activo ] ){
-            pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo - ( pedido.PTS["316-SIM-CARD"] == 5 ? 135 : 0 ), 2 );
+            pedido.data.costoxbulto =  parseFloat( pedido.PTS["316-SIM-CARD"] == 5 ? 115 : 250, 2 );
         }
         // packs  = 5;
     }
