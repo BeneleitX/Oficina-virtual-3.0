@@ -4,7 +4,7 @@ namespace App\Entities;
 use CodeIgniter\Entity\Entity;
 use CodeIgniter\I18n\Time;
 
-
+// Entidad USUARIO
 
 class E_usuario extends Entity
 {
@@ -52,6 +52,7 @@ class E_usuario extends Entity
         ];
     }
 
+
     protected function setPassword( string $password ): string
     {
         $encrypter = service( "encrypter" );
@@ -90,8 +91,9 @@ class E_usuario extends Entity
 
 
     public function updateCalificaciones( $modelo ){
-
+        // transferido a stored function en MySQL
     }
+
 
     public function getCalificaciones( $modelo, $m = false ){
         $PTS = [];
@@ -134,6 +136,7 @@ class E_usuario extends Entity
         return $PTS;
     }
     
+
     protected function setCurp( string $curp ){
         $this->attributes[ "curp" ]     = strtoupper( $curp );
         $yn = substr( $curp, 4, 2) ;
@@ -243,7 +246,7 @@ class E_usuario extends Entity
                     break;
             }
 
-            return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span>".$estatus[ "descripcion" ]."<span class='badge w-100 bg-".$estatus[ "color" ]."'>".$estatus[ "codigo" ]."</span>{$calificacion}\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
+            return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span><span class='badge w-100 bg-".$estatus[ "color" ]."'>{$estatus[ "descripcion" ]}</span><div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
         elseif( $clase ){
             return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
@@ -252,9 +255,11 @@ class E_usuario extends Entity
         return id( $this->id, 6 );
     }
 
+
     public function verified(){
         return "<i class=\"far fa-circle-".( $this->verificado->estatus ? "check text-teal" : "xmark text-red" )."\"></i>";
     }
+
 
     public function nombre( $apellidos = 0, $mask = false ): string
     {
@@ -289,6 +294,7 @@ class E_usuario extends Entity
     public function iniciales(){
         return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
     }
+
 
     public function porcentaje_beneficiarios( $porcentaje = 0 ){
         foreach( $this->data->beneficiarios as $b ){
@@ -326,6 +332,7 @@ class E_usuario extends Entity
 
         return null;
     }
+
 
     public function getDownlineJSON( $modelo, $niveles = null ){
 
@@ -377,6 +384,7 @@ class E_usuario extends Entity
         return $respuesta;
     }
 
+
     public function es_menor(){
         $fecha = new Time( $this->fechanac );
         return $fecha->getAge() < 18;
@@ -424,6 +432,7 @@ class E_usuario extends Entity
         return $this->attributes[ "password"];
     }
 
+    
     public Function getEstrellas( $r = null ){
         
         $db  = db_connect();

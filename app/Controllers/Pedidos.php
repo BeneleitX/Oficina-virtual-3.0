@@ -72,6 +72,7 @@ class Pedidos extends BaseController
 
         $this->data[ "navbar" ] = true;
 
+        // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
 
             $this->data[ "titulo" ] = "Detalles de pedido";
@@ -132,6 +133,8 @@ class Pedidos extends BaseController
             $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 || ($this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id )  ? 1 : 0;
             $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500 ? 1 : 0;
         }
+
+        // Entrar directo a URl tienda (sin referencia, pedido en proceso)
         else{
             $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -149,7 +152,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
             load_catalogo( "metodospago", "modelo_codigo = '{$this->data[ "modelo" ]}'");
-            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( ".( $this->data[ "modelo" ] != "20-TELEFONIA" ? "codigo = '00-ALMACEN' OR" : "" )." modelo_codigo = '{$this->data[ "modelo" ]}' )");
+            load_catalogo( "metodosentrega", "estatus_codigo = '201-ACTIVO' AND ( codigo = '00-ALMACEN' OR modelo_codigo = '{$this->data[ "modelo" ]}' )");
             load_catalogo( "almacenes",      "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $this->data[ "modelo" ] );
