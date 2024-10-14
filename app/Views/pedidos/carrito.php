@@ -317,12 +317,10 @@
 
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "PAQUETERIA" ) echo "style=\"display:none\""; ?>>
                     <?php 
-
-                  
+                 
                     $dom = $usuario->data->domicilio ?? 0;
 
-//                    if( $pedido[ "metodoentrega_codigo" ] && sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
-                    if( sizeof( $domicilios) ){
+                    if( sizeof( $domicilios ) > 0){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
                             if( isset( $pedido[ "data" ][ "entrega" ] ) ){
 
@@ -337,7 +335,7 @@
                             $d   = $domicilios[ $dom ];
                         }
                         else{
-                            $dom = $pedido[ "data" ][ "entrega" ] ?? array_keys( $domicilios )[ 0 ];
+                            $dom = intval( $pedido[ "data" ][ "entrega" ] ) > 0 ? intval( $pedido[ "data" ][ "entrega" ] ) : array_keys( $domicilios )[ 0 ];
                             $d   = $domicilios[ $dom ];
                             $pedido[ "data" ][ "domicilio" ] = $d;
                         }
