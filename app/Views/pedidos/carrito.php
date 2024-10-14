@@ -317,12 +317,14 @@
 
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "PAQUETERIA" ) echo "style=\"display:none\""; ?>>
                     <?php 
+
+                  
                     $dom = $usuario->data->domicilio ?? 0;
 
 //                    if( $pedido[ "metodoentrega_codigo" ] && sizeof( $domicilios) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
-    if( sizeof( $domicilios) ){
+                    if( sizeof( $domicilios) ){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
-                            if( isset( $pedido[ "data" ][ "entrega" ] ) && isset( $pedido[ "data" ][ "domicilio" ] ) ){
+                            if( isset( $pedido[ "data" ][ "entrega" ] ) ){
 
                                 $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 
@@ -331,27 +333,15 @@
                             elseif( ( $pedido[ "data" ][ "entrega_xpace" ] ?? 0 ) > 0 ){
                                 $dom = $pedido[ "data" ][ "entrega" ];
                             }
+
+                            $d   = $domicilios[ $dom ];
                         }
                         else{
-                            if( $pedido[ "metodoentrega_codigo" ] && isset(  METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ] ) ){
-                                if( METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ]["tipocosto" ] == "efectivo" ){
+                            $dom = $pedido[ "data" ][ "entrega" ] ?? array_keys( $domicilios )[ 0 ];
+                            $d   = $domicilios[ $dom ];
+                            $pedido[ "data" ][ "domicilio" ] = $d;
+                        }
 
-                                    if( !$pedido[ "data" ][ "entrega" ] ){
-                                        $pedido[ "data" ][ "entrega" ] = array_keys( $domicilios )[ 0 ];
-                                    }
-
-                                    $d = !isset($domicilios[ $pedido[ "data" ][ "entrega" ] ]) || is_array( $pedido[ "data" ][ "domicilio" ] ?? "" ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
-                                }
-                            }
-                        }
-                        
-                        if( isset($domicilios[ $dom ]) ){
-                            $d = $domicilios[ $dom ];
-                        }
-                        else{
-                            $d = array_values( $domicilios )[ 0 ];
-                        }
-                        
                         echo "\n<div domicilio_id=\"{$d[ "id" ]}\" class=\"card ".( $d[ "colonia" ] ? "border-teal text-teal mb-3" : "border-red text-red" )." text-start p-2\">
                                     <p><strong>{$d[ "nombre" ]}</strong></p>
                                     
@@ -413,11 +403,11 @@
                 </div>
 
                 <?php 
-                switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) ){
-                    case "00" : 
+                switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) ){
+                    case "ALMACEN" : 
                         $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; 
                         break;
-                    case "11" : 
+                    case "CELULAR" : 
                         $costoentrega = 0; 
                         break;
                     default   : 
@@ -968,7 +958,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
             </div>
             <div class="modal-body">
                 <?php 
-                if( sizeof( $domicilios ) && !in_array( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ){
+                if( sizeof( $domicilios ) && substr( $pedido[ "metodoentrega_codigo" ], 3 ) == "PAQUETERIA" ){
 
                 foreach( $domicilios as $d ){
                     echo "\n<button domicilio_id=\"{$d[ "id" ]}\" class=\"w-100 btn btn-outline-success text-start mb-3\"><p><strong>{$d[ "nombre" ]}</strong></p>
