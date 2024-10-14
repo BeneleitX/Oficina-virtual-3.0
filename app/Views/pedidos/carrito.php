@@ -320,9 +320,9 @@
                  
                     $dom = $usuario->data->domicilio ?? 0;
 
-                    if( sizeof( $domicilios ) > 0){
+                    if( sizeof( $domicilios ) > 0 && substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" ){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
-                            if( isset( $pedido[ "data" ][ "entrega" ] ) && substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" ){
+                            if( isset( $pedido[ "data" ][ "entrega" ] ) ){
 
                                 $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 
