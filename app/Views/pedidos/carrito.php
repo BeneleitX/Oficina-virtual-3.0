@@ -335,7 +335,13 @@
                             $d   = $domicilios[ $dom ];
                         }
                         else{
-                            $dom = intval( $pedido[ "data" ][ "entrega" ] ) > 0 ? intval( $pedido[ "data" ][ "entrega" ] ) : array_keys( $domicilios )[ 0 ];
+                            if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" && intval( $pedido[ "data" ][ "entrega" ] ) > 0 ){
+                                $dom = intval( $pedido[ "data" ][ "entrega" ] );
+                            }
+                            else{
+                                $dom = array_keys( $domicilios )[ 0 ];
+                            }
+
                             $d   = $domicilios[ $dom ];
                             $pedido[ "data" ][ "domicilio" ] = $d;
                         }
