@@ -322,7 +322,7 @@
 
                     if( sizeof( $domicilios ) > 0){
                         if( ( $pagado || $bloqueado || $cancelado ) ){
-                            if( isset( $pedido[ "data" ][ "entrega" ] ) ){
+                            if( isset( $pedido[ "data" ][ "entrega" ] ) && substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" ){
 
                                 $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 
