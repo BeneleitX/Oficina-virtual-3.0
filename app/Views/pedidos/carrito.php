@@ -324,7 +324,7 @@
                         if( ( $pagado || $bloqueado || $cancelado ) && substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" && intval( $pedido[ "data" ][ "entrega" ] ) > 0 ){
                             if( isset( $pedido[ "data" ][ "entrega" ] )){
 
-                                $domicilios[ 0 ] = is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
+                                $domicilios[ 0 ] = isset( $pedido[ "data" ][ "domicilio" ] ) && is_array( $pedido[ "data" ][ "domicilio" ] ) ? $pedido[ "data" ][ "domicilio" ] : $domicilios[ $pedido[ "data" ][ "entrega" ] ];
                                 
                                 $dom = 0;
                             }
@@ -340,6 +340,10 @@
                             }
                             else{
                                 $dom = array_keys( $domicilios )[ 0 ];
+
+                                $pedido[ "data" ][ "entrega" ]   = $dom;
+                                $pedido[ "data" ][ "domicilio" ] = $domicilios[ $dom ];
+                                model( "PedidoModel" )->save( $pedido );
                             }
 
                             $d   = $domicilios[ $dom ];
