@@ -63,8 +63,10 @@
         <?php $cp = 0; foreach( $pedido[ "productos" ] as $p => $c ){ $cp+= $c; ?>
         <div class="card mb-3">
             <div class="card-header">
-                <h5 class="float-end text-teal m-0"><?php echo $c; ?></h5>
-                <h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5>
+                <div class="col">
+                    <div class="row-6"><h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5></div>
+                    <div class="text-end row-6"><h5 class="text-teal m-0"><?php echo $c; ?></h5></div>
+                </div>
             </div>
             <div class="card-body">
                 <?php for( $a = 1; $a <= $c; $a++ ){ ?>
