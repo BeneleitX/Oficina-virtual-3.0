@@ -1,6 +1,6 @@
-<?php
+<?php namespace App\Controllers;
 
-namespace App\Controllers;
+// instalar aplicaciones necesarias desde composer
 require '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -30,7 +30,9 @@ class Periodos extends BaseController
         echo template( "periodos/listado", $this->data );
     }
 
-    public function detalle( $periodo ){
+
+    public function detalle( $periodo )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -39,19 +41,20 @@ class Periodos extends BaseController
         
         /**********************************/
 
-
         $this->data[ "navbar" ]  = true;
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
+
         $estatus = ESTATUS[ $this->data[ "periodo" ][ "estatus_codigo" ] ];
-        $modelo = MODELOS[ $this->data[ "periodo" ][ "modelo_codigo" ] ];
+        $modelo  = MODELOS[ $this->data[ "periodo" ][ "modelo_codigo" ] ];
 
         $this->data[ "titulo" ]  = "Detalles de periodo <span class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$modelo[ "settings" ][ "icono" ]}\"></i> {$modelo[ "nombre" ]}</span> <span class=\"badge bg-marine\">".periodo( $this->data[ "periodo" ][ "codigo" ] )."</span> <span class=\"badge bg-{$estatus[ "color" ]}\">{$estatus[ "descripcion" ]}</span>";
 
-        $sql = "inicia > '2024-08-05' and substring(estatus_codigo, 1, 3) < 400 AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
+        $sql = "inicia > '2024-08-05' 
+                and substring(estatus_codigo, 1, 3) < 400 
+                AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' 
+                and codigo < '{$this->data[ "periodo" ][ "codigo" ]}'";
+
         $this->data[ "pendientes" ] = sizeof( model( "PeriodoModel" )->where( $sql )->findAll() );
-
-
-        $sql = "( modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}' and ".substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 ? "estatus_codigo = '255-PENDIENTE'" : "json_unquote( json_extract( data, '$.periodos.creacion' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}' OR json_unquote( json_extract( data, '$.periodos.deposito' ) ) = '{$this->data[ "periodo" ][ "codigo" ]}'";
 
         // cerrado
         if( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 300 ){
@@ -111,7 +114,8 @@ class Periodos extends BaseController
     }
 
 
-    public function reset_corte(){
+    public function reset_corte()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -120,15 +124,22 @@ class Periodos extends BaseController
         
         /**********************************/
 
-
         $db = db_connect();
-        $db->query( "UPDATE t_variables SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) WHERE codigo = 'avance_corte'" );
+        
+        $sql = "UPDATE t_variables 
+                SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) 
+                WHERE codigo = 'avance_corte'";
+        
+        $db->query( $sql );
 
-        $pedidos = $db->query( "
-            SELECT count(*) as pedidos FROM t_pedidos pd JOIN t_periodos pe ON codigo = '".$this->request->getPost( "periodo" )."'
-            WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
-            AND pe.modelo_codigo = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
-            AND CAST( pd.fechas->>'$.reparte' AS DATE ) between pe.inicia AND pe.termina;" )->getRow()->pedidos;
+        $sql = "SELECT count(*) as pedidos 
+                FROM t_pedidos pd 
+                JOIN t_periodos pe ON codigo = '".$this->request->getPost( "periodo" )."'
+                WHERE SUBSTRING( pd.estatus_codigo, 1, 3 ) > 400 
+                AND pe.modelo_codigo = pd.modelo_codigo COLLATE utf8mb4_0900_ai_ci
+                AND CAST( pd.fechas->>'$.reparte' AS DATE ) between pe.inicia AND pe.termina";
+
+        $pedidos = $db->query( $sql )->getRow()->pedidos;
 
         $db->query( "CALL p_avance_corte( json_object( 'periodo', '".$this->request->getPost( "periodo" )."',
                     'pedidos', 0,
@@ -147,7 +158,8 @@ class Periodos extends BaseController
     }
 
 
-    public function corte(){
+    public function corte()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -156,6 +168,7 @@ class Periodos extends BaseController
         /**********************************/
 
         extract( $this->request->getPost() );
+    
         $db = db_connect();
         
         /*
@@ -179,7 +192,8 @@ class Periodos extends BaseController
     } 
     
     
-    public function cierra_periodo(){
+    public function cierra_periodo()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -188,13 +202,14 @@ class Periodos extends BaseController
         
         /**********************************/
 
-
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
 
         if( $periodo[ "estatus_codigo" ] == '255-PENDIENTE' ){
+
             $db  = db_connect();
+
             $sql = "UPDATE t_pagos p
                     JOIN t_usuarios u ON u.id = p.usuario_id
                     SET p.data = JSON_SET( p.data, '$.periodos.deposito', '{$periodo[ "codigo" ]}' ), 
@@ -203,6 +218,7 @@ class Periodos extends BaseController
                     AND p.estatus_codigo  = '250-EN-PROCESO' 
                     AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) ";
+
             $db->query( $sql );
 
             // BITACORA Cierra semana  
@@ -211,12 +227,14 @@ class Periodos extends BaseController
             ] );
 
             $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
+
             model( "PeriodoModel" )->save( $periodo );
         }
     }   
     
     
-    public function marca_pagado(){
+    public function marca_pagado()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -225,12 +243,12 @@ class Periodos extends BaseController
         
         /**********************************/
 
-
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
 
         if( $periodo[ "estatus_codigo" ] == '306-PERIODO-CERRADO' ){
+
             $db  = db_connect();
 
             $sql = "UPDATE t_pagos p
@@ -240,7 +258,7 @@ class Periodos extends BaseController
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );
 
-           echo $sql = "UPDATE t_comisiones c
+            $sql = "UPDATE t_comisiones c
                     SET c.estatus_codigo  = '420-PAGADO'
                     WHERE c.periodo_codigo = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );            
@@ -253,12 +271,14 @@ class Periodos extends BaseController
             ] );
 
             $periodo[ "estatus_codigo" ] = "422-PERIODO-PAGADO";
+            
             model( "PeriodoModel" )->save( $periodo );
         }
     }   
     
     
-    public function abre_periodo(){
+    public function abre_periodo()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -267,13 +287,14 @@ class Periodos extends BaseController
         
         /**********************************/
 
-
         extract( $this->request->getPost() );
 
         $periodo = model( "PeriodoModel" )->find( $periodo );
 
         if( $periodo[ "estatus_codigo" ] == '306-PERIODO-CERRADO' ){
+
             $db  = db_connect();
+
             $sql = "UPDATE t_pagos p
                     SET p.data = JSON_SET( p.data, '$.periodos.deposito', '' ), 
                         p.estatus_codigo  = '250-EN-PROCESO'
@@ -288,12 +309,14 @@ class Periodos extends BaseController
             ] );
 
             $periodo[ "estatus_codigo" ] = "255-PENDIENTE";
+            
             model( "PeriodoModel" )->save( $periodo );
         }
     }
 
 
-    public function excel_corte(){
+    public function excel_corte()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -301,7 +324,6 @@ class Periodos extends BaseController
         }
         
         /**********************************/
-
 
         $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
 
@@ -383,9 +405,9 @@ class Periodos extends BaseController
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
+                    $pago[ "p_data" ][ "cantidades" ][ "neto" ], 
                     $pago[ "p_data" ][ "cantidades" ][ "isr" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "total" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "neto" ] - $pago[ "p_data" ][ "cantidades" ][ "isr" ],
                     $concepto
                 ];
             }            

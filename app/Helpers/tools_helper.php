@@ -179,7 +179,7 @@ function mes($mesnum, $ext = 0)
     return $mespal;
 }
 
-function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
+function aplicaImpuestos( $cantidades, $tipo, $fecha = null ){
     if( !$fecha ){
         $fecha = date( "Y-m-d" );
     }
