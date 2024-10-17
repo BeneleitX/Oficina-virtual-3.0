@@ -74,9 +74,11 @@
 
         <?php $cp = 0; foreach( $pedido[ "productos" ] as $p => $c ){ $cp+= $c; ?>
         <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="float-end text-teal m-0"><?php echo $c; ?></h5>
-                <h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5>
+            <div class="card-header" producto="<?php echo $p; ?>" cantidad="<?php echo $c; ?>">
+                <div class="row">
+                    <div class="col-6"><h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5></div>
+                    <div class="text-end col-6"><h5 class="text-teal m-0"><button class="carga_todos btn me-3 btn-sm btn-outline-warning">Cargar todos</button> <?php echo $c; ?></h5></div>
+                </div>
             </div>
             <div class="card-body">
                 <?php for( $a = 1; $a <= $c; $a++ ){ ?>
@@ -109,6 +111,27 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="modal_carga_todos" producto="" cantidad="">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="modal-title me-3">
+                    <h5>Agregar <span class="badge bg-red" id="todos_cantidad"></span> productos</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body text-center">
+             <img style="width:200px">
+             <div class="nombre"></div>
+             <button class="btn btn-primary my-2" id="confirma_agregar_todos">AGREGAR TODOS</button>
+            </div>
+		</div>
+	</div>
+</div>
+
 
 <script>
 var cat_productos   = <?php echo json_encode( $productos ); ?>,
