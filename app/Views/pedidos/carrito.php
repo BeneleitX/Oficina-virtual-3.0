@@ -413,6 +413,10 @@
                 <?php 
                 switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) ){
                     case "ALMACEN" : 
+                        if( !isset( ALMACENES[ $pedido[ "data" ][ "entrega" ] ] ) ){
+                            $pedido[ "data" ][ "entrega" ] = array_key_first( ALMACENES );
+                        }
+
                         $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; 
                         break;
                     case "CELULAR" : 
