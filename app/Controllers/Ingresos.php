@@ -71,7 +71,8 @@ class Ingresos extends BaseController
                     c.fecha, 
                     e.codigo as esquema, 
                     IFNULL( p.data->'$.factor', 2.5 ) as factor, 
-                    SUM( c.cantidad ) as cantidad
+                    SUM( c.cantidad ) as cantidad,
+                    c.esquema_codigo
                 from t_pagos p
                 left join t_comisiones c ON c.usuario_id = p.usuario_id
                 left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
