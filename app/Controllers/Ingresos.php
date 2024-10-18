@@ -68,7 +68,7 @@ class Ingresos extends BaseController
         load_catalogo( "esquemas", "modelo_codigo = '{$pago[ "modelo_codigo" ]}'");
 
         $sql  = "SELECT 
-                    c.fecha, 
+                    min(c.fecha), 
                     e.codigo as esquema, 
                     IFNULL( p.data->'$.factor', 2.5 ) as factor, 
                     SUM( c.cantidad ) as cantidad,
