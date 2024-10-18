@@ -44,8 +44,8 @@ class Ingresos extends BaseController
     }
 
 
-    public function depositos( $modelo = null ){
-
+    public function depositos( $modelo = null )
+    {
         if( !$modelo ){
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
         }
@@ -60,42 +60,75 @@ class Ingresos extends BaseController
         echo template( "ingresos/depositos", $this->data );
     } 
 
-    public function pagodata(){
-        $pago   = model( "PagoModel" )->find( $this->request->getPost( "folio" ) );
+    
+    public function pagodata()
+    {
+        $pago    = model( "PagoModel" )->find( $this->request->getPost( "folio" ) );
+        $periodo = model( "PeriodoModel" )->find( $pago[ "data" ][ "periodos" ][ "creacion" ] );
         load_catalogo( "esquemas", "modelo_codigo = '{$pago[ "modelo_codigo" ]}'");
 
-        $sql    = "SELECT c.fecha, e.codigo as esquema, IFNULL( p.data->'$.factor', 2.5 ) as factor, SUM( c.cantidad ) as cantidad
-                   from t_pagos p
-                   left join t_comisiones c ON c.usuario_id = p.usuario_id
-                   left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
-                   WHERE p.id = {$pago[ "id" ]} AND c.periodo_codigo = '10S202440'
-                   GROUP BY c.esquema_codigo";
+        $sql  = "SELECT 
+                    c.fecha, 
+                    e.codigo as esquema, 
+                    IFNULL( p.data->'$.factor', 2.5 ) as factor, 
+                    SUM( c.cantidad ) as cantidad
+                from t_pagos p
+                left join t_comisiones c ON c.usuario_id = p.usuario_id
+                left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
+                WHERE p.id = {$pago[ "id" ]} AND c.periodo_codigo = '{$pago[ "data" ][ "periodos" ][ "creacion" ]}'
+                GROUP BY c.esquema_codigo";
 
         $db = db_connect();
         $desglose = $db->query( $sql )->getResultArray();
 
-        $html = "<table class=\"table w-100 table-striped\">";
+        $html = "<div class=\"alert alert-info text-center\">Del ".fecha( $periodo[ "inicia" ] )." al ".fecha( $periodo[ "termina" ] )."</div><table class=\"table w-100 table-striped\">";
 
         foreach( $desglose as $d ){
             $titulo = ESQUEMAS[ $d[ "esquema" ] ][ "settings" ][ "titulo" ];
 
             if($d[ "esquema" ] == "118-PROMOS-50" ){
                 $d[ "cantidad" ] *= $d[ "factor" ];
-                $titulo .= " ".strtoupper( mes( date( "m", strtotime( $d[ "fecha" ] ) ), 3 ) )."-". date( "Y", strtotime( $d[ "fecha" ] ) )." <span class=\"badge bg-blue\">x{$d[ "factor" ]}</span>";
+                $titulo .= " <span class=\"badge bg-pink\">".strtoupper( mes( date( "m", strtotime( $d[ "fecha" ] ) ), 3 ) )."-". date( "Y", strtotime( $d[ "fecha" ] ) )."</span> <span class=\"badge bg-blue\">x{$d[ "factor" ]}</span>";
             }
 
             $html .= "\n<tr>
-                        <td>{$titulo}</td>
-                        <td class=\"text-end\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
+                        <td class=\"w-100\">{$titulo}</td>
+                        <td class=\"text-end nowrap\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
                     </tr>";
         }
 
-        $html .= "\n<tr>
-                    <td class=\"text-end\">Total de comisiones</td>
-                    <td class=\"text-end\"><strong>$".number_format( $pago[ "data" ][ "cantidades" ][ "subtotal" ], 2)."</strong></td>
+        $html .= "\n<tr class=\"table-secondary\">
+                    <td class=\"\">Total de comisiones</td>
+                    <td class=\"text-end nowrap\"><strong>$".number_format( $pago[ "data" ][ "cantidades" ][ "subtotal" ], 2)."</strong></td>
                 </tr>";
 
+
+        $html .= "</table><table class=\"table w-100 table-striped\">";;
+
+        $desglose = aplicaImpuestos( $pago[ "data" ][ "cantidades" ][ "subtotal" ], $pago[ "data" ][ "retencion" ], $periodo[ "inicia" ] );
+
+        foreach( $desglose as $d ){
+            if( $d[ "descripcion" ] == "TOTAL" ){
+                $total = $d[ "cantidad" ];
+            }
+            else{
+                $html .= "\n<tr>
+                            <td class=\"w-100\">{$d[ "descripcion" ]}</td>
+                            <td class=\"text-end nowrap\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
+                        </tr>";
+            }
+        }
+
+        $html .= "\n<tr class=\"table-secondary\">
+                    <td class=\"\">Total depósito</td>
+                    <td class=\"text-end nowrap\"><strong>$".number_format( $total, 2)."</strong></td>
+                </tr>";
+
+
         $html .= "</table>";
+
+        $html .= "<div class=\"alert alert-success text-center mb-0\">Transferencia a cuenta CLABE {$pago[ "clabe" ]}<h1>$".number_format( $total, 2)."</h1></div>";
+
 
         return $html;        
     }

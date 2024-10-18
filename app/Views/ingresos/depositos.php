@@ -18,7 +18,7 @@
         <div class="col-4">
                 <a href="<?php echo base_url()."balance/{$modelo}/".codigo_periodo( $modelo ); ?>" class="btn btn-outline-secondary"> Detalle SEMANAL</a>
             </div>
-            <div class="col-4">
+            <div class="col-4 d-none">
             <a href="#" class="btn btn-outline-secondary"> Detalle MENSUAL</a>
             </div>
             <div class="col-4">
@@ -46,15 +46,24 @@
         <?php 
             $socios = [];
             foreach( $pagos as $pago ){
+                $desglose = aplicaImpuestos( $pago[ "total" ], $pago[ "impuestos" ], $pago[ "fecha" ] );
+
+
+                foreach( $desglose as $d ){
+                    if( $d[ "descripcion" ] == "TOTAL" ){
+                        $total = $d[ "cantidad" ];
+                    }
+                }
+
                 echo "
                     <tr>
                         <td class=\"text-center\"><span class=\"d-none\">{$pago["periodo"]}</span><span class=\"badge bg-marine\">".periodo( $pago["periodo" ] )."</span></td>
-                        <td class=\"text-end\">$".number_format( aplicaImpuestos( $pago[ "total" ], $pago[ "impuestos" ], $pago[ "fecha" ] ) , 2)."</td>
+                        <td class=\"text-end\">$".number_format( $total , 2)."</td>
                         <td><span class=\"d-none\">{$pago["estatus"]}</span>".estatus( $pago["estatus"] )."</td>
                         <td>{$pago["clabe"]} ".( $pago["menor"] > 0 ? "<small><span class=\"badge bg-pink\">MENOR</span></small>" : "" )."</td>
                         <td class=\"text-center\">{$pago["folio"]}</td>
                         <td>".( $pago[ "fecha" ] )."</td>
-                        <td class=\"text-end\"><button onclick=\"detalle_pago( {$pago["folio"]} )\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
+                        <td class=\"text-end\"><button onclick=\"detalle_pago( {$pago["folio"]}, '".periodo( $pago["periodo" ] )."' )\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
                     </tr>
                 ";
             }

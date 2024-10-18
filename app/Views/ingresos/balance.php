@@ -19,7 +19,7 @@
         <div class="col-4">
                 <a href="<?php echo base_url()."balance/{$modelo}/". $periodo[ "codigo" ]; ?>" class="btn btn-secondary"> Detalle SEMANAL</a>
             </div>
-            <div class="col-4">
+            <div class="col-4 d-none">
             <a href="#" class="btn btn-outline-secondary"> Detalle MENSUAL</a>
             </div>
             <div class="col-4">

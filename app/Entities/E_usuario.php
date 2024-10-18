@@ -851,6 +851,7 @@ class E_usuario extends Entity
                 left JOIN t_periodos e ON e.codigo = a.data->>'$.periodos.creacion'
                 WHERE a.usuario_id = {$this->id} 
                 AND a.modelo_codigo = '10-NUTRICION' 
+                and p.inicia > '2024-08-18'
                 ORDER BY a.data->>'$.periodos.creacion' desc";
 
         $db = db_connect();
