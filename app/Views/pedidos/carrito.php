@@ -335,8 +335,9 @@
                             $d   = $domicilios[ $dom ];
                         }
                         else{
-                            if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" && intval( $pedido[ "data" ][ "entrega" ] ) > 0 ){
+                            if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "PAQUETERIA" && intval( $pedido[ "data" ][ "entrega" ] ) > 0 && isset( $domicilios[ $pedido[ "data" ][ "entrega" ] ] ) ){
                                 $dom = intval( $pedido[ "data" ][ "entrega" ] );
+                                
                             }
                             else{
                                 $dom = array_keys( $domicilios )[ 0 ];
