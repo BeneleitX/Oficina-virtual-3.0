@@ -405,9 +405,9 @@ class Periodos extends BaseController
                     30,
                     "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
                     $pago[ "banco" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "neto" ], 
+                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
                     $pago[ "p_data" ][ "cantidades" ][ "isr" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "neto" ] - $pago[ "p_data" ][ "cantidades" ][ "isr" ],
+                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ] - $pago[ "p_data" ][ "cantidades" ][ "isr" ],
                     $concepto
                 ];
             }            
