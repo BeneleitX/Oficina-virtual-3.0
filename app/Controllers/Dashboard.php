@@ -50,7 +50,7 @@ class Dashboard extends BaseController
         if( $this->request->getPost( "search_id" ) ){
             $temp = model( "UsuarioModel" )->find( $this->request->getPost( "search_id" ) );
 
-            if( $temp->id ){
+            if( $temp->id ?? false ){
                 $request = urlencode( base64_encode( $temp->password_original() ) );
             }
         }

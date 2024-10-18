@@ -135,6 +135,10 @@ class Pedidos extends BaseController
                     model( "PedidoModel" )->save( $this->data[ "pedido" ] );
                 }
 
+                if( !isset( ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ] )){
+                    $this->data[ "pedido" ][ "data" ][ "entrega" ] = (substr( $modelo, 0, 1 ) - 1 )."11-OFICINAS";
+                }
+
                 $ff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
 
                 if( !( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){

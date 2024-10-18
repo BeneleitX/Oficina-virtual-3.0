@@ -179,14 +179,14 @@ function mes($mesnum, $ext = 0)
     return $mespal;
 }
 
-function aplicaImpuestos( $cantidades, $tipo, $fecha = null ){
+function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
     if( !$fecha ){
         $fecha = date( "Y-m-d" );
     }
 
 
 
-return $cantidad - getISR( $cantidad, date( "Y", strtotime($fecha) ) );
+    return $cantidad - getISR( $cantidad, date( "Y", strtotime($fecha) ) );
 }
 
 function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
