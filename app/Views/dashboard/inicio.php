@@ -1,3 +1,4 @@
+<script src="https://core.beneleit.talentonet.com/static/beneleit/beneleit.js"></script>
 
 <div class="row">
     <div class="col-lg-8 col-sm-6">

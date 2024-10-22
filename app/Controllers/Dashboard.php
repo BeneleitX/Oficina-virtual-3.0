@@ -531,4 +531,64 @@ class Dashboard extends BaseController
 
         return $html;
     }
+
+
+    public function datos_moviles(){
+        $token = $this->request->getPost( "token" );
+        $html = "<span class=\"badge bg-red\">{$token}</span>";
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://core.beneleit.talentonet.com/api/beneleit/resumen_servicios?token=".$token );
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($curl, CURLOPT_HEADER, 0); 
+        $respuesta = json_decode( curl_exec( $curl ) );
+        curl_close($curl);
+                
+        $html = "<table class=\"table w-100 m-0 table-borderless xtable-striped\">";
+        $k = 0;
+        
+        foreach( $respuesta->data as $num ){
+            $recarga = end( $num->detalle );
+            $plan = model( "ProductoModel" )->find( $recarga->plan__oferta_adicional );
+            //$plan->descripcion = str_replace( "B -", "B<br>", $plan->descripcion );
+
+            $f = [
+                "d" => date( "d", strtotime( $recarga->vigencia_fin ) ),
+                "m" => date( "m", strtotime( $recarga->vigencia_fin ) ),
+                "y" => date( "Y", strtotime( $recarga->vigencia_fin ) ),
+            ];
+
+            $g = [
+                "d" => date( "d", strtotime( $recarga->vigencia_inicio ) ),
+                "m" => date( "m", strtotime( $recarga->vigencia_inicio ) ),
+                "y" => date( "Y", strtotime( $recarga->vigencia_inicio ) ),
+            ];
+
+            if( $recarga->vigencia_fin < date( "Y-m-d" ) ){
+                $vence = "Vencido";
+                $vence_clase = "red";
+            }
+            else{
+                $vence = "Vence";
+                $vence_clase = "teal";
+            }
+
+            $html .= "\n<tr class=\"dt_num ".( $k++ > 3 ? "d-none" : "" )."\">
+                <td class=\"p-0\"><i class=\"fa fa-mobile-retro text-{$vence_clase} fs-1\"></td>
+                <td class=\"py-2 w-100\"><h5 style=\"line-height: 0.2\" class=\"mb-3\">{$num->sim__numero_telefono}</h5><p style=\"line-height: 0.8\"><small><strong>{$plan->data->descripcion}</strong><br>Contratado el ".( $g[ "d" ]." de ".mes( $g[ "m" ] ).", ".$g[ "y" ])."<br><span class=\"text-{$vence_clase}\">{$vence} el ".( $f[ "d" ]." de ".mes( $f[ "m" ] ).", ".$f[ "y" ])."</span></small></p></td>
+                <td class=\"text-end p-0\" nowrap><img src=\"https://v4.app/assets/img/productos/{$plan->codigo}.png\" style=\"border-radius:5px; width:60px; height:60px\"></td>
+            </tr>";
+        }
+        
+        $html .= "</table>";
+
+        if( $k > 4 ){
+            $html.= "<p class=\"text-center\"><button onclick=\"$( '.dt_num' ).removeClass( 'd-none' );\" class=\"btn btn-xs btn-outline-danger\">Ver todas las líneas relacionadas a este socio</button></p>";
+        }
+        elseif( $k == 0 ){
+            $html= "<div class=\"row mx-3\"><div class=\"col-4 display-1 py-2 text-gray-300 text-center ps-5\"><i class=\"fa fa-mobile-retro\"></i></div><div class=\"col-8 pt-4 text-gray-500 text-center\">No tienes números de celular asociados a tu cuenta</div></div>";
+        }
+
+        return $html;
+    }
 }

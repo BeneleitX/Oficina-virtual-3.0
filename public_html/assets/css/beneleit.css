@@ -31,6 +31,10 @@ html, body{
     color: #aaa;
 }
 
+#contenedor-menu.contenedor-menu-admin {
+    background: var(--bs-red);
+}
+
 a.menu-opcion{
     text-align:center;
     padding:10px 0;

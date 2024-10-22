@@ -1,8 +1,12 @@
+
+
 <div class="card-body">
+
+<div id="datos_linea"><p class="text-center"><p class="text-center p-5"><i class="fa-solid fa-circle-notch fa-spin"></i></p></p></div>
 <?php
 
 $numeros = $usuario->getCelulares();
-$htmlx   = "";
+/* $htmlx   = "";
 
 foreach( $numeros as $c ){
         $paqs = ""; 
@@ -24,7 +28,8 @@ foreach( $numeros as $c ){
     }
     else{
         echo "<div class=\"row mx-3\"><div class=\"col-4 display-1 py-2 text-gray-300 text-center ps-5\"><i class=\"fa fa-mobile-retro\"></i></div><div class=\"col-8 pt-4 text-gray-500 text-center\">No tienes números de celular asociados a tu cuenta</div></div>";    
-    } 
+    }
+     */ 
 
     $directos = $usuario->getDirectosActivos( "20-TELEFONIA" );
     ?>
@@ -63,3 +68,21 @@ foreach( $numeros as $c ){
     </table>
 
 </div>
+
+
+<script>
+
+$(document).ready(function(){
+
+    $.ajax({
+        url: base_url + 'datos_moviles',
+        method:'POST',
+        data:{ [csrf_token] : csrf_hash, token: get_token_beneleit( <?php echo $usuario->id; ?>)  }
+    }).done( function( datax ) {
+        $( '#datos_linea' ).html( datax );
+    });
+
+});
+
+
+</script>

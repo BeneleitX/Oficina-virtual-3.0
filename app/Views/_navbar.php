@@ -1,5 +1,5 @@
 </div>
-<div id="contenedor-menu" class="">
+<div id="contenedor-menu" class="<?php echo session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ? "contenedor-menu-admin" : ""; ?>">
 <div class="dropdown dropup" style="display: inline;">
   <a class="menu-opcion avatar" type="button" data-bs-toggle="dropdown" aria-expanded="false">
   <!-- <div class="pie-chart" style="	background:
@@ -34,6 +34,7 @@
 	<li><hr class="dropdown-divider"></li>
     <li class="d-none"><a class="dropdown-item" href="<?php echo base_url( "inicio"); ?>"><i class="fa fa-house"></i> Inicio</a></li>
     <li><a class="dropdown-item" href="<?php echo base_url( "perfil"); ?>"><i class="fa fa-user"></i> Perfil de socio</a></li>
+	<li><hr class="dropdown-divider"></li>
     
 	<?php 
 	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
@@ -74,16 +75,16 @@
 		<i class="fa fa-circle-question"></i>
 	</a>
 
-	<?php if(
-		$usuario->permiso( "18-STOCK" ) ||
-		$usuario->permiso( "20-ALMACEN" ) ||
-		$usuario->permiso( "22-IMAGEN" ) ||
-		$usuario->permiso( "34-VALIDACION" ) ||
-		$usuario->permiso( "38-CONTABILIDAD" ) ||
-		$usuario->permiso( "25-PAQUETERIA" ) ||
-		$usuario->permiso( "32-EDICION" ) ||
-		$usuario->permiso( "40-ADMIN" )
-	){ ?>
+	<?php 
+	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+		?>	
+		<a data-bs-toggle="tooltip" 
+	title="Regresar a sesión de Admin" class="menu-opcion" href="<?php echo base_url( "oauth/".session( "admin" ) ); ?>">
+	<i class="fa fa-shuffle xtext-marine"></i>
+	</a>
+	<?php
+	}
+	elseif( $usuario->es_admin() ){ ?>
     <a data-bs-toggle="tooltip" 
 		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "admin" ); ?>">

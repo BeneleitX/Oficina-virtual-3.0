@@ -42,6 +42,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "update_sociodata",      "Dashboard::update_sociodata" );
     $routes->post( "save_layout",           "Dashboard::save_layout" );
     $routes->post( "reset_password",        "Dashboard::reset_password" );
+    $routes->post( "datos_moviles",         "Dashboard::datos_moviles" );
 
     $routes->get( "usuarios",               "Usuarios::busqueda" );
     $routes->get( "usuarios/(:any)",        "Usuarios::busqueda/$1" );

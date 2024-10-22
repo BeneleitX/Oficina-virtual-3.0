@@ -291,6 +291,21 @@ class E_usuario extends Entity
     }
 
 
+    public function es_admin(){
+        load_catalogo( "roles" );
+        $admin = false;
+
+        foreach( ROLES as $r ){
+            if( $r[ "tipo" ] == "ADMIN" ){
+                if( $this->permiso( $r[ "codigo" ] ) ){
+                    $admin = true;
+                }
+            }
+        }
+
+        return $admin;
+    }
+
     public function iniciales(){
         return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
     }

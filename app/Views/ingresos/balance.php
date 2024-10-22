@@ -105,7 +105,7 @@ for( $d = 0; $d < 7; $d++ ){
 
                                 $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
                                 echo "\n<tr\">
-                                    <td width=\"10%\" class=\"text-center\"><a href=\"".base_url()."/pedido/{$c->referencia}\"><span class=\"badge bg-marine\">{$c->referencia}</span></a></td>
+                                    <td width=\"10%\" class=\"text-center\">".( $usuario->es_admin() ? "<a href=\"".base_url()."/pedido/{$c->referencia}\"><span class=\"badge bg-marine\">{$c->referencia}</span></a>" : "<span class=\"badge bg-marine\">{$c->referencia}</span>" )."</td>
 
                                     <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c->cantidad, 2 )."</strong></td>
 

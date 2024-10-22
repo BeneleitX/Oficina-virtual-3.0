@@ -189,15 +189,6 @@ class Sesion extends BaseController
 
             $this->session->set( "usuario", $usuario->id );
 
-            // activa modo admin para staff que trenga permiso de ver cuentas de socios
-            if( 
-                $usuario->permiso( "32-EDICION" ) || 
-                $usuario->permiso( "40-ADMIN" ) 
-            ){
-                $this->session->set( "admin", urlencode( base64_encode( $usuario->password_original() ) ) );
-            }
-
-
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
@@ -207,7 +198,20 @@ class Sesion extends BaseController
             $db->query( " CALL p_update_padre( {$usuario->id}, '20-TELEFONIA' );" );
             $db->query( " CALL p_update_padre( {$usuario->id}, '30-ALIMENTOS' );" );
 
-            return redirect()->route( "inicio" ); 
+            // activa modo admin para staff que trenga permiso de ver cuentas de socios
+            if( $usuario->es_admin() && !session( "admin" ) ){
+                if( 
+                    $usuario->permiso( "32-EDICION" ) || 
+                    $usuario->permiso( "40-ADMIN" ) 
+                ){
+                    $this->session->set( "admin", urlencode( base64_encode( $usuario->password_original() ) ) );                
+                }
+
+                return redirect()->route( "admin" ); 
+            }
+            else{
+                return redirect()->route( "inicio" ); 
+            }
         }
     }
 
