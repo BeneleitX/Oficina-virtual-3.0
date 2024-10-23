@@ -865,7 +865,7 @@ class E_usuario extends Entity
                 left JOIN t_periodos p ON p.codigo = a.data->>'$.periodos.deposito'
                 left JOIN t_periodos e ON e.codigo = a.data->>'$.periodos.creacion'
                 WHERE a.usuario_id = {$this->id} 
-                AND a.modelo_codigo = '10-NUTRICION' 
+                AND a.modelo_codigo = '{$modelo}' 
                 and p.inicia > '2024-08-18'
                 ORDER BY a.data->>'$.periodos.creacion' desc";
 

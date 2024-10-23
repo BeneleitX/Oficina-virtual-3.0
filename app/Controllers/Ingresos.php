@@ -49,6 +49,7 @@ class Ingresos extends BaseController
         if( !$modelo ){
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
         }
+    
 
         $this->data[ "navbar" ] = true;
         $this->data[ "modelo" ] = $modelo;
