@@ -97,7 +97,7 @@ class Ingresos extends BaseController
 
             if( intval( substr( $periodo[ "codigo" ], 3 ) ) > intval( $d[ "semana" ] ) ){
                 $anteriores .= "\n<tr>
-                        <td class=\"w-100\">{$titulo} <small>Comisiones pendientes <span class=\"badge bg-gray-600\">".( substr($d[ "semana" ],4,2)."-".substr( $d[ "semana" ],0,4 ) )."</span></small></td>
+                        <td class=\"w-100\">{$titulo} <small>Comisiones pendientes <span class=\"badge bg-red\">".( substr($d[ "semana" ],4,2)."-".substr( $d[ "semana" ],0,4 ) )."</span></small></td>
                         <td class=\"text-end nowrap\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
                     </tr>";
             }
