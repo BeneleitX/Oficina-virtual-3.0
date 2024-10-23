@@ -21,7 +21,7 @@ for( $q = 0; $q < 10; $q++ ){
         $total[ $m[ "codigo" ] ][ $q ] = 0;
 
         foreach( $comisiones as $c ){
-            $total[ $m[ "codigo" ] ][ $q ] += floatval( $c->cantidad );
+            $total[ $m[ "codigo" ] ][ $q ] += ( $c->cantidad );
         }   
         
         if( !$q ){
@@ -30,6 +30,8 @@ for( $q = 0; $q < 10; $q++ ){
             $headers .= "<th class=\"text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</td>";
             $bot .="<td style=\"opacity:".( $total[ $m[ "codigo" ] ][ $q ] ? "1" : "0.4")."\" class=\"col-4 rounded p-2 text-center bg-{$m[ "settings" ][ "color" ]} text-white\">$".number_format( $total[ $m[ "codigo" ] ][ $q ], 2 )."</td>";            
         }
+
+        $total[ $m[ "codigo" ] ][ $q ] = (string)$total[ $m[ "codigo" ] ][ $q ];
     }
 
     $dto->modify('-7 days');

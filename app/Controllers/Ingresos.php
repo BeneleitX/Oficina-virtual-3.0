@@ -73,31 +73,45 @@ class Ingresos extends BaseController
                     e.codigo as esquema, 
                     IFNULL( p.data->'$.factor', 2.5 ) as factor, 
                     SUM( c.cantidad ) as cantidad,
-                    c.esquema_codigo
+                    c.esquema_codigo  , DATE_FORMAT(IF( e.codigo = '118-PROMOS-50', NOW(), c.fecha ), '%x%v') as semana
                 from t_pagos p
                 left join t_comisiones c ON c.usuario_id = p.usuario_id
                 left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
                 WHERE p.id = {$pago[ "id" ]} AND c.periodo_codigo = '{$pago[ "data" ][ "periodos" ][ "creacion" ]}'
-                GROUP BY c.esquema_codigo";
+                GROUP BY c.esquema_codigo, semana
+                order by semana asc";
 
         $db = db_connect();
         $desglose = $db->query( $sql )->getResultArray();
 
-        $html = "<div class=\"alert alert-info text-center\">Del ".fecha( $periodo[ "inicia" ] )." al ".fecha( $periodo[ "termina" ] )."</div><table class=\"table w-100 table-striped\">";
+        $actual = "";
+        $anteriores = "";
 
         foreach( $desglose as $d ){
             $titulo = ESQUEMAS[ $d[ "esquema" ] ][ "settings" ][ "titulo" ];
 
-            if($d[ "esquema" ] == "118-PROMOS-50" ){
+            if( $d[ "esquema" ] == "118-PROMOS-50" ){
                 $d[ "cantidad" ] *= $d[ "factor" ];
                 $titulo .= " <span class=\"badge bg-pink\">".strtoupper( mes( date( "m", strtotime( $d[ "fecha" ] ) ), 3 ) )."-". date( "Y", strtotime( $d[ "fecha" ] ) )."</span> <span class=\"badge bg-blue\">x{$d[ "factor" ]}</span>";
             }
 
-            $html .= "\n<tr>
+            if( intval( substr( $periodo[ "codigo" ], 3 ) ) > intval( $d[ "semana" ] ) ){
+                $anteriores .= "\n<tr>
+                        <td class=\"w-100\">{$titulo} <small>Comisiones pendientes <span class=\"badge bg-gray-600\">".( substr($d[ "semana" ],4,2)."-".substr( $d[ "semana" ],0,4 ) )."</span></small></td>
+                        <td class=\"text-end nowrap\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
+                    </tr>";
+            }
+            else{
+                $actual .= "\n<tr>
                         <td class=\"w-100\">{$titulo}</td>
                         <td class=\"text-end nowrap\"><strong>$".number_format( $d[ "cantidad" ], 2)."</strong></td>
                     </tr>";
+            }
         }
+
+        $html = "<table class=\"table w-100 table-striped\">";
+
+        $html .= $anteriores.$actual;
 
         $html .= "\n<tr class=\"table-secondary\">
                     <td class=\"\">Total de comisiones</td>
