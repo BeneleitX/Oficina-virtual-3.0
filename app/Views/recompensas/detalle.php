@@ -4,6 +4,10 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+
 <?php
     $r = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
     $total_estrellas = $usuario->getEstrellas( $r );
@@ -33,6 +37,118 @@
         </div>
     </div>
 </div>
+
+<!-- NUEVA GRAFICA -->
+ 
+
+<?php
+$ciclos = [];
+
+foreach( RECOMPENSAS as $r ){
+    $ciclos[ $r[ "ciclo" ] ][] = $r;
+}
+
+foreach( $ciclos as $k => $c ){
+    echo "\n<div class=\"card mb-3\">
+                <div class=\"card-header bg-teal\"><h5 class=\"m-0 text-white\">ciclo {$k}</h5></div>
+                <div class=\"card-body\">
+                    <div class=\"row\">";
+
+    foreach( $c as $d ){
+        $te = $total_estrellas > $d[ "estrellas" ] ? $d[ "estrellas" ] : $total_estrellas ;
+        $porcentaje = intval( $te * 100 / $d[ "estrellas" ] );
+        $serie = $d[ "estrellas" ];
+        $label = $d[ "nombre" ];
+        $color = "var(--bs-".( $porcentaje == 100 ? "teal" : "marine" ).")";
+
+        echo "\n<div class=\"col-3\"><div class=\"card\"><div class=\"card-body text-center\">
+                    <div id=\"chart_{$d[ "codigo" ]}\"></div>
+                    <p>".( $porcentaje == 100 ? "Ya tienes las" : "Necesitas" )." <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i>estrellas</p>";
+
+    
+            echo "<button ".( $porcentaje == 100 ? "" : "disabled" )." class=\"btn btn-".( $porcentaje == 100 ? "success" : "outline-danger" )."\">".( $porcentaje == 100 ? "Reclamar recompensa" : "Faltan ".( $d[ "estrellas" ] - $total_estrellas ) )."</button>";
+        
+
+        echo "</div></div></div>";
+        ?>
+        <script>
+
+        $(document).ready(function(){
+            var estrellas = <?php echo $te; ?>,
+                options = {
+                series: [<?php echo $porcentaje; ?>],
+                chart: {
+                height: 400,
+                type: 'radialBar',
+                },
+                stroke: {
+                    lineCap: 'round'
+                },           
+                plotOptions: {
+                    radialBar: {
+                        offsetY: 0,
+                        startAngle: -130,
+                        endAngle: 130,
+                        hollow: {
+                            size: '60%',
+                            image: base_url + 'assets/img/recompensas/<?php echo $d[ "codigo" ]; ?>.png',
+                            imageOffsetY: -40,
+                            imageWidth: 60,
+                            imageHeight: 60,
+                            imageClipped: false
+                        },
+                        barLabels: {
+                            enabled: false,
+                            useSeriesColors: true,
+                            margin: 18,
+                            fontSize: '16px'
+                        },
+                        dataLabels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                offsetY: 100,
+                            },
+                            value: {
+                                formatter: function(val) {
+                                    return estrellas;
+                                },
+                                color: '<?php echo $color; ?>',
+                                offsetY: 40,
+                                fontSize: '50px',
+                                show: true,
+                            },
+                            total: {
+                                show: true,
+                                label: '<?php echo $label; ?>',
+                                formatter: function (w) {
+                                    return estrellas;
+                                }
+                            }      
+                        }               
+                    }
+                },
+                colors: ['<?php echo $color; ?>'],
+                labels: '<?php echo $label; ?>'
+            };
+        
+            var chart = new ApexCharts(document.querySelector("#chart_<?php echo $d[ "codigo" ]; ?>"), options);
+            chart.render();
+        });
+        
+        </script>
+        
+        <?php
+    }                    
+                    
+    echo "           </div>
+                </div>
+            </div>";
+}
+?>
+
+
+<!-- NUEVA GRAFICA -->
 
 <div class="row mb-5">
     <div class="mb-3 col-lg-4">
@@ -227,6 +343,17 @@ $(document).ready(function(){
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 });
+
+
+
+
+ // use a script tag or an external JS file
+ document.addEventListener("DOMContentLoaded", (event) => {
+  gsap.registerPlugin(Draggable)
+  // gsap code here!
+ });
+
+
 
 </script>
 

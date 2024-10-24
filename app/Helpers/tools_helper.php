@@ -92,7 +92,7 @@ function mask( $texto, $tipo = "nombre" ){
         case "nombre":
             $ok = 2;
             $nueva = "";
-            $txt = explode( " ", $texto);
+            $txt = explode( " ", limpia_acentos( $texto) );
             
             foreach( $txt as $t ){
                 $nueva .=" ";
@@ -133,6 +133,22 @@ function admin( $codigo ){
     }
 
     return $data->valor;
+}
+
+function limpia_acentos($Texto){
+    $valor_htm = array('&aacute;','&Aacute;','&eacute;','&Eacute;','&iacute;','&Iacute;','&oacute;','&Oacute;','&uacute;','&Uacute;','&ntilde;','&Ntilde;','&uuml;','&Uuml;',
+    '&agrave;','&Agrave;','&egrave;','&Egrave;','&igrave;','&Igrave;','&ograve;','&Ograve;','&ugrave;','&Ugrave;');    // Valores originales   
+    $valor_acent = array('a','A','e','E','i','I','o','O','u','U','ñ','Ñ','u','U','a','A','e','E','i','I','o','O','u','U');    // Nuevos valores   
+        $Cambia_Texto = str_replace($valor_htm,$valor_acent,$Texto);  
+    // Separamos cada una de las letras con acentos y dieresis, y la ponemos en un array
+    preg_match_all('/\w/u', 'áàäéèëíìïòóöùúüÀÁÄÈÉËÌÍÏÒÓÖÙÚÜñÑ', $Texto);
+    $cadena = array_map(
+        function($eli_acent) { return '/'.$eli_acent.'/u'; },
+        $Texto[0]
+    );
+    // realizamos la sustitución
+    $sustitucion = preg_replace($cadena, str_split('aaaeeeiiiooouuuAAAEEEIIIOOOUUU'), $Cambia_Texto);
+        return $sustitucion;
 }
 
 

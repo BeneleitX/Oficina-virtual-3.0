@@ -62,9 +62,9 @@ class Registro extends BaseController
             "estatus_codigo" => "201-ACTIVO",
             "rol_codigos"    => [ "10-SOCIO" ],
             "data"           => [
-                "nombre"        => $data[ "nombre" ],
+                "nombre"        => limpia_acentos( $data[ "nombre" ] ),
                 "layout"        => [],
-                "apellidos"     => [ $data[ "apellido1" ], $data[ "apellido2" ]],
+                "apellidos"     => [ limpia_acentos( $data[ "apellido1" ] ), limpia_acentos( $data[ "apellido2" ] )],
                 "avatar"        => [
                     "imagenes"      => [],
                     "activo"        => null

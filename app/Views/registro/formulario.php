@@ -5,7 +5,7 @@
     <h4 class="text-center mb-4"><?php echo $titulo; ?></h4>
 </div>
         
-<form method="post" action="<?php echo base_url( "procesa_registro" ); ?>">
+<form method="post" action="<?php echo base_url( "procesa_registro" ); ?>" id="procesa_registro">
     <?php echo csrf_field() ?>
     <div class="row">
         <div class="col-md-4">
@@ -50,11 +50,31 @@
             </div></div>
         </div>
     </div>
-    <hr class="border-teal">
-    <div class="col-6 offset-3 col-md-4 offset-md-4 col-lg-2 offset-lg-5">
-        <p class="mt-3 mb-1 text-end"><button id="submit_login" class="submit btn btn-primary rounded-pill col-12">Registrate ahora <i class="fa fa-wand-magic-sparkles"></i></button></p>
-    </div>
+    <button type="submit" id="hidden_submit" class="d-none"></button>
 </form>
+
+<hr class="border-teal">
+<div class="col-6 offset-3 col-md-4 offset-md-4 col-lg-2 offset-lg-5">
+    <p class="mt-3 mb-1 text-end"><button id="submit_login" class="e btn btn-primary rounded-pill col-12">Registrate ahora <i class="fa fa-wand-magic-sparkles"></i></button></p>
+</div>
 
 <p class="text-center mt-3"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Cancelar y regresar</a></p>
 
+<div class="modal" tabindex="-1" id="modal_confirma">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Importante:</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+                <div class="alert alert-danger"><i class="fa fa-warning"></i> Por favor revisa que tus datos y especialmente tu patrocinador sean correctos. recuerda que una vez creada tu cuenta, no podrás modificar el patrocinador.</div>
+
+
+                <div class="verificado" style="zoom:2"></div>
+                
+                <p class="mt-3 mb-1 text-end"><button id="submit_ok" class="e btn btn-primary rounded-pill">Mi patrocinador es correcto, quiero continuar</button></p>
+			</div>
+		</div>
+	</div>
+</div>
