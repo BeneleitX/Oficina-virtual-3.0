@@ -58,7 +58,7 @@ class Usuarios extends BaseController
                 and d.fecha IN (
                     SELECT MAX( d2.fecha ) FROM t_bitacoras d2 WHERE accion_id IN (50) AND usuario_id = 55 and d.variables = d2.variables 
                 ) 
-                ORDER BY fecha desc";
+                ORDER BY fecha desc limit 10";
                 
             $socios = [];
             $db = db_connect();

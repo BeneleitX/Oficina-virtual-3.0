@@ -37,8 +37,57 @@ class Recompensas extends BaseController
             "icono" => "check", 
             "texto" => "Se actualizó la recompensa activa" ] );         
     }
+
+
+    public function guarda_recompensas(){
+        extract( $this->request->getPost() );
+
+        $data = $this->data[ "usuario" ]->data;
+        $data->recompensas->orden = [ $ciclo => $orden ];
+        $this->data[ "usuario" ]->data = $data;
+        model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 70, $this->data[ "usuario" ]->id, [ 
+            "orden" => $orden,
+        ] );
+    }
+
+
+    public function reclama_recompensa( $recompensa ){
+        $r = model( "RecompensaModel" )->find( $recompensa );
+        $total_estrellas = $this->data[ "usuario" ]->getEstrellas( $r );
+        $alcanzadas = $this->data[ "usuario" ]->recompensas_alcanzadas();
+
+        if( isset( $r[ "estrellas" ] ) && $total_estrellas >= intval( $r[ "estrellas" ] ) && !in_array( $r[ "codigo" ], $alcanzadas ) ){
+
+            // update conteo
+            $db = db_connect();
+            $db->query( "insert into t_redenciones values( NULL, '330-EN-ESPERA', {$this->data[ "usuario" ]->id}, '{$r[ "codigo" ]}', '".date( "Y-m-d" )."')" );
+            $db->query( "call p_cobra_estrellas( {$this->data[ "usuario" ]->id}, '{$r[ "estrellas" ]}' )" );
+    
+            $data = $this->data[ "usuario" ]->data;
+            // notificación flash
+            $data->splash[] = [
+                "tipo" => "recompensa",
+                "parametros" => [ $r[ "codigo" ] ]
+            ];
+
+            $data->recompensas->estrellas = intval( $total_estrellas - $r[ "estrellas"] );
+            $this->data[ "usuario" ]->data = $data;
+            model( "UsuarioModel" )->save( $this->data[ "usuario" ] ); 
+        }
+
+        // BITACORA Eliminar beneficiario
+        bitacora( 71, $this->data[ "usuario" ]->id, [ 
+            "recompensa" => $r[ "codigo" ],
+        ] );
+
+        return redirect()->to( "recompensas" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "¡Felicidades! recompensa reclamada" ] );    
+    }
+
 }
-
-
-
 

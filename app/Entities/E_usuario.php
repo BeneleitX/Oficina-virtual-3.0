@@ -423,12 +423,15 @@ class E_usuario extends Entity
 
         $sql = "estatus_codigo = '201-ACTIVO' and ciclo = ".$this->data->recompensas->ciclo;
         $recompensas = model( "RecompensaModel" )->where( $sql , null, false )->findAll();
+        $a = $this->recompensas_alcanzadas();
 
         if( $activa ){
-            foreach( $recompensas as $r ){
-                if( $r[ "codigo" ] == $this->data->recompensas->activa ){
-                    return $r;
-                }
+            do{
+                $busqueda = isset( $this->data->recompensas->orden ) ? $this->data->recompensas->orden->{1}[ 0 ] : "010-CELULAR";
+            }while( in_array( $busqueda, $a ) );
+
+            foreach( $recompensas as $r ){                
+                if( $r[ "codigo" ] == $busqueda ) return $r;
             }
         }
         return $recompensas;
@@ -487,12 +490,16 @@ class E_usuario extends Entity
             model( "UsuarioModel" )->save( $this ); 
             */
         }
-        elseif( $estrellas > $data->recompensas->estrellas ){
-            // notificación flash
-            $data->splash[] = [
-                "tipo" => "estrellas",
-                "parametros" => [ intval( $estrellas - $data->recompensas->estrellas ) ]
-            ];
+        
+        if( $estrellas != $data->recompensas->estrellas ){
+            
+            if( $estrellas > $data->recompensas->estrellas ){
+                // notificación flash
+                $data->splash[] = [
+                    "tipo" => "estrellas",
+                    "parametros" => [ intval( $estrellas - $data->recompensas->estrellas ) ]
+                ];
+            }
 
             $data->recompensas->estrellas = intval( $estrellas );
             $this->data = $data;
@@ -506,7 +513,7 @@ class E_usuario extends Entity
 
     public function recompensas_alcanzadas(){
         $db = db_connect();
-        $re = $db->query( "select recompensa_codigo from t_redenciones where usuario_id = '{$this->id}'" );
+        $re = $db->query( "select recompensa_codigo from t_redenciones where substring( estatus_codigo, 1, 3 ) > 200 and usuario_id = '{$this->id}'" );
         $resultado = [];
 
         foreach( $re->getResult() as $r ){

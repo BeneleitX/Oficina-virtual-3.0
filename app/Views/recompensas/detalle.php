@@ -1,12 +1,18 @@
+<style>
+.ghost .card{
+  color: var(--bs-teal);
+  background: var(--bs-teal);
+}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 
 <?php
     $r = model( "RecompensaModel" )->find( $usuario->data->recompensas->activa ?? "010-CELULAR" );
@@ -44,29 +50,81 @@
 <?php
 $ciclos = [];
 
+if( $usuario->data->recompensas->inicia ){
+    $inicia  = date( "Y-m-d", strtotime( $usuario->data->recompensas->inicia ) );
+    $termina = date( "Y-m-d", strtotime( $inicia." +30 month" ) );
+
+    $date1 = new DateTime( $inicia );
+    $date2 = new DateTime( $termina );
+    $interval = $date1->diff( $date2 );
+    $total = $interval->days ?? 0;
+
+    $date1 = new DateTime( date( "Y-m-d" ) );
+    $interval = $date1->diff( $date2 );
+    $resta = $interval->days;
+
+    $porc  = ceil( ( $total - $resta ) * 100 / $total );
+}
+else{
+    $inicia  = "No iniciado";
+    $termina = "???";
+    $resta = "???";
+    $porc  = 0;
+    $total =  0;
+}
+
 foreach( RECOMPENSAS as $r ){
     $ciclos[ $r[ "ciclo" ] ][] = $r;
 }
 
+if( isset( $usuario->data->recompensas->orden ) ){
+    foreach( $usuario->data->recompensas->orden as $ccc => $aaa ){
+        $ciclos[ $ccc ] = [];
+        foreach( $aaa as $cdx ){
+            $ciclos[ $ccc ][] = RECOMPENSAS[ $cdx ];
+        }
+    }
+}
+
+
 foreach( $ciclos as $k => $c ){
     echo "\n<div class=\"card mb-3\">
-                <div class=\"card-header bg-teal\"><h5 class=\"m-0 text-white\">ciclo {$k}</h5></div>
+                <div class=\"card-header bg-teal\">
+                    <table class=\"w-100\"><tr>
+                        <td width=\"25%\"><h5 class=\"m-0 text-white\">ciclo {$k}</h5></td>
+                        <td width=\"25%\" class=\" text-white text-center\">
+                            Del ".date( "d-m-Y", strtotime( $inicia) ) ." al ".date( "d-m-Y", strtotime( $termina) ) ."
+                        </td>
+                        <td width=\"25%\" class=\" text-white text-center\">Días restantes: {$resta} de {$total}</td>
+                        <td width=\"25%\">
+                            <div style=\"height:24px; border-radius:10px\" class=\"xbg-white progress mb-0\" aria-valuemin=\"0\" aria-valuemax=\"100\">
+                                <div class=\"progress-bar progress-bar-striped progress-bar-animated bg-red\" style=\"width: {$porc}%\"></div>
+                            </div>                        
+                        </td>
+                    </tr></table>
+                </div>
                 <div class=\"card-body\">
-                    <div class=\"row\">";
+                    <div class=\"row\" id=\"ciclo_{$k}\">";
 
+    $n = 0;
     foreach( $c as $d ){
-        $te = $total_estrellas > $d[ "estrellas" ] ? $d[ "estrellas" ] : $total_estrellas ;
+        $n++;
+        $te = $total_estrellas > $d[ "estrellas" ] || in_array( $d[ "codigo"], $alcanzadas ) ? $d[ "estrellas" ] : $total_estrellas ;
         $porcentaje = intval( $te * 100 / $d[ "estrellas" ] );
         $serie = $d[ "estrellas" ];
         $label = $d[ "nombre" ];
-        $color = "var(--bs-".( $porcentaje == 100 ? "teal" : "marine" ).")";
+        $color = "var(--bs-".( $porcentaje == 100 ? ( in_array( $d[ "codigo"], $alcanzadas ) ? "green" : "teal" ) : "marine" ).")";
 
-        echo "\n<div class=\"col-3\"><div class=\"card\"><div class=\"card-body text-center\">
+        echo "\n<div class=\"col-3\" ciclo=\"{$k}\" recompensa_orden=\"{$d[ "codigo" ]}\"><div class=\"card\"><div class=\"card-body text-center\">
                     <div id=\"chart_{$d[ "codigo" ]}\"></div>
-                    <p>".( $porcentaje == 100 ? "Ya tienes las" : "Necesitas" )." <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i>estrellas</p>";
+                    <p>".( in_array( $d[ "codigo"], $alcanzadas ) ? "Recompensa recibida <i class=\"fa fa-check text-teal\"></i>" : ( $porcentaje == 100 ? "Ya tienes las" : "Necesitas" )." <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i>estrellas" )."</p>";
 
-    
-            echo "<button ".( $porcentaje == 100 ? "" : "disabled" )." class=\"btn btn-".( $porcentaje == 100 ? "success" : "outline-danger" )."\">".( $porcentaje == 100 ? "Reclamar recompensa" : "Faltan ".( $d[ "estrellas" ] - $total_estrellas ) )."</button>";
+    if( in_array( $d[ "codigo"], $alcanzadas ) ){
+            echo "<button disabled class=\"btn btn-outline-light\">&nbsp;</button>";
+    }
+    else{
+        echo "<button onclick=\"reclama_recompensa( '{$d[ "codigo" ]}' )\" ".( $porcentaje == 100 ? "" : "disabled" )." class=\"btn btn-".( $porcentaje == 100 ? "success" : "outline-danger" )."\">".( $porcentaje == 100 ? "Reclamar recompensa" : "Faltan ".( $d[ "estrellas" ] - $total_estrellas ) )."</button>";
+    }
         
 
         echo "</div></div></div>";
@@ -146,242 +204,73 @@ foreach( $ciclos as $k => $c ){
             </div>";
 }
 ?>
+<div class="mb-3">&nbsp;</div>
 
+<table class="mb-0 table table-striped bg-white tabla_estrellas" id="t_<?php echo date("Y-m-d"); ?>">
+    <thead>
+        <tr>
+            <th class="text-center">Compra</th>
+            <th class="text-center">Fecha</th>
+            <th>Cantidad</th>
+            <th>Socio</th>
+        </tr>
+    </thead>
 
-<!-- NUEVA GRAFICA -->
-
-<div class="row mb-5">
-    <div class="mb-3 col-lg-4">
-        <div class="card">
+    <tbody>
         <?php 
+            $socios = [];
+            foreach( $comisiones as $c ){
 
-            // Se declaran arrays porque se buscan multiples datos, por ahora dejaremos solo uno
-            if( $r ){ 
-                $porcentaje = intval( $total_estrellas * 100 / $r[ "estrellas" ] );
-                $serie = $r[ "estrellas" ];
-                $label = $r[ "nombre" ];
-                $color = "var(--bs-marine)";
+                if( !isset( $socios[ $c->usuario_id ] ) ){
+                    $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
+                }
 
-                echo "\n<div id=\"chart\"></div>";
+                $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
+                echo "\n<tr\">
+                    <td width=\"10%\" class=\"text-center\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
+                    <td width=\"20%\" class=\"text-center\">".date( "d-m-Y", strtotime( $c->fecha ) )."</td>
+                    
+                    <td width=\"10%\" class=\"text-end\"><strong> ".number_format( $c->cantidad )."</strong><i class=\"fa fa-star text-amber\"></i></td>
+                    <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( "10-NUTRICION" )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
+                </tr>";
             }
         ?>
-        </div>
-    </div>
-
-    <div class="mb-3 col-lg-4">
-        <div class="card" style="overflow:hidden">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-8">
-                        <h5 class="m-0">Recompensa activa</h5>
-                    </div>
-                    <div class="col-4 text-end"><button class="btn btn-info btn-sm" onclick="$( '#modal_recompensas' ).modal( 'show' );"><i class="fa fa-cog"></i> Cambiar</button></div>
-                </div>
-            </div>
-            <div class="card-body">
-                <table class="m-0 table">
-                    <tr><td style="border:none">Recompensa:</td><td style="border:none"><?php echo "<i class=\"fa fa-{$r[ "icono" ]}\"></i> {$r[ "nombre" ]}"; ?></td></tr>
-                    <tr><td colspan="2">
-                        <div style="height:24px; border-radius:10px" class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porcentaje; ?>%"></div>
-                        </div>
-                        <?php
-                        if( in_array( $r[ "codigo" ], $alcanzadas ) ){
-                            echo "<h4 class=\"text-center my-4\">¡Recompensa alcanzada!</h4>";
-                        }
-                        ?>
-                    </td></tr>
-                    <tr><td>Estrellas requeridas:</td><td><?php echo $r[ "estrellas" ]; ?></td></tr>
-                    <tr><td>Estrellas faltantes:</td><td><?php echo ( $r[ "estrellas" ] > $total_estrellas ? $r[ "estrellas" ] - $total_estrellas : 0 ); ?></td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
     
-<?php
-
-if( $usuario->data->recompensas->inicia ){
-    $inicia  = date( "Y-m-d", strtotime( $usuario->data->recompensas->inicia ) );
-    $termina = date( "Y-m-d", strtotime( $inicia." +30 month" ) );
-
-    $date1 = new DateTime( $inicia );
-    $date2 = new DateTime( $termina );
-    $interval = $date1->diff( $date2 );
-    $total = $interval->days ?? 0;
- 
-    $date1 = new DateTime( date( "Y-m-d" ) );
-    $interval = $date1->diff( $date2 );
-    $resta = $interval->days;
-
-    $porc  = ceil( ( $total - $resta ) * 100 / $total );
-}
-else{
-    $inicia  = "No iniciado";
-    $termina = "???";
-    $resta = "???";
-    $porc  = 0;
-    $total =  0;
-}
-?>
+    </tbody>
+</table>
 
 
-    <div class="col-lg-4">
-        <div class="card" style="overflow:hidden">
-            <div class="card-header"><h5 class="m-0">Ciclo de recompensas <span class="badge bg-marine">1</span> <span class="badge bg-<?php echo $usuario->data->recompensas->inicia ? "teal" : "red" ?>"><?php echo $usuario->data->recompensas->inicia ? "Activo" : "No activo" ?></span></h5></div>
-            <div class="card-body">
-                <table class="m-0 table">
-                    <tr><td>Inicio de ciclo:</td><td><?php echo $inicia; ?></td></tr>
-                    <tr><td>Fin de ciclo:</td><td><?php echo $termina; ?></td></tr>
-                    <tr><td style="border:none">Días restantes:</td><td style="border:none"><?php echo $resta." de ".$total; ?></td></tr>
-                    <tr><td colspan="2">
-                        <div style="height:24px; border-radius:10px" class="progress mb-2" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-teal" style="width: <?php echo $porc; ?>%"></div>
-                        </div>
-                    </td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-        <table class="mb-0 table table-striped bg-white tabla_estrellas" id="t_<?php echo date("Y-m-d"); ?>">
-            <thead>
-                <tr>
-                    <th class="text-center">Compra</th>
-                    <th class="text-center">Fecha</th>
-                    <th>Cantidad</th>
-                    <th>Socio</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php 
-                    $socios = [];
-                    foreach( $comisiones as $c ){
-
-                        if( !isset( $socios[ $c->usuario_id ] ) ){
-                            $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
-                        }
-
-                        $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
-                        echo "\n<tr\">
-                            <td width=\"10%\" class=\"text-center\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
-                            <td width=\"20%\" class=\"text-center\">".date( "d-m-Y", strtotime( $c->fecha ) )."</td>
-                          
-                            <td width=\"10%\" class=\"text-end\"><strong> ".number_format( $c->cantidad )."</strong><i class=\"fa fa-star text-amber\"></i></td>
-                            <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( "10-NUTRICION" )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
-                        </tr>";
-                    }
-                ?>
-            
-            </tbody>
-        </table>
-
-
-<script>
-
-$(document).ready(function(){
-    var estrellas = <?php echo $total_estrellas; ?>,
-        options = {
-        series: [<?php echo $porcentaje; ?>],
-        chart: {
-        height: 400,
-        type: 'radialBar',
-        },
-        stroke: {
-            lineCap: 'round'
-        },           
-        plotOptions: {
-            radialBar: {
-                offsetY: 0,
-                startAngle: -130,
-                endAngle: 130,
-                hollow: {
-                    size: '60%',
-                    image: base_url + 'assets/img/recompensas/<?php echo $r[ "codigo" ]; ?>.png',
-                    imageOffsetY: -40,
-                    imageWidth: 80,
-                    imageHeight: 80,
-                    imageClipped: false
-                },
-                barLabels: {
-                    enabled: false,
-                    useSeriesColors: true,
-                    margin: 18,
-                    fontSize: '16px'
-                },
-                dataLabels: {
-                    show: true,
-                    name: {
-                        show: true,
-                        offsetY: 100,
-                    },
-                    value: {
-                        formatter: function(val) {
-                            return estrellas;
-                        },
-                        color: '#ffc107',
-                        offsetY: 40,
-                        fontSize: '50px',
-                        show: true,
-                    },
-                    total: {
-                        show: true,
-                        label: '<?php echo $label; ?>',
-                        formatter: function (w) {
-                            return estrellas;
-                        }
-                    }      
-                }               
-            }
-        },
-        colors: ['<?php echo $color; ?>'],
-        labels: '<?php echo $label; ?>'
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-});
-
-
-
-
- // use a script tag or an external JS file
- document.addEventListener("DOMContentLoaded", (event) => {
-  gsap.registerPlugin(Draggable)
-  // gsap code here!
- });
-
-
-
-</script>
-
-
-<div class="modal" tabindex="-1" id="modal_recompensas">
+<div class="modal" tabindex="-1" id="reclama_recompensa">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Elije tu recompensa activa</h5>
+				<h5 class="modal-title">Reclamar recompensa</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-                <div class="alert alert-warning"><i class="fa fa-circle-info"></i> La recompensa activa es la recompensa que aparecerá en tu sección de inicio. Esto no significa que no puedas canjear tus <i class="fa fa-star text-amber"></i>estrellas por cualquiera de las otras recompensas cuando cumplas la cantidad requerida.</div>
                 <div class="row">
-                <?php
-                foreach( RECOMPENSAS as $r ){
-
-                    if( in_array( $r[ "codigo" ], $alcanzadas ) ){
-                        echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-success disabled\" style=\"height:200px\"><img src=\"".base_url()."assets/img/recompensas/{$r[ "codigo" ]}.png\" class=\"my-3\" style=\"width:64px\"><br>{$r[ "nombre" ]}<h4><i class=\"fa fa-star text-amber\"></i> {$r[ "estrellas" ]}</h4></a></div>";
-                    }
-                    else{
-                        echo "\n<div class=\"col-6 col-md-3 mb-3\"><a href=\"".base_url()."switch_recompensa/{$r[ "codigo" ]}\" class=\"btn py-3 col-12 btn-light\" style=\"height:200px\"><img src=\"".base_url()."assets/img/recompensas/{$r[ "codigo" ]}.png\" class=\"my-3\" style=\"width:64px\"><br>{$r[ "nombre" ]}<h4><i class=\"fa fa-star text-amber\"></i> {$r[ "estrellas" ]}</h4></a></div>";
-                    }
-                }
-                ?>
+                <div class="col-lg-6 text-center px-5">
+                        <img src="" class="px-5 img-fluid img_recompensa">
+                    </div>
+                    <div class="col-lg-6 txext-center">
+                        <h2>¡Felicidades!</h2>
+                        <p>Ya puedes reclamar tu recompensa</p>
+                        <p>Gracias al crecimiento de tu red, cuentas con suficientes estrellas para la recompensa <strong class="recompensa_nombre"></strong> la cual se te entregará de acuerdo al seguimiento que le dará la empresa una vez que confirmes que si quieres reclamarla.</p>
+                        
+                    </div>
                 </div>
+                
+                <div class="alert alert-danger"><i class="fa fa-circle-info"></i> IMPORTANTE: Al reclamar esta recompensa, se te descontará la cantidad de <strong class="cantidad_estrellas"></strong> <i class="fa fa-star text-amber"></i>estrellas de tu bolsa total de <strong><?php echo $total_estrellas; ?></strong>, quedando un saldo de <strong class="saldo_estrellas"></strong> <i class="fa fa-star text-amber"></i>estrellas que se sumarán a las que continúes acumulando con nuevas compras de tu red hasta alcanzar más recompensas antes de la fecha límite del ciclo. </div>
+
+                <p class="text-center mt-3"><a href="" class="boton_reclama btn btn-success">¡Sí! quiero reclamar mi recompensa ahora</a></p>
 			</div>
 		</div>
 	</div>
 </div>
 
+<script>
+
+var total_estrellas = <?php echo $total_estrellas; ?>,
+    cat_recompensas = <?php echo json_encode( RECOMPENSAS ); ?>;
+
+</script>
