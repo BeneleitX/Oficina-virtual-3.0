@@ -426,9 +426,16 @@ class E_usuario extends Entity
         $a = $this->recompensas_alcanzadas();
 
         if( $activa ){
-            do{
-                $busqueda = isset( $this->data->recompensas->orden ) ? $this->data->recompensas->orden->{1}[ 0 ] : "010-CELULAR";
-            }while( in_array( $busqueda, $a ) );
+            $busqueda = "010-CELULAR";
+
+            if( isset( $this->data->recompensas->orden ) ){
+                foreach( $this->data->recompensas->orden->{1} as $r ){
+                    if( !in_array( $r, $a ) ){
+                        $busqueda = $r;    
+                        break;
+                    }
+                }
+            }
 
             foreach( $recompensas as $r ){                
                 if( $r[ "codigo" ] == $busqueda ) return $r;
