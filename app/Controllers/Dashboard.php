@@ -84,7 +84,7 @@ class Dashboard extends BaseController
                 JOIN
                 ( SELECT modelo_codigo != @prev AS first, @prev := modelo_codigo, modelo_codigo, referencia, metodoentrega_codigo as metodoentrega, data->>'$.entrega' as entrega, CAST( fechas->>'$.pagado' AS DATE ) as fecha
                         FROM  t_pedidos where usuario_id = {$this->data[ "socio" ]->id} AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
-                        ORDER BY modelo_codigo, id DESC, CAST( fechas->>'$.pagado' AS DATE ) DESC LIMIT 999999
+                        ORDER BY modelo_codigo, fecha DESC, CAST( fechas->>'$.pagado' AS DATE ) DESC LIMIT 999999
                 ) x
                 WHERE  first ORDER BY modelo_codigo;";
 
