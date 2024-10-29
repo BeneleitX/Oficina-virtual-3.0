@@ -68,7 +68,7 @@ class Ingresos extends BaseController
         $periodo = model( "PeriodoModel" )->find( $pago[ "data" ][ "periodos" ][ "creacion" ] );
         load_catalogo( "esquemas", "modelo_codigo = '{$pago[ "modelo_codigo" ]}'");
 
-        $sql  = "SELECT 
+         $sql  = "SELECT 
                     min(c.fecha) as fecha, 
                     e.codigo as esquema, 
                     IFNULL( p.data->'$.factor', 2.5 ) as factor, 

@@ -16,7 +16,7 @@
             echo "\n<ul class=\"nav nav-pills my-4\">";
             
             foreach( MODELOS as $m ){
-                if( $m[ "settings" ][ "efectivo" ] && ( $m[ "codigo" ] != '20-TELEFONIA' || $usuario->permiso( "50-ROOT" ) ) ){
+                if( $m[ "settings" ][ "efectivo" ] ){
                     echo "\n<li class=\"nav-item\">
                                 <a class=\"text-{$m[ "settings" ][ "color" ]} nav-link ".( $modelo == $m[ "codigo" ] ? "text-white bg-".$m[ "settings" ][ "color" ] : "")."\" aria-current=\"page\" href=\"".base_url( "tienda/".$m[ "codigo" ] )."\">
                                     <i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}

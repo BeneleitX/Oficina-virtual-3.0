@@ -252,7 +252,8 @@ class Periodos extends BaseController
             $db  = db_connect();
 
             $sql = "UPDATE t_pagos p
-                    SET p.estatus_codigo  = '420-PAGADO'
+                    SET p.estatus_codigo  = '420-PAGADO',
+                    p.data = json_set( p.data, '$.fechapago', now() )
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
                     AND p.estatus_codigo  = '330-EN-ESPERA' 
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
@@ -266,7 +267,7 @@ class Periodos extends BaseController
             // agregar el splash de "cash" a socios
 
             // BITACORA marca periodo como pagado
-            bitacora( 45, $this->data[ "usuario" ]->id, [
+            bitacora( 47, $this->data[ "usuario" ]->id, [
                 "periodo" => $periodo[ "codigo" ]
             ] );
 

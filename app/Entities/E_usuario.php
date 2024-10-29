@@ -865,7 +865,7 @@ class E_usuario extends Entity
     
     public function getPagos( $modelo ){
 
-        $sql = "SELECT 
+      $sql = "SELECT 
                     a.id AS folio, 
                     a.estatus_codigo as estatus, 
                     a.clabe as clabe, 
@@ -873,10 +873,11 @@ class E_usuario extends Entity
                     a.data->>'$.retencion' as impuestos, 
                     a.data->>'$.periodos.creacion' AS periodo, 
                     a.data->>'$.cantidades.subtotal' AS total,
-                    IFNULL( a.data->>'$.fechapago', IFNULL( p.termina, e.termina ) ) AS fecha
+                    IFNULL( a.data->>'$.fechapago', IFNULL( cast( b.fecha as date ), IFNULL( p.termina, e.termina ) ) ) AS fecha
                 FROM t_pagos a
                 left JOIN t_periodos p ON p.codigo = a.data->>'$.periodos.deposito'
                 left JOIN t_periodos e ON e.codigo = a.data->>'$.periodos.creacion'
+                left join t_bitacoras b on b.variables->>'$.periodo' = a.data->>'$.periodos.deposito' and accion_id = 47
                 WHERE a.usuario_id = {$this->id} 
                 AND a.modelo_codigo = '{$modelo}' 
                 and p.inicia > '2024-08-18'
