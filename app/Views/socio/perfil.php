@@ -463,8 +463,9 @@ if( !$socio->data->verificacion->correo ){ ?>
 	</div>
 </div>
 
-
-<?php if( $usuario->permiso( "30-SOPORTE" ) || $usuario->permiso( "40-ADMIN" ) ){ ?>
+<?php 
+	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+		?>	
 <div class="card border-red mt-3">
 	<div class="card-header">
 		<h5 class="text-red mb-0">Administración de socio</h5>
@@ -574,7 +575,6 @@ if( !$socio->data->verificacion->correo ){ ?>
 		</div>
 	</div>
 </div>
-
 
 
 <div class="modal" tabindex="-1" id="modal_domicilio">
@@ -710,7 +710,6 @@ if( !$socio->data->verificacion->correo ){ ?>
 		</div>
 	</div>
 </div>
-
 
 
 <script>

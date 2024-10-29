@@ -73,7 +73,7 @@ class Ingresos extends BaseController
                     e.codigo as esquema, 
                     IFNULL( p.data->'$.factor', 2.5 ) as factor, 
                     SUM( c.cantidad ) as cantidad,
-                    c.esquema_codigo  , DATE_FORMAT(IF( e.codigo = '118-PROMOS-50', NOW(), c.fecha ), '%x%v') as semana
+                    c.esquema_codigo  , DATE_FORMAT(IF( e.codigo in ( '118-PROMOS-50' , '116-ANIVERSARIO' ), NOW(), c.fecha ), '%x%v') as semana
                 from t_pagos p
                 left join t_comisiones c ON c.usuario_id = p.usuario_id
                 left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
@@ -93,6 +93,9 @@ class Ingresos extends BaseController
             if( $d[ "esquema" ] == "118-PROMOS-50" ){
                 $d[ "cantidad" ] *= $d[ "factor" ];
                 $titulo .= " <span class=\"badge bg-pink\">".strtoupper( mes( date( "m", strtotime( $d[ "fecha" ] ) ), 3 ) )."-". date( "Y", strtotime( $d[ "fecha" ] ) )."</span> <span class=\"badge bg-blue\">x{$d[ "factor" ]}</span>";
+            }
+            elseif( $d[ "esquema" ] == "116-ANIVERSARIO" ){
+                $titulo = "<i class=\"fa fa-gift text-purple\"></i> {$titulo} <span class=\"badge bg-teal\">".( date( "Y", strtotime( $d[ "fecha" ] ) ) - 1 )."-". date( "Y", strtotime( $d[ "fecha" ] ) )."</span>";
             }
 
             if( intval( substr( $periodo[ "codigo" ], 3 ) ) > intval( $d[ "semana" ] ) ){

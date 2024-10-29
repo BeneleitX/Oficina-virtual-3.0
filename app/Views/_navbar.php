@@ -37,7 +37,7 @@
 	<li><hr class="dropdown-divider"></li>
     
 	<?php 
-	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+	if( 0 && session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
 		echo "<li><a class=\"dropdown-item\" href=\"".base_url( "oauth/".session( "admin" ) )."\"><button class=\"btn btn-danger\"><i class=\"fa fa-undo\"></i> Regresar a sesión de ADMIN</button></a></li><li><hr class=\"dropdown-divider\"></li>";
 	}
 	?>
