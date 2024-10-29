@@ -272,7 +272,7 @@ function update_pedido( flag = null ){
         }
 
         if( pedido.PTS[ promocion ] ){
-            $( '#puntajes' ).append( '<div class="pts text-white bg-white"><div class="pts-titulo bg-' + cat_promociones[ promocion ].settings.clase + '">' + cat_promociones[ promocion ].settings.siglas + '</div><div class="pts-numero bg-' + cat_promociones[ promocion ].settings.clase + '">' + pedido.PTS[ promocion ] + '</div></div>' );
+            $( '#puntajes' ).append( '<div class="pts text-white bg-white"><div class="pts-titulo bg-' + cat_promociones[ promocion ].settings.clase + '">' + cat_promociones[ promocion ].settings.siglas + '</div><div class="pts-numero bg-' + cat_promociones[ promocion ].settings.clase + '">' + Math.round( pedido.PTS[ promocion ] ) + '</div></div>' );
         }
 
         $( this ).find( '[conteo]' ).html( cuenta_productos + ' productos' + ( disponible > 0 ? ' de ' + disponible + ' disponibles' + ( cat_promociones[ promocion ].settings.paquete == "true" ? ' (Paquete) ' : '') : '' ) );
