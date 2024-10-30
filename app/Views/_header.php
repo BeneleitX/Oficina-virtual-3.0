@@ -11,11 +11,11 @@
 
         <title>BENELEIT</title>
 
-        <link href="<?php echo base_url(); ?>assets/css/bootstrap.css" rel="stylesheet">
-        <link href="<?php echo base_url(); ?>assets/css/colores.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/bootstrap.css?<?php echo filemtime( "assets/css/bootstrap.css" ); ?>" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/colores.css?<?php echo filemtime( "assets/css/colores.css" ); ?>" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/fontawesome.css" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/OverlayScrollbars.css" rel="stylesheet">
-        <link href="<?php echo base_url(); ?>assets/css/beneleit.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>assets/css/beneleit.css?<?php echo filemtime( "assets/css/beneleit.css" ); ?>" rel="stylesheet">
         
         <!meta http-equiv="refresh" content="7200">
 

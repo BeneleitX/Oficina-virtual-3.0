@@ -4,8 +4,6 @@ function get_pat(){
 	$( '.verificado, .noverifica' ).empty();
 	$( '[name=patrocinador]' ).removeClass( 'is-invalid' );
 
-	console.log( pat );
-
 	if( pat ){
 		$.ajax({
 			url: base_url + "valida_patrocinador", 
@@ -49,6 +47,7 @@ $(document).ready(function(){
 	});
 
 	$( '#submit_ok' ).on( 'click', function(){
+		$( this ).attr( 'disabled', true );
 		$( '#hidden_submit' ).click();
 	});
 
