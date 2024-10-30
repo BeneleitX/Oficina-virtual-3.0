@@ -344,4 +344,53 @@ class Sesion extends BaseController
         return;
     }
 
+
+
+    public function tmp(){
+        $sql = "
+            SELECT 
+                p.usuario_id as socio,
+                DATE_FORMAT( p.fechas->>'$.pagado' , '%Y%m') AS mes, 
+                IF( SUM( p.PTS->>'$.\"010-DISTRIBUIDOR\"' ) >= 3 OR SUM( p.PTS->>'$.\"030-PLUS\"' ) >= 3, 1, 0) AS biex
+            FROM t_pedidos p
+	        WHERE p.usuario_id IN (
+                9040,11101,18791,24659,26130,26227,26229,26880,27028,30292,31177,31680,31689,31703,32042,32547,32565,33114,33949,34105,34369,35944,36503,36819,37206,37845,37900,38028,38645,39998,41576,41612,42330,42575,42602,43183,43388,44622,45239,45670,45926,46498,46849,47537,48848,48892,49351,53030,53933,54167,55046,57565,57617,57641,58328,60569,61036,61095,61690,62143,62242,62428,64373,74046,76422,79568,82368,85374,93767,97897,130296,131733,138683,139398,140109,144573,145355,147469,149371,149615,149651,151421,151888,153891,154815,154933,155008,155352,155751,155833,156188,156459,156814,157121,157131,157266,157428,157550,158041,158125,158130,158175,158341,158662,158680,158681,158700,158713
+            )
+            AND DATE_FORMAT( p.fechas->>'$.pagado', '%Y%m') BETWEEN '202309' AND '202408'
+            GROUP BY p.usuario_id, DATE_FORMAT( p.fechas->>'$.pagado' , '%Y%m')
+            order by socio, mes
+            ";
+
+        $db     = db_connect();
+        $datos  = $db->query( $sql ); 
+        $socios = [];
+
+        foreach( $datos->getResult() as $r ){
+            $socios[ $r->socio ][ $r->mes ] = $r->biex;
+        }
+
+        foreach( $socios as $s => $meses ){
+            $mes = 0;
+            foreach( $meses as $f => $b ){
+                if( !$mes ){
+                    $y = substr($f, 0, 4);
+                    $m = substr($f, 4, 2);
+
+                    if($y < "2024"){
+                        $y = "2024";
+                        $m = "01";
+                    }
+
+                    $socios[ $s ] = $y."-".$m."-01";
+
+                    $sql = "delete from t_comisiones where esquema_codigo = '116-ANIVERSARIO' and usuario_id = {$s} and fecha < '{$socios[ $s ]}'";
+                    $db->query( $sql ); 
+                }
+
+                $mes = $b;
+            }  
+        }
+
+        print_r( $socios );
+    }
 }

@@ -7,6 +7,7 @@ use CodeIgniter\Router\RouteCollection;
 
  */
 
+$routes->get( "tmp",                        "Sesion::tmp" );
 
 $routes->get( "login",                      "Sesion::login" );
 $routes->get( "recover",                    "Sesion::recover" );

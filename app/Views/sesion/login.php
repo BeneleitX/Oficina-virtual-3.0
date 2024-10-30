@@ -71,7 +71,8 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 						</div>
 						
 					</div>
-					<p class="text-center m-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" style="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+					<p class="text-center my-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" style="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+					<p class="text-center my-3 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://recarga.beneleit.talentonet.com/" style="border-radius:15px"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Recarga Express</a></p>
 		</div>
 	</div>	
 </div>
