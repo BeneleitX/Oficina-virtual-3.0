@@ -13,7 +13,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 		if( sizeof( $banners ) ){
 			?>
 
-			<div id="carrusel" class="carousel slide mb-3" data-bs-ride="carousel">
+			<div id="carrusel" class="carousel slide mt-3" data-bs-ride="carousel">
 				<div class="carousel-indicators">
 					<?php
 					$active = 0;
@@ -26,7 +26,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 					<?php
 					$active = 0;
 					foreach( $banners as $b ){
-						echo "\n<div class=\"carousel-item ".( $active++ ? "" : "active")."\"><img src=\"".base_url()."assets/img/banners/{$b[ "archivo" ]}\" class=\"d-block w-100\" alt=\"\"></div>";
+						echo "\n<div class=\"carousel-item ".( $active++ ? "" : "active")."\"><img src=\"".base_url()."assets/img/banners/{$b[ "archivo" ]}\" class=\"d-block w-100\" alt=\"\" style=\"aspect-ratio:1.411\"></div>";
 					}
 					?>
 				</div>
@@ -44,7 +44,8 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 			<?php
 		}
 		?>
-			
+		
+		<p class="text-center my-3 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://recarga.beneleit.talentonet.com/" style="border-radius:15px"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Recarga Express</a></p>
 		</div>
 		<div class="col-lg-1">
 
@@ -72,7 +73,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 						
 					</div>
 					<p class="text-center my-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" style="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
-					<p class="text-center my-3 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://recarga.beneleit.talentonet.com/" style="border-radius:15px"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Recarga Express</a></p>
+					
 		</div>
 	</div>	
 </div>
