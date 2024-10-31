@@ -35,8 +35,8 @@ foreach( $numeros as $c ){
     ?>
 
     <div class="row mt-3">
-        <div class="col-6"><a href="<?php echo base_url("beneleit_movil"); ?>" class="btn btn-success col-12"><i class="fa fa-shopping-cart"></i> Paquetes y activaciones</a></div>
-        <div class="col-6"><a href="<?php echo base_url("perfil"); ?>" class="btn btn-danger col-12"><i class="fa fa-phone"></i> Ir a mis números</a></div>
+        <div class="col-12"><a href="<?php echo base_url("beneleit_movil"); ?>" class="btn btn-success col-12"><i class="fa fa-shopping-cart"></i> Tiempo aire y activar líneas</a></div>
+        <div class="d-none col-6"><a href="<?php echo base_url("perfil"); ?>" class="btn btn-danger col-12"><i class="fa fa-phone"></i> Ir a mis números</a></div>
     </div>
 
     <table class="px-2 w-100 mt-3 mb-0" style="border-spacing: 10px;border-collapse: separate; ">
