@@ -1059,11 +1059,13 @@ $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;
 }
+
 ?>
 
 <script>
     
     var modelo 			= '<?php echo $modelo; ?>',
+        es_primermes    = <?php echo !$pc || date( "Ym", strtotime( $pc ) ) == date( "Ym" ) ? "true" : "false"; ?>,
         usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
         cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
         cat_productos   = <?php echo json_encode( $prods ); ?>,

@@ -34,6 +34,7 @@ $menu = [
     [ "info", "apikeys", "network-wired", "API keys", 0,["40-ADMIN"] ],     
     [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],   
     [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],
+    [ "secondary", "eventos", "person-chalkboard", "Eventos", 0 ,[""] ],
 ];
 
 foreach( $menu as $opcion ){
