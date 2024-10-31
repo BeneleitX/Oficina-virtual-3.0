@@ -543,12 +543,12 @@ class Dashboard extends BaseController
         curl_setopt($curl, CURLOPT_HEADER, 0); 
         $respuesta = json_decode( curl_exec( $curl ) );
         curl_close($curl);
-                
+              
         $html = "<table class=\"table w-100 m-0 table-borderless xtable-striped\">";
         $k = 0;
         
         foreach( $respuesta->data as $num ){
-            $recarga = end( $num->detalle );
+            $recarga = $num; // end( $num->detalle );
             $plan = model( "ProductoModel" )->find( $recarga->plan__oferta_adicional );
             //$plan->descripcion = str_replace( "B -", "B<br>", $plan->descripcion );
 
