@@ -15,6 +15,9 @@
         <p class="mt-3">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.png"; ?>" style="width:60px; opacity:.4" class="mb-1"><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span></p><p class="m-0">Durante 3 meses consecutivos debes alcanzar la meta o tener una calificación PREMIERE</p><p class="m-0 fs-3">
 
         <?php 
+            $keys = array_keys($checks);
+            unset( $checks[ $keys[ 0 ] ] );
+        
             foreach( $checks as $ch ){
                 echo "\n<i class=\"fa fa-square-".( $ch[ "check" ] ? "check" : "xmark" )." text-".( $ch[ "check" ] ? "teal" : "gray-300" )."\"></i>";
             }
