@@ -184,16 +184,16 @@ class Periodos extends BaseController
         */
 
         // BITACORA corte parcial / corte semanal      
-        bitacora( 43, $this->data[ "usuario" ]->id, [
+/*         bitacora( 43, $this->data[ "usuario" ]->id, [
             "periodo" => $periodo,
             "avance" => $avance
-        ] );
+        ] ); */
 
         try {
-            $db->transStrict(false);
-            $db->transException(true)->transStart();
+//            $db->transStrict(false);
+  //          $db->transException(true)->transStart();
             $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
-            $db->transComplete();
+    //        $db->transComplete();
             echo 1;
         } catch (DatabaseException $e) {
             // print_r($e);
