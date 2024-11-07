@@ -5,7 +5,7 @@ require '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
+use CodeIgniter\Database\Exceptions\DatabaseException;
 
 class Periodos extends BaseController
 {
@@ -189,11 +189,13 @@ class Periodos extends BaseController
             "avance" => $avance
         ] );
 
-        $sql = "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )";
-
         try {
-            $db->query( $sql );
+            $db->transException(true)->transStart();
+            $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
+            $this->db->transComplete();
+
             echo 1;
+            
         } catch (Exception $e) {
             echo 0;
         }
