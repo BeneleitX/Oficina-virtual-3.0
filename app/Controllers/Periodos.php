@@ -196,6 +196,7 @@ class Periodos extends BaseController
             $db->transComplete();
             echo 1;
         } catch (DatabaseException $e) {
+            // print_r($e);
             echo 0;
         }
     } 
