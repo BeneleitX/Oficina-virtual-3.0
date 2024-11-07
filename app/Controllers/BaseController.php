@@ -90,7 +90,10 @@ abstract class BaseController extends Controller
         load_catalogo( "rangos" );
         load_catalogo( "variables" );
 
-        if( !rand( 0, 2 ) ) update_estatus_random( 1 );
+        $router = \Config\Services::router();
+        $_controller = explode("\\", $router->controllerName()); 
+
+        if( $_controller[3] != "sesion" && !rand( 0, 1 ) ) update_estatus_random( 1 );
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
