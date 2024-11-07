@@ -24,8 +24,8 @@ $validCustomer = [
     'email' => "juan.perez@dominio.com"
 ];
 
-// $c = Customer::create($validCustomer);
-
+ $c = Customer::create($validCustomer);
+ dd($c);
 
 // Configure Bearer authorization: bearerAuth
 $config = Conekta\Configuration::getDefaultConfiguration()->setAccessToken( $conekta[ "api_key" ] );

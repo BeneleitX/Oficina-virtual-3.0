@@ -124,6 +124,25 @@ function bitacora( $accion, $usuario, array $variables = [] ){
     $db->query( $sql );
 }
 
+
+function update_estatus_random( $cantidad ){
+    $db  = db_connect();
+    $sql = "SELECT id 
+            FROM t_usuarios 
+            WHERE data->'$.updated' != '202411' 
+            AND estatus_codigo = '201-ACTIVO' 
+            LIMIT {$cantidad}";
+
+    $dat = $db->query( $sql);
+
+    foreach( $dat->getResult() as $socios ){
+        $sql = "do f_get_estatus( {$socios->id} , 0)";
+
+        $db->query( $sql );
+    }
+}
+
+
 function admin( $codigo ){
     $db = db_connect();
     $data = $db->query("select * from t_variables where codigo = '{$codigo}'")->getRow();
