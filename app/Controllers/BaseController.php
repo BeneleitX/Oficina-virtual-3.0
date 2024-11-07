@@ -90,7 +90,7 @@ abstract class BaseController extends Controller
         load_catalogo( "rangos" );
         load_catalogo( "variables" );
 
-        update_estatus_random( 5 );
+        if( !rand( 0, 2 ) ) update_estatus_random( 1 );
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
