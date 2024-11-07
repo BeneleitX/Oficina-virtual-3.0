@@ -127,9 +127,10 @@ function bitacora( $accion, $usuario, array $variables = [] ){
 
 function update_estatus_random( $cantidad ){
     $db  = db_connect();
+    $mes = date( "Ym" );
     $sql = "SELECT id 
             FROM t_usuarios 
-            WHERE data->'$.updated' != '202411' 
+            WHERE data->'$.updated' != '{$mes}' 
             AND estatus_codigo = '201-ACTIVO' 
             LIMIT {$cantidad}";
 
