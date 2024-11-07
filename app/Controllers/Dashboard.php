@@ -108,12 +108,13 @@ class Dashboard extends BaseController
 
         $db = db_connect();
         foreach( MODELOS as $m ){
-            $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+            $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
+            $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
 
-        $db->query( "select f_get_estatus(  {$socio->id}, 1 )" );
-        $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
+        $db->query( "do f_get_estatus(  {$socio->id}, 1 )" );
+        $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
 
         // BITACORA Forzar update

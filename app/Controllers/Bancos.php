@@ -289,9 +289,10 @@ class Bancos extends BaseController
                                 model( "UsuarioModel" )->save( $u );    
 
                                 $db = db_connect();
-                                $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
-                                $db->query( "select f_get_estatus( {$u->id}, 1 )" );
-                                $afectados = $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();                                    
+                                $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date('Ym', strtotime( date('Y-m', $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ).'-01'. ' -1 month' ) )."' )" ); 
+                                $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
+                                $db->query( "do f_get_estatus( {$u->id}, 1 )" );
+                                $afectados = $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();                                    
 
                             }
                             else{

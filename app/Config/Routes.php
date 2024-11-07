@@ -84,6 +84,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
     $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 
+    $routes->get( "corte/(:any)/(:num)/(:num)",     "Periodos::corte/$1/$2/$3" ); 
     $routes->post( "reset_corte",           "Periodos::reset_corte" ); 
     $routes->post( "excel_corte",           "Periodos::excel_corte" ); 
     $routes->post( "corte",                 "Periodos::corte" ); 

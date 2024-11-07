@@ -158,7 +158,7 @@ class Periodos extends BaseController
     }
 
 
-    public function corte()
+    public function corte( $periodo = null, $avance = 0, $step = 0 )
     {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
@@ -167,7 +167,9 @@ class Periodos extends BaseController
         }
         /**********************************/
 
-        extract( $this->request->getPost() );
+        if( !$periodo ){
+            extract( $this->request->getPost() );
+        }
     
         $db = db_connect();
         
@@ -187,8 +189,14 @@ class Periodos extends BaseController
             "avance" => $avance
         ] );
 
-        echo $sql = "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )";
-        $db->query( $sql );
+        $sql = "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )";
+
+        try {
+            $db->query( $sql );
+            echo 1;
+        } catch (Exception $e) {
+            echo 0;
+        }
     } 
     
     

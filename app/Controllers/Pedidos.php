@@ -247,9 +247,10 @@ class Pedidos extends BaseController
 
             model( "UsuarioModel" )->save( $u );
 
-            $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $f ) )."' )" );  
-            $db->query( "select f_get_estatus( {$u->id}, 0 )" );
-            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    
+            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( 'Ym', strtotime( date('Y-m', $f ).'-01'. ' -1 month' ) )."' )" ); 
+            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $f ) )."' )" );  
+            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    
 
             // BITACORA Actualizar reparto de comisiones
             bitacora( 31, $this->data[ "usuario" ]->id, [ 
