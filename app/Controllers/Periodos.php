@@ -190,13 +190,12 @@ class Periodos extends BaseController
         ] );
 
         try {
+            $db->transStrict(false);
             $db->transException(true)->transStart();
             $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
             $db->transComplete();
-
             echo 1;
-
-        } catch (Exception $e) {
+        } catch (DatabaseException $e) {
             echo 0;
         }
     } 
