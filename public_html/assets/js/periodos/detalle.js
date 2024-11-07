@@ -54,7 +54,7 @@ function getStatus(total) {
 }
 
 function do_corte( total, avance = 0 ){
-    var step = 50;
+    var step = 25;
 
     $.ajax({
         url: base_url + 'corte',
