@@ -61,6 +61,11 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
+        $router = \Config\Services::router();
+        $_controller = explode("\\", $router->controllerName()); 
+        if( $_controller[3] != "sesion" ) update_estatus_random( 1 );
+
+
         // Preload any models, libraries, etc, here.
         $this->session = session();
 
@@ -89,11 +94,6 @@ abstract class BaseController extends Controller
         load_catalogo( "estatus" );
         load_catalogo( "rangos" );
         load_catalogo( "variables" );
-
-        $router = \Config\Services::router();
-        $_controller = explode("\\", $router->controllerName()); 
-
-        if( $_controller[3] != "sesion" ) update_estatus_random( 1 );
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }

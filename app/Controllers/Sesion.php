@@ -192,7 +192,7 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
-            $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
+            // $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
             $db->query( " CALL p_update_padre( {$usuario->id}, '10-NUTRICION' );" );
             $db->query( " CALL p_update_padre( {$usuario->id}, '20-TELEFONIA' );" );

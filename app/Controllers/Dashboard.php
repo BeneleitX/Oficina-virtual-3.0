@@ -95,7 +95,7 @@ class Dashboard extends BaseController
 
 
     public function update_estatus( $request ){
-
+/* 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -123,7 +123,7 @@ class Dashboard extends BaseController
         ] );
 
         $ruta = urlencode( base64_encode( $socio->password_original() ) );
-        return redirect()->to( "sociodata/{$ruta}" );
+        return redirect()->to( "sociodata/{$ruta}" ); */
     }
 
 
