@@ -20,7 +20,7 @@ function lanza_corte(){
 
 function getStatus(total) { 
     //$( '#modal_corte .progress-bar' ).css( 'width', '100%' );
-    var timer = parseInt(total) + Math.floor( Math.random() * 1000 );
+    var timer = parseInt(total) + Math.floor( Math.random() * 2000 );
 
     setTimeout(function() {
 
@@ -54,7 +54,7 @@ function getStatus(total) {
 }
 
 function do_corte( total, avance = 0 ){
-    var step = 5;
+    var step = 25;
 
     $.ajax({
         url: base_url + 'corte',
