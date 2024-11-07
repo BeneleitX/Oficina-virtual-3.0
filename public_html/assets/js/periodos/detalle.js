@@ -61,15 +61,15 @@ function do_corte( total, avance = 0 ){
         data: { periodo: periodo, [csrf_token] : csrf_hash, avance : avance, step : step },
         type: 'POST',
         async: true,
-        success: function(){
-            console.log( total + ' - procesados pedidos del ' + ( avance + 1 ) + ' al ' + ( avance + step ) );
-
-            avance += step;
+        success: function( resultado ){
+            console.log( resultado + ' : ' + total + ' - procesados pedidos del ' + ( avance + 1 ) + ' al ' + ( avance + step ) );
+            
+            avance += ( resultado * step );
             
             if( avance < total ){
                 setTimeout(function(){
                     do_corte( total, avance );
-                }, 1000);   
+                }, 500);   
                 
             }
             else{
