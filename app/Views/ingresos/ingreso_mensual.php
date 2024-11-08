@@ -1,23 +1,23 @@
-<link  href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
-<link  href="<?php echo base_url(); ?>assets/css/responsive.css" rel="stylesheet"/>
-
-<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/js/responsive.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
+<div class="row">
+    <div class="col-8">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+    </div>
+    <div class="col-4 text-end">
+        <button class="btn btn-success col-12 mt-3" id="descarga_ingreso"><i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span></button>
+    </div>
+</div>
 
 <div class="row mb-4">
     <div class="col-lg-8">
         <?php echo pills( "ingreso_mensual", $modelo ); ?>
     </div>
     <div class="col-lg-4 text-end">
-        <button class="btn btn-success d-none"><i class="fa fa-file-excel"></i> Descargar Excel</button>
+        
 
-        <div class="row">
-        <div class="col-4">
+        <div class="row mt-3">
+            <div class="col-4">
                 <a href="<?php echo base_url()."balance/{$modelo}/".codigo_periodo( $modelo ); ?>" class="btn btn-outline-secondary"> Detalle SEMANAL</a>
             </div>
             <div class="col-4">
