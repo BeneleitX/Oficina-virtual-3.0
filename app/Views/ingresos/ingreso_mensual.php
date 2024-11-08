@@ -38,7 +38,7 @@ while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-0
     $cantidad = $ingresosxdia[ $hoy ] ?? null;
 
     ?>
-    <div class="card mb-3 col-lg-6">
+    <div class="card mb-4 col-lg-6">
         <div class="card-header bg-<?php echo isset( $ingreso[ $mes ] ) ? "marine" : "gray-500" ?>"><h5 class="m-0 text-white"><?php echo $hoy; ?></h5></div>
 
             <table class="mb-0 table table-striped bg-white tabla_comisiones" id="t_<?php echo date("Y-m-d"); ?>">
