@@ -80,6 +80,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
     $routes->get( "depositos/(:any)",       "Ingresos::depositos/$1" ); 
+    $routes->get( "ingreso_mensual/(:any)", "Ingresos::ingreso_mensual/$1" ); 
     $routes->post( "pagodata",              "Ingresos::pagodata" ); 
 
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 

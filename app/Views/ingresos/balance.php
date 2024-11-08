@@ -19,8 +19,8 @@
         <div class="col-4">
                 <a href="<?php echo base_url()."balance/{$modelo}/". $periodo[ "codigo" ]; ?>" class="btn btn-secondary"> Detalle SEMANAL</a>
             </div>
-            <div class="col-4 d-none">
-            <a href="#" class="btn btn-outline-secondary"> Detalle MENSUAL</a>
+            <div class="col-4">
+            <a href="<?php echo base_url()."ingreso_mensual/{$modelo}"; ?>" class="btn btn-outline-secondary"> Ingreso MENSUAL</a>
             </div>
             <div class="col-4">
             <a href="<?php echo base_url()."depositos/{$modelo}"; ?>" class="btn btn-outline-secondary"> Depósitos recibidos</a>
