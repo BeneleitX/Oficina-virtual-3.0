@@ -1,8 +1,10 @@
-<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
-<link href="<?php echo base_url(); ?>assets/css/responsive.css" rel="stylesheet"/>
+<link  href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<link  href="<?php echo base_url(); ?>assets/css/responsive.css" rel="stylesheet"/>
+
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/responsive.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
@@ -28,9 +30,17 @@
     </div>
 </div>
 
-<?php
 
-$mes = date( "Ym" );
+
+<div id="chart_ingreso"></div>
+
+<?php
+$data = [
+    "meses" => [],
+    "cantidades" => []
+];
+
+$mes  = date( "Ym" );
 
 while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-01' ? '2024-08-01' : $usuario->historial->registro ) ) ){
 
@@ -68,12 +78,74 @@ while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-0
         </div>
     </div>
     <?php 
+
+    $data[ "meses" ][] = strtoupper( mes( substr( $mes, 4, 2 ), 3 ) );
+    $data[ "cantidades" ][] = $suma;
+
     $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
 }
+
+
+while( sizeof( $data[ "meses" ] ) < 12 ){
+    $data[ "meses" ][] = "";
+    $data[ "cantidades" ][] = 0;
+}
+
 ?>
 
 
 
 <script>
     var modelo = '<?php echo $modelo; ?>';
+
+    var options = {
+          series: [{
+            name: "Ingresos",
+            data: [ <?php echo implode( ",", array_reverse( $data[ "cantidades" ] ) ); ?> ]
+        }],
+          chart: {
+          height: 350,
+          type: 'area',
+          zoom: {
+            enabled: false
+          }
+        },
+        colors: ['#009779'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+              shadeIntensity: 1,
+              inverseColors: false,
+              opacityFrom: 0.5,
+              opacityTo: 0.1,
+           
+            },
+        },        
+        markers: {
+          size: 7,
+          color: '#ff0000'
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        title: {
+          text: 'Ingresos por mes en <?php echo MODELOS[ $modelo ][ "nombre" ]; ?>',
+          align: 'left'
+        },
+        grid: {
+          row: {
+            colors: ['#f0f0f0', '#ffffff'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        xaxis: {
+          categories: [ '<?php echo implode( "','", array_reverse( $data[ "meses" ] ) ); ?>' ],
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart_ingreso"), options);
+        chart.render();
 </script>
