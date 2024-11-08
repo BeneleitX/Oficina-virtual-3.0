@@ -32,21 +32,21 @@
 
 $mes = date( "Ym" );
 
-while( $mes >= '202408' ){
+while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-01' ? '2024-08-01' : $usuario->historial->registro ) ) ){
 
     $hoy = strtoupper( mes( substr( $mes, 4, 2 ) ) )." ".substr( $mes, 0, 4 );
     $cantidad = $ingresosxdia[ $hoy ] ?? null;
 
-    if( isset( $ingreso[ $mes ] ) ){
     ?>
     <div class="card mb-3 col-lg-6">
-        <div class="card-header bg-marine"><h5 class="m-0 text-white"><?php echo $hoy; ?></h5></div>
+        <div class="card-header bg-<?php echo isset( $ingreso[ $mes ] ) ? "marine" : "gray-500" ?>"><h5 class="m-0 text-white"><?php echo $hoy; ?></h5></div>
 
             <table class="mb-0 table table-striped bg-white tabla_comisiones" id="t_<?php echo date("Y-m-d"); ?>">
                 <tbody>
                     <?php 
                         $suma = 0;
-                        foreach( $ingreso[ $mes ] as $k => $c ){
+                        if( isset( $ingreso[ $mes ] ) ){
+                            foreach( $ingreso[ $mes ] as $k => $c ){
 
                                 $esquema = ESQUEMAS[ $k ][ "settings" ][ "titulo" ];
                                 $suma += $c;
@@ -56,19 +56,18 @@ while( $mes >= '202408' ){
                                     <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c, 2 )."</strong></td>
 
                                 </tr>";
+                            }
                         }
                     ?>
                 
                 </tbody>
 
             </table>
-        <div class="card-footer text-end bg-gray-600">
+        <div class="card-footer text-end bg-gray-<?php echo isset( $ingreso[ $mes ] ) ? "600" : "400" ?>">
         <h5 class="m-0 text-white">$<?php echo number_format( $suma, 2 ); ?></h5>
         </div>
     </div>
-<?php } 
-
-
+    <?php 
     $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
 }
 ?>
