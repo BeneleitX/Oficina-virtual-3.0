@@ -83,6 +83,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "ingreso_mensual/(:any)", "Ingresos::ingreso_mensual/$1" ); 
     $routes->post( "pagodata",              "Ingresos::pagodata" ); 
     $routes->post( "excel_ingreso_mensual", "Ingresos::excel_ingreso_mensual" ); 
+    $routes->post( "excel_pago_comisiones", "Ingresos::excel_pago_comisiones" ); 
 
     $routes->get( "periodos/(:any)",        "Periodos::listado/$1" ); 
     $routes->get( "periodo/(:any)",         "Periodos::detalle/$1" ); 

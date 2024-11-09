@@ -31,5 +31,21 @@ $( document ).ready(function()
         order: [ [ 0, 'desc' ] ]
     });
 
+    $( '#descarga_pagos' ).on( 'click', function(){
+        var btn = $( this );
+
+        btn.addClass( 'disabled' ).html( '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...' );
+
+        $.ajax({
+            url: base_url + 'excel_pago_comisiones',
+            data: { 'modelo' : modelo, [csrf_token] : csrf_hash },
+            type: 'POST',
+            success: function( file ){
+                // download
+                btn.removeClass( 'disabled' ).html( '<i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span>' );
+                window.location.href = base_url + file;
+            }
+        });  
+    });
 });
 

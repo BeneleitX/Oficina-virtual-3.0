@@ -250,7 +250,7 @@ class Ingresos extends BaseController
             $row++;
             $col  = 0;
             $suma = 0;
-            $worksheet->setCellValue( chr(65 + $col++).$row, strtoupper( mes( substr( $mes, 4, 2 ) ) )." ".substr( $mes, 0, 4 ) );
+            $worksheet->setCellValue( chr(65 + $col++).$row, substr( $mes, 0, 4 )." ".strtoupper( mes( substr( $mes, 4, 2 ) ) ) );
 
             foreach( $e as $esquema ){
                 $valor = $data[ "meses" ][ $mes ][ "esquemas" ][ $esquema ] ?? 0;
@@ -272,6 +272,7 @@ class Ingresos extends BaseController
         $worksheet->getStyle( "A1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
         $worksheet->getStyle( chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
         $worksheet->getStyle( "A2:A".$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+        $worksheet->getStyle( chr(65 + $col)."2:".chr(65 + $col).$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
 
         foreach( $worksheet->getColumnIterator() as $column ){
             $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
@@ -290,4 +291,126 @@ class Ingresos extends BaseController
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
     }
+
+    public function excel_pago_comisiones()
+    {
+        $db       = db_connect();
+        $modelo   = $this->request->getPost( "modelo" );
+        $mes      = date( "Ym" );
+        $data     = [];
+        load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "INGRESO MENSUAL");
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $col = 0;
+        $row = 1;
+        $d = [];
+        $e = [];
+        $worksheet->setCellValue( chr(65 + $col++)."1", "SEMANA" );
+
+        $pagos = $this->data[ "usuario" ]->getPagos( $modelo );
+
+        foreach( $pagos as $pago ){
+
+            $sql  = "SELECT 
+                min(c.fecha) as fecha, 
+                e.codigo as esquema, 
+                IFNULL( p.data->'$.factor', 2.5 ) as factor, 
+                SUM( c.cantidad ) as cantidad,
+                c.esquema_codigo  , 
+                '".periodo( $pago[ "periodo" ] )."' as semana
+            from t_pagos p
+            left join t_comisiones c ON c.usuario_id = p.usuario_id
+            left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
+            WHERE p.id = {$pago[ "folio" ]} AND c.periodo_codigo = '{$pago[ "periodo" ]}'
+            GROUP BY c.esquema_codigo, semana
+            order by semana asc, c.esquema_codigo asc";
+
+            $result = $db->query( $sql );
+
+            foreach( $result->getResult() as $ms ){
+                $data[ $pago[ "folio" ] ][ "detalles" ] = $ms;
+                $data[ $pago[ "folio" ] ][ "esquemas" ][ $ms->esquema ] = $ms->cantidad;
+
+                $e[ $ms->esquema ] = true;
+            }
+
+            $desglose = aplicaImpuestos( $pago[ "total" ], $pago[ "impuestos" ], $pago[ "periodo" ] );
+
+            foreach( $desglose as $de ){
+                $data[ $pago[ "folio" ] ][ "desglose" ][ $de[ "descripcion" ] ] = $de[ "cantidad" ];
+
+                $d[ $de[ "descripcion" ] ] = true;
+            }
+        }
+
+        $e = array_keys( $e );
+        foreach( $e as $esquema ){
+            $worksheet->setCellValue( chr(65 + $col++)."1", mb_strtoupper( ESQUEMAS[ $esquema ][ "settings" ][ "titulo" ] ) );
+        }
+
+        $worksheet->setCellValue( chr(65 + $col++)."1", "SUBTOTAL" );
+
+        $d = array_keys( $d );
+        foreach( $d as $desglose ){
+            $worksheet->setCellValue( chr(65 + $col++)."1", mb_strtoupper( $desglose ) );
+        }
+
+        $row = 1;
+        foreach( $data as $pago ){
+            $row++;
+            $col  = 1;
+            $suma = 0;
+            $worksheet->setCellValue( "A".( $row ), substr( $pago[ "detalles" ]->semana, 3, 4)."-".substr( $pago[ "detalles" ]->semana , 0, 2 ) );
+
+            foreach( $e as $esquema ){
+                $valor = $pago[ "esquemas" ][ $esquema ] ?? 0;
+                $suma += $valor;
+                $worksheet->setCellValue( chr(65 + $col++).$row, $valor );
+            }
+
+            $worksheet->setCellValue( chr(65 + $col++).$row, $suma ); 
+
+            foreach( $d as $desglose ){
+                $valor = $pago[ "desglose" ][ $desglose ] ?? 0;
+                $worksheet->setCellValue( chr(65 + $col++).$row, $valor );
+            }
+        }
+
+        $coltemp = sizeof( $e ) + 1;
+        $col--;
+
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "B2:".chr(65 + $col ).$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+
+        $worksheet->getStyle( "B1:".chr(65 + $col - 1 )."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        $worksheet->getStyle( "A1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( chr(65 + $coltemp)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+
+        $worksheet->getStyle( "A2:A".$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+
+        $worksheet->getStyle( chr(65 + $col)."2:".chr(65 + $col).$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+        $worksheet->getStyle( chr(65 + $coltemp)."2:".chr(65 + $coltemp).$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        // BITACORA descarga excel de corte
+        bitacora( 73, $this->data[ "usuario" ]->id, [
+            "modelo" => $modelo
+        ] );
+
+        $path = "data/excel/ingreso_mensual";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/PagosRecibidos_{$this->data[ "usuario" ]->id}_".substr( $modelo, 3 )."_".date( "Y-m-d" ).".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }    
 }

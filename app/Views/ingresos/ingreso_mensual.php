@@ -14,8 +14,6 @@
         <?php echo pills( "ingreso_mensual", $modelo ); ?>
     </div>
     <div class="col-lg-4 text-end">
-        
-
         <div class="row mt-3">
             <div class="col-4">
                 <a href="<?php echo base_url()."balance/{$modelo}/".codigo_periodo( $modelo ); ?>" class="btn btn-outline-secondary"> Detalle SEMANAL</a>
@@ -29,8 +27,6 @@
         </div>
     </div>
 </div>
-
-
 
 <div id="chart_ingreso"></div>
 
