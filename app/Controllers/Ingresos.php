@@ -198,10 +198,20 @@ class Ingresos extends BaseController
     public function excel_ingreso_mensual()
     {
         $db       = db_connect();
-        $modelo = $this->request->getPost( "modelo" );
-        $columnas = [];
+        $modelo   = $this->request->getPost( "modelo" );
         $mes      = date( "Ym" );
-     
+        $data     = [];
+        load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "INGRESO MENSUAL");
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $col = 0;
+        $e = [];
+        $worksheet->setCellValue( chr(65 + $col++)."1", "MES" );
+
         while( $mes >= '202408' ){
             $sql = "SELECT c.esquema_codigo as esquema,
                     SUM( c.cantidad * IF( e.codigo = '118-PROMOS-50', f_get_factor_promos( c.usuario_id, '{$mes}' ), 1 ) ) as cantidad
@@ -217,167 +227,71 @@ class Ingresos extends BaseController
 
             $result  = $db->query( $sql );
 
-            foreach( $result->getResult() as $ms )
-                $ingreso[ $mes ][ $ms->esquema ] = $ms->cantidad;
-                $columnas[] = $ms->esquema;
+            foreach( $result->getResult() as $ms ){
+                $data[ "meses" ][ $mes ][ "esquemas" ][ $ms->esquema ] = $ms->cantidad;
+                $e[ $ms->esquema ] = true;
+            }
 
             $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
         }
+
+        $e = array_keys( $e );
+        asort( $e );
+
+        foreach( $e as $esquema ){
+            $worksheet->setCellValue( chr(65 + $col++)."1", mb_strtoupper( ESQUEMAS[ $esquema ][ "settings" ][ "titulo" ] ) );
+        }
+
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TOTAL" );
+
+        $mes = date( "Ym" );
+        $row = 1;
+        while( $mes >= '202408' ){
+            $row++;
+            $col  = 0;
+            $suma = 0;
+            $worksheet->setCellValue( chr(65 + $col++).$row, strtoupper( mes( substr( $mes, 4, 2 ) ) )." ".substr( $mes, 0, 4 ) );
+
+            foreach( $e as $esquema ){
+                $valor = $data[ "meses" ][ $mes ][ "esquemas" ][ $esquema ] ?? 0;
+                $suma += $valor;
+                $worksheet->setCellValue( chr(65 + $col++).$row, $valor );
+            }
+
+            $worksheet->setCellValue( chr(65 + $col++).$row, $suma );
+                
+            $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+        }
+
+        $col--;
         
-        foreach( $pagos as $pago ){
-            
-            $pago[ "p_data" ] = json_decode( $pago[ "p_data" ], 1 );
-            $pago[ "u_data" ] = json_decode( $pago[ "u_data" ], 1 );
-            $pago[ "verificado" ] = json_decode( $pago[ "verificado" ], 1 );
-            
-            $k_dia_inicia  = date( "d", strtotime( $periodo[ "inicia" ] ) );
-            $k_mes_inicia  = mes( date( "m", strtotime( $periodo[ "inicia" ] ) ), 3 );
-            $k_dia_termina = date( "d", strtotime( $periodo[ "termina" ] ) );
-            $k_mes_termina = mes( date( "m", strtotime( $periodo[ "termina" ] ) ), 3 );
+/*         $worksheet->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
+        $worksheet->getStyle( "A:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $worksheet->getStyle( "F:H" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+ */
 
-            $concepto = substr( $periodo[ "modelo_codigo" ], 3, 4 )." ".periodo( $periodo[ "codigo" ] )." ".strtoupper( "{$k_dia_inicia} {$k_mes_inicia}-{$k_dia_termina} {$k_mes_termina}" ); 
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "B2:".chr(65 + $col ).$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
 
-            if( $pago[ "p_data" ][ "retencion" ] == 2 ){
+        $worksheet->getStyle( "B1:".chr(65 + $col - 1 )."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        $worksheet->getStyle( "A1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( "A2:A".$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
 
-                $neto = $pago[ "p_data" ][ "cantidades" ][ "subtotal" ];
-                $importe = $neto / 1.16;
-
-                $sheetData[ 0 ][] = [
-                    $pago[ "pago_id" ],
-                    "80161701",
-                    "PROMOCIÓN, DISPOSICIÓN Y PUBLICIDAD VENTAS BENELEIT",
-                    $pago[ "usuario_id" ],
-                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
-                    //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
-                    strval( $pago[ "clabe" ] ),
-                    30,
-                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
-                    $promo = $importe * .1, // promo
-                    $neto, // neto
-                    $importe, // importe
-                    $sub = $importe - $promo,  // subtotal
-                    $iva = $sub * .16, // iva
-                    $ret = $sub * 0.0125, //( retencion)
-                    $neto - $promo + $iva - $ret,
-                    $concepto
-                ];
-            }
-            elseif( $pago[ "p_data" ][ "retencion" ] == 1 ){
-                $sheetData[ 1 ][] = [
-                    $pago[ "pago_id" ],
-                    $pago[ "usuario_id" ],
-                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
-                    //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
-                    strval( $pago[ "clabe" ] ),
-                    30,
-                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
-                    $subt = $pago[ "p_data" ][ "cantidades" ][ "subtotal" ] / 1.16, // subtotal
-                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], // importe
-                    $rete = $subt * 0.1066, // retencion
-                    $iva  = $subt * 0.16,  // iva
-                    $subt - $rete + $iva, // total
-                    $concepto,
-                    "PAGO DE COMISIONES"
-                ];
-            }
-            elseif( $pago[ "p_data" ][ "retencion" ] == 0 ){
-                $sheetData[ 2 ][] = [
-                    $pago[ "pago_id" ],
-                    $pago[ "usuario_id" ],
-                    $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
-                    strval( $pago[ "clabe" ] ),
-                    30,
-                    "PAGO SEMANA ".periodo( $periodo[ "codigo" ] ),
-                    $pago[ "banco" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
-                    $pago[ "p_data" ][ "cantidades" ][ "isr" ],
-                    $pago[ "p_data" ][ "cantidades" ][ "subtotal" ] - $pago[ "p_data" ][ "cantidades" ][ "isr" ],
-                    $concepto
-                ];
-            }            
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
         }
-
-        $data = $periodo[ "data" ];
-        $data[ "contador" ] = intval( $data[ "contador" ] ?? 0 ) + 1;
-
-        $time = str_pad( $data[ "contador" ], 2, "0", STR_PAD_LEFT );
-
-        $periodo[ "data" ] = $data;
-        model( "PeriodoModel" )->save( $periodo );
-
-        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $mySpreadsheet->removeSheetByIndex(0);
-
-        $worksheet = [ 
-            2 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "RET ISR"),
-            1 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "NO RET"),
-            0 => new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "VENTA")
-        ];
-
-        $mySpreadsheet->addSheet( $worksheet[ 0 ], 0 );
-        $mySpreadsheet->addSheet( $worksheet[ 1 ], 0 );
-        $mySpreadsheet->addSheet( $worksheet[ 2 ], 0 );
-
-      /*   $worksheet[ 0 ]->fromArray( $sheetData[ 0 ] );
-        $worksheet[ 1 ]->fromArray( $sheetData[ 1 ] );
-        $worksheet[ 2 ]->fromArray( $sheetData[ 2 ] ); */
-
-        foreach( $sheetData as $k => $s ){
-            $row = 0;
-            foreach( $s as $bloque ){
-                $col = 0;
-                $row++;
-                foreach( $bloque as $dato){
-                    if( strlen( $dato ) == 18 ){
-                        $worksheet[ $k ]->setCellValueExplicit( chr(65 + $col++).$row, $dato, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                    }
-                    else{
-                        $worksheet[ $k ]->setCellValue( chr(65 + $col++).$row, $dato );
-                    }
-                }
-            }
-        }
-
-        $worksheet[ 0 ]->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
-        $worksheet[ 0 ]->getStyle( "A:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 0 ]->getStyle( "F:H" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 0 ]->getStyle( "I:O" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
-        $worksheet[ 0 ]->getStyle( "A1:P1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
-        $worksheet[ 0 ]->getStyle( "I1:O1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
-        $worksheet[ 0 ]->getStyle( "A1:P1" )->getFont()->getColor()->setARGB('ffffff');
-
-        $worksheet[ 1 ]->getStyle( "D" )->getNumberFormat()->setFormatCode( "#" );
-        $worksheet[ 1 ]->getStyle( "A:B" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 1 ]->getStyle( "D:G" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 1 ]->getStyle( "G:K" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
-        $worksheet[ 1 ]->getStyle( "A1:M1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
-        $worksheet[ 1 ]->getStyle( "G1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
-        $worksheet[ 1 ]->getStyle( "A1:M1" )->getFont()->getColor()->setARGB('ffffff');
-
-        $worksheet[ 2 ]->getStyle( "D" )->getNumberFormat()->setFormatCode( "#" );
-        $worksheet[ 2 ]->getStyle( "A:B" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 2 ]->getStyle( "D:G" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet[ 2 ]->getStyle( "H:J" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
-        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
-        $worksheet[ 2 ]->getStyle( "H1:J1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
-        $worksheet[ 2 ]->getStyle( "A1:K1" )->getFont()->getColor()->setARGB('ffffff');
-
-        foreach( $worksheet as $k => $ws ){
-            foreach( $ws->getColumnIterator() as $column ){
-                $worksheet[ $k ]->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
-            }
-        } 
 
         // BITACORA descarga excel de corte
-        bitacora( 46, $this->data[ "usuario" ]->id, [
-            "periodo" => $this->request->getPost( "periodo" ),
-            "time" => $time
+        bitacora( 72, $this->data[ "usuario" ]->id, [
+            "modelo" => $modelo
         ] );
 
-        $path = "assets/archivo/corte/{$periodo[ "modelo_codigo" ]}";
+        $path = "data/excel/ingreso_mensual";
         if( !is_dir( $path ) ) mkdir( $path, 0755, true );
 
-        echo $file = $path."/{$periodo[ "modelo_codigo" ]}_".periodo( $periodo[ "codigo" ] )."_{$time}.xlsx";
+        echo $file = $path."/IngresoMensual_".substr( $modelo, 3 )."_".date( "Y-m-d" ).".xlsx";
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
