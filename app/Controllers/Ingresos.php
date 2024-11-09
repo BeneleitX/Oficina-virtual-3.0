@@ -321,7 +321,8 @@ class Ingresos extends BaseController
                 IFNULL( p.data->'$.factor', 2.5 ) as factor, 
                 SUM( c.cantidad ) as cantidad,
                 c.esquema_codigo  , 
-                '".periodo( $pago[ "periodo" ] )."' as semana
+                '".periodo( $pago[ "periodo" ] )."' as semana,
+                p.data->>'$.cantidades.subtotal' as subtotal
             from t_pagos p
             left join t_comisiones c ON c.usuario_id = p.usuario_id
             left JOIN t_esquemas e ON e.codigo = c.esquema_codigo
@@ -360,6 +361,8 @@ class Ingresos extends BaseController
         }
 
         $row = 1;
+        $coltemp = sizeof( $e ) + 1;
+
         foreach( $data as $pago ){
             $row++;
             $col  = 1;
@@ -372,15 +375,16 @@ class Ingresos extends BaseController
                 $worksheet->setCellValue( chr(65 + $col++).$row, $valor );
             }
 
-            $worksheet->setCellValue( chr(65 + $col++).$row, $suma ); 
+            $worksheet->setCellValue( chr(65 + $col++).$row, $pago[ "detalles" ]->subtotal ); 
 
             foreach( $d as $desglose ){
                 $valor = $pago[ "desglose" ][ $desglose ] ?? 0;
                 $worksheet->setCellValue( chr(65 + $col++).$row, $valor );
             }
+
+
         }
 
-        $coltemp = sizeof( $e ) + 1;
         $col--;
 
         $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
