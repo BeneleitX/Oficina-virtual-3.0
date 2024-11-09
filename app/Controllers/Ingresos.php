@@ -264,12 +264,6 @@ class Ingresos extends BaseController
         }
 
         $col--;
-        
-/*         $worksheet->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
-        $worksheet->getStyle( "A:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $worksheet->getStyle( "F:H" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        
- */
 
         $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
         $worksheet->getStyle( "B2:".chr(65 + $col ).$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
@@ -291,7 +285,7 @@ class Ingresos extends BaseController
         $path = "data/excel/ingreso_mensual";
         if( !is_dir( $path ) ) mkdir( $path, 0755, true );
 
-        echo $file = $path."/IngresoMensual_".substr( $modelo, 3 )."_".date( "Y-m-d" ).".xlsx";
+        echo $file = $path."/IngresoMensual_{$this->data[ "usuario" ]->id}_".substr( $modelo, 3 )."_".date( "Y-m-d" ).".xlsx";
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
