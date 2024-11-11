@@ -202,6 +202,39 @@ class Pedidos extends BaseController
     }
 
 
+    public function shop( $tipo, $data )
+    {
+        $this->data[ "navbar" ] = true;
+
+        $modelo = $data;
+        $activo = "estatus_codigo = '201-ACTIVO'";
+        $sql    = "{$activo} AND modelo_codigo = '{$modelo}'";
+
+        $this->data[ "socio" ]     = $this->data[ "usuario" ];
+        $this->data[ "pagado" ]    = 0;
+        $this->data[ "enproceso" ] = 1;
+        $this->data[ "bloqueado" ] = 0;
+        $this->data[ "cancelado" ] = 0;
+        $this->data[ "entregado" ] = 0;
+        $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
+        $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
+
+        load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
+        load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+
+        $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
+        $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $modelo );
+        $this->data[ "titulo" ] = "Tienda en línea";
+        $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ];
+
+        $this->data[ "modelo" ] = $modelo;
+        
+        echo template( "pedidos/shop", $this->data );
+    }
+
+
     public function save_pedido()
     {
         model( "PedidoModel" )->save( json_decode( $this->request->getPost( "json" ) ) );
