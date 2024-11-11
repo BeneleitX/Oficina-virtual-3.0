@@ -280,7 +280,7 @@ class Pedidos extends BaseController
 
             model( "UsuarioModel" )->save( $u );
 
-            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( 'Ym', strtotime( date('Y-m', $f ).'-01'. ' -1 month' ) )."' )" ); 
+            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( 'Ym', strtotime( date('Y-m', strtotime( $f.'-01'. ' -1 month' ) ) ) )."' )" );             
             $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $f ) )."' )" );  
             $db->query( "do f_get_estatus( {$u->id}, 0 )" );
             $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    
