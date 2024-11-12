@@ -368,6 +368,7 @@ function update_pedido( flag = null ){
         var metodopago  = $( this ).attr( 'value' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
+            padre       = $( this ).closest( 'div.metodopago' ),
             comision    = 0;
 
         switch( metodospago[ metodopago ].settings.tipocomision ){
@@ -391,11 +392,15 @@ function update_pedido( flag = null ){
             $( this ).prop( 'disabled', true );
             $( this ).removeClass( 'btn-primary' );
             $( this ).addClass( 'btn-light2 text-gray-500' );
+
+            $( '#open_checkout' ).prop( 'disabled', true );
         }
         else{
             $( this ).prop( 'disabled', false );
             $( this ).removeClass( 'btn-light2 text-gray-500' );
             $( this ).addClass( 'btn-primary' );
+
+            $( '#open_checkout' ).prop( 'disabled', false );
         }
     });
     
@@ -530,7 +535,6 @@ var pendientes = 0;
 
 $(document).ready(function()
 { 
-    
 	function delay(fn, ms) {
 		let timer = 0
 		return function(...args) {
@@ -710,7 +714,7 @@ $(document).ready(function()
     });
 
     $( '#no_pago' ).hide();
-    $( 'button[name=metodopago]' ).show();
+    $( 'button[name=metodopago], div.metodopago' ).show();
     $( 'img[metodopago]' ).show();
 
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
@@ -755,5 +759,9 @@ $(document).ready(function()
 
     $( 'div[evento=true][estatus=true]' ).each( function(a, b){
         $( this ).find( 'input' ).click();
+    });
+
+    $( '#open_checkout' ).on( 'click', function(){
+        $( '#modal_checkout' ).modal( 'show' );
     });
 });

@@ -561,78 +561,91 @@
             </div>
 
             <div class="col-lg-6">
-                <form method="post" action="<?php echo base_url( "checkout" ); ?>">
-                    <?php echo csrf_field(); ?>
-            
-                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+             
+                <?php echo csrf_field(); ?>
+        
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
-                    <?php 
-                    if( $pagado ){
-                        ?>
-                        <div class="card mb-3" style="overflow:hidden">
-                            <table class="table rounded-3 m-0">
-                                <tr>
-                                    <td valign="middle" class="">Fecha de pago</td>
+                <?php 
+                if( $pagado ){
+                    ?>
+                    <div class="card mb-3" style="overflow:hidden">
+                        <table class="table rounded-3 m-0">
+                            <tr>
+                                <td valign="middle" class="">Fecha de pago</td>
+                                
+                                <td valign="middle" class="text-end">
+                                    <h5 class="m-0">
+                                        <?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?>
+                                    </h5>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
+                                
+                                <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
+                                    <span class="badge bg-marine" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
+                                        <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Pago comisiones</td>
+                                
+                                <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
                                     
-                                    <td valign="middle" class="text-end">
-                                        <h5 class="m-0">
-                                            <?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?>
-                                        </h5>
-                                    </td>
-                                </tr>
+                                        <small><?php
+                                        $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
 
-                                <tr>
-                                    <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
+                                        if( isset( $periodo[ "estatus_codigo" ] ) and $periodo[ "estatus_codigo" ] ){
+                                            echo estatus( $periodo[ "estatus_codigo" ] );
+                                        }
+                                        ?></small>
+                                    <span class="badge bg-marine">
+                                        <?php echo date( "W-Y", strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
+                                    </span>
                                     
-                                    <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
-                                        <span class="badge bg-marine" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
-                                            <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
-                                        </span>
-                                    </td>
-                                </tr>
+                                </td>
+                            </tr>                                
+                        </table>
+                    </div>
 
-                                <tr>
-                                    <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Pago comisiones</td>
-                                    
-                                    <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
-                                        
-                                            <small><?php
-                                            $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
+                    <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
+                    <?php
+                }
+                elseif( $cancelado ){
+                    ?>
+                    <div class="card mb-3" style="overflow:hidden">
+                        <table class="table rounded-3 m-0">
+                            <tr>
+                                <td valign="middle" class="">Cancelación</td>
+                                
+                                <td valign="middle" class="text-end">
+                                    <h5 class="m-0">
+                                        <?php echo $pedido[ "fechas" ][ "cancela" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancela" ] ) ) : ""; ?>
+                                    </h5>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <?php
+                }
+                else{
 
-                                            if( isset( $periodo[ "estatus_codigo" ] ) and $periodo[ "estatus_codigo" ] ){
-                                                echo estatus( $periodo[ "estatus_codigo" ] );
-                                            }
-                                            ?></small>
-                                        <span class="badge bg-marine">
-                                            <?php echo date( "W-Y", strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
-                                        </span>
-                                        
-                                    </td>
-                                </tr>                                
-                            </table>
-                        </div>
-
-                        <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
-                        <?php
+                    $boton  = "";
+                    if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                        $mp[ "settings" ][ "tipocomision" ] = "";
                     }
-                    elseif( $cancelado ){
-                        ?>
-                        <div class="card mb-3" style="overflow:hidden">
-                            <table class="table rounded-3 m-0">
-                                <tr>
-                                    <td valign="middle" class="">Cancelación</td>
-                                    
-                                    <td valign="middle" class="text-end">
-                                        <h5 class="m-0">
-                                            <?php echo $pedido[ "fechas" ][ "cancela" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancela" ] ) ) : ""; ?>
-                                        </h5>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <?php
+
+                    if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                
+                        echo "\n<button class=\"btn col-12 m-0 btn-warning\" id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button>";                      
                     }
-                    else{
+
+
+                    /*
                         foreach( METODOSPAGO as $mp ){
                             $imagen = "";
                             $boton  = "";
@@ -660,15 +673,15 @@
                                 }
 
                                 echo $boton.$imagen;
-                            }
+                            } 
                         }
+                    */
 
-                        echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
-                    }
+                    echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
+                }
 
-                    
-                    ?>
-                </form>
+                
+                ?>
 
                 <?php 
                 if( $bloqueado && !$pagado ){
@@ -920,7 +933,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 </div>
 
                 <div class="modal-body">
-                Al regresar a su modo de edición, se podrán modificar las camtidades de productos, metodos de pago y de entrega.
+                Al regresar a su modo de edición, se podrán modificar las cantidades de productos, metodos de pago y de entrega.
                 </div>
 
                 <div class="modal-footer">
@@ -958,6 +971,52 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
             </div>
         </div>
     </div>
+
+
+    <div class="modal" tabindex="-1" id="modal_checkout">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "cancela_pedido" ); ?>">
+                    <?php echo csrf_field() ?>
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Finalizar pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                       
+                        <?php   
+                            foreach( METODOSPAGO as $mp ){
+                                $imagen = "";
+                                $boton  = "";
+                                if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                                    $mp[ "settings" ][ "tipocomision" ] = "";
+                                }
+
+                                if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                                    if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
+
+                                        $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
+
+                                        $boton .= "\n<div class=\"row g-0 metodopago\" style=\"display:none\"><div class=\"col-6\">{$imagen}</div><div class=\"col-6\"><button class=\"btn col-12 m-0 rounded-start-0 btn-primary\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button></div><div class=\"col-12\">descripcion<button class=\"btn btn-success\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\">Elegir</button></div></div>";
+                                    }
+
+                                    echo $boton;
+                                } 
+                            }
+                        ?>
+
+                        
+
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
 
     <div class="modal" tabindex="-1" id="modal_domicilios">

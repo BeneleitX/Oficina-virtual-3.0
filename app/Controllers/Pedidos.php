@@ -206,28 +206,101 @@ class Pedidos extends BaseController
     {
         $this->data[ "navbar" ] = true;
 
-        $modelo = $data;
-        $activo = "estatus_codigo = '201-ACTIVO'";
-        $sql    = "{$activo} AND modelo_codigo = '{$modelo}'";
+        // Entrar a pedido en espera de pago o pagado (usando referencia)
+        if( $tipo == "pedido" ){
 
-        $this->data[ "socio" ]     = $this->data[ "usuario" ];
-        $this->data[ "pagado" ]    = 0;
-        $this->data[ "enproceso" ] = 1;
-        $this->data[ "bloqueado" ] = 0;
-        $this->data[ "cancelado" ] = 0;
-        $this->data[ "entregado" ] = 0;
-        $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
-        $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
+            $this->data[ "titulo" ] = "Detalles de pedido";
+            $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
 
-        load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
-        load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+            if( !$this->data[ "pedido" ] ){ 
+                // return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
+                return template( "pedidos/no_pedido", $this->data );
+            }
 
-        $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
-        $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $modelo );
-        $this->data[ "titulo" ] = "Tienda en línea";
-        $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ];
+            if( $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){ 
+                // return redirect()->to( 'tienda/'.$this->data[ "pedido" ][ "modelo_codigo" ] );
+            }
+
+            $modelo = $this->data[ "pedido" ][ "modelo_codigo" ];
+
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
+            load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
+            load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+            load_catalogo( "esquemas",       "modelo_codigo = '{$modelo}'");
+
+            $staff = false;
+
+            if( $this->data[ "pedido" ][ "metodoentrega_codigo" ] == "00-ALMACEN" ){
+                $staff = true;
+
+                if( !$this->data[ "pedido" ][ "data" ][ "entrega" ] ){
+                    $this->data[ "pedido" ][ "data" ][ "entrega" ] = VARIABLES[ "almacen_principal" ][ "valor" ];
+                    model( "PedidoModel" )->save( $this->data[ "pedido" ] );
+                }
+
+                if( !isset( ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ] )){
+                    $this->data[ "pedido" ][ "data" ][ "entrega" ] = (substr( $modelo, 0, 1 ) - 1 )."11-OFICINAS";
+                }
+
+                $ff = ALMACENES[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ][ "settings" ][ "staff" ];
+
+                if( !( $this->data[ "usuario" ]->permiso( "18-STOCK" ) && in_array( $this->data[ "usuario" ]->id, $ff ) ) ){
+                    $staff = false;
+                }
+            }
+
+            if( !$staff && $this->data[ "usuario" ]->id !=intval(  $this->data[ "pedido" ][ "usuario_id" ] ) && !(
+                $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+                $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+                $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+            ) ){
+                return template( "pedidos/no_permiso", $this->data );
+            }
+            
+            /**********************************/
+
+            $this->data[ "link" ]  = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
+            $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
+            $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
+
+            $sql = "/* estatus_codigo = '201-ACTIVO' AND */ modelo_codigo = '{$modelo}'";
+            $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
+    
+            $this->data[ "enproceso" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 250 && ( $this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id ) ? 1 : 0;
+            $this->data[ "cancelado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) < 200 ? 1 : 0;
+            $this->data[ "pagado" ]    = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 400 ? 1 : 0;
+            $this->data[ "bloqueado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 255 /* || ($this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id ) */ ? 1 : 0;
+            $this->data[ "entregado" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) > 500 ? 1 : 0;
+        }
+
+        // Entrar directo a URl tienda (sin referencia, pedido en proceso)
+        else{
+            $modelo = $data;
+            $activo = "estatus_codigo = '201-ACTIVO'";
+            $sql    = "{$activo} AND modelo_codigo = '{$modelo}'";
+
+            $this->data[ "socio" ]     = $this->data[ "usuario" ];
+            $this->data[ "pagado" ]    = 0;
+            $this->data[ "enproceso" ] = 1;
+            $this->data[ "bloqueado" ] = 0;
+            $this->data[ "cancelado" ] = 0;
+            $this->data[ "entregado" ] = 0;
+            $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
+            $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
+
+            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}'");
+            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
+            load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'", "stocks" );
+            load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+
+            define( "ALMACENES", STOCKS );
+
+            $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
+            $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $modelo );
+            $this->data[ "titulo" ] = "Tienda en línea";
+            $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ];
+        }
 
         $this->data[ "modelo" ] = $modelo;
         
@@ -282,7 +355,7 @@ class Pedidos extends BaseController
 
             $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( 'Ym', strtotime( date('Y-m', strtotime( $f.'-01'. ' -1 month' ) ) ) )."' )" );             
             $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $f ) )."' )" );  
-            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "do f_get_estatus( {$u->id}, 1 )" );
             $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );    
 
             // BITACORA Actualizar reparto de comisiones
@@ -327,14 +400,14 @@ class Pedidos extends BaseController
 
             $db = db_connect();
 
-            $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" ); 
+            $db->query( "do f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" ); 
 
             if( $mescalifica != $mesprevio ){
-                $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
+                $db->query( "do f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mesprevio}' )" );  
             }
 
-            $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
-            $db->query( "select f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" )->getRow();            
+            $db->query( "do f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
+            $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );            
         }
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
@@ -393,8 +466,8 @@ class Pedidos extends BaseController
 
                 $db = db_connect();
 
-                $db->query( "select f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
-                $db->query( "select f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
+                $db->query( "do f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
+                $db->query( "do f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
             }
 
             // BITACORA Cancelar pedido
@@ -470,9 +543,9 @@ class Pedidos extends BaseController
             model( "UsuarioModel" )->save( $u );    
 
             $db = db_connect();
-            $db->query( "select f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
-            $db->query( "select f_get_estatus( {$u->id}, 1 )" );
-            $db->query( "select f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
+            $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
+            $db->query( "do f_get_estatus( {$u->id}, 1 )" );
+            $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
         
             // BITACORA Marcar pedido como pagado
             bitacora( 56, $this->data[ "usuario" ]->id, [ 

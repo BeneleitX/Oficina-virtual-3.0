@@ -63,7 +63,7 @@ abstract class BaseController extends Controller
 
         $router = \Config\Services::router();
         $_controller = explode("\\", $router->controllerName()); 
-        if( $_controller[3] != "sesion" && !$request->isAJAX() ) update_estatus_random( 1 );
+        if( $_controller[ 3 ] != "sesion" && !$request->isAJAX() && rand( 0, 1 ) == 0 ) update_estatus_random( 1 );
 
         // Preload any models, libraries, etc, here.
         $this->session = session();

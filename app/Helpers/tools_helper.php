@@ -639,7 +639,7 @@ function load_catalogo( $tabla, $where = null, $nombre = null ){
     // catálogo de modelos de negocio
     $array = [];
     
-    foreach( $db->query( "select * from t_{$tabla}".( $where ? " where ".$where : "")." order by codigo" )->getResultArray() as $row ){ 
+    foreach( $db->query( "select * from t_{$tabla}".( $where ? " where ".$where : "")." order by ".( $nombre == "stocks" ? "nombre" : "codigo") )->getResultArray() as $row ){ 
         $tmp = [];
 
         foreach( $row as $k => $d ){

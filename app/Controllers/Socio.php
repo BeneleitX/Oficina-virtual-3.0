@@ -761,7 +761,7 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $socio );
 
-        // BITACORA Actualziar CLABE interbancaria
+        // BITACORA Actualziar RFC
         bitacora( 48, $socio->id, [ 
             "rfc"   => $rfc,
             "usuario" => $this->data[ "usuario" ]->id

@@ -74,7 +74,7 @@ class Sesion extends BaseController
                 $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
             }
 
-            $db->query( "do f_get_estatus(  {$socio->id}, 1 )" );
+            $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
             $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
 
             $this->session->set( "usuario", $socio->id );
@@ -169,7 +169,7 @@ class Sesion extends BaseController
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
 
-            $db->query( "do f_get_estatus(  {$usuario->id}, 1 )" );
+            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
 
             // si es password original revisa si es activo, si no, rechaza login
