@@ -19,6 +19,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" ) ||
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "34-VALIDACION" ) ||
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 

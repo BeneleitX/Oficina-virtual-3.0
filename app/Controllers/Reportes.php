@@ -81,6 +81,13 @@ class Reportes extends BaseController
 
     public function excel_socios_por_estatus()
     {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+                
         $db       = db_connect();
         $modelo   = $this->request->getPost( "modelo" );
         $estatus  = $this->request->getPost( "estatus");
