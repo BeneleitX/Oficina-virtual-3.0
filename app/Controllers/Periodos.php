@@ -188,7 +188,7 @@ class Periodos extends BaseController
             "periodo" => $periodo,
             "avance" => $avance
         ] ); */
-  $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
+//  $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
         try {
 //            $db->transStrict(false);
   //          $db->transException(true)->transStart();
