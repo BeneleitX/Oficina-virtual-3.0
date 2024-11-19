@@ -21,7 +21,7 @@ $menu = [
     [ "secondary", "redes/".getModeloPrincipal(), "sitemap", "Redes", 0,[] ],
     [ "secondary", "callcenter", "headset", "Call center", 0,[] ],
     [ "secondary", "mensajeria", "envelope", "Mensajes masivos", 0,[] ],
-    [ "secondary", "reportes", "chart-pie", "Reportes", 0,[ "38-CONTABILIDAD" ] ],
+    [ "warning", "reportes", "chart-pie", "Reportes", 0,[ "38-CONTABILIDAD" ] ],
     [ "secondary", "backups", "cloud-arrow-down", "Respaldos de BD", 0,[] ],
     [ "secondary", "tickets", "ticket", "Tickets de soporte", 0,[] ],  
     [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", $almacenes, ["20-ALMACEN", "18-STOCK", "40-ADMIN"] ],    

@@ -364,11 +364,11 @@ function update_pedido( flag = null ){
         b.hide();
     }
       
-    $( 'button[name=metodopago]' ).each( function( a, b){
-        var metodopago  = $( this ).attr( 'value' ),
+    $( 'div.metodopago' ).each( function( a, b){
+        var metodopago  = $( this ).attr( 'metodopago' ),
+            boton       = $( this ).find( '[name=metodopago]' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
-            padre       = $( this ).closest( 'div.metodopago' ),
             comision    = 0;
 
         switch( metodospago[ metodopago ].settings.tipocomision ){
@@ -383,6 +383,7 @@ function update_pedido( flag = null ){
         caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
         cantidad.html( caption );
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
+        console.log();
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
@@ -715,7 +716,7 @@ $(document).ready(function()
 
     $( '#no_pago' ).hide();
     $( 'button[name=metodopago], div.metodopago' ).show();
-    $( 'img[metodopago]' ).show();
+    // $( 'img[metodopago]' ).show();
 
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
 
@@ -764,4 +765,7 @@ $(document).ready(function()
     $( '#open_checkout' ).on( 'click', function(){
         $( '#modal_checkout' ).modal( 'show' );
     });
+
+
+
 });

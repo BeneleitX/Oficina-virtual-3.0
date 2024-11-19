@@ -47,6 +47,7 @@ function getStatus(total) {
 
                 if( respuesta.porcentaje_pagos < 100 ){
                     getStatus(total);
+                    console.log(respuesta);
                 }
             }
         })
@@ -55,6 +56,8 @@ function getStatus(total) {
 
 function do_corte( total, avance = 0 ){
     var step = 25;
+
+    total = parseInt( total ); 
 
     $.ajax({
         url: base_url + 'corte',
@@ -67,6 +70,7 @@ function do_corte( total, avance = 0 ){
             avance += ( resultado * step );
             
             if( avance < total ){
+                console.log(avance, total);
                 setTimeout(function(){
                     do_corte( total, avance );
                 }, 500);   

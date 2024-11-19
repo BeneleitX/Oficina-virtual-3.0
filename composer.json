@@ -14,10 +14,11 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "conekta/conekta-php": "*@dev",
+        "guzzlehttp/guzzle": "^7.9",
         "laminas/laminas-escaper": "^2.9",
         "phpoffice/phpspreadsheet": "^2.1",
-        "psr/log": "^1.1",
-        "conekta/conekta-php": "*@dev"
+        "psr/log": "^1.1"
     },
     "require-dev": {
         "codeigniter/coding-standard": "^1.7",

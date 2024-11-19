@@ -51,6 +51,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 
+    $routes->get( "reportes",               "Reportes::menu" );
+    $routes->get( "reportes/socios_por_estatus",     "Reportes::socios_por_estatus" );
+    $routes->post( "excel_socios_por_estatus",       "Reportes::excel_socios_por_estatus" ); 
+
     $routes->get( "soporte",                "Soporte::inicio" );    
     $routes->get( "tickets",                "Soporte::tickets" );    
 

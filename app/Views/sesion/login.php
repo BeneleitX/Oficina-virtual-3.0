@@ -33,11 +33,11 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 
 				<button class="carousel-control-prev" type="button" data-bs-target="#carrusel" data-bs-slide="prev">
 					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
+					<span class="visually-hidden">Anterior</span>
 				</button>
 				<button class="carousel-control-next" type="button" data-bs-target="#carrusel" data-bs-slide="next">
 					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
+					<span class="visually-hidden">Siguiente</span>
 				</button>
 			</div>
 
@@ -45,7 +45,17 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 		}
 		?>
 		
-		<p class="text-center my-3 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://recarga.beneleit.talentonet.com/" style="border-radius:15px"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Recarga Express</a></p>
+
+<div class="row mb-2 mt-1">
+<div class="col-md-6">
+	<p class="text-center mb-1 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://core.beneleit.talentonet.com/activar/" style="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Activa tu línea</a></p>
+	</div>
+
+	<div class="col-md-6">
+	<p class="text-center mb-1 text-white"><a class="mt-2 btn btn-info2 py-2 col-12" href="https://recarga.beneleit.talentonet.com/" style="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> Recarga Express</a></p>
+	</div>	
+</div>
+		
 		</div>
 		<div class="col-lg-1">
 
@@ -72,7 +82,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 						</div>
 						
 					</div>
-					<p class="text-center my-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" style="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
+					<p class="text-center my-3 text-white">¿Aun no eres socio?<br><a class="mt-2 btn btn-warning py-3 col-12" href="<?php echo base_url( "formulario" ); ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> Registrate aquí</a></p>
 					
 		</div>
 	</div>	

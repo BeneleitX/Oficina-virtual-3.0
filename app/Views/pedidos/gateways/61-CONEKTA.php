@@ -27,7 +27,7 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
         ],
         "checkout" => [
             "type" => "Integration",
-            "allowed_payment_methods" => [ "card" ],
+            "allowed_payment_methods" => [ "cash" ],
             "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
             "redirection_time" => 5,
             "success_url"      => "http://xxx.com"

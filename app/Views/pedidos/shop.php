@@ -1,3 +1,5 @@
+
+
 <h4 class="mt-1 mb-0">
     <?php echo $titulo; ?> - 
     <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> 
@@ -976,16 +978,19 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
     <div class="modal" tabindex="-1" id="modal_checkout">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form method="post" action="<?php echo base_url( "cancela_pedido" ); ?>">
-                    <?php echo csrf_field() ?>
+                <form method="post" action="<?php echo base_url( "checkout" ); ?>">
+                <?php echo csrf_field(); ?>
+            
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Finalizar pedido</h5>
+                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Elegir método de pedido</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                       
+                        <div class="accordion accordion-flush" id="accordionExample">
                         <?php   
+                            $cc = 0;
                             foreach( METODOSPAGO as $mp ){
                                 $imagen = "";
                                 $boton  = "";
@@ -996,27 +1001,45 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                 if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
                                     if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
 
-                                        $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
+                                        $file   = "assets/img/metodospago/{$mp[ "codigo" ]}.png";
+                                        $imagen =  "<img style=\"height:63px; width:240px\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\">";
 
-                                        $boton .= "\n<div class=\"row g-0 metodopago\" style=\"display:none\"><div class=\"col-6\">{$imagen}</div><div class=\"col-6\"><button class=\"btn col-12 m-0 rounded-start-0 btn-primary\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button></div><div class=\"col-12\">descripcion<button class=\"btn btn-success\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\">Elegir</button></div></div>";
+                                        $boton .= "\n
+                                        <div class=\"accordion-item\"><div class=\"alert alert-info mb-0 ".($cc++ ? "mt-3" : "" )." p-0 tipo_pago accordion-button collapsed\" style=\"cursor:pointer\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse_{$mp[ "codigo" ]}\" aria-expanded=\"false\" aria-controls=\"collapse_{$mp[ "codigo" ]}\">
+                                            <div class=\"row g-0 metodopago w-100\" style=\"display:none\" metodopago=\"{$mp[ "codigo" ]}\">
+                                                <div class=\"col-4\">{$imagen}</div>
+                                                <div class=\"col-5 p-2\"><h5 style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."</span></div>
+                                                <div class=\"col-3 text-end p-3\"><h4 class=\"cantidad m-0\">$".number_format( $tt, 2 )."</h4></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id=\"collapse_{$mp[ "codigo" ]}\" class=\"accordion-collapse collapse\" data-bs-parent=\"#accordionExample\">
+                                        <div class=\"col-12 alert alert-light pago_datos accordion-body\" id=\"detalle_{$mp[ "codigo" ]}\">";
+                                        
+                                        switch( $mp[ "codigo" ] ){
+                                            case "61-CONEKTA": 
+                                                 $boton .= "\n<img src=\"".base_url()."assets/img/puntos_conekta.png\" class=\"img-fluid mb-2\">";
+                                                break;
+
+                                            default:
+                                                $boton .= "\n";
+                                        }
+
+                                        
+                                        
+                                        $boton .= "<div class=\"row\"><div class=\"col-6\">Instrucciones de pago</div><div class=\"col-6\"><button class=\"btn btn-success col-12\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\">Pagar con {$mp[ "nombre" ]}</button></div></div></div></div>";
                                     }
 
                                     echo $boton;
                                 } 
                             }
                         ?>
-
-                        
-
-                        <?php echo csrf_field(); ?>
-                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-
 
 
     <div class="modal" tabindex="-1" id="modal_domicilios">
