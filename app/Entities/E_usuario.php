@@ -59,6 +59,47 @@ class E_usuario extends Entity
         return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
     }
 
+
+    public function valida_modelo( $modelo ){
+        if(1){
+
+            
+            foreach( MODELOS as $m ){
+                if( $m[ "settings" ][ "efectivo" ] ){
+                    $recibe[ "historial" ][ "modelos" ][ $m[ "codigo" ] ] = [
+                        "primercompra"   => json_decode( "{}" ),
+                        "ultimacompra"   => null,
+                        "fondeos" => [],
+                        "reset" => $fecha,
+                        "ingresos" => [
+                            date( "Ym" ) => []
+                        ],
+                        "calificaciones" => [
+                            date( "Ym" ) => []
+                        ]
+                    ];
+    
+                    $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = [
+                        "cantidad" => 0.00,
+                        "estatus"  => 0
+                    ];
+                    $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
+    
+                    $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
+                        "padre" => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ],
+                        "hijos" => [],
+                        "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
+                        "profundidad" => [
+                            "activos" => [0,0,0],
+                            "calificados" => [0,0,0]
+                        ]
+                    ];
+                }
+            }
+
+        }
+    }
+
     
     public function resetPassword()
     {
