@@ -48,6 +48,6 @@ else
     $link   = new mysqli("localhost", "vpsbeneleitmx_root", "B3n3l31t**", "vpsbeneleitmx_app");
 
 $result = mysqli_query($link, "select valor from t_variables where codigo = 'avance_corte'" );
-echo mysqli_fetch_row( $result )[0];
+echo json_encode( json_decode( mysqli_fetch_row( $result )[0] ) );
 mysqli_close($link);
 

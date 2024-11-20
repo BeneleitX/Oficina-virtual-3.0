@@ -211,7 +211,7 @@ class Periodos extends BaseController
         } catch (DatabaseException $e) {
              print_r($e);
              echo 0;
-            $db->query( "UPDATE t_variables SET valor = '".json_encode( $data )."' WHERE codigo = 'avance_corte'" );
+           // $db->query( "UPDATE t_variables SET valor = '".json_encode( $data )."' WHERE codigo = 'avance_corte'" );
         }
     } 
     
