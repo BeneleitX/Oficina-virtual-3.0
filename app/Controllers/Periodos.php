@@ -209,7 +209,7 @@ class Periodos extends BaseController
             $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
             echo 1;
         } catch (DatabaseException $e) {
-           //  print_r($e);
+             //print_r($e);
              echo 0;
            // $db->query( "UPDATE t_variables SET valor = '".json_encode( $data )."' WHERE codigo = 'avance_corte'" );
         }
