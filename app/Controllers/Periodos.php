@@ -127,7 +127,19 @@ class Periodos extends BaseController
         $db = db_connect();
         
         $sql = "UPDATE t_variables 
-                SET valor = JSON_SET( valor, '$.porcentaje_comisiones', 0, '$.porcentaje_pagos', 0 ) 
+                SET valor = json_object(
+                    'periodo', '".$this->request->getPost( "periodo" )."',
+                    'pedidos', 0,
+                    'pagos', 0,
+                    'socios', 0,
+                    'comisiones', 0,
+                    'isr', 0,
+                    'total', 0,
+                    'total_pedidos', 0, 
+                    'total_pagos', 0,
+                    'porcentaje_comisiones', 0,
+                    'proceso', JSON_OBJECT(),
+                    'porcentaje_pagos', 0 ) 
                 WHERE codigo = 'avance_corte'";
         
         $db->query( $sql );
@@ -184,21 +196,22 @@ class Periodos extends BaseController
         */
 
         // BITACORA corte parcial / corte semanal      
-/*         bitacora( 43, $this->data[ "usuario" ]->id, [
+        /* 
+        bitacora( 43, $this->data[ "usuario" ]->id, [
             "periodo" => $periodo,
             "avance" => $avance
-        ] ); */
-//  $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
-        try {
-//            $db->transStrict(false);
-  //          $db->transException(true)->transStart();
+        ] ); 
+         */
+
+        $data = json_decode( $db->query( "select valor from t_variables where codigo = 'avance_corte'" )->getRow()->valor );
+
+         try {
             $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
-    //        $db->transComplete();
             echo 1;
         } catch (DatabaseException $e) {
-            // print_r($e);
-            echo 0;
-            $db->query( "UPDATE t_variables SET valor = json_set( valor, '$.pedidos', valor->'$.pedidos' - {$step} ) WHERE codigo = 'avance_corte'" );
+             print_r($e);
+             echo 0;
+            $db->query( "UPDATE t_variables SET valor = '".json_encode( $data )."' WHERE codigo = 'avance_corte'" );
         }
     } 
     
