@@ -17,13 +17,11 @@
         <link href="<?php echo base_url(); ?>assets/css/OverlayScrollbars.css" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/beneleit.css?<?php echo filemtime( "assets/css/beneleit.css" ); ?>" rel="stylesheet">
         
-        <!meta http-equiv="refresh" content="7200">
-
         <script src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
 
     </head>
     
     <body class="bg-<?php echo $fondo; ?>">
-        <div class="p-3 <?php echo $navbar ? "con-navbar" : ""; ?>" id="contenedor-body">
+        <div class="p-<?php echo $header_x ? "0" : "3" ?> <?php echo $navbar ? "con-navbar" : ""; ?>" id="contenedor-body">
             

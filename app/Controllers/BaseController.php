@@ -49,7 +49,8 @@ abstract class BaseController extends Controller
         "usuario"   => null,
         "navbar"    => false,
         "menu"      => null,
-        "fondo"     => "light"
+        "fondo"     => "light",
+        "header_x"  => null
     ];
 
     /**

@@ -33,6 +33,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout/(:num)/(:any)",              "Sesion::logout/$1/$2" );
     $routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
 
+    $routes->get( "dashboard",              "Panel::inicio" );    
+
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
     $routes->post( "splash",                "Dashboard::splash" );
