@@ -10,6 +10,8 @@ class Admin extends BaseController
 
     public function dashboard(){
 
+        $this->data[ "usuario" ]->valida_modelo();
+
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||

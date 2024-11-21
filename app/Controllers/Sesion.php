@@ -65,8 +65,11 @@ class Sesion extends BaseController
 
         // SI es un login automático de switch de admin
         if( $socio ){
+            
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+
+            $socio->valida_modelo();
 
             $db = db_connect();
             foreach( MODELOS as $m ){
@@ -112,6 +115,8 @@ class Sesion extends BaseController
 
             $datax    = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
+
+            $usuario->valida_modelo();
 
             // Password corrompido, debe generar uno nuevo
 

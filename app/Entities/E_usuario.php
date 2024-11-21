@@ -60,17 +60,22 @@ class E_usuario extends Entity
     }
 
 
-    public function valida_modelo( $modelo ){
-        if(1){
+    public function valida_modelo(){
+        foreach( MODELOS as $m ){
 
-            
-            foreach( MODELOS as $m ){
-                if( $m[ "settings" ][ "efectivo" ] ){
-                    $recibe[ "historial" ][ "modelos" ][ $m[ "codigo" ] ] = [
+            if( $m[ "settings" ][ "efectivo" ] ){
+
+                if( 
+                    !isset( $this->historial->modelos->{$m[ "codigo" ]} ) ||
+                    !isset( $this->redes->modelos->{$m[ "codigo" ]} ) ||
+                    !isset( $this->data->estatus->modelos->{$m[ "codigo" ]} ) 
+                ){
+                    $historial = $this->historial;
+                    $historial->modelos->{$m[ "codigo" ]} = [
                         "primercompra"   => json_decode( "{}" ),
                         "ultimacompra"   => null,
                         "fondeos" => [],
-                        "reset" => $fecha,
+                        "reset" => $historial->modelos->{"10-NUTRICION"}->reset,
                         "ingresos" => [
                             date( "Ym" ) => []
                         ],
@@ -78,15 +83,17 @@ class E_usuario extends Entity
                             date( "Ym" ) => []
                         ]
                     ];
-    
-                    $recibe[ "data" ][ "saldo" ][ $m[ "codigo"] ] = [
+
+                    $data = $this->data;
+                    $data->saldo->{$m[ "codigo"]} = [
                         "cantidad" => 0.00,
                         "estatus"  => 0
                     ];
-                    $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
-    
-                    $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
-                        "padre" => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ],
+                    $data->estatus->modelos->{$m[ "codigo"]} = "210-NUEVO";
+
+                    $redes = $this->redes;
+                    $redes->modelos->{$m[ "codigo" ]} = [
+                        "padre" => $redes->patrocinador,
                         "hijos" => [],
                         "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
                         "profundidad" => [
@@ -94,9 +101,15 @@ class E_usuario extends Entity
                             "calificados" => [0,0,0]
                         ]
                     ];
+
+                    $this->historial = $historial;
+                    $this->data = $data;
+                    $this->redes = $redes;
+
+                    // Actualización de datos de socio al agregar un nuevo modelo de negocio
+                    model( "UsuarioModel" )->save( $this );
                 }
             }
-
         }
     }
 
@@ -270,6 +283,7 @@ class E_usuario extends Entity
 
             $db  = db_connect();
             $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
+            
             $calificaciones = $db->query($sql)->getRowArray();
 
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
@@ -285,7 +299,10 @@ class E_usuario extends Entity
                 case "30-ALIMENTOS" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
                     break;
-            }
+                case "40-COMBUSTIBLES" : 
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
+                    break;
+                        }
 
             return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span><span class='badge w-100 bg-".$estatus[ "color" ]."'>{$estatus[ "descripcion" ]}</span><div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
@@ -941,7 +958,7 @@ class E_usuario extends Entity
         ];
 
         $inicia  = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01";
-        $termina = substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-31";
+        $termina = date( "Y-m-d", strtotime( $inicia." + 1 month - 1 day") );
 
         $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
                 WHERE esquema_codigo = '118-PROMOS-50'

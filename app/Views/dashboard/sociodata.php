@@ -150,7 +150,10 @@
                     <?php 
                     
                     foreach( MODELOS as $m ){
+                        
                         $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre);
+                        $pat->valida_modelo();
+                        
                         echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5><a class=\"\" href=\"".base_url()."/sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
                         
                         if( isset( $pedidos[ $m[ "codigo" ] ] ) ){

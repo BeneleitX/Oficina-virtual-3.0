@@ -14,6 +14,8 @@ class Dashboard extends BaseController
         $this->data[ "titulo" ] = "¡Hola {$this->data[ "usuario" ]->nombre()}! ".$this->data[ "usuario" ]->id( null, "marine");
         $this->data[ "checks" ] = $this->data[ "usuario" ]->getChecks( "10-NUTRICION" );
         
+        $this->data[ "usuario" ]->valida_modelo();
+
         $sql = "estatus_codigo = '201-ACTIVO'";
         $this->data[ "bloques" ] = model( "BloqueModel" )->where( $sql , null, false )->orderBy('columna', 'asc')->orderBy('orden', 'asc')->findAll();
 
@@ -68,6 +70,7 @@ class Dashboard extends BaseController
 
         // Se hace doble consulta para que carque la validación
         $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
+        $this->data[ "socio" ]->valida_modelo();
         
         // BITACORA Consulta de datos
         bitacora( 50, $this->data[ "usuario" ]->id, [ 
