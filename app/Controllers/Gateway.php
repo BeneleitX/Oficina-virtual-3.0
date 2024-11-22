@@ -15,6 +15,17 @@ class Gateway extends BaseController
 
     }
 
+    public function ConektaRedirect(){
+        $respuesta = $this->request->getGet();
+
+        $this->data["respuesta"] = $respuesta;
+        $this->data["ok"] = true;
+        $this->data[ "navbar" ]  = false;
+        $this->data[ "referencia" ]  = "0000";
+
+        echo template( "gateway/conekta", $this->data );
+
+    }
 }
 
 /*

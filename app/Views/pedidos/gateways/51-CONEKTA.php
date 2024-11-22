@@ -8,20 +8,19 @@ use Conekta\ApiException;
 
 $conekta  = VARIABLES[ "conekta" ][ "valor" ][ "ambientes" ][ "sandbox" ];
 $client   = new \GuzzleHttp\Client();
+
+
 $response = $client->request('POST', 'https://api.conekta.io/orders', [
     "body" => json_encode( [
         "customer_info" => [
-            "name"  => "juan perez",
-            "email" => "scabbia@gmail.com",
-            "phone" => "3245234523"
-        ],
-        "metadata" => [
-            "referencia" => "11931234"
+            "name"  => $socio->nombre( 2 ),
+            "email" => $socio->correo,
+            "phone" => $socio->telefono
         ],
         "line_items" => [
             [
                 "unit_price" => 23000,
-                "name"       => "Box of Cohiba S1s",
+                "name"       => $pedido[ "referencia" ],
                 "quantity"   => 1
             ]
         ],
@@ -30,7 +29,7 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
             "allowed_payment_methods" => [ "card" ],
             "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
             "redirection_time" => 5,
-            "success_url"      => "http://xxx.com"
+            "success_url"      => "https://app.beneleit.mx/ConektaRedirect"
         ],
         "currency" => "MXN"
     ]),
@@ -42,6 +41,10 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
 ]);
 
 $stream = json_decode( $response->getBody() );
+
+$pedido[ "data" ][ "conekta" ][ "id" ] = $stream->id;
+
+dd($pedido, $socio, $stream );
 ?>
 
 <p class="text-center">

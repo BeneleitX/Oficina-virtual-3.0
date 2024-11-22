@@ -24,6 +24,7 @@ $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
 $routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" ); 
+$routes->get( "ConektaRedirect",            "Gateway::ConektaRedirect" ); 
 
 $routes->get( "no_internet",                        "Tools::no_internet" );   
 $routes->get( "compresion/(:any)/(:num)/(:num)",   "Tools::compresion/$1/$2/$3" );     

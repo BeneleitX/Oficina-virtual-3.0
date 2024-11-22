@@ -66,7 +66,7 @@ $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
     </table>
 
 <div class="card-body pt-0">
-    <div class="mt-3 badge col-12 bg-<?php echo $t_actual ? "teal" : "gray-400" ?> text-white">
+    <div class="mt-3 d-none badge col-12 bg-<?php echo $t_actual ? "teal" : "gray-400" ?> text-white">
         <div class="mt-2">Total acumulado SEMANA <?php echo date( "Y-W" ); ?><h1 class="my-1 text-white">$<?php echo number_format( $t_actual, 2 ); ?><?php echo $t_actual ? "<span class=\"badge\" data-bs-custom-class=\"tooltip-mustard\" title=\"<i class='fa fa-warning'></i> Antes del pago, se aplicará a esta cantidad la retención de ISR correspondiente. \" data-bs-toggle=\"tooltip\"><i class=\"fa fa-warning text-mustard small\"></i></span>" : "" ?></h1></div>
     </div>
 

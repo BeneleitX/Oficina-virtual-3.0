@@ -4,6 +4,8 @@
     <div class="progress-bar bg-<?php echo $usuario->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated"; ?>" style="width: <?php echo $usuario->verificado->porcentaje; ?>%"><?php echo $usuario->verificado->estatus ? "SOCIO VERIFICADO" : "VERIFICACION AL ".$usuario->verificado->porcentaje."%"; ?></div>
     </div>
 </div>
+
+<div class="row mx-2 my-3">
 <?php
 
 $bot     = "";
@@ -27,6 +29,8 @@ if( !defined( "calificaciones" ) ){
 }
 
 foreach( MODELOS as $m ){
+    echo "\n<div class=\"col-6 text-center mt-3\"><div xclass=\"card\"><div xclass=\"card-body\">";
+
     $sql = "select 
         f_get_calificacion( {$usuario->id}, '{$m_2}', '{$m[ "codigo" ]}' ) as 'm_2', 
         f_get_calificacion( {$usuario->id}, '{$m_1}', '{$m[ "codigo" ]}' ) as 'm_1', 
@@ -35,48 +39,41 @@ foreach( MODELOS as $m ){
     $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
 
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
-    $headers .= "<th class=\"text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</td>";
-    $bot .="<td class=\"col-4 rounded p-2 text-center small bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</td>";
- 
- 
+    
+    echo "\n<div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
+            <div class=\"small mb-2\"><div class=\"py-2 badge col-12 bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</div></div>";
+  
     switch( $m["codigo"] ){
         case "10-NUTRICION": 
-            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>CALIFICADO - ".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>CALIFICADO - ".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"border-left:1px solid #fff !important; font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";       
+            $cal = "<div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"border-left:1px solid #fff !important; font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
             break;
 
         case "20-TELEFONIA": 
 
-            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+            $cal = "<div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
             break;
 
         case "30-ALIMENTOS": 
-            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+            $cal = "<div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
             break;
 
-        case "40-COMBUSTIBLES": 
-
-            $cal .= "<td><div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
-            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".(CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div></td>";
+        case "40-GASOLINAS": 
+            $cal = "<div class=\"input-group input-xgroup-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-2 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
             break;
-    
     }
- 
+
+    echo "\n{$cal}\n</div></div></div>";
 }
 
 ?>
-
-<div class="card-body p-2">
-    <table class="m-0 w-100" style="border-spacing: 10px;border-collapse: separate; ">
-        <tr><?php echo $headers; ?></tr>
-        <tr><?php echo $bot; ?></tr>
-        <tr><?php echo $cal; ?></tr>
-    </table>
 </div>
 
 <?php

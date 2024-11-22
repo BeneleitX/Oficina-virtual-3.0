@@ -299,7 +299,7 @@ class E_usuario extends Entity
                 case "30-ALIMENTOS" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
                     break;
-                case "40-COMBUSTIBLES" : 
+                case "40-GASOLINAS" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
                     break;
                         }
