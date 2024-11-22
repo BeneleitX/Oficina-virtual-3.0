@@ -9,6 +9,9 @@ use Conekta\ApiException;
 $conekta  = VARIABLES[ "conekta" ][ "valor" ][ "ambientes" ][ "sandbox" ];
 $client   = new \GuzzleHttp\Client();
 
+$subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
+$comisionbanco = ceil( $subtotal * 2 / 100 );
+$total    = $subtotal + $comisionbanco;
 
 $response = $client->request('POST', 'https://api.conekta.io/orders', [
     "body" => json_encode( [
@@ -19,7 +22,7 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
         ],
         "line_items" => [
             [
-                "unit_price" => 23000,
+                "unit_price" => $total,
                 "name"       => $pedido[ "referencia" ],
                 "quantity"   => 1
             ]
@@ -42,9 +45,9 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
 
 $stream = json_decode( $response->getBody() );
 
-$pedido[ "data" ][ "conekta" ][ "id" ] = $stream->id;
+$pedido[ "data" ][ "conekta" ][ "order" ] = $stream->id;
+$pedido[ "data" ][ "conekta" ][ "checkout" ] = $stream->checkout->id;
 
-dd($pedido, $socio, $stream );
 ?>
 
 <p class="text-center">
@@ -53,7 +56,7 @@ dd($pedido, $socio, $stream );
 
 <script crossorigin src="https://pay.conekta.com/v1.0/js/conekta-checkout.min.js"></script>
 
-<div id="example" style="height: 714px"></div>
+<div id="conekta_component" style="height: 714px"></div>
 <script>
     const options = {
         backgroundMode: 'lightMode', //lightMode o darkMode
@@ -64,7 +67,7 @@ dd($pedido, $socio, $stream );
     };
     const config = {
         locale: 	  	   'es',
-        targetIFrame: 	   '#example',
+        targetIFrame: 	   '#conekta_component',
         publicKey:    	   '<?php echo $conekta[ "public_key" ]; ?>',
         checkoutRequestId: '<?php echo $stream->checkout->id; ?>',
     };
