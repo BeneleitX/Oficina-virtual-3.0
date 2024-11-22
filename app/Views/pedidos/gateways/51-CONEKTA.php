@@ -12,6 +12,7 @@ $client   = new \GuzzleHttp\Client();
 $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
 $comisionbanco = ceil( $subtotal * 2 / 100 );
 $total    = $subtotal + $comisionbanco;
+
 $json     = [
     "body" => json_encode( [
         "customer_info" => [
@@ -21,7 +22,7 @@ $json     = [
         ],
         "line_items" => [
             [
-                "unit_price" => $total,
+                "unit_price" => $total * 100,
                 "name"       => $pedido[ "referencia" ],
                 "quantity"   => 1
             ]
