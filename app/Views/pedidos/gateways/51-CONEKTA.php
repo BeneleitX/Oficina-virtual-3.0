@@ -12,11 +12,10 @@ $client   = new \GuzzleHttp\Client();
 $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
 $comisionbanco = ceil( $subtotal * 2 / 100 );
 $total    = $subtotal + $comisionbanco;
-
-$response = $client->request('POST', 'https://api.conekta.io/orders', [
+$json     = [
     "body" => json_encode( [
         "customer_info" => [
-            "name"  => $socio->nombre( 2 ),
+            "name"  => limpia_acentos( $socio->nombre( 2, false, true ) ),
             "email" => $socio->correo,
             "phone" => $socio->telefono
         ],
@@ -41,9 +40,10 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
         "authorization" => "Bearer ".$conekta[ "private_key" ],
         "content-type"  => "application/json",
     ],
-]);
+]; 
 
-$stream = json_decode( $response->getBody() );
+$response = $client->request('POST', 'https://api.conekta.io/orders', $json );
+$stream   = json_decode( $response->getBody() );
 
 $pedido[ "data" ][ "conekta" ][ "order" ] = $stream->id;
 $pedido[ "data" ][ "conekta" ][ "checkout" ] = $stream->checkout->id;
