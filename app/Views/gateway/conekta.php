@@ -18,8 +18,3 @@
 
     </div>
 </div>
-<?php
-
-d( $respuesta );
-
-?>

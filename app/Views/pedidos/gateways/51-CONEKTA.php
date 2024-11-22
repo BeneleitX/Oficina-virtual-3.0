@@ -49,6 +49,8 @@ $stream   = json_decode( $response->getBody() );
 $pedido[ "data" ][ "conekta" ][ "order" ] = $stream->id;
 $pedido[ "data" ][ "conekta" ][ "checkout" ] = $stream->checkout->id;
 
+model( "PedidoModel" )->save( $pedido );
+
 ?>
 
 <p class="text-center">
