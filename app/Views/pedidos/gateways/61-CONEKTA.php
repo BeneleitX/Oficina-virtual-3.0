@@ -27,6 +27,9 @@ $json     = [
                 "quantity"   => 1
             ]
         ],
+        "metadata" => [
+            "referencia" => $pedido[ "referencia" ]
+        ],        
         "checkout" => [
             "type" => "Integration",
             "allowed_payment_methods" => [ "cash" ],
