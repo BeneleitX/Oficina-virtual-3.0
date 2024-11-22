@@ -8,20 +8,22 @@ use Conekta\ApiException;
 
 $conekta  = VARIABLES[ "conekta" ][ "valor" ][ "ambientes" ][ "sandbox" ];
 $client   = new \GuzzleHttp\Client();
-$response = $client->request('POST', 'https://api.conekta.io/orders', [
+
+$subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
+$comisionbanco = ceil( $subtotal * 2 / 100 );
+$total    = $subtotal + $comisionbanco;
+
+$json     = [
     "body" => json_encode( [
         "customer_info" => [
-            "name"  => "juan perez",
-            "email" => "scabbia@gmail.com",
-            "phone" => "3245234523"
-        ],
-        "metadata" => [
-            "referencia" => "11931234"
+            "name"  => limpia_acentos( $socio->nombre( 2, false, true ) ),
+            "email" => $socio->correo,
+            "phone" => $socio->telefono
         ],
         "line_items" => [
             [
-                "unit_price" => 23000,
-                "name"       => "Box of Cohiba S1s",
+                "unit_price" => $total * 100,
+                "name"       => $pedido[ "referencia" ],
                 "quantity"   => 1
             ]
         ],
@@ -29,8 +31,8 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
             "type" => "Integration",
             "allowed_payment_methods" => [ "cash" ],
             "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
-            "redirection_time" => 5,
-            "success_url"      => "http://xxx.com"
+            "redirection_time" => 0,
+            "success_url"      => "https://app.beneleit.mx/ConektaRedirect"
         ],
         "currency" => "MXN"
     ]),
@@ -39,9 +41,16 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
         "authorization" => "Bearer ".$conekta[ "private_key" ],
         "content-type"  => "application/json",
     ],
-]);
+]; 
 
-$stream = json_decode( $response->getBody() );
+$response = $client->request('POST', 'https://api.conekta.io/orders', $json );
+$stream   = json_decode( $response->getBody() );
+
+$pedido[ "data" ][ "conekta" ][ "order" ] = $stream->id;
+$pedido[ "data" ][ "conekta" ][ "checkout" ] = $stream->checkout->id;
+
+model( "PedidoModel" )->save( $pedido );
+
 ?>
 
 <p class="text-center">
@@ -50,7 +59,7 @@ $stream = json_decode( $response->getBody() );
 
 <script crossorigin src="https://pay.conekta.com/v1.0/js/conekta-checkout.min.js"></script>
 
-<div id="example" style="height: 714px"></div>
+<div id="conekta_component" style="height: 714px"></div>
 <script>
     const options = {
         backgroundMode: 'lightMode', //lightMode o darkMode
@@ -61,7 +70,7 @@ $stream = json_decode( $response->getBody() );
     };
     const config = {
         locale: 	  	   'es',
-        targetIFrame: 	   '#example',
+        targetIFrame: 	   '#conekta_component',
         publicKey:    	   '<?php echo $conekta[ "public_key" ]; ?>',
         checkoutRequestId: '<?php echo $stream->checkout->id; ?>',
     };
