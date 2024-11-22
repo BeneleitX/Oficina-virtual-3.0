@@ -28,7 +28,7 @@ $response = $client->request('POST', 'https://api.conekta.io/orders', [
             "type" => "Integration",
             "allowed_payment_methods" => [ "card" ],
             "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
-            "redirection_time" => 5,
+            "redirection_time" => 0,
             "success_url"      => "https://app.beneleit.mx/ConektaRedirect"
         ],
         "currency" => "MXN"
