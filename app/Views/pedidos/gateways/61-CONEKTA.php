@@ -6,7 +6,7 @@ use Conekta\Model\OrderRequest;
 use Conekta\Configuration;
 use Conekta\ApiException;
 
-$conekta  = VARIABLES[ "conekta" ][ "valor" ][ "ambientes" ][ "sandbox" ];
+$conekta  = VARIABLES[ "conekta" ][ "valor" ][ "ambientes" ][ "beneleit" ];
 $client   = new \GuzzleHttp\Client();
 
 $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
