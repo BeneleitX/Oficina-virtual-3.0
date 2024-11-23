@@ -641,10 +641,10 @@
                             }
 
                             if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
-                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && ( $mp[ "estatus_codigo" ] == "201-ACTIVO" || $socio->id == 55 ) ){
                                     $boton .= "\n<button class=\"btn col-12 m-0 rounded-bottom-0";
 
-                                    if( $mp[ "settings" ][ "tipocomision" ] == "saldo"){
+                                    if( $mp[ "settings" ][ "tipocomision" ] == "saldo" ){
                                         $boton .= " btn-warning ";
 
                                         if( !$socio->data->saldo->{$modelo}->estatus || $socio->data->saldo->{$modelo}->cantidad < ($tt + $socio->data->saldo->{$modelo}->cantidad) ){
