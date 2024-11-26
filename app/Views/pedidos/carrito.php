@@ -657,7 +657,7 @@
                                     <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
                                     
                                     <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
-                                        <span class="badge bg-marine" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
+                                        <span class="badge bg-teal" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
                                             <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
                                         </span>
                                     </td>
