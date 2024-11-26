@@ -632,7 +632,7 @@
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
-                                <tr>
+                            <tr>
                                     <td valign="middle" class="">Fecha de pago</td>
                                     
                                     <td valign="middle" class="text-end">
@@ -641,6 +641,17 @@
                                         </h5>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td valign="middle" class="" nowrap>Método de pago</td>
+                                    
+                                    <td valign="middle" class="text-end">
+                                        <h5 class="m-0">
+                                            <?php 
+                                            $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
+                                            echo file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"w-50 rounded\" src=\"".base_url()."{$file}\">" : "<span class=\"badge bg-gray-600\">".$pedido[ "metodopago_codigo" ]."</span>"; ?>
+                                        </h5>
+                                    </td>
+                                </tr>                                
 
                                 <tr>
                                     <td valign="middle" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red; color:white"; ?>">Calificación</td>
