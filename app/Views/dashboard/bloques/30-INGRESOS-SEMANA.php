@@ -1,4 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<div id="chart_ingresos"></div>
+
+<div class="row mx-1">
 
 <?php
 
@@ -27,8 +30,7 @@ for( $q = 0; $q < 10; $q++ ){
         if( !$q ){
             $t_actual += $total[ $m[ "codigo" ] ][ $q ];
 
-            $headers .= "<th class=\"text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</td>";
-            $bot .="<td style=\"opacity:".( $total[ $m[ "codigo" ] ][ $q ] ? "1" : "0.4")."\" class=\"col-4 rounded p-2 text-center bg-{$m[ "settings" ][ "color" ]} text-white\">$".number_format( $total[ $m[ "codigo" ] ][ $q ], 2 )."</td>";            
+            echo "<div class=\"col-6 text-center mb-3\"><p class=\"m-0 text-center text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</p><h5><span style=\"xopacity:".( $total[ $m[ "codigo" ] ][ $q ] ? "1" : "0.4")."; display:inline-block\" class=\"col-12 badge p-2 bg-".( $total[ $m[ "codigo" ] ][ $q ] ? $m[ "settings" ][ "color" ] : "gray-400")." text-white\">$".number_format( $total[ $m[ "codigo" ] ][ $q ], 2 )."</span></h5></div>";
         }
 
         $total[ $m[ "codigo" ] ][ $q ] = (string)$total[ $m[ "codigo" ] ][ $q ];
@@ -59,11 +61,7 @@ $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
 
 ?>
 
-<div id="chart_ingresos"></div>
-<table class="px-2 w-100" style="border-spacing: 10px;border-collapse: separate; ">
-        <tr><?php echo $headers; ?></tr>
-        <tr><?php echo $bot; ?></tr>
-    </table>
+</div>
 
 <div class="card-body pt-0">
     <div class="mt-3 d-none badge col-12 bg-<?php echo $t_actual ? "teal" : "gray-400" ?> text-white">

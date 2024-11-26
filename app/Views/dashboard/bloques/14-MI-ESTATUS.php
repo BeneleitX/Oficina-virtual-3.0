@@ -29,7 +29,6 @@ if( !defined( "calificaciones" ) ){
 }
 
 foreach( MODELOS as $m ){
-    echo "\n<div class=\"col-6 text-center mt-3\"><div xclass=\"card\"><div xclass=\"card-body\">";
 
     $sql = "select 
         f_get_calificacion( {$usuario->id}, '{$m_2}', '{$m[ "codigo" ]}' ) as 'm_2', 
@@ -40,8 +39,9 @@ foreach( MODELOS as $m ){
 
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
     
-    echo "\n<div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
-            <div class=\"small mb-2\"><div class=\"py-2 badge col-12 bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</div></div>";
+    echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div><div class=\"card bg-{$estatus[ "color" ]}\"><div class=\"card-body\">";
+
+    echo "\n<div class=\"small mb-2\"><div class=\"py-2 badge col-12 bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</div></div>";
   
     switch( $m["codigo"] ){
         case "10-NUTRICION": 

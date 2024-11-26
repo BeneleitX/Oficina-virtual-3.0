@@ -207,7 +207,13 @@
                     // PROBLEMA PARA STAFF
                     // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
 
-                    if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], [ "almacen", "efectivo", "recarga" ] ) ){
+                    $metodos = [ "almacen", "efectivo", "recarga" ];
+
+                    if( $modelo == "40-GASOLINAS" ){
+                        unset( $metodos[ 0 ] );
+                    }
+
+                    if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
                         echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                     }
                 }
@@ -314,6 +320,55 @@
                     }
                     ?>
                 </div>
+
+
+                <div class="me_formulario" mp="tarjeta" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "GAS" ) echo "style=\"display:none\""; ?>>
+                    
+                    <?php 
+                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "GAS" && sizeof( $celulares ) ){ 
+                        ?>
+                        <div class="row">
+                            <div class="col-lg-6">
+                            
+                                <select class="form-select form-select-lg fw-bold" name="select_tarjeta">
+                                    <?php
+                                    $existe_almacen = 0;
+
+                                    foreach( $celulares as $c ){
+                                        if( !$existe_almacen && $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            $existe_almacen = 1;
+                                        }
+                                        
+                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
+                                        }
+
+                                        if( !$pagado &&!$bloqueado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
+                                            $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    else{
+                        if( ( $pagado || $bloqueado || $cancelado ) ){
+                            echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Por el momento no se cuenta con información relacionada con el número celular al cual fue aplicado el servicio</div>";
+                        }
+                        else{
+                            echo "\n<div class=\"alert alert-danger\">
+                                        <i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.
+                                    </div>
+                                    <p class=\"m-0\">
+                                        <a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a>
+                                    </p>";
+                        }
+                    }
+                    ?>
+                </div>
+
 
                 <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "PAQUETERIA" ) echo "style=\"display:none\""; ?>>
                     <?php 
@@ -422,10 +477,16 @@
 
                         $costoentrega = $pedido[ "data" ][ "entrega" ] ? VARIABLES[ "tarifas_almacen" ][ "valor" ][ ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "settings" ][ "tarifa" ] ] : 0; 
                         break;
+ 
                     case "CELULAR" : 
                         $costoentrega = 0; 
                         break;
-                    default   : 
+ 
+                    case "CELULAR" : 
+                        $costoentrega = 0; 
+                        break;
+ 
+                    default : 
                         $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
                 }
 

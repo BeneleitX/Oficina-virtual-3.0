@@ -12,11 +12,12 @@ if( !$es_bx ){
 
     <?php
 
-        $dto = new \DateTime( date( "Y-m-" ) ."01 - 2 months" );
-        $historial = $usuario->historial->modelos->{"10-NUTRICION"};
-        $contador  = 2;
-        $ganado    = 0;
+$historial = $usuario->historial->modelos->{"10-NUTRICION"};
 
+$ganado    = 0;
+
+/* 
+        $dto = new \DateTime( date( "Y-m-" ) ."01 - 2 months" );
         for( $a = 0; $a < 3; $a++ ){
 
             $PTS        = $historial->calificaciones->{$dto->format('Ym')} ?? json_decode( "{}" );
@@ -29,25 +30,33 @@ if( !$es_bx ){
             
             $dto->modify('+1 month');
         }
+ */
+        $dto   = new \DateTime( date( "Y-m-" ) ."01 - 3 months" );
+        $a     = 0;
+        $bx    = 0;
+        $print = "";
 
-        $dto = new \DateTime( date( "Y-m-" ) ."01 - 2 months" );
-        
-        for( $a = 0; $a < 3; $a++ ){
+        while( $a < 3 && $bx++ < 10 ){
+            $dto->modify('+1 month');
 
+            $contador   = 0;
             $PTS        = $historial->calificaciones->{$dto->format('Ym')} ?? json_decode( "{}" );
             $es_biex    = ( $PTS->{"010-DISTRIBUIDOR"} ?? 0 ) >= 3;
             $es_lealtad = ( $PTS->{"210-LEALTAD"} ?? 0 ) > 0;
 
-            if( $es_lealtad && $a < 2 ){
-                $ganado = 0;
+            if($es_lealtad && $a < 2){
+                $print = "";
+                $a = 0;
             }
 
-            echo "\n<td style=\"line-height:1\" class=\"col-4 rounded p-2 text-center ".($ganado == 3 ? "bg-gray-600 text-white" : "text-".( $es_biex ? "teal" : "gray-500" )." bg-gray-".( $es_biex ? "300" : "100" ) )."\"><span class=\"small\">Calificación BIEX</span><br><strong>".strtoupper( mes( $dto->format('m') ) )." ".$dto->format('Y')."</strong><p class=\"mt-2 mb-1\"><i class=\"fa fs-3 fa-circle-".( $es_biex ? "check text-".( $ganado == 3 ? "white" : "teal") : "xmark text-red" )."\"></i></p>";
+            if( ( $es_biex && !$es_lealtad ) || $dto->format('Ym') >= date( "Ym" ) ){
+                $a++;
 
-            echo "</td>";
-
-            $dto->modify('+1 month');
+                $print .= "\n<td style=\"line-height:1\" class=\"col-4 rounded p-2 text-center ".($ganado == 3 ? "bg-gray-600 text-white" : "text-".( $es_biex ? "teal" : "gray-500" )." bg-gray-".( $es_biex ? "300" : "100" ) )."\">{$a}<span class=\"small\">Calificación BIEX</span><br><strong>".strtoupper( mes( $dto->format('m') ) )." ".$dto->format('Y')."</strong><p class=\"mt-2 mb-1\"><i class=\"fa fs-3 fa-circle-".( $es_biex ? "check text-".( $ganado == 3 ? "white" : "teal") : "xmark text-red" )."\"></i></p></td>";
+            }
         }
+
+        echo $print;
 
         $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
 ?>

@@ -633,6 +633,13 @@ $(document).ready(function()
             pedido.data.costoxbulto = 0;
         }
 
+        else if( metodoentrega_activo.substring(3) == 'GAS'){
+            $( '.me_formulario[mp=tarjeta]' ).show();
+            entrega = $( '[name=select_tarjeta]' ).val();
+            pedido.data.domicilio = null;
+            pedido.data.costoxbulto = 0;
+        }
+
         else{
             $( '.me_formulario[mp=domicilio]' ).show();
             pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
