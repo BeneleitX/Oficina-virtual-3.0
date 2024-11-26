@@ -52,7 +52,7 @@ $ganado    = 0;
             if( ( $es_biex && !$es_lealtad ) || $dto->format('Ym') >= date( "Ym" ) ){
                 $a++;
 
-                $print .= "\n<td style=\"line-height:1\" class=\"col-4 rounded p-2 text-center ".($ganado == 3 ? "bg-gray-600 text-white" : "text-".( $es_biex ? "teal" : "gray-500" )." bg-gray-".( $es_biex ? "300" : "100" ) )."\">{$a}<span class=\"small\">Calificación BIEX</span><br><strong>".strtoupper( mes( $dto->format('m') ) )." ".$dto->format('Y')."</strong><p class=\"mt-2 mb-1\"><i class=\"fa fs-3 fa-circle-".( $es_biex ? "check text-".( $ganado == 3 ? "white" : "teal") : "xmark text-red" )."\"></i></p></td>";
+                $print .= "\n<td style=\"line-height:1\" class=\"col-4 rounded p-2 text-center ".($ganado == 3 ? "bg-gray-600 text-white" : "text-".( $es_biex ? "teal" : "gray-500" )." bg-gray-".( $es_biex ? "300" : "100" ) )."\"><span class=\"small\">Calificación BIEX</span><br><strong>".strtoupper( mes( $dto->format('m') ) )." ".$dto->format('Y')."</strong><p class=\"mt-2 mb-1\"><i class=\"fa fs-3 fa-circle-".( $es_biex ? "check text-".( $ganado == 3 ? "white" : "teal") : "xmark text-red" )."\"></i></p></td>";
             }
         }
 
