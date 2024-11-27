@@ -75,13 +75,14 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "shop/(:any)",            "Pedidos::shop/modelo/$1" ); 
     $routes->get( "pagoyenvio/(:any)",      "Pedidos::pagoyenvio/$1" ); 
     $routes->get( "compra_demo/(:num)/(:any)/(:num)",    "Pedidos::compra_demo/$1/$2/$3" );
+    $routes->get( "beneleit_movil",         "Pedidos::beneleit_movil" ); 
     $routes->post( "checkout",              "Pedidos::checkout" ); 
     $routes->post( "reparte",               "Pedidos::reparte" ); 
     $routes->post( "cancela_pedido",        "Pedidos::cancela_pedido" ); 
     $routes->post( "cambia_fecha",          "Pedidos::cambia_fecha" ); 
+    $routes->post( "edita_guia",            "Pedidos::edita_guia" ); 
     $routes->post( "fondeo",                "Pedidos::fondeo" ); 
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
-    $routes->get( "beneleit_movil",         "Pedidos::beneleit_movil" ); 
     $routes->post( "paga_pedido",           "Pedidos::paga_pedido" ); 
     $routes->post( "cambia_edicion",        "Pedidos::cambia_edicion" ); 
 

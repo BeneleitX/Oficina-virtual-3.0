@@ -1,7 +1,20 @@
 function define_boton(){
-    $( '.opciones' ).each( function( k, e ){
+    var url    = base_url,
+        cadena = [];
 
+    $( '#actualiza' ).hide();
+
+    $( '.opciones' ).each( function( k, e ){
+        var valor   = $( this ).val(),
+            estatus = $( this ).is( ':checked' );
+
+            if( estatus ){ 
+                cadena.push( valor );
+                $( '#actualiza' ).show();
+            }
     });
+
+    $( '#actualiza' ).attr( 'href', url + 'balance/' + modelo + '/' + periodo + '/' + encodeURIComponent( btoa( JSON.stringify( cadena ) ) ) );
 }
 
 
@@ -22,11 +35,6 @@ $(document).ready(function(){
     });
 
     $( '.opciones' ).on( 'change', function(){
-        var valor   = $( this ).val(),
-            estatus = $( this ).is( ':checked' );
-
-        console.log(valor, estatus);
-
         define_boton();
     } );
 });

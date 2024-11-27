@@ -436,6 +436,9 @@
                                         Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.
                                         <br>Guía de rastreo: 
                                         <span class="badge bg-marine fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
+                                        <?php if( 1 ){
+                                            echo "<button data-bs-toggle=\"tooltip\" title=\"Editar guía\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_guia' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
+                                        }?>
                                     </div>
                                 </div>
                                 <?php 
@@ -1002,6 +1005,32 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" id="edita_guia">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="<?php echo base_url( "edita_guia" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                <div class="modal-header bg-mustard">
+                    <h5 class="modal-title text-white"><i class="fa fa-edit"></i> Editar guía de rastreo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                <p>Verificar que la información sea correcta antes de guardar los datos.</p>
+                <input class="form-control text-center" name="guia_nueva" value="<?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?>">
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal" tabindex="-1" id="cancela_pedido2">
         <div class="modal-dialog">

@@ -483,6 +483,34 @@ class Pedidos extends BaseController
     }    
 
 
+    public function edita_guia()
+    {
+        $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+
+        if( 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+            $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" )
+         ){
+
+            $previo = $pedido[ "data" ][ "guia" ];
+            $pedido[ "data" ][ "guia" ] = $this->request->getPost( "guia_nueva" );
+
+            model( "PedidoModel" )->save( $pedido );
+
+            // BITACORA Cambiar guia
+            bitacora( 74, $this->data[ "usuario" ]->id, [ 
+                "pedido" => $pedido[ "id" ],
+                "anterior" => $previo,
+                "nueva" => $pedido[ "data" ][ "guia" ]
+            ] );
+        }
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se ha actualizado la guía de rastreo de paquetería" ] );      
+    } 
+
     public function fondeo()
     {
         extract( $this->request->getPost() );

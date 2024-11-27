@@ -61,14 +61,14 @@
     </div>
 </div>
 <div class="card mb-5">
-    <div class="card-body small">
+    <div class="card-body">
         <div class="row">
             <div class="col-lg-9">
                 <?php
                 foreach( $esquemas_activos as $e ){
                     $s = ESQUEMAS[ $e[ "esquema" ] ];
 
-                    echo "\n<input ".( in_array( $e[ "esquema" ], $esq ) ? "checked" : "" )." type=\"checkbox\" value=\"{$s[ "codigo" ]}\" class=\"btn-check opciones\" id=\"btn-check-{$s[ "codigo" ]}\" autocomplete=\"off\"><label class=\"btn btn-outline-yesno\" for=\"btn-check-{$s[ "codigo" ]}\"><i class=\"fa fa-sack-dollar\"></i> {$s[ "settings" ][ "titulo" ]}</label>&nbsp; ";
+                    echo "\n<input ".( in_array( $e[ "esquema" ], $esq ) ? "checked" : "" )." type=\"checkbox\" value=\"{$s[ "codigo" ]}\" class=\"btn-check opciones\" id=\"btn-check-{$s[ "codigo" ]}\" autocomplete=\"off\"><label class=\"btn btn-outline-yesno btn-sm\" for=\"btn-check-{$s[ "codigo" ]}\"><i class=\"fa fa-sack-dollar\"></i> {$s[ "settings" ][ "titulo" ]}</label> ";
                 }
                 ?>
             </div>
@@ -143,5 +143,6 @@ for( $d = 0; $d < 7; $d++ ){
 <?php } } ?>
 
 <script>
-    var modelo = '<?php echo $modelo; ?>';
+    var modelo  = '<?php echo $modelo; ?>',
+        periodo = '<?php echo $periodo[ "codigo" ]; ?>';
 </script>
