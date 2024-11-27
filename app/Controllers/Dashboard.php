@@ -547,7 +547,7 @@ class Dashboard extends BaseController
         curl_setopt($curl, CURLOPT_HEADER, 0); 
         $respuesta = json_decode( curl_exec( $curl ) );
         curl_close($curl);
-              
+           
         $html = "<table class=\"table w-100 m-0 table-borderless xtable-striped\">";
         $k = 0;
         

@@ -90,6 +90,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "depositos/(:any)",       "Ingresos::depositos/$1" ); 
     $routes->get( "ingreso_mensual/(:any)", "Ingresos::ingreso_mensual/$1" ); 
     $routes->post( "pagodata",              "Ingresos::pagodata" ); 
+    $routes->post( "heatmap",               "Ingresos::heatmap" ); 
     $routes->post( "excel_ingreso_mensual", "Ingresos::excel_ingreso_mensual" ); 
     $routes->post( "excel_pago_comisiones", "Ingresos::excel_pago_comisiones" ); 
 

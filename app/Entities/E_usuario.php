@@ -977,28 +977,30 @@ class E_usuario extends Entity
     }    
 
 
-    public function getIngresosPorDia( $modelo ){
+    public function getIngresosPorDia( $modelo, $esquemas ){
         $resultado = [];
 
-        $sql = "SELECT SUM(comision.cantidad) as comisiones, 
-                DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
+        $sql = "SELECT 
+                    SUM(comision.cantidad) as comisiones, 
+                    DATE_FORMAT(comision.fecha, '%Y-%m-%d') as dia 
                 FROM t_comisiones comision
                 JOIN t_pedidos pedido ON pedido.id = comision.pedido_id
                 join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                 WHERE esquema.modelo_codigo = '{$modelo}' 
-                and comision.usuario_id = {$this->id} 
-                AND esquema.settings->>'$.reparto' != 'puntos'
-                AND esquema.settings->>'$.periodo' = 'SEMANAL'
-                and substring( comision.estatus_codigo, 1, 3 ) > 200
-                and substring( pedido.estatus_codigo, 1, 3 ) > 400
-                and comision.fecha >= '2024-08-12'
+                    and comision.usuario_id = {$this->id} 
+                    AND esquema.settings->>'$.reparto' != 'puntos'
+                    AND esquema.settings->>'$.periodo' in ( 'SEMANAL', 'MENSUAL', 'ANUAL' )
+                    and substring( comision.estatus_codigo, 1, 3 ) > 200
+                    and substring( pedido.estatus_codigo, 1, 3 ) > 400
+                    and comision.fecha >= '2024-08-12'
+                    ".( sizeof( $esquemas ) ? "and comision.esquema_codigo in ( '".implode( "', '", $esquemas )."' )" : "" )."
                 GROUP BY DATE_FORMAT(comision.fecha, '%Y-%m-%d')";
 
         $db     = db_connect();
         $result = $db->query($sql);
 
         foreach($result->getResult() as $d){
-            $resultado[$d->dia] = $d->comisiones;
+            $resultado[ $d->dia] = $d->comisiones;
         }
 
         if(!sizeof($resultado)) $resultado = [0];

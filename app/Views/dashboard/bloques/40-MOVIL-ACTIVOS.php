@@ -5,7 +5,7 @@
 <div id="datos_linea"><p class="text-center"><p class="text-center p-5"><i class="fa-solid fa-circle-notch fa-spin"></i></p></p></div>
 <?php
 
-$numeros = $usuario->getCelulares();
+// $numeros = $usuario->getCelulares();
 /* $htmlx   = "";
 
 foreach( $numeros as $c ){

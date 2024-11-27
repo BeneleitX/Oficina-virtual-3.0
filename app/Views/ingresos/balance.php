@@ -29,39 +29,53 @@
     </div>
 </div>
 
-    
-<div id="heatmap" class="mb-5">
-<?php 
-    $ingresosxdia = $socio->getIngresosPorDia( $modelo );
+<div class="card mb-2">
+    <div id="heatmap" class="card-body">
+    <?php 
+        $ingresosxdia = $socio->getIngresosPorDia( $modelo, $esq );
 
-    $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
+        $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
 
+        while( $inicia <= date( "Y-m-d") ){
+            $fecha = $inicia;
+            $mes = substr( $fecha, 5, 2 );
+            $semana = date("W",  strtotime( $fecha ) );
 
-    while( $inicia <= date( "Y-m-d") ){
-        $fecha = $inicia;
-        $mes = substr( $fecha, 5, 2 );
-        $semana = date("W",  strtotime( $fecha ) );
+            $selected = ( $periodo[ "codigo" ] == codigo_periodo( $modelo, $inicia ) ) ? "selected" : "";
 
-        $selected = ( $periodo[ "codigo" ] == codigo_periodo( $modelo, $inicia ) ) ? "selected" : "";
-
-        echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo, $inicia )."\"><p class=\"m-2\">{$semana}</p>";
-        
-        for( $d = 0; $d < 7; $d++ ){
-            $fecha_next = date( "Y-m-d", strtotime( $fecha." + 1 day" ) );
-            $cantidad = $ingresosxdia[ $fecha ] ?? null;
-
-            echo "<div class=\"heatmap_dia ".( $mes != substr( $fecha, 5, 2 ) ? "" : "" )."\" data-bs-toggle=\"tooltip\" title=\"{$fecha} : $".number_format( $cantidad, 2 )."\" semana=\"{$semana}\" cantidad=\"{$cantidad}\"></div>";
+            echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo, $inicia )."\"><p class=\"m-2\">{$semana}</p>";
             
-            $fecha = $fecha_next;
+            for( $d = 0; $d < 7; $d++ ){
+                $fecha_next = date( "Y-m-d", strtotime( $fecha." + 1 day" ) );
+                $cantidad = $ingresosxdia[ $fecha ] ?? null;
+
+                echo "<div class=\"heatmap_dia ".( $mes != substr( $fecha, 5, 2 ) ? "" : "" )."\" data-bs-toggle=\"tooltip\" title=\"{$fecha} : $".number_format( $cantidad, 2 )."\" semana=\"{$semana}\" cantidad=\"{$cantidad}\"></div>";
+                
+                $fecha = $fecha_next;
+            }
+
+            $inicia = date( "Y-m-d", strtotime( $inicia." + 1 week" ) );
+            echo "</div>";
         }
-
-        $inicia = date( "Y-m-d", strtotime( $inicia." + 1 week" ) );
-        echo "</div>";
-    }
-?>
+    ?>
+    </div>
 </div>
+<div class="card mb-5">
+    <div class="card-body small">
+        <div class="row">
+            <div class="col-lg-9">
+                <?php
+                foreach( $esquemas_activos as $e ){
+                    $s = ESQUEMAS[ $e[ "esquema" ] ];
 
-
+                    echo "\n<input ".( in_array( $e[ "esquema" ], $esq ) ? "checked" : "" )." type=\"checkbox\" value=\"{$s[ "codigo" ]}\" class=\"btn-check opciones\" id=\"btn-check-{$s[ "codigo" ]}\" autocomplete=\"off\"><label class=\"btn btn-outline-yesno\" for=\"btn-check-{$s[ "codigo" ]}\"><i class=\"fa fa-sack-dollar\"></i> {$s[ "settings" ][ "titulo" ]}</label>&nbsp; ";
+                }
+                ?>
+            </div>
+            <div class="col-lg-3 text-end"><a href="" style="display:none" class="btn btn-primary" id="actualiza"><i class="fa fa-rotate"></i> Actualizar datos</a></div>
+        </div>
+    </div>
+</div>
 <?php
 $fecha = $periodo[ "inicia" ];
 

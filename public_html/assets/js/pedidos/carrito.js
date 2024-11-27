@@ -172,7 +172,8 @@ function update_pedido( flag = null ){
             'precio'       : 0,
             'comisionable' : 0,
             'evento'  : tag.attr( 'evento' )  ?? 'false',
-            'estatus' : tag.attr( 'estatus' ) ?? 'false'
+            'estatus' : tag.attr( 'estatus' ) ?? 'false',
+            'activo' : 'false'
         };
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
@@ -187,8 +188,10 @@ function update_pedido( flag = null ){
                     agrega_producto( producto, promocion, 1, true );
                 });
             }   
+            pedido.promociones[ promocion ].activo = 'true';
         }
         else{
+            pedido.promociones[ promocion ].activo = 'false';
             $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
             $( '.card[promocion=' + promocion + ']' ).hide();
         }  
@@ -257,8 +260,10 @@ function update_pedido( flag = null ){
             $( '.card[promocion=' + promocion + '] .agrega_productos' ).show();
 
 
-            if( cat_promociones[ promocion ].settings.exacto == 'true' && ( cat_promociones[ promocion ].settings.obligatoria == "true" || ( cuenta_productos % 3 ) > 0 ) ){
+            if( pedido.promociones[ promocion ].activo == 'true' && cat_promociones[ promocion ].settings.exacto == 'true' && ( cat_promociones[ promocion ].settings.obligatoria == "true" || ( cuenta_productos % 3 ) > 0 ) ){
                 pendientes = 1;
+
+                console.log(promocion);
                 $( '.card[promocion=' + promocion + '] .agrega_productos' ).removeClass( 'btn-light' ).addClass( 'btn-warning' );
             }
             else{
@@ -386,6 +391,8 @@ function update_pedido( flag = null ){
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
         permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
+
+console.log( pendientes );
 
         if( !permitepagos || pendientes ){
             $( this ).prop( 'disabled', true );
