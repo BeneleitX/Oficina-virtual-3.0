@@ -358,32 +358,38 @@ table[productos] td{
 }
 
 #heatmap{
-
-
+    white-space: nowrap;
 }
 
 .heatmap_columna{
     width: auto; 
     display:inline-block;
-    border-radius: 6px;
+    border-radius: 3px;
     text-align: center;
     cursor:pointer;
     padding:0 1px;
     margin:0px;
     border:1px solid transparent;
+    background-color: var(--bs-gray-100)
+}
+
+.heatmap_columna p{
+    font-size: 0.8rem;
+    display:inline-block;
 }
 
 .heatmap_columna:hover{
     border:1px solid var(--bs-teal);
     background-color: var(--bs-teal);
     color:white;
+    box-shadow: 0 0 0 0px var(--bs-teal);
 }
 
 .heatmap_columna.selected{
     border:1px solid var(--bs-teal);
     background-color: var(--bs-teal);
     color:white;
-    padding:0 4px;
+    padding:0 2px;
     cursor:default;
 }
 
@@ -392,9 +398,9 @@ table[productos] td{
 }
 
 .heatmap_dia{
-    width:40px;
-    height:40px;
+    width:20px;
+    height:20px;
     margin-bottom:3px;
     display:block;
-    border-radius: 4px;
+    border-radius: 3px;
 }

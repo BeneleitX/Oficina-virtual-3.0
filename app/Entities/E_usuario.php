@@ -1027,18 +1027,24 @@ class E_usuario extends Entity
                     join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
                     WHERE comision.usuario_id = {$this->id} 
                     and substring( comision.estatus_codigo, 1, 3 ) > 200
-                    AND esquema.settings->>'$.periodo' = 'SEMANAL'
+                    and ".( is_array( $esquema ) ? "esquema.codigo in ( '".implode( "', '", $esquema )."' )" : "esquema.settings->>'$.periodo' = 'SEMANAL'" )."
                     AND comision.fecha between periodo.inicia and periodo.termina
                     AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
         }
         else{
-            $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
-                    FROM t_comisiones comision
-                    join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
-                    WHERE comision.usuario_id = {$this->id} 
-                    and substring( comision.estatus_codigo, 1, 3 ) > 200
-                    and comision.esquema_codigo = '{$esquema}'
-                    ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" );
+
+            if( is_array( $esquema ) ){
+
+            }
+            else{
+                $sql = "SELECT comision.fecha, comision.compresion, comision.pedido_id, comision.esquema_codigo, comision.nivel, comision.cantidad, pedido.usuario_id, pedido.referencia
+                        FROM t_comisiones comision
+                        join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
+                        WHERE comision.usuario_id = {$this->id} 
+                        and substring( comision.estatus_codigo, 1, 3 ) > 200
+                        and comision.esquema_codigo = '{$esquema}'
+                        ".( $estatus ? "AND comision.estatus_codigo = '{$estatus}'" : "" );
+            }
 
         }
 

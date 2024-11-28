@@ -25,9 +25,7 @@ $(document).ready(function(){
         responsive: true
     });
 
-
     $( ".heatmap_dia" ).heatmapper();
-
     $( ".heatmap_columna" ).on( 'click', function(){
         var periodo = $( this ).attr( 'periodo' );
 

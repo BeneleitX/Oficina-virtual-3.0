@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<div class="card mb-2">
+<div class="card mb-2" style="width:100%; overflow-x: auto;" id="heatmap_container">
     <div id="heatmap" class="card-body">
     <?php 
         $ingresosxdia = $socio->getIngresosPorDia( $modelo, $esq );
@@ -43,7 +43,7 @@
 
             $selected = ( $periodo[ "codigo" ] == codigo_periodo( $modelo, $inicia ) ) ? "selected" : "";
 
-            echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo, $inicia )."\"><p class=\"m-2\">{$semana}</p>";
+            echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo, $inicia )."\"><p class=\"m-1\">{$semana}</p>";
             
             for( $d = 0; $d < 7; $d++ ){
                 $fecha_next = date( "Y-m-d", strtotime( $fecha." + 1 day" ) );
@@ -86,7 +86,12 @@ for( $d = 0; $d < 7; $d++ ){
     if( $cantidad ){
     ?>
     <div class="card mb-3">
-        <div class="card-header bg-marine"><h5 class="m-0 text-white"><?php echo date( "d-m-Y", strtotime( $hoy ) ); ?></h5></div>
+        <div class="card-header bg-marine">
+            <div class="row">
+                <div class="col-6"><h5 class="m-0 text-white"><?php echo date( "d-m-Y", strtotime( $hoy ) ); ?></h5></div>
+                <div class="col-6 text-end text-white">$<?php echo number_format( $cantidad, 2 ); ?></div>
+            </div>
+        </div>
 
             <table class="mb-0 table table-striped bg-white tabla_comisiones" id="t_<?php echo date("Y-m-d"); ?>">
                 <thead>
@@ -103,6 +108,8 @@ for( $d = 0; $d < 7; $d++ ){
                 <tbody>
                     <?php 
                         $socios = [];
+                        $comisiones = $socio->getComisiones( $periodo[ "codigo" ], $esq );
+
                         foreach( $comisiones as $c ){
 
                             if( $c->fecha == $hoy ){
