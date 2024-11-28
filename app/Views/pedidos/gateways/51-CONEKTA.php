@@ -6,6 +6,7 @@ use Conekta\Model\OrderRequest;
 use Conekta\Configuration;
 use Conekta\ApiException;
 
+$ambiente = VARIABLES[ "conekta" ][ "valor" ];
 $conekta  = $ambiente[ "ambientes" ][ $ambiente[ "ambiente" ] ];
 $client   = new \GuzzleHttp\Client();
 
