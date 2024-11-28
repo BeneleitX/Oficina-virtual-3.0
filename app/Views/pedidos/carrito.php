@@ -716,7 +716,7 @@
                             }
 
                             if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
-                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && ( $mp[ "estatus_codigo" ] == "201-ACTIVO" || $socio->id == 55 ) ){
+                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
                                     $boton .= "\n<button class=\"btn col-12 m-0 rounded-bottom-0";
 
                                     if( $mp[ "settings" ][ "tipocomision" ] == "saldo" ){
