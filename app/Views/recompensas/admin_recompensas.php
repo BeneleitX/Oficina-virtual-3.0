@@ -37,7 +37,7 @@ foreach( $ciclos as $k => $c ){
                         <table class=\"w-100\"><tr>
 
                             <td width=\"6%\"><img src=\"".base_url()."/assets/img/recompensas/{$d[ "codigo" ]}.png\" style=\"width:60px; height:auto;\"></td>
-                            <td width=\"23%\"><h3><strong>{$d[ "nombre" ]}</strong></h3></td>
+                            <td width=\"23%\"><h4><strong>{$d[ "nombre" ]}</strong></h4></td>
                             <td width=\"20%\" class=\"m-0\">Estrellas: <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i></td>
                             <td width=\"20%\" class=\"m-0\">Rango necesario: <span class=\"badge bg-".RANGOS[ $d[ "rango_codigo" ] ][ "color" ]."\">".RANGOS[ $d[ "rango_codigo" ] ][ "nombre" ]."</span></td>
                             <td width=\"20%\" class=\"m-0\">".( sizeof( $redenciones ) ? ( sizeof( $redenciones ) == sizeof( $entregados ) ? "Todos entregados" : "<strong><i class=\"fa fa-warning text-mustard\"></i> ".( sizeof( $redenciones ) - sizeof( $entregados ) )." por entregar</strong>" ) : "Sin ganadores" )."</td>
