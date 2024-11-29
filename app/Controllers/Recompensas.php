@@ -89,5 +89,57 @@ class Recompensas extends BaseController
             "texto" => "¡Felicidades! recompensa reclamada" ] );    
     }
 
+
+    public function admin_recompensas(){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+        
+        /**********************************/
+
+        load_catalogo( "recompensas");
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Administración de recompensas";
+        
+        echo template( "recompensas/admin_recompensas", $this->data );
+    }
+
+
+    public function entregar_recompensa(){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $db = db_connect();
+        extract( $this->request->getPost() );
+
+        $sql = "select * from t_redenciones where id = ".$redencion;
+        $redencion = $db->query( $sql )->getRow();
+
+        $sql = "UPDATE t_redenciones set estatus_codigo = '623-ENTREGA' where id = ".$redencion->id;
+        $db->query( $sql );
+
+        // BITACORA Marca recompensa entregada
+        bitacora( 75, $this->data[ "usuario" ]->id, [ 
+            "redencion"   => $redencion->id,
+            "recompensa" => $redencion->recompensa_codigo,
+            "socio"      => $redencion->usuario_id
+        ] );
+
+        return redirect()->to( "admin_recompensas" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Esta recompensa se ha marcado como entregada" ] );   
+    }
+
 }
 

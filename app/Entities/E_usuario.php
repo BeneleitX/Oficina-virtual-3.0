@@ -589,6 +589,19 @@ class E_usuario extends Entity
     }
 
 
+    public function recompensas_recibidas(){
+        $db = db_connect();
+        $re = $db->query( "select recompensa_codigo from t_redenciones where estatus_codigo = '623-ENTREGA' and usuario_id = '{$this->id}'" );
+        $resultado = [];
+
+        foreach( $re->getResult() as $r ){
+            $resultado[] = $r->recompensa_codigo;
+        }
+
+        return $resultado;
+    }
+
+
     public function redime_recompensa( $r ){
         $db = db_connect();
         $db->query( "insert into t_redenciones values( NULL, '330-EN-ESPERA', {$this->id}, '{$r[ "codigo" ]}', '".date( "Y-m-d" )."')" );

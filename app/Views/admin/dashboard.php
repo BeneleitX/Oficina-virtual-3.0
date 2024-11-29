@@ -16,7 +16,7 @@ $menu = [
     [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Paquetería", sizeof( $paqueterias ), [ "25-PAQUETERIA", "40-ADMIN"] ],
     [ "danger", "periodos/".getModeloPrincipal(), "calendar-days", "Periodos", sizeof( $periodos ), [ "38-CONTABILIDAD" ] ],
     [ "warning", "productos/".getModeloPrincipal(), "spray-can-sparkles", "Productos", sizeof( $productos ), ["20-ALMACEN", "40-ADMIN"] ],
-    [ "secondary", "", "award", "Recompensas", sizeof( $recompensas ), ["40-ADMIN"] ],
+    [ "success", "admin_recompensas", "award", "Recompensas", sizeof( $recompensas ), ["27-RECOMPENSAS", "40-ADMIN"] ],
     [ "warning", "modelos", "shop", "Modelos de negocio", sizeof( MODELOS ), [] ],
     [ "secondary", "redes/".getModeloPrincipal(), "sitemap", "Redes", 0,[] ],
     [ "secondary", "callcenter", "headset", "Call center", 0,[] ],

@@ -19,6 +19,7 @@
     $total_estrellas = $usuario->getEstrellas( $r );
 
     $alcanzadas = $socio->recompensas_alcanzadas();
+    $recibidas  = $socio->recompensas_recibidas();
 ?>
 
 <h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
@@ -113,11 +114,11 @@ foreach( $ciclos as $k => $c ){
         $porcentaje = intval( $te * 100 / $d[ "estrellas" ] );
         $serie = $d[ "estrellas" ];
         $label = $d[ "nombre" ];
-        $color = "var(--bs-".( $porcentaje == 100 ? ( in_array( $d[ "codigo"], $alcanzadas ) ? "green" : "teal" ) : "marine" ).")";
+        $color = "var(--bs-".( $porcentaje == 100 ? ( in_array( $d[ "codigo"], $alcanzadas ) ? ( in_array( $d[ "codigo"], $recibidas ) ? "green" : "teal" ) : "red" ) : "marine" ).")";
 
         echo "\n<div class=\"col-3\" ciclo=\"{$k}\" recompensa_orden=\"{$d[ "codigo" ]}\"><div class=\"card\"><div class=\"card-body text-center\">
                     <div id=\"chart_{$d[ "codigo" ]}\"></div>
-                    <p>".( in_array( $d[ "codigo"], $alcanzadas ) ? "Recompensa recibida <i class=\"fa fa-check text-teal\"></i>" : ( $porcentaje == 100 ? "Ya tienes las" : "Necesitas" )." <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i>estrellas" )."</p>";
+                    <p>".( in_array( $d[ "codigo"], $alcanzadas ) ? ( in_array( $d[ "codigo"], $recibidas ) ? "Recompensa recibida <i class=\"fa fa-check text-teal\"></i>" : "Esperando entrega <i class=\"fa fa-hourglass-half text-yellow\"></i>" ) : ( $porcentaje == 100 ? "Ya tienes las" : "Necesitas" )." <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i>estrellas" )."</p>";
 
     if( in_array( $d[ "codigo"], $alcanzadas ) ){
             echo "<button disabled class=\"btn btn-outline-light\">&nbsp;</button>";

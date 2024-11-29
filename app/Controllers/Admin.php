@@ -13,6 +13,7 @@ class Admin extends BaseController
         $this->data[ "usuario" ]->valida_modelo();
 
         if( !(
+            $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 

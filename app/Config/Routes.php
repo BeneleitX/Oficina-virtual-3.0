@@ -106,9 +106,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "abre_periodo",          "Periodos::abre_periodo" ); 
 
     $routes->get( "recompensas",            "Recompensas::detalle" );     
+    $routes->get( "admin_recompensas",      "Recompensas::admin_recompensas" );     
     $routes->get( "switch_recompensa/(:any)", "Recompensas::switch/$1" );     
     $routes->get( "reclama_recompensa/(:any)", "Recompensas::reclama_recompensa/$1" );     
     $routes->post( "guarda_recompensas",    "Recompensas::guarda_recompensas" );     
+    $routes->post( "entregar_recompensa",   "Recompensas::entregar_recompensa" );     
 
     $routes->get( "red",                    "Redes::downline" ); 
     $routes->get( "red/(:any)",             "Redes::downline/$1" ); 
