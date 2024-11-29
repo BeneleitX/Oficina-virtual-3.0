@@ -40,7 +40,7 @@ foreach( $ciclos as $k => $c ){
                             <td width=\"23%\"><h3><strong>{$d[ "nombre" ]}</strong></h3></td>
                             <td width=\"20%\" class=\"m-0\">Estrellas: <strong>{$d[ "estrellas" ]}</strong> <i class=\"fa fa-star text-amber\"></i></td>
                             <td width=\"20%\" class=\"m-0\">Rango necesario: <span class=\"badge bg-".RANGOS[ $d[ "rango_codigo" ] ][ "color" ]."\">".RANGOS[ $d[ "rango_codigo" ] ][ "nombre" ]."</span></td>
-                            <td width=\"20%\" class=\"m-0\">".( sizeof( $redenciones ) ? ( sizeof( $redenciones ) == sizeof( $entregados ) ? "Todos entregados" : "<strong>".( sizeof( $redenciones ) - sizeof( $entregados ) )." por entregar</strong>" ) : "Sin ganadores" )."</td>
+                            <td width=\"20%\" class=\"m-0\">".( sizeof( $redenciones ) ? ( sizeof( $redenciones ) == sizeof( $entregados ) ? "Todos entregados" : "<strong><i class=\"fa fa-warning text-mustard\"></i> ".( sizeof( $redenciones ) - sizeof( $entregados ) )." por entregar</strong>" ) : "Sin ganadores" )."</td>
                             <td width=\"10%\"><h1 class=\"m-0 pe-4\"><span class=\"badge bg-".( sizeof( $redenciones ) ? ( sizeof( $redenciones ) == sizeof( $entregados ) ? "teal" : "red" ) : "gray-500" )." col-12\" style=\"display:inline-block\">".sizeof( $redenciones )."</span></h1></td>
                         
                         </tr></table>
