@@ -68,6 +68,7 @@ class Usuarios extends BaseController
                 $socios[] = $b[ "socio" ];
             }
             
+            if( sizeof($socios) )
             $socios = model( "UsuarioModel" )->find( $socios );
 
             foreach( $socios as $b ){
