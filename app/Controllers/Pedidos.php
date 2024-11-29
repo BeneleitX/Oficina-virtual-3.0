@@ -665,8 +665,8 @@ class Pedidos extends BaseController
     public function checkout()
     {
         $this->data[ "metodopago" ] = model( "MetodopagoModel" )->find( $this->request->getPost( "metodopago" ) );
-        $this->data[ "socio" ]      = $this->data[ "usuario" ];
         $this->data[ "pedido" ]     = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $this->data[ "socio" ]      = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
 
         if( !$this->data[ "pedido" ] || !in_array( $this->data[ "pedido" ][ "estatus_codigo" ], [ "250-EN-PROCESO", "255-PENDIENTE" ] ) ){ 
             return redirect()->to( 'historial' );
