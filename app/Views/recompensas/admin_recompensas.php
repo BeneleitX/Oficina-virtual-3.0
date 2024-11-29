@@ -61,7 +61,7 @@ foreach( $ciclos as $k => $c ){
                     <td nowrap>".$socios[ $r->usuario_id ]->id( "10-NUTRICION", false, false )." ".$socios[ $r->usuario_id ]->avatar( 24 )." ".$socios[ $r->usuario_id ]->nombre( 2 )."</td>
                     <td nowrap><img src=\"".base_url()."/assets/img/recompensas/{$d[ "codigo" ]}.png\" style=\"width:30px; height:auto;\"> {$d[ "nombre" ]}</td>
                     <td nowrap>".estatus( $r->estatus_codigo )."</td>
-                    <td class=\"text-end\">".( $r->estatus_codigo == '330-EN-ESPERA' ? "<button class=\"btn btn-sm btn-secondary\" onclick=\"entregar_recompensa( {$r->id} )\">Entregar</button>" : "" )."</td></tr>";
+                    <td class=\"text-end\">".( $r->estatus_codigo == '330-EN-ESPERA' ? "<button class=\"btn btn-sm btn-secondary\" onclick=\"entregar_recompensa( {$r->id} )\">Marcar como entregado</button>" : "" )."</td></tr>";
         }
                 
 
