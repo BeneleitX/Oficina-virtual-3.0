@@ -210,31 +210,34 @@ function update_pedido( flag = null ){
                 cuenta_productos += parseInt( cantidad );
                 
                 if( disponible > 0 && cuenta_productos > 0 ){
-                    while( disponible < cuenta_productos ){
+                    while( cantidad && disponible < cuenta_productos ){
                         campo.val( campo.val() - 1 );
                         cuenta_productos--;
                         cantidad--;
-
-                        if( !cantidad ){
-                            $( this ).remove();
-                        }
                     }
                 }
 
-                pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
-                    "cantidad"    : cantidad,
-                    "puntos"      : parseFloat( cat_productos[ producto ].data.puntos[ promocion ] ),
-                    "comisionable": parseFloat( cat_productos[ producto ].precio.base ),
-                    "orden"       : orden,
-                    "nombre"      : cat_productos[ producto ].data.nombre.toUpperCase(),
-                    "descripcion" : cat_productos[ producto ].data.descripcion,
-                    "reparte"     : cat_productos[ producto ].precio.reparte ?? null,
-                    "precio"      : unitario
-                };
+                if( cantidad ){
+                    pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
+                        "cantidad"    : cantidad,
+                        "puntos"      : parseFloat( cat_productos[ producto ].data.puntos[ promocion ] ),
+                        "comisionable": parseFloat( cat_productos[ producto ].precio.base ),
+                        "orden"       : orden,
+                        "nombre"      : cat_productos[ producto ].data.nombre.toUpperCase(),
+                        "descripcion" : cat_productos[ producto ].data.descripcion,
+                        "reparte"     : cat_productos[ producto ].precio.reparte ?? null,
+                        "precio"      : unitario
+                    };
 
-                total_promo += ( cantidad * unitario );
-                total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
-                $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
+                    total_promo += ( cantidad * unitario );
+                    total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
+                    $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
+                }
+                else{
+                    $( this ).remove();
+
+                    console.log( 'borra', promocion, producto );
+                }
             });
         }
 
@@ -391,8 +394,6 @@ function update_pedido( flag = null ){
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
 
         permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
-
-console.log( pendientes );
 
         if( !permitepagos || pendientes ){
             $( this ).prop( 'disabled', true );

@@ -19,7 +19,7 @@
       </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body"><iframe title="1.- Beneleit Nutrición Sinergy (Part 1)" width="400" height="225" src="https://www.youtube.com/embed/mvRNn4fofew?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <div class="accordion-body text-center"><iframe title="1.- Beneleit Nutrición Sinergy (Part 1)" width="400" height="225" src="https://www.youtube.com/embed/mvRNn4fofew?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
     </div>
   </div>
   <div class="accordion-item">
@@ -29,7 +29,7 @@
       </button>
     </h2>
     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body"><iframe title="2.- Beneleit Nutrición Sinergy (Part 2)" width="400" height="225" src="https://www.youtube.com/embed/ifj9ypLcEXs?list=PLzR1E7MVK5Wyt9DedQQevRXBQVucpwo2F" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <div class="accordion-body text-center"><iframe title="2.- Beneleit Nutrición Sinergy (Part 2)" width="400" height="225" src="https://www.youtube.com/embed/ifj9ypLcEXs?list=PLzR1E7MVK5Wyt9DedQQevRXBQVucpwo2F" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
     </div>
   </div>
   <div class="accordion-item">
@@ -39,7 +39,7 @@
       </button>
     </h2>
     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body"><iframe title="3.- ¿Cómo funcionan los bonos Beneleit?" width="400" height="225" src="https://www.youtube.com/embed/TIaUYG1rpsk?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <div class="accordion-body text-center"><iframe title="3.- ¿Cómo funcionan los bonos Beneleit?" width="400" height="225" src="https://www.youtube.com/embed/TIaUYG1rpsk?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
     </div>
   </div>
 </div>
