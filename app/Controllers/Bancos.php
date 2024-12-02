@@ -284,7 +284,7 @@ class Bancos extends BaseController
                                 }
 
                                 $u->data = $data;
-                                $u->historial = $historial;
+                                $u->historial = $historial; 
 
                                 model( "UsuarioModel" )->save( $u );    
 
