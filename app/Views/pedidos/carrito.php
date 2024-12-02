@@ -128,7 +128,7 @@
  
                     if( $evento == "true" ){
                         echo "\n<div style=\"position:relative;width:100%\">
-                                    <img src=\"".base_url()."assets/img/promociones/{$p[ "codigo" ]}.jpg?".filemtime( "assets/img/promociones/{$p[ "codigo" ]}.jpg" )."\" class=\"img-fluid\">
+                                    <img src=\"".base_url()."assets/img/promociones/{$p[ "codigo" ]}.png?".filemtime( "assets/img/promociones/{$p[ "codigo" ]}.png" )."\" class=\"img-fluid\">
                                     <div title=\"Click aquí para agregar o quitar la promoción de tu pedido\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-evento ".( $pagado ? "d-none" : "" )."\">
                                         <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" >
                                     </div>
