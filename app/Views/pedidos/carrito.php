@@ -325,46 +325,8 @@
                 <div class="me_formulario" mp="tarjeta" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "GAS" ) echo "style=\"display:none\""; ?>>
                     
                     <?php 
-                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "GAS" && sizeof( $celulares ) ){ 
-                        ?>
-                        <div class="row">
-                            <div class="col-lg-6">
-                            
-                                <select class="form-select form-select-lg fw-bold" name="select_tarjeta">
-                                    <?php
-                                    $existe_almacen = 0;
-
-                                    foreach( $celulares as $c ){
-                                        if( !$existe_almacen && $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
-                                            $existe_almacen = 1;
-                                        }
-                                        
-                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ){
-                                            echo "\n<option ".( $c[ "numero" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$c[ "numero" ]}\">{$c[ "numero" ]}</option>";
-                                        }
-
-                                        if( !$pagado &&!$bloqueado && !$cancelado && !$pedido[ "data" ][ "entrega" ] ){
-                                            $pedido[ "data" ][ "entrega" ] = $c[ "numero" ];
-                                        }
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    else{
-                        if( ( $pagado || $bloqueado || $cancelado ) ){
-                            echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Por el momento no se cuenta con información relacionada con el número celular al cual fue aplicado el servicio</div>";
-                        }
-                        else{
-                            echo "\n<div class=\"alert alert-danger\">
-                                        <i class=\"fa fa-warning\"></i> Para seleccionar este tipo de entrega, primero necesitas vincular un número telefónico a tu cuenta.
-                                    </div>
-                                    <p class=\"m-0\">
-                                        <a class=\"btn btn-info\" href=\"".base_url()."perfil\"><i class=\"fa fa-mobile-retro\"></i> Ver mis números en mi perfil</a>
-                                    </p>";
-                        }
+                    if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) == "GAS" ) { 
+                        echo "<input type=\"hidden\" name=\"select_tarjeta\" value=\"{$usuario->id}\">";
                     }
                     ?>
                 </div>

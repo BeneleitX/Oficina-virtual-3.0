@@ -286,9 +286,13 @@ class E_usuario extends Entity
             
             $calificaciones = $db->query($sql)->getRowArray();
 
+            if( !isset( $this->data->estatus->modelos->{$modelo}) ){
+                $this->valida_modelo();
+            }
+
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];
-
+            
             switch( $modelo[ "codigo" ] ){
                 case "10-NUTRICION" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_1 ] ][ "descripcion" ]." - ".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    

@@ -467,7 +467,7 @@ class Pedidos extends BaseController
                 $db = db_connect();
 
                 $db->query( "do f_update_PTS( {$pedido[ "usuario_id" ]}, '{$pedido[ "modelo_codigo" ]}', '{$mescalifica}' )" );
-                $db->query( "do f_get_estatus( {$pedido[ "usuario_id" ]}, 1 )" );
+                $db->query( "do f_get_estatus( {$pedido[ "usuario_id" ]}, 0 )" );
             }
 
             // BITACORA Cancelar pedido
@@ -678,7 +678,7 @@ class Pedidos extends BaseController
 
             $domicilios = $this->data[ "socio" ]->getDomicilios();
 
-            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
+            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
 
             $total = $this->data[ "pedido" ][ "data" ][ "total" ] - $this->data[ "socio" ]->saldo( $this->data[ "modelo" ] ) + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
 

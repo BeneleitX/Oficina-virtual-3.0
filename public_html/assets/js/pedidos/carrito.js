@@ -392,8 +392,8 @@ function update_pedido( flag = null ){
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
-
-        permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
+        
+            permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
         if( !permitepagos || pendientes ){
             $( this ).prop( 'disabled', true );
@@ -643,8 +643,9 @@ $(document).ready(function()
 
         else if( metodoentrega_activo.substring(3) == 'GAS'){
             $( '.me_formulario[mp=tarjeta]' ).show();
-            entrega = $( '[name=select_tarjeta]' ).val();
+            entrega = pedido.usuario_id;
             pedido.data.domicilio = null;
+            pedido.data.entrega = entrega;
             pedido.data.costoxbulto = 0;
         }
 
