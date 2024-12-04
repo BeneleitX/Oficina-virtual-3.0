@@ -36,7 +36,7 @@ class Rangos extends BaseController
         " );
 
         $pendientes = $db->query( "SELECT rango_codigo, COUNT(*) AS pendientes FROM t_pines
-        WHERE estatus_codigo = '225-ALCANZADO'
+        WHERE estatus_codigo = '225-ALCANZADO' AND u.rol_codigos not like '%42-PERMANENTE%'
         GROUP BY rango_codigo" );
 
         foreach( $pendientes->getResult() as $s ){
