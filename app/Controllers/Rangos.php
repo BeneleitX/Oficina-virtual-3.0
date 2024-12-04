@@ -32,7 +32,7 @@ class Rangos extends BaseController
             FROM t_usuarios u
             WHERE SUBSTRING( u.estatus_codigo, 1,3 ) > 200 
             AND u.rol_codigos not like '%42-PERMANENTE%'
-            GROUP BY u.data->>'$.rango'
+            GROUP BY u.data->>'$.rango' 
         " );
 
         $pendientes = $db->query( "SELECT p.rango_codigo, COUNT(*) AS pendientes FROM t_pines p join t_usuarios u on u.id = p.usuario_id
