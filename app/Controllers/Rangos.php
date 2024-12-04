@@ -68,6 +68,7 @@ class Rangos extends BaseController
             JOIN t_rangos r ON r.codigo = p.rango_codigo
             JOIN t_usuarios u ON u.id = p.usuario_id 
             WHERE p.estatus_codigo = '225-ALCANZADO'
+            AND t.rol_codigos not like '%42-PERMANENTE%'
             ORDER BY p.rango_codigo, p.usuario_id" )->getResultArray();
 
 
