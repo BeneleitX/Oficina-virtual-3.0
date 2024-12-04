@@ -179,9 +179,11 @@ class Registro extends BaseController
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
         $respuesta = json_decode( curl_exec( $curl ) );
         curl_close($curl);
-        $usuario->data->talento_id = $respuesta->cliente_id;
-      
 
+        $data = $usuario->data;
+        $data->talento_id = $respuesta->cliente_id;
+        $usuario->data = $data;
+      
         model( "UsuarioModel" )->save( $usuario );
 
         if( $data[ "patrocinador" ] != 9999999 ){
