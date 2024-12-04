@@ -169,7 +169,20 @@ class Registro extends BaseController
 
         $usuario = model( "UsuarioModel" )->find( $id );
         $recibe[ "password" ] = $usuario->password = $demo > 0 ? "1234" : random_password();
-        
+
+        // crear usuario en TALENTO.NET
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://core.beneleit.talentonet.com/api/beneleit/crear_socio" );
+        curl_setopt($curl, CURLOPT_POST, true );
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "socio_id" => $usuario->id ] ) );
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+        $respuesta = curl_exec( $curl );
+        curl_close($curl);
+     dd( $respuesta );
+        $usuario->data->talento_id = $respuesta->cliente_id;
+      
+
         model( "UsuarioModel" )->save( $usuario );
 
         if( $data[ "patrocinador" ] != 9999999 ){
@@ -191,16 +204,6 @@ class Registro extends BaseController
             "patrocinador" => $usuario->redes->patrocinador,
             "password" => $recibe[ "password" ]
         ] );
-
-        // crear usuario en TALENTO.NET
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "https://core.beneleit.talentonet.com/api/beneleit/crear_socio" );
-        curl_setopt($curl, CURLOPT_POST, true );
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "socio_id" => $usuario->id ] ) );
-        curl_exec( $curl);
-        curl_close($curl);
-
 
                 // ENVIAR CORREO
 
