@@ -192,6 +192,16 @@ class Registro extends BaseController
             "password" => $recibe[ "password" ]
         ] );
 
+        // crear usuario en TALENTO.NET
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://core.beneleit.talentonet.com/api/beneleit/crear_socio" );
+        curl_setopt($curl, CURLOPT_POST, true );
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( [ "socio_id" => $usuario->id ] ) );
+        curl_exec( $curl);
+        curl_close($curl);
+
+
                 // ENVIAR CORREO
 
                 $imagenes = [

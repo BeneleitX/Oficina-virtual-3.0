@@ -237,9 +237,7 @@
 
                 <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
 
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <select class="form-select" name="select_almacen">
+                            <select class="form-select" name="select_almacen" style="display:inline-block; width:50%">
                                 <?php
                                 $existe_almacen = 0;
 
@@ -256,22 +254,15 @@
                                 }
                                 ?>
                             </select>
-                        </div>
 
-                        <div class="col-lg-6">
+                            
                             <?php 
-                            if(0 && $pagado  && $bloqueado && !$entregado ){ 
-                                ?>
-                                <form method="post" action="<?php echo base_url("entrega"); ?>">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                                    <button type="submit" <?php echo $existe_almacen ? "" : "disabled"; ?> class="btn col-12 btn-warning">Entregar Pedido en Almacen</button>
-                                </form>
-                                <?php 
+                            if( $pagado && !$entregado ){ 
+                                if( $usuario->es_admin() || ( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ) ){
+                                    echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_guia' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
+                                }
                             } 
                             ?>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "CELULAR" ) echo "style=\"display:none\""; ?>>
@@ -398,7 +389,8 @@
                                         Este pedido ha sido enviado por paquetería <?php echo $pedido[ "fechas" ][ "enviado" ] ? " con fecha de ".date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "enviado" ] ) ) : ""; ?>.
                                         <br>Guía de rastreo: 
                                         <span class="badge bg-marine fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
-                                        <?php if( 1 ){
+                                        <?php 
+                                        if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
                                             echo "<button data-bs-toggle=\"tooltip\" title=\"Editar guía\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_guia' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
                                         }?>
                                     </div>
