@@ -259,7 +259,7 @@
                             <?php 
                             if( $pagado && !$entregado ){ 
                                 if( $usuario->es_admin() || ( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ) ){
-                                    echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_guia' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
+                                    echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_almacen' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
                                 }
                             } 
                             ?>
@@ -976,6 +976,44 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 <p>Verificar que la información sea correcta antes de guardar los datos.</p>
                 <input class="form-control text-center" name="guia_nueva" value="<?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?>">
                 </div>
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" tabindex="-1" id="edita_almacen">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="<?php echo base_url( "edita_almacen" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                <div class="modal-header bg-mustard">
+                    <h5 class="modal-title text-white"><i class="fa fa-edit"></i> Editar almacen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                <p>Verificar que la información sea correcta antes de guardar los datos.</p>
+
+                <select class="form-select" name="select_almacen" style="display:inline-block; width:50%">
+                    <?php              
+                    foreach( ALMACENES as $a ){
+
+                        // Almacen es donde se distribuye, puntos y cedis es donde se pueden hacer entregas a cliente
+                        
+                        if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
+                            echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
                 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-warning">Continuar</button>

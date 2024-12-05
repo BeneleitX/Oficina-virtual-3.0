@@ -180,9 +180,9 @@ class Registro extends BaseController
         $respuesta = json_decode( curl_exec( $curl ) );
         curl_close($curl);
 
-        $data = $usuario->data;
-        $data->talento_id = $respuesta->cliente_id;
-        $usuario->data = $data;
+        $datax = $usuario->data;
+        $datax->talento_id = $respuesta->cliente_id;
+        $usuario->datax = $data;
       
         model( "UsuarioModel" )->save( $usuario );
 
