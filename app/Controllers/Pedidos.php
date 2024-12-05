@@ -499,9 +499,9 @@ class Pedidos extends BaseController
 
             // BITACORA Cambiar guia
             bitacora( 74, $this->data[ "usuario" ]->id, [ 
-                "pedido" => $pedido[ "id" ],
+                "pedido"   => $pedido[ "id" ],
                 "anterior" => $previo,
-                "nueva" => $pedido[ "data" ][ "guia" ]
+                "nueva"    => $pedido[ "data" ][ "guia" ]
             ] );
         }
 
@@ -518,26 +518,28 @@ class Pedidos extends BaseController
 
         if( 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
+            $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || 
+            $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||                         
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" )
          ){
 
-            $previo = $pedido[ "data" ][ "guia" ];
-            $pedido[ "data" ][ "guia" ] = $this->request->getPost( "guia_nueva" );
+            $previo = $pedido[ "data" ][ "entrega" ];
+            $pedido[ "data" ][ "entrega" ] = $this->request->getPost( "nuevo_almacen" );
 
             model( "PedidoModel" )->save( $pedido );
 
             // BITACORA Cambiar guia
-            bitacora( 74, $this->data[ "usuario" ]->id, [ 
-                "pedido" => $pedido[ "id" ],
+            bitacora( 76, $this->data[ "usuario" ]->id, [ 
+                "pedido"   => $pedido[ "id" ],
                 "anterior" => $previo,
-                "nueva" => $pedido[ "data" ][ "guia" ]
+                "nueva"    => $pedido[ "data" ][ "entrega" ]
             ] );
         }
 
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
-            "texto" => "Se ha actualizado la guía de rastreo de paquetería" ] );      
+            "texto" => "Se ha actualizado el punto de entrega" ] );      
     } 
     
 

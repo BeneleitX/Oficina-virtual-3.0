@@ -1001,7 +1001,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 <div class="modal-body">
                 <p>Verificar que la información sea correcta antes de guardar los datos.</p>
 
-                <select class="form-select" name="select_almacen" style="display:inline-block; width:50%">
+                <select class="form-select" name="nuevo_almacen" style="display:inline-block; width:50%">
                     <?php              
                     foreach( ALMACENES as $a ){
 
