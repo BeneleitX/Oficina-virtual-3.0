@@ -585,6 +585,9 @@ class Dashboard extends BaseController
                 </tr>";
             }
         }
+        else{
+            $html .= "<tr><td class=\"py-5 text-red text-center\">No hay información</td></tr>";
+        }
         
         $html .= "</table>";
 
