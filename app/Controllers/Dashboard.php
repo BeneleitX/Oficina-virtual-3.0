@@ -551,37 +551,39 @@ class Dashboard extends BaseController
         $html = "<table class=\"table w-100 m-0 table-borderless xtable-striped\">";
         $k = 0;
         
-        foreach( $respuesta->data as $num ){
-            $recarga = $num; // end( $num->detalle );
-            $plan = model( "ProductoModel" )->find( $recarga->plan__oferta_adicional );
-            //$plan->descripcion = str_replace( "B -", "B<br>", $plan->descripcion );
+        if( $respuesta ){
+            foreach( $respuesta->data as $num ){
+                $recarga = $num; // end( $num->detalle );
+                $plan = model( "ProductoModel" )->find( $recarga->plan__oferta_adicional );
+                //$plan->descripcion = str_replace( "B -", "B<br>", $plan->descripcion );
 
-            $f = [
-                "d" => date( "d", strtotime( $recarga->vigencia_fin ) ),
-                "m" => date( "m", strtotime( $recarga->vigencia_fin ) ),
-                "y" => date( "Y", strtotime( $recarga->vigencia_fin ) ),
-            ];
+                $f = [
+                    "d" => date( "d", strtotime( $recarga->vigencia_fin ) ),
+                    "m" => date( "m", strtotime( $recarga->vigencia_fin ) ),
+                    "y" => date( "Y", strtotime( $recarga->vigencia_fin ) ),
+                ];
 
-            $g = [
-                "d" => date( "d", strtotime( $recarga->vigencia_inicio ) ),
-                "m" => date( "m", strtotime( $recarga->vigencia_inicio ) ),
-                "y" => date( "Y", strtotime( $recarga->vigencia_inicio ) ),
-            ];
+                $g = [
+                    "d" => date( "d", strtotime( $recarga->vigencia_inicio ) ),
+                    "m" => date( "m", strtotime( $recarga->vigencia_inicio ) ),
+                    "y" => date( "Y", strtotime( $recarga->vigencia_inicio ) ),
+                ];
 
-            if( $recarga->vigencia_fin < date( "Y-m-d" ) ){
-                $vence = "Vencido";
-                $vence_clase = "red";
+                if( $recarga->vigencia_fin < date( "Y-m-d" ) ){
+                    $vence = "Vencido";
+                    $vence_clase = "red";
+                }
+                else{
+                    $vence = "Vence";
+                    $vence_clase = "teal";
+                }
+
+                $html .= "\n<tr class=\"dt_num ".( $k++ > 3 ? "d-none" : "" )."\">
+                    <td class=\"p-0\"><i class=\"fa fa-mobile-retro text-{$vence_clase} fs-1\"></td>
+                    <td class=\"py-2 w-100\"><h5 style=\"line-height: 0.2\" class=\"mb-3\">{$num->sim__numero_telefono}</h5><p style=\"line-height: 0.8\"><small><strong>{$plan->data->descripcion}</strong><br>Contratado el ".( $g[ "d" ]." de ".mes( $g[ "m" ] ).", ".$g[ "y" ])."<br><span class=\"text-{$vence_clase}\">{$vence} el ".( $f[ "d" ]." de ".mes( $f[ "m" ] ).", ".$f[ "y" ])."</span></small></p></td>
+                    <td class=\"text-end p-0\" nowrap><img src=\"https://v4.app/assets/img/productos/{$plan->codigo}.png\" style=\"border-radius:5px; width:60px; height:60px\"></td>
+                </tr>";
             }
-            else{
-                $vence = "Vence";
-                $vence_clase = "teal";
-            }
-
-            $html .= "\n<tr class=\"dt_num ".( $k++ > 3 ? "d-none" : "" )."\">
-                <td class=\"p-0\"><i class=\"fa fa-mobile-retro text-{$vence_clase} fs-1\"></td>
-                <td class=\"py-2 w-100\"><h5 style=\"line-height: 0.2\" class=\"mb-3\">{$num->sim__numero_telefono}</h5><p style=\"line-height: 0.8\"><small><strong>{$plan->data->descripcion}</strong><br>Contratado el ".( $g[ "d" ]." de ".mes( $g[ "m" ] ).", ".$g[ "y" ])."<br><span class=\"text-{$vence_clase}\">{$vence} el ".( $f[ "d" ]." de ".mes( $f[ "m" ] ).", ".$f[ "y" ])."</span></small></p></td>
-                <td class=\"text-end p-0\" nowrap><img src=\"https://v4.app/assets/img/productos/{$plan->codigo}.png\" style=\"border-radius:5px; width:60px; height:60px\"></td>
-            </tr>";
         }
         
         $html .= "</table>";
