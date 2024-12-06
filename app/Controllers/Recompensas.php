@@ -141,5 +141,70 @@ class Recompensas extends BaseController
             "texto" => "Esta recompensa se ha marcado como entregada" ] );   
     }
 
+
+    public function excel_premios()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+                
+        $db       = db_connect();
+        $data     = [];
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "RECOMPENSAS" );
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $row = 1;
+        $d = [];
+        $e = [];
+        $worksheet->setCellValue( "A1", "SOCIO" );
+        $worksheet->setCellValue( "B1", "NOMBRE" );
+        $worksheet->setCellValue( "C1", "RECOMPENSA" );
+        $worksheet->setCellValue( "D1", "FECHA" );
+        $worksheet->setCellValue( "E1", "ESTATUS" );
+
+        $sql = "SELECT 
+                u.id AS 'SOCIO', 
+                CONCAT(u.data->>'$.nombre', ' ', u.data->>'$.apellidos[0]', ' ', u.data->>'$.apellidos[1]') AS 'NOMBRE', 
+                p.nombre AS 'RECOMPENSA',
+                r.fecha AS 'FECHA',
+                r.estatus_codigo AS 'ESTATUS'
+                from t_redenciones r
+                JOIN t_usuarios u ON u.id = r.usuario_id
+                JOIN t_recompensas p ON p.codigo = r.recompensa_codigo
+                where SUBSTRING( r.estatus_codigo, 1, 3) > 300
+                ORDER BY fecha asc";
+
+        $result = $db->query( $sql );
+
+        foreach( $result->getResult() as $s ){
+            $row++;
+            $worksheet->setCellValue( "A".( $row ),  $s->SOCIO);
+            $worksheet->setCellValue( "B".( $row ),  $s->NOMBRE);
+            $worksheet->setCellValue( "C".( $row ),  $s->RECOMPENSA);
+            $worksheet->setCellValue( "D".( $row ),  $s->FECHA);
+            $worksheet->setCellValue( "E".( $row ),  ESTATUS[ $s->ESTATUS ][ "descripcion" ] );
+        }
+
+        $worksheet->getStyle( "A1:E1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "A1:E1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        $path = "data/excel/recompensas";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/Recompensas_".date( "Y-m-d" )."_".time().".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }      
 }
 

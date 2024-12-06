@@ -3,8 +3,15 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+<div class="row">
+    <div class="col-8">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+    </div>
+    <div class="col-4 text-end pt-3">
+        <button class="btn btn-success" id="descarga_premios"><i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span></button>
+    </div>
+</div>
 
 <?php
 $ciclos = [];

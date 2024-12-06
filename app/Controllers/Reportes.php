@@ -140,7 +140,7 @@ class Reportes extends BaseController
         $path = "data/excel/socios_por_estatus";
         if( !is_dir( $path ) ) mkdir( $path, 0755, true );
 
-        echo $file = $path."/SociosPorEstatus_".substr( $modelo, 3 )."_".date( "Y-m-d" ).".xlsx";
+        echo $file = $path."/SociosPorEstatus_".substr( $modelo, 3 )."_".date( "Y-m-d" )."_".time().".xlsx";
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );

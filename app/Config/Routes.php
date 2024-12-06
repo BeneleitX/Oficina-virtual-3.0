@@ -112,6 +112,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "reclama_recompensa/(:any)", "Recompensas::reclama_recompensa/$1" );     
     $routes->post( "guarda_recompensas",    "Recompensas::guarda_recompensas" );     
     $routes->post( "entregar_recompensa",   "Recompensas::entregar_recompensa" );     
+    $routes->post( "excel_premios",         "Recompensas::excel_premios" ); 
+
 
     $routes->get( "red",                    "Redes::downline" ); 
     $routes->get( "red/(:any)",             "Redes::downline/$1" ); 
