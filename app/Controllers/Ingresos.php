@@ -367,7 +367,7 @@ class Ingresos extends BaseController
         $worksheet->setCellValue( chr(65 + $col++)."1", "SEMANA" );
 
         $pagos = $this->data[ "usuario" ]->getPagos( $modelo );
-
+               
         foreach( $pagos as $pago ){
 
             $sql  = "SELECT 
@@ -388,6 +388,7 @@ class Ingresos extends BaseController
             $result = $db->query( $sql );
 
             foreach( $result->getResult() as $ms ){
+
                 $data[ $pago[ "folio" ] ][ "detalles" ] = $ms;
                 $data[ $pago[ "folio" ] ][ "esquemas" ][ $ms->esquema ] = $ms->cantidad;
 
@@ -402,6 +403,35 @@ class Ingresos extends BaseController
                 $d[ $de[ "descripcion" ] ] = true;
             }
         }
+
+        // revisar que existan todos los datos
+
+        foreach( $data as $k => $pago ){
+            if( !isset( $pago[ "detalles" ] ) ){
+                $sql = "SELECT 
+                    min(c.fecha) as fecha, 
+                    e.codigo as esquema, 
+                    IFNULL( p.data->'$.factor', 2.5 ) as factor, 
+                    SUM( c.cantidad ) as cantidad,
+                    '34-2024' as semana,
+                    p.data->>'$.cantidades.subtotal' as subtotal 
+                    from t_pagos p
+                    LEFT JOIN t_periodos r ON r.codigo = p.data->>'$.periodos.creacion'
+                    left join t_comisiones c ON c.usuario_id = p.usuario_id AND c.fecha BETWEEN r.inicia AND r.termina 
+                    LEFT JOIN t_esquemas e ON e.codigo = c.esquema_codigo
+                    WHERE p.id = {$k} AND e.modelo_codigo = r.modelo_codigo
+                    GROUP BY c.esquema_codigo, semana
+                    order by semana asc, c.esquema_codigo asc";
+
+                $ms = $db->query( $sql )->getRow();
+
+                $data[ $k ][ "detalles" ] = $ms;
+                $data[ $k ][ "esquemas" ][ $ms->esquema ] = $ms->cantidad;
+
+                $e[ $ms->esquema ] = true;
+            }
+        }
+
 
         $e = array_keys( $e );
         foreach( $e as $esquema ){
@@ -418,7 +448,11 @@ class Ingresos extends BaseController
         $row = 1;
         $coltemp = sizeof( $e ) + 1;
 
-        foreach( $data as $pago ){
+        foreach( $data as $folio => $pago ){
+            if( !isset( $pago[ "detalles" ] ) ){
+                echo "<pre>".print_r($folio,1);
+                die();
+            }
             $row++;
             $col  = 1;
             $suma = 0;
