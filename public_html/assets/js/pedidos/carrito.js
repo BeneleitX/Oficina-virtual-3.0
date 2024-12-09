@@ -144,6 +144,8 @@ function update_pedido( flag = null ){
       // return;
     }
 
+    console.log( 'check ' + pedido.data.mesanterior );
+
     pedido.data.total     = 0;
     pedido.data.productos = 0;
     pedido.data.peso      = 0;
@@ -396,7 +398,7 @@ function update_pedido( flag = null ){
         
         permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
 
-        console.log( permitepagos, pendientes, pedido.no_stock, total_productos_pedido, pedido.data.entrega, es_paqueteria);
+        // console.log( permitepagos, pendientes, pedido.no_stock, total_productos_pedido, pedido.data.entrega, es_paqueteria);
         
         if( !permitepagos || pendientes ){
             $( this ).prop( 'disabled', true );
@@ -574,6 +576,7 @@ $(document).ready(function()
         pedido.data.comisionentrega = 0;
         pedido.data.costoxbulto = 0;
         pedido.metodoentrega_codigo = null;
+        pedido.data.mesanterior = 0;
 
         $( '[total_productos]' ).attr( 'total_productos', 0 );
         $( '[total_entrega]' ).attr( 'total_entrega', 0 );
