@@ -709,8 +709,12 @@ class Pedidos extends BaseController
        // if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
 
             $domicilios = $this->data[ "socio" ]->getDomicilios();
-
-            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
+            
+            if( !$this->data[ "pedido" ][ "metodoentrega_codigo" ] && $this->data[ "pedido" ][ "modelo_codigo" ] == "40-GASOLINAS" ){
+                $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
+            }
+            
+            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13", "15" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
 
             $total = $this->data[ "pedido" ][ "data" ][ "total" ] - $this->data[ "socio" ]->saldo( $this->data[ "modelo" ] ) + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
 

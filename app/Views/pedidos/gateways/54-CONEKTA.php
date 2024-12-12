@@ -33,7 +33,7 @@ $json     = [
         ],        
         "checkout" => [
             "type" => "Integration",
-            "allowed_payment_methods" => [ "cash" ],
+            "allowed_payment_methods" => [ "card", "cash" ],
             "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
             "redirection_time" => 0,
             "success_url"      => "https://app.beneleit.mx/ConektaRedirect"

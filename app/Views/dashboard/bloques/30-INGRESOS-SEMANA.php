@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <div id="chart_ingresos"></div>
 
-<div class="row mx-1">
+<div class="row mx-1 mb-0">
 
 <?php
 
@@ -68,7 +68,7 @@ $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
         <div class="mt-2">Total acumulado SEMANA <?php echo date( "Y-W" ); ?><h1 class="my-1 text-white">$<?php echo number_format( $t_actual, 2 ); ?><?php echo $t_actual ? "<span class=\"badge\" data-bs-custom-class=\"tooltip-mustard\" title=\"<i class='fa fa-warning'></i> Antes del pago, se aplicará a esta cantidad la retención de ISR correspondiente. \" data-bs-toggle=\"tooltip\"><i class=\"fa fa-warning text-mustard small\"></i></span>" : "" ?></h1></div>
     </div>
 
-    <p class="text-center mt-3 mb-0"><?php echo "Día ".ceil( $transcurridos / 24 / 60 )." de ".$total_dias; ?></p>
+    <p class="text-center mt-0 mb-0"><?php echo "Día ".ceil( $transcurridos / 24 / 60 )." de ".$total_dias; ?></p>
 
     <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
         <div class="progress-bar bg-teal" style="width: <?php echo $porc_bono; ?>%"><?php echo $porc_bono."%"; ?></div>

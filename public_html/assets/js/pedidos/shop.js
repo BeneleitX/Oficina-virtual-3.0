@@ -765,7 +765,4 @@ $(document).ready(function()
     $( '#open_checkout' ).on( 'click', function(){
         $( '#modal_checkout' ).modal( 'show' );
     });
-
-
-
 });

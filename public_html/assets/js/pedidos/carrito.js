@@ -34,7 +34,7 @@ function revisa_stock(){
         $( '#no_stock' ).hide();
         pedido.no_stock = false;
 
-    if( metodoentrega_activo ){
+    if( metodoentrega_activo && pedido.data.peso > 0 ){
         var d = metodoentrega_activo.substring( 3 );
 
         if( d == 'ALMACEN' || d == 'PAQUETERIA' ){
@@ -144,8 +144,6 @@ function update_pedido( flag = null ){
       // return;
     }
 
-    console.log( 'check ' + pedido.data.mesanterior );
-
     pedido.data.total     = 0;
     pedido.data.productos = 0;
     pedido.data.peso      = 0;
@@ -179,6 +177,8 @@ function update_pedido( flag = null ){
         };
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
+
+        console.log( formula, promocion );
 
         if( formula ){
             $( '.card[promocion=' + promocion + ']' ).show();
@@ -290,6 +290,9 @@ function update_pedido( flag = null ){
         total_productos_pedido += cuenta_productos;
     });
 
+    pedido.data.peso = pedido.data.peso == false ? 0 : parseInt( pedido.data.peso );
+    total_productos_pedido = pedido.data.productos ;
+
     // update bultos
     var bultos1 = Math.ceil( pedido.data.peso / pesoxbulto );
     var bultos2 = 1; //Math.ceil( pedido.data.productos / pedido.data.productosxbulto );
@@ -298,34 +301,59 @@ function update_pedido( flag = null ){
     pluses = 0;
     packs  = 0;
 
-    if( pedido.PTS["030-PLUS"] > 0 ){
-        pluses = Math.floor( pedido.PTS["030-PLUS"] / 3 );
-        bultos -= pluses;
+    if( pedido.data.peso == 0 ){
+        metodoentrega_activo    = null;
+        pedido.data.costoxbulto = 0;
 
-        if( bultos < 0 ){
-            bultos = 0;
-        }
-    }  
-    if( pedido.PTS["316-SIM-CARD"] > 0 ){
-        bultos = 1;
-        metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
-
-        // diferencia de costod e envio si son 5 sims o más
-        if( metodosentrega[ metodoentrega_activo ] && pedido.data.costoxbulto ){
-            pedido.data.costoxbulto =  parseFloat( pedido.PTS["316-SIM-CARD"] == 5 ? 115 : 250, 2 );
-        }
-        // packs  = 5;
+        if( modelo == '40-GASOLINAS' ){
+            pedido.metodoentrega_codigo = null;
+            pedido.data.entrega = null;
+            pedido.data.costoxbulto = 0;
+        }        
     }
+    else{
+        
+        if( pedido.metodoentrega_codigo == null && $( '[name=metodosentrega]:checked' ).val() !== undefined ){
+            $( '[name=metodosentrega]' ).change();
+        }
+
+        if( pedido.PTS["030-PLUS"] > 0 ){
+            pluses = Math.floor( pedido.PTS["030-PLUS"] / 3 );
+            bultos -= pluses;
+
+            if( bultos < 0 ){
+                bultos = 0;
+            }
+        }  
+        if( pedido.PTS["316-SIM-CARD"] > 0 ){
+            bultos = 1;
+            metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() ?? null;
+
+            // diferencia de costod e envio si son 5 sims o más
+            if( metodosentrega[ metodoentrega_activo ] && pedido.data.costoxbulto ){
+                pedido.data.costoxbulto =  parseFloat( pedido.PTS["316-SIM-CARD"] == 5 ? 115 : 250, 2 );
+            }
+            // packs  = 5;
+        }
+    }
+    
+    if( !pedido.data.peso && pedido.data.productos > 0 ){
+        $( '.metodosentrega, .me_respuesta' ).hide();
+
+        $( '#no_costo' ).show();
+    }
+    else{
+        $( '.metodosentrega, .me_respuesta' ).show();
+        $( '#no_costo' ).hide();
+    }
+
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
 
     $( '[total_entrega]' ).attr( 'total_entrega', pedido.data.comisionentrega );
-    $( '.me_costo' ).html( 'Utilizar este método de entrega, genera un costo de ' + 
-
-    Moneda.format( pedido.data.comisionentrega ) ).show();
+    $( '.me_costo' ).html( parseInt( pedido.data.comisionentrega ) ? 'Utilizar este método de entrega, genera un costo de ' + Moneda.format( pedido.data.comisionentrega ) : 'Este método de entrega no genera costo' ).show();
 
     porcentaje1 = 100 * pedido.data.peso / pedido.data.pesoxbulto;
     porcentaje2 = 100 * pedido.data.productos / pedido.data.productosxbulto;
-
 
     if( 0 && porcentaje2 > porcentaje1 ){
         $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) + ( packs ? '<small><br>Envío gratis <span class="badge bg-light-blue">CHIPS</span> x' + packs + '</small>' : '' ) ); 
@@ -373,13 +401,20 @@ function update_pedido( flag = null ){
     else{
         b.hide();
     }
-      
-    $( 'button[name=metodopago]' ).each( function( a, b){
-        var metodopago  = $( this ).attr( 'value' ),
+     
+    $( 'div.metodopago' ).each( function( a, b){
+        var metodopago  = $( this ).attr( 'metodopago' ),
+            boton       = $( this ).find( '[name=metodopago]' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
             comision    = 0;
 
+/*     $( 'button[name=metodopago]' ).each( function( a, b){
+        var metodopago  = $( this ).attr( 'value' ),
+            cantidad    = $( this ).find( '.cantidad' ),
+            costo_extra = $( this ).find( '.costo_extra' ),
+            comision    = 0;
+ */
         switch( metodospago[ metodopago ].settings.tipocomision ){
             case 'porcentaje':
                 comision = Math.ceil( subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100 );
@@ -393,23 +428,64 @@ function update_pedido( flag = null ){
         cantidad.html( caption );
         costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
 
-
-        es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;
+        es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'PAQUETERIA' : false;
+        es_almacen    = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'ALMACEN' : false;
         
-        permitepagos = !pedido.no_stock && total_productos_pedido > 0 /* && ( total_productos_pedido > 0 || ( subtotal > 0  || total_saldo > 0) ) */ && parseInt( pedido.data.entrega ) > 0 && ( ( es_paqueteria && pedido.data.domicilio !== undefined || !es_paqueteria && pedido.data.entrega.length > 0 ) );
-
-        // console.log( permitepagos, pendientes, pedido.no_stock, total_productos_pedido, pedido.data.entrega, es_paqueteria);
+        permitepagos = 
+            ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ) &&
+            !pendientes &&
+            !pedido.no_stock && 
+            total_productos_pedido > 0 && 
+            ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ) &&
+            ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen );
         
-        if( !permitepagos || pendientes ){
+            $errores = '';
+        
+        if( !permitepagos ){
             $( this ).prop( 'disabled', true );
             $( this ).removeClass( 'btn-primary' );
             $( this ).addClass( 'btn-light2 text-gray-500' );
+
+            $( '#open_checkout' ).removeClass( 'btn-success' ).addClass( 'btn-light' ).prop( 'disabled', true );
+
+            // mostrar error
+
+            if( pendientes ){
+                $errores = 'Hay productos obligatorios que no has seleccionados';
+            }
+
+            if( !pedido.metodoentrega_codigo && pedido.data.peso > 0 ){
+                $errores = 'No has seleccionado método de entrega';
+            }
+
+            if( pedido.no_stock ){
+                $errores = 'Stock insuficiente en almacen seleccionado';
+            }
+
+            if( total_productos_pedido == 0 ){
+                $errores = 'Tu pedido está vacío';
+            }
+
+            if( es_paqueteria && !( parseInt( pedido.data.entrega ) > 0 ) ){
+                $errores = 'Debes seleccionar un domicilio';
+            }
+
+            if( es_almacen && pedido.data.entrega == null ){
+                $errores = 'Debes seleccionar un almacen';
+            }
         }
         else{
             $( this ).prop( 'disabled', false );
             $( this ).removeClass( 'btn-light2 text-gray-500' );
             $( this ).addClass( 'btn-primary' );
+
+            $( '#open_checkout' ).addClass( 'btn-success' ).removeClass( 'btn-light' ).prop( 'disabled', false );
+            $errores = 'Click para finalizar el pedido y seleccionar método de pago';
         }
+
+        const tooltip = bootstrap.Tooltip.getInstance('#btn-wrapper');
+        tooltip.setContent( { '.tooltip-inner': $errores } ); 
+
     });
     
     json = JSON.stringify( pedido );
@@ -420,7 +496,7 @@ function update_pedido( flag = null ){
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: { [csrf_token] : csrf_hash, json : json },
         success: function( result ){
-            console.log( 'log' );
+            // console.log( 'log' );
         }
     });
 }
@@ -619,48 +695,67 @@ $(document).ready(function()
         
     // elige metodo de entrega
     $( '[name=metodosentrega]' ).on( 'change', function(){
-        var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val(),
+        var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() != '' ? $( '[name=metodosentrega]:checked' ).val() : null,
             entrega = $( 'div[domicilio_id]' ).attr( 'domicilio_id' );
-            
-        pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo, 2 );
 
-        $( '.me_descripcion' ).html( metodosentrega[ metodoentrega_activo ].settings.descripcion );
-        $( '.me_formulario, .me_costo' ).hide();
-        $( '.me_respuesta' ).show();
+        pedido.data.costoxbulto = 0;
+        entrega = null;
 
-        if( metodoentrega_activo.substring(0,2) == '00'){
-            $( '.me_formulario[mp=almacen]' ).show();
-            entrega = $( '[name=select_almacen]' ).val();
-            load_inventario( entrega );
+        if( metodoentrega_activo != null && parseInt( pedido.data.peso ) > 0 ) {
+            pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo, 2 );
 
-            pedido.data.domicilio  = null;
+            $( '.me_descripcion' ).html( metodosentrega[ metodoentrega_activo ].settings.descripcion );
+            $( '.me_formulario, .me_costo' ).hide();
+            $( '.me_respuesta' ).show();
 
-            if( entrega ){
-                pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
+            if( metodoentrega_activo.substring(0,2) == '00'){
+                $( '.me_formulario[mp=almacen]' ).show();
+                entrega = $( '[name=select_almacen]' ).val();
+                load_inventario( entrega );
+
+                pedido.data.domicilio  = null;
+
+                if( entrega ){
+                    pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
+                }
+            }  
+
+            else if( metodoentrega_activo.substring(3) == 'CELULAR'){
+                $( '.me_formulario[mp=celular]' ).show();
+                entrega = $( '[name=select_celular]' ).val();
+                pedido.data.domicilio = null;
+                pedido.data.costoxbulto = 0;
             }
-        }  
 
-        else if( metodoentrega_activo.substring(3) == 'CELULAR'){
-            $( '.me_formulario[mp=celular]' ).show();
-            entrega = $( '[name=select_celular]' ).val();
-            pedido.data.domicilio = null;
-            pedido.data.costoxbulto = 0;
+/*             else if( metodoentrega_activo.substring(3) == 'GAS'){
+                $( '.me_formulario[mp=tarjeta]' ).show();
+                entrega = pedido.usuario_id;
+                pedido.data.domicilio = null;
+                pedido.data.costoxbulto = 0;
+            }
+ */
+            else{
+                $( '.me_formulario[mp=domicilio]' ).show();
+                pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
+                entrega = pedido.data.domicilio;
+            }
         }
-
-        else if( metodoentrega_activo.substring(3) == 'GAS'){
-            $( '.me_formulario[mp=tarjeta]' ).show();
-            entrega = pedido.usuario_id;
-            pedido.data.domicilio = null;
-            pedido.data.entrega = entrega;
-            pedido.data.costoxbulto = 0;
-        }
-
         else{
-            $( '.me_formulario[mp=domicilio]' ).show();
-            pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
+            metodoentrega_activo = null;
+            entrega = null;
+            pedido.data.domicilio = null;
+
+            if( modelo == '40-GASOLINAS' ){
+                metodoentrega_activo = '15-GAS';
+                entrega = pedido.usuario_id;
+                pedido.data.costoxbulto = 0;
+            }
         }
+
+        // console.log( 'metodo activo: ' + metodoentrega_activo, ' ( entrega = ' + entrega + ')' );
 
         pedido.data.entrega = entrega;
+        console.log( 'Entrega: ' + entrega );
         pedido.metodoentrega_codigo = metodoentrega_activo;
 
         update_pedido( "metodo entrega" ); 
@@ -732,8 +827,9 @@ $(document).ready(function()
     });
 
     $( '#no_pago' ).hide();
-    $( 'button[name=metodopago]' ).show();
-    $( 'img[metodopago]' ).show();
+    // $( 'button[name=metodopago]' ).show();
+    $( 'button[name=metodopago], div.metodopago' ).show();
+    // $( 'img[metodopago]' ).show();
 
     if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
 
@@ -777,5 +873,9 @@ $(document).ready(function()
 
     $( 'div[evento=true][estatus=true]' ).each( function(a, b){
         $( this ).find( 'input' ).click();
+    });
+
+    $( '#open_checkout' ).on( 'click', function(){
+        $( '#modal_checkout' ).modal( 'show' );
     });
 });

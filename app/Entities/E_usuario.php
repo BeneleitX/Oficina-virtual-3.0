@@ -284,11 +284,11 @@ class E_usuario extends Entity
             $db  = db_connect();
             $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
             
-            $calificaciones = $db->query($sql)->getRowArray();
-
             if( !isset( $this->data->estatus->modelos->{$modelo}) ){
                 $this->valida_modelo();
             }
+
+            $calificaciones = $db->query($sql)->getRowArray();
 
             $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ];
             $modelo  = MODELOS[ $modelo ];

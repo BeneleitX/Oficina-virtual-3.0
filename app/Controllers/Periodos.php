@@ -204,13 +204,14 @@ class Periodos extends BaseController
          */
 
         $data = json_decode( $db->query( "select valor from t_variables where codigo = 'avance_corte'" )->getRow()->valor );
+        $sql  = "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )";
 
-         try {
-            $db->query( "call p_genera_pagos( '{$periodo}', {$avance}, {$step} )" );
+        try {
+            $db->query( $sql );
             echo 1;
         } catch (DatabaseException $e) {
-             //print_r($e);
-             echo 0;
+             print_r( $e );
+             // echo 0;
            // $db->query( "UPDATE t_variables SET valor = '".json_encode( $data )."' WHERE codigo = 'avance_corte'" );
         }
     } 

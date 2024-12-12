@@ -186,44 +186,47 @@
     <div class="col-lg-6">
         <div class="card mb-3">
             <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
-            <div class="card-body m-0 ">
-                <?php 
-                // Si no hay metodos de entrega para este modelo de negocio, no es requerido para finalizar compra
-                // Al colocar metodo de entrega CELULAR a telefonía, ya todos los modelos tienen, por lo que
-                // esta situación nunca debe presentarse
-                if(  !sizeof( METODOSENTREGA ) ){
-                    echo "<div class=\"alert alert-info m-0 text-marine\"><i class=\"fa fa-circle-info\"></i> Este pedido no requiere datos de entrega</div>";
-                }
 
-                // Si ya esta pagado, avisar que hay un problema con el pedido
-                elseif( ( $bloqueado || $pagado ) && $pedido[ "metodoentrega_codigo" ] == null ){
-                    echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
-                }
-        
-                // botones para metodo de entrega
-               // if( $pedido[ "metodoentrega_codigo" ] ){
-
-                foreach( METODOSENTREGA as $me ){
-                    // PROBLEMA PARA STAFF
-                    // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
-
-                    $metodos = [ "almacen", "efectivo", "recarga" ];
-
-                    if( $modelo == "40-GASOLINAS" ){
-                        unset( $metodos[ 0 ] );
+            <div class="card-body m-0">
+                <div class="alert alert-info mt-3" id="no_costo" style="display:none">
+                    <i class="fa fa-circle-check"></i> Este pedido no requiere método de entrega
+                </div>    
+                
+                <div class="metodosentrega">
+                    <?php 
+                    // Si no hay metodos de entrega para este modelo de negocio, no es requerido para finalizar compra
+                    // Al colocar metodo de entrega CELULAR a telefonía, ya todos los modelos tienen, por lo que
+                    // esta situación nunca debe presentarse
+                    if(  !sizeof( METODOSENTREGA ) ){
+                        echo "<div class=\"alert alert-info m-0 text-marine\"><i class=\"fa fa-circle-info\"></i> Este pedido no requiere datos de entrega</div>";
                     }
 
-                    if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
-                        echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                    // Si ya esta pagado, avisar que hay un problema con el pedido
+                    elseif( ( $bloqueado || $pagado ) && $pedido[ "metodoentrega_codigo" ] == null ){
+                        echo "<div class=\"alert alert-danger m-0 text-red\"><i class=\"fa fa-warning\"></i> Este pedido no cuenta con datos de entrega</div>";
                     }
-                }
-                /* }
-                else{
-                    echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> Este pedido aun no cuenta con información para entrega</span>";
-                }      */               
             
-                $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
-                ?>
+                    // botones para metodo de entrega
+                // if( $pedido[ "metodoentrega_codigo" ] ){
+
+                    foreach( METODOSENTREGA as $me ){
+                        // PROBLEMA PARA STAFF
+                        // ocultar si no requiere almacen, si no hay domicilios o si no hay celulares
+
+                        $metodos = [ "almacen", "efectivo", "recarga" ];
+
+                        if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
+                            echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                        }
+                    }
+                    /* }
+                    else{
+                        echo "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> Este pedido aun no cuenta con información para entrega</span>";
+                    }      */               
+                
+                    $pedido[ "data" ][ "entrega" ] = $pedido[ "data" ][ "entrega" ] ?? "";
+                    ?>
+                </div>
             </div>       
 
             <div class="card-body me_respuesta" <?php if( !$pedido[ "metodoentrega_codigo" ] ) echo "style=\"display:none\""; ?>>
@@ -439,10 +442,6 @@
                         $costoentrega = 0; 
                         break;
  
-                    case "CELULAR" : 
-                        $costoentrega = 0; 
-                        break;
- 
                     default : 
                         $costoentrega = $pedido[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $pedido[ "metodoentrega_codigo" ] ][ "settings" ][ "costo" ] : 0;
                 }
@@ -579,10 +578,7 @@
             </div>
 
             <div class="col-lg-6">
-                <form method="post" action="<?php echo base_url( "checkout" ); ?>">
-                    <?php echo csrf_field(); ?>
-            
-                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+               
 
                     <?php 
                     if( $pagado ){
@@ -661,13 +657,19 @@
                         </div>
                         <?php
                     }
-                    else{
-                        foreach( METODOSPAGO as $mp ){
+                    elseif( $bloqueado && !$pagado ){
+?>
+ <form method="post" action="<?php echo base_url( "checkout" ); ?>">
+                    <?php echo csrf_field(); ?>
+            
+                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                    <?php
+
+
                             $imagen = "";
                             $boton  = "";
-                            if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
-                                $mp[ "settings" ][ "tipocomision" ] = "";
-                            }
+
+                            $mp = METODOSPAGO[ $pedido[ "metodopago_codigo" ] ];
 
                             if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
                                 if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
@@ -682,7 +684,7 @@
                                     }else{
                                         $boton .= " btn-primary ";
 
-                                        $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" style=\"zoom:2; display:none\">" : "<div class=\"mb-3\"></div>";
+                                        $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 w-100 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" xstyle=\"zoom:2; xdisplay:none\">" : "<div class=\"mb-3\"></div>";
                                     } 
                                     
                                     $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."}</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
@@ -690,21 +692,39 @@
 
                                 echo $boton.$imagen;
                             }
-                        }
 
-                        echo "<div class=\"alert alert-danger\" id=\"no_pago\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
+                        echo "</form>";
+
+
+
+
+
+                    
+                        echo "\n<button class=\"btn btn-warning mb-2 col-12\" onclick=\"$( '#cambia_edicion' ).modal( 'show' );\"><i class=\"fa fa-undo\"></i> Regresar a editar pedido</button>";
+                    
+                        echo "\n<button class=\"btn btn-danger mb-2 col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
+                    } 
+                    else{
+
+                        $boton  = "";
+                    if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                        $mp[ "settings" ][ "tipocomision" ] = "";
+                    }
+
+                    if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                
+                        echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";                      
+                    }
+
+                        echo "<div class=\"alert alert-danger\" id=\"no_pago\" style=\"display:none\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
                     }
 
                     
                     ?>
-                </form>
+              
 
                 <?php 
-                if( $bloqueado && !$pagado ){
-                    echo "\n<button class=\"btn btn-warning mb-2 col-12\" onclick=\"$( '#cambia_edicion' ).modal( 'show' );\"><i class=\"fa fa-undo\"></i> Regresar a editar pedido</button>";
-                
-                    echo "\n<button class=\"btn btn-danger mb-2 col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
-                } ?>
+                ?>
             </div>
         </div>
     </div>
@@ -751,7 +771,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
     }
     ?>
 
-    <div class="alert alert-danger">
+    <div class="alert alert-danger mt-5">
         <table>
             <tr>
                 <td valign="top"><i class="fa fa-circle-radiation" style="font-size:32px"></i></td>
@@ -1046,6 +1066,53 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger">Cancelar pedido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="modal_checkout">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "checkout" ); ?>">
+                <?php echo csrf_field(); ?>
+            
+                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Elegir método de pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <?php   
+                            $cc = 0;
+                            foreach( METODOSPAGO as $mp ){
+                                $imagen = "";
+                                if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                                    $mp[ "settings" ][ "tipocomision" ] = "";
+                                }
+
+                                if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                                    if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
+
+                                        $file   = "assets/img/metodospago/{$mp[ "codigo" ]}.png";
+                                        $imagen =  "<img xstyle=\"height:63px; width:240px\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" class=\"w-100 img-fluid\">";
+
+                                        echo "\n
+                                        <button class=\"col-12\" type=\"submit\" style=\"margin:0; padding:0; border:none\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\"><div class=\"alert alert-info mb-0 ".($cc++ ? "mt-3" : "" )." p-0 tipo_pago accordion-button collapsed\" style=\"cursor:pointer\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse_{$mp[ "codigo" ]}\" aria-expanded=\"false\" aria-controls=\"collapse_{$mp[ "codigo" ]}\">
+                                            <div class=\"row g-0 metodopago w-100\" style=\"display:none\" metodopago=\"{$mp[ "codigo" ]}\">
+                                                <div class=\"col-lg-4 col-12\">{$imagen}</div>
+                                                <div class=\"col-lg-5 col-8 p-2\"><h5 style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."</span></div>
+                                                <div class=\"col-lg-3 col-4 text-end p-3\"><h4 class=\"cantidad m-0\">$".number_format( $tt, 2 )."</h4></div>
+                                            </div>
+                                        </div>
+                                        </button>";
+                                    }
+                                } 
+                            }
+                        ?>
                     </div>
                 </form>
             </div>

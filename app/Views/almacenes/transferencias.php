@@ -65,23 +65,25 @@
             <div class="row" id="inventario">
                 <?php  
                     foreach( PRODUCTOS as $p ){
-                        if( !isset( $almacen[ "productos" ][ $p[ "codigo" ] ] ) ){
-                            $almacen[ "productos" ][ $p[ "codigo" ] ]  = 0;
-                        } 
-                        
-                        $e = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
-                        $d = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
+                        if( intval( $p[ "data" ][ "dimensiones" ][ "peso" ] ) > 0 ){
+                            if( !isset( $almacen[ "productos" ][ $p[ "codigo" ] ] ) ){
+                                $almacen[ "productos" ][ $p[ "codigo" ] ]  = 0;
+                            } 
+                            
+                            $e = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
+                            $d = intval( $almacen[ "productos" ][ $p[ "codigo" ] ]);
 
-                        $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
+                            $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
 
-                        echo "
-                        <div class=\"col-6 col-lg-3 mb-2\" producto=\"{$p[ "codigo" ]}\">
-                            <table class=\"w-100 m-0\"><tr>
-                                <td><img  style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
-                                <td nowrap><input name=\"productos[{$p[ "codigo" ]}]\" class=\"form-control mx-2\" type=\"number\" style=\"width:100px !important\"></td>
-                                <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
-                            </tr></table>
-                        </div>";
+                            echo "
+                            <div class=\"col-6 col-lg-3 mb-2\" producto=\"{$p[ "codigo" ]}\">
+                                <table class=\"w-100 m-0\"><tr>
+                                    <td><img  style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
+                                    <td nowrap><input name=\"productos[{$p[ "codigo" ]}]\" class=\"form-control mx-2\" type=\"number\" style=\"width:100px !important\"></td>
+                                    <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
+                                </tr></table>
+                            </div>";
+                        }
                     }
                 ?>
             </div>

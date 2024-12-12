@@ -4,11 +4,12 @@
 
 $db = db_connect();
            
-$sql = "SELECT * FROM t_pedidos
-        WHERE usuario_id = {$usuario->id}
-        AND SUBSTRING( estatus_codigo, 1, 3 ) > 400
-        and fechas->>'$.pagado' > '".date( "Y-m" )."-01'
-        ORDER BY fechas->>'$.pagado' DESC LIMIT 5";
+$sql = "SELECT * FROM t_pedidos p
+        join t_modelos m on m.codigo = p.modelo_codigo and m.estatus_codigo = '201-ACTIVO'
+        WHERE p.usuario_id = {$usuario->id}
+        AND SUBSTRING( p.estatus_codigo, 1, 3 ) > 400
+        and p.fechas->>'$.pagado' > '".date( "Y-m" )."-01'
+        ORDER BY p.fechas->>'$.pagado' DESC LIMIT 5";
 
 $pedidos = $db->query( $sql )->getResultArray();
 load_catalogo( "promociones" );

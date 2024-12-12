@@ -13,17 +13,7 @@ class Admin extends BaseController
         $this->data[ "usuario" ]->valida_modelo();
 
         if( !(
-            $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
-            $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
-            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) || 
-            $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
-            $this->data[ "usuario" ]->permiso( "32-EDICION" ) ||
-            $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" ) ||
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
-            $this->data[ "usuario" ]->permiso( "34-VALIDACION" ) ||
-            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
-            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+            $this->data[ "usuario" ]->es_admin() 
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -63,7 +53,8 @@ class Admin extends BaseController
         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); 
         $this->data[ "banners" ]      = model( "BannerModel" )->where( $sql, null, false )->findAll();
 
-       
+        $this->data[ "tarjetas" ]     = $db->query( "select count(id) as uss from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null" )->getRow()->uss;
+
         echo template( "admin/dashboard", $this->data );
     }
 
