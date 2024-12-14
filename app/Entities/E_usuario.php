@@ -91,7 +91,7 @@ class E_usuario extends Entity
                         "cantidad" => 0.00,
                         "estatus"  => 0
                     ];
-                    $data->estatus->modelos->{$m[ "codigo"]} = "210-NUEVO";
+                    $data->estatus->modelos->{$m[ "codigo"]} = $this->verificado->estatus ? "220-NUEVO-VERIFICADO" : "210-NUEVO"; 
 
                     $redes->modelos->{$m[ "codigo" ]} = [
                         "padre" => $redes->patrocinador,
