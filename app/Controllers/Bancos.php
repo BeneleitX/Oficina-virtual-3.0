@@ -268,9 +268,9 @@ class Bancos extends BaseController
                                         $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
                                     }
                     
-                                    if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) ){
+                                    if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
                                         $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
-                                    }
+                                    }                                    
                                 } 
 
                                 $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];

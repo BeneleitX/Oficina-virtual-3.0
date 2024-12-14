@@ -63,6 +63,10 @@ class E_usuario extends Entity
     public function valida_modelo(){
         foreach( MODELOS as $m ){
 
+            $historial = $this->historial;
+            $data      = $this->data;
+            $redes     = $this->redes;
+
             if( $m[ "settings" ][ "efectivo" ] ){
 
                 if( 
@@ -70,12 +74,11 @@ class E_usuario extends Entity
                     !isset( $this->redes->modelos->{$m[ "codigo" ]} ) ||
                     !isset( $this->data->estatus->modelos->{$m[ "codigo" ]} ) 
                 ){
-                    $historial = $this->historial;
                     $historial->modelos->{$m[ "codigo" ]} = [
                         "primercompra"   => json_decode( "{}" ),
                         "ultimacompra"   => null,
                         "fondeos" => [],
-                        "reset" => $historial->modelos->{"10-NUTRICION"}->reset,
+                        "reset" => $historial->reset,
                         "ingresos" => [
                             date( "Ym" ) => []
                         ],
@@ -84,14 +87,12 @@ class E_usuario extends Entity
                         ]
                     ];
 
-                    $data = $this->data;
                     $data->saldo->{$m[ "codigo"]} = [
                         "cantidad" => 0.00,
                         "estatus"  => 0
                     ];
                     $data->estatus->modelos->{$m[ "codigo"]} = "210-NUEVO";
 
-                    $redes = $this->redes;
                     $redes->modelos->{$m[ "codigo" ]} = [
                         "padre" => $redes->patrocinador,
                         "hijos" => [],
@@ -101,16 +102,23 @@ class E_usuario extends Entity
                             "calificados" => [0,0,0]
                         ]
                     ];
-
-                    $this->historial = $historial;
-                    $this->data = $data;
-                    $this->redes = $redes;
-
-                    // Actualización de datos de socio al agregar un nuevo modelo de negocio
-                    model( "UsuarioModel" )->save( $this );
                 }
             }
         }
+
+        if( !isset( $data->tarjeta) )
+        $data->tarjeta = [
+            "numero"   => "",
+            "estatus"  => "126-NO-ADQUIRIDO",
+            "folio"    => 0
+        ];
+
+        $this->historial = $historial;
+        $this->data = $data;
+        $this->redes = $redes;
+    
+        // Actualización de datos de socio al agregar un nuevo modelo de negocio
+        model( "UsuarioModel" )->save( $this );
     }
 
     
@@ -757,7 +765,7 @@ class E_usuario extends Entity
                     $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
                 }
 
-                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) && $pts > 0 ){
                     $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
                 }
             } 

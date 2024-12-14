@@ -77,6 +77,11 @@ class Registro extends BaseController
                     ]
                 ],
                 "domicilio"     => null,
+                "tarjeta"       => [
+                    "numero"        => "",
+                    "estatus"       => "126-NO-ADQUIRIDO",
+                    "folio"         => 0
+                ],
                 "credencial"    => [
                     "frente"        => null,
                     "reverso"       => null,

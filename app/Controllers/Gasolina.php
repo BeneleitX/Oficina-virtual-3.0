@@ -13,7 +13,7 @@ class Gasolina extends BaseController
         $this->data[ "menu" ] = "admin";
     }
 
-    public function admin(){
+    public function admin( $mes = null ){
         if( !(
             $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -21,16 +21,21 @@ class Gasolina extends BaseController
             return redirect()->to( "inicio" ); 
         }
         
+        if( !$mes ){
+            $mes = date( "Ym" );
+        }
+
         /**********************************/
         $db = db_connect();
 
         $this->data[ "navbar" ] = true;
+        $this->data[ "mes" ]    = $mes;
         $this->data[ "titulo" ] = "Administración Gasolina";
         $this->data[ "promociones" ] = model( "PromocionModel" )->where( "codigo in ('414-GASOLINA', '415-COMODIN')" )->findAll();
 
         $sql = "SELECT 
                 u.id, (
-                    SELECT COUNT(*) FROM t_gasolina g WHERE g.usuario_id = u.id AND date_format( g.fecha, '%Y%m') = date_format( NOW(), '%Y%m') AND g.estatus_codigo = '623-ENTREGA'
+                    SELECT COUNT(*) FROM t_gasolina g WHERE g.usuario_id = u.id AND date_format( g.fecha, '%Y%m') = '{$mes}' AND g.estatus_codigo = '623-ENTREGA'
                 ) AS recargas
                 from t_usuarios u 
                 where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT NULL
@@ -39,6 +44,9 @@ class Gasolina extends BaseController
         // "select id from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null"
 
         $this->data[ "socios" ] = $db->query( $sql )->getResult();
+        
+        $sql = "SELECT COUNT(*) as total FROM t_gasolina g WHERE date_format( g.fecha, '%Y%m') = '{$mes}' AND g.estatus_codigo = '623-ENTREGA'";
+        $this->data[ "total" ] = $db->query( $sql )->getRow()->total;
 
         echo template( "gasolina/admin", $this->data );
     }
@@ -55,12 +63,18 @@ class Gasolina extends BaseController
         $db = db_connect();
         extract( $this->request->getPost() );
 
-        $sql = "UPDATE t_usuarios set data = json_set( data, '$.tarjeta', '{$v_tarjeta2}' ) where id = ".$v_socio;
+        $sql = "UPDATE t_usuarios set data = json_set( data, '$.tarjeta', json_object(
+            'numero',  '{$v_tarjeta2}', 
+            'estatus', '623-ENTREGA',
+            'folio',   '{$v_folio}'
+        ) ) where id = ".$v_socio;
+        
         $db->query( $sql );
 
         // BITACORA Marca recompensa entregada
         bitacora( 77, $this->data[ "usuario" ]->id, [ 
             "socio"   => $v_socio,
+            "folio"   => $v_folio,
             "tarjeta" => $v_tarjeta2
         ] );
 
@@ -68,6 +82,36 @@ class Gasolina extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Se ha viculado correctamente la tarjeta al socio" ] );   
+    }
+
+
+    public function activa_tarjeta(){
+
+        $db = db_connect();
+        extract( $this->request->getPost() );
+
+        if( $v_tarjeta2 == $this->data[ "usuario" ]->data->tarjeta->numero ){
+            echo "true";
+
+            $data = $this->data[ "usuario" ]->data;
+            $data->tarjeta->estatus = "625-ACTIVA";
+            $this->data[ "usuario" ]->data = $data;
+
+            model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+
+            // BITACORA Marca recompensa entregada
+            bitacora( 79, $this->data[ "usuario" ]->id, [ 
+                "tarjeta" => $v_tarjeta2
+            ] );        
+        }
+        else{
+            echo "false";
+
+            // BITACORA Marca recompensa entregada
+            bitacora( 80, $this->data[ "usuario" ]->id, [ 
+                "tarjeta" => $v_tarjeta2
+            ] );
+        }
     }
 
 
@@ -135,7 +179,7 @@ class Gasolina extends BaseController
                 $html .= "\n<tr>
                     <td></td>
                     <td class=\"text-start\"><span class=\"badge bg-marine\">{$r->referencia}</span></td>
-                    <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$socio->data->tarjeta}</strong></td>
+                    <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$socio->data->tarjeta->numero}</strong></td>
                     <td></td>
                     <td>".estatus( "330-EN-ESPERA" )."</td>
                     <td class=\"text-end\"><a href=\"".base_url()."entrega_recarga/{$url}\" class=\"btn btn-sm btn-success\"><i class=\"fa fa-check\"></i> Marcar entregado</a></td>
@@ -165,7 +209,7 @@ class Gasolina extends BaseController
         $pedido = model( "PedidoModel"  )->find( $p );
         $socio  = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
-        $sql = "insert into t_gasolina values ( NULL, '623-ENTREGA', {$pedido[ "id" ]}, {$socio->id}, '{$socio->data->tarjeta}', NOW() )";
+        $sql = "insert into t_gasolina values ( NULL, '623-ENTREGA', {$pedido[ "id" ]}, {$socio->id}, '{$socio->data->tarjeta->numero}', NOW() )";
         $db->query( $sql );
 
         // BITACORA Marca recompensa entregada

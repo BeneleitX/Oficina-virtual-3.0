@@ -2,11 +2,32 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+<div class="row">
+    <div class="col-6">
+    <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <p>
+            <a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a>
+        </p>
+    </div>
 
-<p>
-    <a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a>
-</p>
+    <div class="col-6 text-end pt-3">
+        <h5>Total de recargas en el mes: <span class="badge bg-gray-500" id="totales">0</span>
+        <select id="mes_recargas" class="ms-4 form-select" style="display: inline-block; width:auto">
+            <?php
+            $fecha = date( "Y-m-d" );
+            $mes_x = date( "Ym", strtotime( $fecha ) );
+
+            while( $mes_x >= '202408' ){
+                echo "\n<option ".( $mes_x == $mes ? "selected" : "" )." value=\"{$mes_x}\">".substr( $mes_x, 0, 4)." ".strtoupper( mes( substr( $mes_x, 4, 2) ) )."</option>";
+
+                $fecha = date( "Y-m-d", strtotime( $fecha." -1 month" ) );
+                $mes_x   = date( "Ym", strtotime( $fecha ) );
+            }
+            ?>
+        </select>
+        </h5>
+    </div>
+</div>
 
 
 <div class="alert alert-info">
@@ -19,7 +40,7 @@
 
         <div class="col-lg-4">
         <h5>2. Vincular tarjeta a socio</h5> 
-            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta.</p><p>Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p>     
+            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta. Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p><p>Una vez que el socio reciba su tarjeta, deberá activarla repitiendo el proceso desde su propia oficina virtual</p>     
         </div>
 
         <div class="col-lg-4">
@@ -43,8 +64,9 @@
     </thead>
     <tbody>
         <?php
-        $mes = date( "Ym" );
+      //  $mes = date( "Ym" );
         
+        $todas = 0;
 
         foreach( $socios as $s ){
             $calificacion = 0;
@@ -58,6 +80,7 @@
 
                 if( $p[ "codigo" ] == "414-GASOLINA" ){
                     $recargas = $cantidad;
+                    $todas   += $cantidad;
                 }
 
                 if( $cantidad ){
@@ -76,8 +99,8 @@
                 <td nowrap>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
                 <td>{$paquetes}</td>
                 <td><span class=\"badge bg-".( ESTATUS[ $u->data->estatus->modelos->{"40-GASOLINAS"} ][ "color" ])."\">NIVEL {$calificacion}</span></td>
-                <td>".( $u->data->tarjeta ?? null ? "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$usuario->data->tarjeta}</span>" : "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."</td>
-                <td class=\"text-end\">".( $u->data->tarjeta ?? null ? ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."</td>
+                <td>".( $u->data->tarjeta ?? null ? "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."</td>
+                <td class=\"text-end\">".( ( $u->data->tarjeta->numero ?? null ) ? ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."</td>
             </tr>";
         }
         ?>
@@ -98,15 +121,18 @@
 				</div>
 				<div class="modal-body">
                     <div class="row">
-                        <div class="col-lg-5 text-center">
-                            <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-5">
+                        <div class="col-lg-4 text-center">
+                            <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3">
                         </div>
-                        <div class="col-lg-7">
-                            <p class="text-center mb-1">Escriba los 16 dígitos de la tarjeta a vincular al socio <span id="num_socio" class="badge bg-marine"></span></p>
-                            <input type="text" class="form-control fs-3 text-center mb-3" name="v_tarjeta1"></input>
-                            
-                            <p class="text-center mb-1">Repita con cuidado los 16 dígitos de la tarjeta</p>
-                            <input type="text" class="form-control fs-3 text-center" name="v_tarjeta2" disabled></input>
+                        <div class="col-lg-8">
+                            <p class="mb-1">Folio <span class="badge bg-mustard">EFECTIVALE</span></p>
+                            <div class="row"><div class="col-lg-3"><input type="text" class="form-control mb-3" name="v_folio"></input></div></div>
+
+                            <p class="mb-1">Escriba los 16 dígitos de la tarjeta a vincular al socio <span id="num_socio" class="badge bg-marine"></span></p>
+                            <div class="row"><div class="col-lg-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div></div>
+
+                            <p class="mb-1">Repita con cuidado los 16 dígitos de la tarjeta</p>
+                            <div class="row"><div class="col-lg-6"><input type="text" class="form-control" name="v_tarjeta2" disabled></input></div></div>
                         </div>
                     </div>
 				</div>
@@ -137,3 +163,9 @@
 		</div>
 	</div>
 </div>
+
+
+<script>
+    var g_todas   = <?php echo intval( $todas ); ?>,
+        g_pagadas = <?php echo intval( $total ); ?>;
+</script>

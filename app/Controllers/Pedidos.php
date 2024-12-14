@@ -336,9 +336,9 @@ class Pedidos extends BaseController
                     $historial->modelos->{$modelo}->primercompra = json_decode( '{}' );
                 }
 
-                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) ){
+                if( !isset( $historial->modelos->{$modelo}->primercompra->{$promo} ) && $pts > 0 ){
                     $historial->modelos->{$modelo}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
-                }
+                }                
             } 
 
             $f = $historial->modelos->{$modelo}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
@@ -590,9 +590,9 @@ class Pedidos extends BaseController
                     $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
                 }
 
-                if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) ){
+                if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
                     $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
-                }
+                }                
             } 
 
             $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
@@ -604,7 +604,7 @@ class Pedidos extends BaseController
 
             $db = db_connect();
             $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
-            $db->query( "do f_get_estatus( {$u->id}, 1 )" );
+            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
             $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
         
             // BITACORA Marcar pedido como pagado

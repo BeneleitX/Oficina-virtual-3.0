@@ -1225,6 +1225,7 @@ foreach( $productos as $p ){
 <script>
     
     var modelo 			= '<?php echo $modelo; ?>',
+        tarjeta_Activa  = <?php echo isset( $socio->data->tarjeta ) && $socio->data->tarjeta->estatus == '625-ACTIVA' ? "true" : "false"; ?>,
         es_primermes    = <?php echo !$pc || date( "Ym", strtotime( $pc ) ) == date( "Ym" ) ? "true" : "false"; ?>,
         usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
         cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,

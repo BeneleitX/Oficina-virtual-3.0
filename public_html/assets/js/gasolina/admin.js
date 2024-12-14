@@ -38,6 +38,16 @@ $(document).ready(function(){
         pageLength: 50
     });
 
+    if( g_todas > 0 ){
+        nueva_clase = g_todas == g_pagadas ? 'bg-teal' : 'bg-red';
+        $( '#totales' ).text( g_todas ).removeClass( 'bg-gray-500' ).addClass( nueva_clase );
+    }
+
+
+    $( '#mes_recargas' ).on( 'change', function(){
+        window.location.href = base_url + "admin_gasolina/" + $( '#mes_recargas' ).val();
+    });
+
     // mascara tarjetas
 
     let ccNumberInput1 = document.querySelector('[name=v_tarjeta1]'),
