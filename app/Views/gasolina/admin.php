@@ -98,7 +98,7 @@
                 <td>".$u->id( "40-GASOLINAS", false, false )."</td>
                 <td nowrap>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
                 <td>{$paquetes}</td>
-                <td><span class=\"badge bg-".( ESTATUS[ $u->data->estatus->modelos->{"40-GASOLINAS"} ][ "color" ])."\">NIVEL {$calificacion}</span></td>
+                <td>".( $calificacion ? "<span class=\"badge bg-".( ESTATUS[ $u->data->estatus->modelos->{"40-GASOLINAS"} ][ "color" ])."\">NIVEL {$calificacion}" : "<span class=\"badge bg-gray-500\">NINGUNA" )."</span></td>
                 <td>".( $u->data->tarjeta ?? null ? "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."</td>
                 <td class=\"text-end\">".( ( $u->data->tarjeta->numero ?? null ) ? ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."</td>
             </tr>";
