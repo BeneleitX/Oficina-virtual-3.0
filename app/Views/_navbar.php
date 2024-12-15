@@ -76,6 +76,14 @@
 	</a>
 
 	<?php 
+	if( $usuario->es_admin() ){ ?>
+    <a data-bs-toggle="tooltip" 
+		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
+		href="<?php echo base_url( "admin" ); ?>">
+		<i class="fa fa-gear"></i>
+	</a>
+	<?php } 
+	
 	if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
 		?>	
 		<a data-bs-toggle="tooltip" 
@@ -84,12 +92,6 @@
 	</a>
 	<?php
 	}
-	
-	if( $usuario->es_admin() ){ ?>
-    <a data-bs-toggle="tooltip" 
-		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
-		href="<?php echo base_url( "admin" ); ?>">
-		<i class="fa fa-gear"></i>
-	</a>
-	<?php } ?>
+
+	?>
 
