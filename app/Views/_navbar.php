@@ -84,7 +84,8 @@
 	</a>
 	<?php
 	}
-	elseif( $usuario->es_admin() ){ ?>
+	
+	if( $usuario->es_admin() ){ ?>
     <a data-bs-toggle="tooltip" 
 		title="Administración" class="menu-opcion <?php echo $menu == "admin" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "admin" ); ?>">
