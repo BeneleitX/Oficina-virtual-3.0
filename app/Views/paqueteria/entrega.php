@@ -62,6 +62,7 @@
                 
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                <input type="hidden" name="tarjeta" value="">
                 <button class="btn btn-lg my-5 btn-primary">Marcar pedido como enviado</button>
                 
             </div>
@@ -106,11 +107,51 @@
 			<div class="modal-body text-center">
              <img style="width:200px">
              <div class="nombre"></div>
-             <button class="btn btn-primary my-2" id="confirma_agregar">AGREGAR</button>
+             <button class="btn btn-primary my-2 confirma_agregar">AGREGAR</button>
             </div>
 		</div>
 	</div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="modal_tarjeta" producto="">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+
+				<div class="modal-header bg-red">
+					<h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Entregar tarjeta a socio</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4 text-center">
+                            <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3 avat">
+                            
+                        </div>
+                        <div class="col-lg-8">
+                        <p class="text-center m-0"><img class="w-50" src="<?php echo base_url();?>assets/img/efectivale.jpg"></p>
+
+                            <div class="card"><div class="card-body">
+                            <div class="row">
+                                <div class="col-4 text-end">16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Repite 16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control" name="v_tarjeta2"></input></div>
+                            </div>
+                            </div></div>
+
+                        </div>
+                    </div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger confirma_agregar" disabled><i class="fa fa-check"></i> AGREGAR</button>
+				</div>
+		</div>
+	</div>
+</div>
+
 
 
 <div class="modal" tabindex="-1" id="modal_carga_todos" producto="" cantidad="">

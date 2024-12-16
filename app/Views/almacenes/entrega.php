@@ -49,7 +49,8 @@
             <div id="boton_entregado_si" style="display:none">
                 
                 <?php echo csrf_field(); ?>
-                <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                <input type="hidden" name="pedido"  value="<?php echo $pedido[ "id" ]; ?>">
+                <input type="hidden" name="tarjeta" value="">
                 <button class="btn btn-lg my-5 btn-primary">Marcar pedido como entregado</button>
                 
             </div>
@@ -60,22 +61,28 @@
 
     <div class="col-lg-6">
 
-        <?php $cp = 0; foreach( $pedido[ "productos" ] as $p => $c ){ $cp+= $c; ?>
-        <div class="card mb-3">
-            <div class="card-header" producto="<?php echo $p; ?>" cantidad="<?php echo $c; ?>">
-                <div class="row">
-                    <div class="col-6"><h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5></div>
-                    <div class="text-end col-6"><h5 class="text-teal m-0"><button class="carga_todos btn me-3 btn-sm btn-outline-warning">Cargar todos</button> <?php echo $c; ?></h5></div>
+        <?php 
+        $cp = 0; 
+        foreach( $pedido[ "productos" ] as $p => $c ){ 
+            $cp+= $c; 
+            ?>
+            <div class="card mb-3">
+                <div class="card-header" producto="<?php echo $p; ?>" cantidad="<?php echo $c; ?>">
+                    <div class="row">
+                        <div class="col-6"><h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5></div>
+                        <div class="text-end col-6"><h5 class="text-teal m-0"><button class="<?php if( $c == 1 ){ echo "d-none"; } ?> carga_todos btn me-3 btn-sm btn-outline-warning">Cargar todos</button> <?php echo $c; ?></h5></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <?php for( $a = 1; $a <= $c; $a++ ){ ?>
+                        <input type="checkbox" class="btn-check" id="check_<?php echo $p."_".$a; ?>">
+                        <label producto="<?php echo $p; ?>" numero="<?php echo $a; ?>" class="btn btn-outline-yesno fs-1 px-3 mb-1" for="check_<?php echo $p."_".$a; ?>"><i class="far fa-circle-down"></i></label>
+                    <?php } ?>
                 </div>
             </div>
-            <div class="card-body">
-                <?php for( $a = 1; $a <= $c; $a++ ){ ?>
-                    <input type="checkbox" class="btn-check" id="check_<?php echo $p."_".$a; ?>">
-                    <label producto="<?php echo $p; ?>" numero="<?php echo $a; ?>" class="btn btn-outline-yesno fs-1 px-3 mb-1" for="check_<?php echo $p."_".$a; ?>"><i class="far fa-circle-down"></i></label>
-                <?php } ?>
-            </div>
-        </div>
-        <?php } ?>
+            <?php 
+        } 
+        ?>
 
     </div>
 
@@ -94,7 +101,7 @@
 			<div class="modal-body text-center">
              <img style="width:200px">
              <div class="nombre"></div>
-             <button class="btn btn-primary my-2" id="confirma_agregar">AGREGAR</button>
+             <button class="btn btn-primary my-2 confirma_agregar">AGREGAR</button>
             </div>
 		</div>
 	</div>
@@ -118,6 +125,46 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="modal_tarjeta" producto="">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+
+				<div class="modal-header bg-red">
+					<h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Entregar tarjeta a socio</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4 text-center">
+                            <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3 avat">
+                            
+                        </div>
+                        <div class="col-lg-8">
+                        <p class="text-center m-0"><img class="w-50" src="<?php echo base_url();?>assets/img/efectivale.jpg"></p>
+
+                            <div class="card"><div class="card-body">
+                            <div class="row">
+                                <div class="col-4 text-end">16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Repite 16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control" name="v_tarjeta2"></input></div>
+                            </div>
+                            </div></div>
+
+                        </div>
+                    </div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger confirma_agregar" disabled><i class="fa fa-check"></i> AGREGAR</button>
+				</div>
+		</div>
+	</div>
+</div>
+
 
 <script>
 var cat_productos   = <?php echo json_encode( $productos ); ?>,

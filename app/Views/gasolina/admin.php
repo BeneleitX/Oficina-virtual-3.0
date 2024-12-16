@@ -125,14 +125,18 @@
                             <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3">
                         </div>
                         <div class="col-lg-8">
-                            <p class="mb-1">Folio <span class="badge bg-mustard">EFECTIVALE</span></p>
-                            <div class="row"><div class="col-lg-3"><input type="text" class="form-control mb-3" name="v_folio"></input></div></div>
+                        <p class="text-center m-0"><img class="w-50" src="<?php echo base_url();?>assets/img/efectivale.jpg"></p>
 
-                            <p class="mb-1">Escriba los 16 dígitos de la tarjeta a vincular al socio <span id="num_socio" class="badge bg-marine"></span></p>
-                            <div class="row"><div class="col-lg-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div></div>
-
-                            <p class="mb-1">Repita con cuidado los 16 dígitos de la tarjeta</p>
-                            <div class="row"><div class="col-lg-6"><input type="text" class="form-control" name="v_tarjeta2" disabled></input></div></div>
+<div class="card"><div class="card-body">
+<div class="row">
+    <div class="col-4 text-end">16 dígitos</div>
+    <div class="col-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div>
+</div>
+<div class="row">
+    <div class="col-4 text-end">Repite 16 dígitos</div>
+    <div class="col-6"><input type="text" class="form-control" name="v_tarjeta2"></input></div>
+</div>
+</div></div>
                         </div>
                     </div>
 				</div>

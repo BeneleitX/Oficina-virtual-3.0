@@ -65,8 +65,7 @@ class Gasolina extends BaseController
 
         $sql = "UPDATE t_usuarios set data = json_set( data, '$.tarjeta', json_object(
             'numero',  '{$v_tarjeta2}', 
-            'estatus', '623-ENTREGA',
-            'folio',   '{$v_folio}'
+            'estatus', '623-ENTREGA'
         ) ) where id = ".$v_socio;
         
         $db->query( $sql );
@@ -74,7 +73,6 @@ class Gasolina extends BaseController
         // BITACORA Marca recompensa entregada
         bitacora( 77, $this->data[ "usuario" ]->id, [ 
             "socio"   => $v_socio,
-            "folio"   => $v_folio,
             "tarjeta" => $v_tarjeta2
         ] );
 
