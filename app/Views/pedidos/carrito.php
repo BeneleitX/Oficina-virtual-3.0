@@ -1082,7 +1082,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
 
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Elegir método de pedido</h5>
+                        <h5 class="modal-title"><i class="fa fa-cash-register"></i> Elegir método de pago</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -1104,10 +1104,10 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                         <button class=\"col-12\" type=\"submit\" style=\"margin:0; padding:0; border:none\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\"><div class=\"alert alert-info mb-0 ".($cc++ ? "mt-3" : "" )." p-0 tipo_pago accordion-button collapsed\" style=\"cursor:pointer\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse_{$mp[ "codigo" ]}\" aria-expanded=\"false\" aria-controls=\"collapse_{$mp[ "codigo" ]}\">
                                             <div class=\"row g-0 metodopago w-100\" style=\"display:none\" metodopago=\"{$mp[ "codigo" ]}\">
                                                 <div class=\"col-lg-4 col-12\">{$imagen}</div>
-                                                <div class=\"col-lg-5 col-8 p-2\"><h5 style=\"line-height: 0.9;\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">$".number_format( $comisionbanco, 2 )."</span></div>
+                                                <div class=\"col-lg-5 col-8 p-2 \"><h5 class=\"my-2\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}</h5><p style=\"line-height: 0.8rem;\" class=\"costo_extra text-marine m-0\">$".number_format( $comisionbanco, 2 )."</p></div>
                                                 <div class=\"col-lg-3 col-4 text-end p-3\"><h4 class=\"cantidad m-0\">$".number_format( $tt, 2 )."</h4></div>
                                             </div>
-                                        </div>
+                                        </div>".( substr( $mp[ "codigo" ], 3 ) == "CONEKTA" ? "<p style=\"line-height: 1rem;\" class=\"text-orange mt-2 mb-0\"><i class=\"fa fa-warning\"></i> En pagos en modalidad CONEKTA EFECTIVO, el establecimiento cobrará una comisión adicional de aproximadamente $10.00 al momento de pagar en caja</p>" : "" )."
                                         </button>";
                                     }
                                 } 

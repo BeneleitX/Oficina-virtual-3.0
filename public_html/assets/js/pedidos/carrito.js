@@ -426,7 +426,7 @@ function update_pedido( flag = null ){
     
         caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
         cantidad.html( caption );
-        costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
+        costo_extra.html( 'Comisión bancaria de ' + Moneda.format( comision ) + ( 0 && metodopago.substring( 3 ) == 'CONEKTA' ? ' (el punto de pago cobrará una comisión extra aprox. de $10)' : '' ) );
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'PAQUETERIA' : false;
         es_almacen    = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'ALMACEN' : false;
