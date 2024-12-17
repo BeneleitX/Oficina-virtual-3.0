@@ -116,6 +116,7 @@ class Reportes extends BaseController
                     CAST( JSON_EXTRACT( historial, CONCAT( '$.modelos.\"', '{$modelo}', '\".ultimacompra') ) AS DATE) AS 'ULTIMA'
                 FROM t_usuarios u 
                 WHERE estatus_codigo = '201-ACTIVO'
+                AND json_Extract( u.redes, '$.verificado' ) is null
                 AND JSON_UNQUOTE( JSON_EXTRACT( DATA, CONCAT( '$.estatus.modelos.\"', '{$modelo}', '\"') ) ) = '{$estatus}';";
 
         $result = $db->query( $sql );
