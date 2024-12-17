@@ -37,7 +37,6 @@ function getCadenaURL( $xml ){
   $cifrado = AESencriptar( $xml, $AES[ "key128" ] );
   $encodedString = "<pgs><data0>{$AES[ "cadena" ]}</data0><data>{$cifrado}</data></pgs>";
 
-
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $AES[ "url" ] );
   curl_setopt($curl, CURLOPT_POST, true );
@@ -46,8 +45,11 @@ function getCadenaURL( $xml ){
   $respuesta = curl_exec( $curl );
   curl_close($curl);
   $des = AESdesencriptar( $respuesta, $AES[ "key128" ] );
+  $temp = simplexml_load_string($des);
 
-  return simplexml_load_string( $des )->nb_url ?? base_url( "no_internet" );
+  if( $temp->cd_response == "error" ){
+    echo "<div class=\"alert alert-danger text-center mb-5\"><strong>GETNET response {$temp->cd_response}</strong> : {$temp->nb_response}</div>";
+  }
 }
 
 

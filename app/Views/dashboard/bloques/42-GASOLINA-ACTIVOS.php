@@ -20,9 +20,9 @@ $tarjeta = [
                 <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png"; ?>" style="width:100px">
                 <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:30px; position:absolute; top:50px; left: 54px"><?php echo $calificacion; ?></span>
             </td>
-            <td>
-
-            <div class="card small">
+            <td nowrap>
+            <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; Niveles en tu red</div>
+            <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por calificación</p>
                 <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
                     <thead>
                         <tr>
