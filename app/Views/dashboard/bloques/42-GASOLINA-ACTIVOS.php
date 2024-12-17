@@ -106,7 +106,7 @@ $tarjeta = [
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
             <div class="modal-header bg-marine">
-                <h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Vincular tarjeta a socio</h5>
+                <h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Activar tarjeta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

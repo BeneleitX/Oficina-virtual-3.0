@@ -50,6 +50,8 @@ function getCadenaURL( $xml ){
   if( $temp->cd_response == "error" ){
     echo "<div class=\"alert alert-danger text-center mb-5\"><strong>GETNET response {$temp->cd_response}</strong> : {$temp->nb_response}</div>";
   }
+
+  return simplexml_load_string( $des )->nb_url ?? base_url( "no_internet" );
 }
 
 
