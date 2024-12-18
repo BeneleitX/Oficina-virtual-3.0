@@ -35,7 +35,7 @@ $menu = [
     [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],   
     [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],
     [ "secondary", "eventos", "person-chalkboard", "Eventos", 0 ,[""] ],
-    [ "danger", "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN"] ],
+    [ "danger", "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN", "31-GASOLINA"] ],
 ];
 
 foreach( $menu as $opcion ){
