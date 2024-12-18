@@ -180,7 +180,7 @@ class Gasolina extends BaseController
                     <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$socio->data->tarjeta->numero}</strong></td>
                     <td></td>
                     <td>".estatus( "330-EN-ESPERA" )."</td>
-                    <td class=\"text-end\"><a href=\"".base_url()."entrega_recarga/{$url}\" class=\"btn btn-sm btn-success\"><i class=\"fa fa-check\"></i> Marcar entregado</a></td>
+                    <td class=\"text-end\">".( $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") ? "<a href=\"".base_url()."entrega_recarga/{$url}\" class=\"btn btn-sm btn-success\"><i class=\"fa fa-check\"></i> Marcar entregado</a>" : "" )."</td>
                 </tr>";
             }
         }
@@ -195,7 +195,7 @@ class Gasolina extends BaseController
 
     public function entrega_recarga( $pedido ){
         if( !(
-            $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
+            $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
