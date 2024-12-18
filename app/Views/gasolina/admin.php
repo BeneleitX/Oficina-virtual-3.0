@@ -42,12 +42,12 @@
 
         <div class="col-lg-4">
         <h5>2. Vincular tarjeta a socio</h5> 
-            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta. Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p><p>Una vez que el socio reciba su tarjeta, deberá activarla repitiendo el proceso desde su propia oficina virtual</p><p class="m-0 small">Este paso se hace al enviar paquetería o entregar en almacen, aquí sólo es una herramienta de respaldo.</p>
+            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta. Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p><p>Una vez que el socio reciba su tarjeta, deberá <strong>activarla</strong> repitiendo el proceso desde su propia oficina virtual</p><p class="m-0 small">Este paso se hace al enviar paquetería o entregar en almacen, aquí sólo es una herramienta de respaldo.</p>
         </div>
 
         <div class="col-lg-4">
             <h5>3. Aplicar recargas</h5> 
-            <p>Los socios que hayan adquirido su tarjeta, podrán comprar recargas de gasolina. En este listado se mostrarán las cantidades que el socio vaya adquisiendo en el mes seleccionado y podrán marcarse como aplicadas utilizando el botón <span class="badge bg-red text-white">RECARGAS</span> en cual será de color <span class="text-red">ROJO</span> cuando haya recargas pendientes por aplicar.</p>
+            <p>Los socios que hayan adquirido su tarjeta, podrán comprar recargas de gasolina. En este listado se mostrarán las cantidades que el socio vaya adquiriendo <strong>en el mes seleccionado</strong> y pordrán marcarse como aplicadas utilizando el botón <span class="badge bg-red text-white">RECARGAS</span> en cual será de color <span class="text-red">ROJO</span> cuando haya recargas pendientes por aplicar.</p>
         </div>
     </div>
 </div>
