@@ -41,7 +41,7 @@
 
         <div class="col-lg-4">
         <h5>2. Vincular tarjeta a socio</h5> 
-            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta. Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p><p>Una vez que el socio reciba su tarjeta, deberá activarla repitiendo el proceso desde su propia oficina virtual</p><p class="m-0 small">Este paso se hace al enviar paquetería o entregar en almacen, aquí sólo e suna herramienta de respaldo.</p>
+            <p>Para vincluar una tarjeta se debe escribir dos veces el número de la tarjeta. Si la información es correcta, el sistema permitirá avanzar y habilitará el botón de <span class="badge bg-teal text-white">VINCULAR</span></p><p>Una vez que el socio reciba su tarjeta, deberá activarla repitiendo el proceso desde su propia oficina virtual</p><p class="m-0 small">Este paso se hace al enviar paquetería o entregar en almacen, aquí sólo es una herramienta de respaldo.</p>
         </div>
 
         <div class="col-lg-4">
