@@ -18,7 +18,7 @@ $tarjeta = [
         <tr>
             <td style="width:100px; position:relative" class="px-3" valign="bottom">
                 <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png"; ?>" style="width:100px">
-                <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:30px; position:absolute; top:50px; left: 54px"><?php echo $calificacion; ?></span>
+                <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:30px; position:absolute; top:60px; left: 54px"><?php echo $calificacion; ?></span>
             </td>
             <td nowrap>
             <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; Niveles en tu red</div>
