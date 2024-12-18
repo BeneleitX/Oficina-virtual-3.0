@@ -78,7 +78,7 @@
             <div class="card-header" producto="<?php echo $p; ?>" cantidad="<?php echo $c; ?>">
                 <div class="row">
                     <div class="col-6"><h5 class="m-0"><?php echo $productos[$p]->data->nombre; ?></h5></div>
-                    <div class="text-end col-6"><h5 class="text-teal m-0"><button class="carga_todos btn me-3 btn-sm btn-outline-warning">Cargar todos</button> <?php echo $c; ?></h5></div>
+                    <div class="text-end col-6"><h5 class="text-teal m-0"><button class="<?php if( $c == 1 ){ echo "d-none"; } ?> carga_todos btn me-3 btn-sm btn-outline-warning">Cargar todos</button> <?php echo $c; ?></h5></div>
                 </div>
             </div>
             <div class="card-body">

@@ -154,16 +154,6 @@ $(document).ready(function(){
         update_conteo();
     });
 
-
-    $( 'input.btn-check' ).on( 'change', function(){
-        update_conteo();       
-    });
-
-
-    if( problema ){
-        $( '#boton_entregado_no' ).html( 'hay un problema con la configuración de este pedido' );
-    }
-
     $( '.carga_todos' ).on( 'click', function( e ){
 
         var header   = $( this ).closest( '.card-header' ),
