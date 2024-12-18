@@ -12,6 +12,7 @@
 
     <div class="col-6 text-end pt-3">
         <h5>Total de recargas en el mes: <span class="badge bg-gray-500" id="totales">0</span>
+        <span class="badge bg-gray-500" id="pendientes">0 pendientes</span>
         <select id="mes_recargas" class="ms-4 form-select" style="display: inline-block; width:auto">
             <?php
             $fecha = date( "Y-m-d" );
@@ -170,6 +171,7 @@
 
 
 <script>
-    var g_todas   = <?php echo intval( $todas ); ?>,
-        g_pagadas = <?php echo intval( $total ); ?>;
+    var g_todas     = <?php echo intval( $todas ); ?>,
+        g_pendientes = <?php echo intval( $todas - $total ); ?>;
+        g_pagadas   = <?php echo intval( $total ); ?>;
 </script>

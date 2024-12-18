@@ -38,10 +38,16 @@ $(document).ready(function(){
         pageLength: 50
     });
 
+    
     if( g_todas > 0 ){
-        nueva_clase = g_todas == g_pagadas ? 'bg-teal' : 'bg-red';
-        $( '#totales' ).text( g_todas ).removeClass( 'bg-gray-500' ).addClass( nueva_clase );
+        $( '#totales' ).text( g_todas );
+        $( '#totales' ).removeClass( 'bg-gray-500' ).addClass( g_todas == g_pagadas ? 'bg-teal' : 'bg-red' );
     }
+    
+    if( g_pendientes ){
+        $( '#pendientes' ).text( g_pendientes );
+        $( '#pendientes' ).removeClass( 'bg-gray-500' ).addClass( 'bg-red' );
+    }    
 
 
     $( '#mes_recargas' ).on( 'change', function(){
