@@ -11,8 +11,9 @@
     </div>
 
     <div class="col-6 text-end pt-3">
-        <h5>Total de recargas en el mes: <span class="badge bg-gray-500" id="totales">0</span>
-        <span class="badge bg-gray-500" id="pendientes">0 pendientes</span>
+        <h5> Recargas aplicadas en el mes: 
+            <span class="badge bg-gray-500" id="pendientes">0</span>
+            de <span class="badge bg-gray-500" id="totales">0</span>
         <select id="mes_recargas" class="ms-4 form-select" style="display: inline-block; width:auto">
             <?php
             $fecha = date( "Y-m-d" );

@@ -44,9 +44,9 @@ $(document).ready(function(){
         $( '#totales' ).removeClass( 'bg-gray-500' ).addClass( g_todas == g_pagadas ? 'bg-teal' : 'bg-red' );
     }
     
-    if( g_pendientes ){
-        $( '#pendientes' ).text( g_pendientes );
-        $( '#pendientes' ).removeClass( 'bg-gray-500' ).addClass( 'bg-red' );
+    if( g_pagadas ){
+        $( '#pendientes' ).text( g_pagadas );
+        $( '#pendientes' ).removeClass( 'bg-gray-500' ).addClass( g_todas == g_pagadas ? 'bg-teal' : 'bg-red' );
     }    
 
 
