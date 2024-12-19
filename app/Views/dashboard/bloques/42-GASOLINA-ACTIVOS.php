@@ -131,6 +131,7 @@ $tarjeta = [
 </div>
 
 <script>
+var califica = <?php echo $calificacion; ?>;
 
 $(document).ready(function(){
     var tabla = $( '#niveles_gas' );
@@ -152,8 +153,10 @@ $(document).ready(function(){
             for( nivel = 1; nivel <= 4; nivel++ ){
                 for( calificacion = 1; calificacion <= 5; calificacion++ ){
 
-                    if( result[ nivel - 1][ calificacion - 1 ] > 0 )
-                    tabla.find( 'tbody > tr:eq( ' + ( nivel - 1 ) + ' ) > td:eq( ' + calificacion + ' )' ).html( '<h5 class="m-0 text-teal">' + result[ nivel - 1 ][ calificacion - 1 ] + '</h5>' );
+                    if( result[ nivel - 1][ calificacion - 1 ] > 0 ){
+                        var td = tabla.find( 'tbody > tr:eq( ' + ( nivel - 1 ) + ' ) > td:eq( ' + calificacion + ' )' );
+                        td.html( '<h5 class="m-0 text-' + ( califica < nivel ? 'red' : 'teal' ) + '">' + result[ nivel - 1 ][ calificacion - 1 ] + '</h5>' );
+                    }
                 }
             }
         }
