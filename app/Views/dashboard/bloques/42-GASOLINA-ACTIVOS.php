@@ -23,49 +23,49 @@ $tarjeta = [
             <td nowrap>
             <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; Niveles en tu red</div>
             <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por calificación</p>
-                <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
+                <table id="niveles_gas" class="table table-striped table-bordered w-100 m-0 table-sm text-center">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>4</th>
-                            <th>5</th>
+                            <th width="15%"></th>
+                            <th width="17%">1</th>
+                            <th width="17%">2</th>
+                            <th width="17%">3</th>
+                            <th width="17%">4</th>
+                            <th width="17%">5</th>
                         </tr>
                     </thead>
                     <tbody>
                     <tr>
                             <td>1</td>
-                            <td class="<?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td class="<?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
                         </tr>
                         <tr>
                             <td>3</td>
-                            <td class="<?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
                         </tr>
                         <tr>
                             <td>4</td>
-                            <td class="<?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
-                            <td class="<?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 1 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 2 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 3 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 4 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
+                            <td class="py-0 <?php echo $calificacion >= 5 ? "table-success" : ( $calificacion ? "table-danger" : "" ); ?>"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -129,3 +129,35 @@ $tarjeta = [
 		</div>
 	</div>
 </div>
+
+<script>
+
+$(document).ready(function(){
+    var tabla = $( '#niveles_gas' );
+    
+    tabla.find( 'th:eq(0)' ).html( loader );
+
+    $.ajax({
+        url: base_url + "niveles_gas", 
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: { 
+            [csrf_token] : csrf_hash, 
+            socio : <?php echo $usuario->id; ?>
+        },
+        success: function( result ){
+            tabla.find( 'th:eq(0)' ).html( '' );
+
+            for( nivel = 1; nivel <= 4; nivel++ ){
+                for( calificacion = 1; calificacion <= 5; calificacion++ ){
+
+                    if( result[ nivel - 1][ calificacion - 1 ] > 0 )
+                    tabla.find( 'tbody > tr:eq( ' + ( nivel - 1 ) + ' ) > td:eq( ' + calificacion + ' )' ).html( '<h5 class="m-0 text-teal">' + result[ nivel - 1 ][ calificacion - 1 ] + '</h5>' );
+                }
+            }
+        }
+    });    
+});
+
+</script>
