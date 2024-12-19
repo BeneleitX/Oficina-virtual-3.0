@@ -360,7 +360,7 @@ function beneleit( data ){
             .style( 'fill', 'white' )
             .style( 'font-size', '9px' )
             .style( 'font-weight', 'bold' )
-            .text(function( d ){ return d.calificaciones[ 0 ].substring( 3, 5 ); } );
+            .text(function( d ){ return d.calificaciones[ 0 ].substring( 4, 5 ); } );
 
         // Texto calificación mes actual
         nodeEnter.append( 'text' )
@@ -370,7 +370,7 @@ function beneleit( data ){
             .style( 'fill', 'white' )
             .style( 'font-size','9px' )
             .style( 'font-weight','bold' )
-            .text( function( d ){ return d.calificaciones[ 1 ].substring( 3, 5 ); } );
+            .text( function( d ){ return d.calificaciones[ 1 ].substring( 4, 5 ); } );
 
 
 
