@@ -552,10 +552,10 @@ class Dashboard extends BaseController
 
         foreach( $ps as $socio ){
             $x = $socio->nivel;
-            $y = intval( substr( $socio->calificacion, 4, 1 ) );
+            $y = $socio->calificacion;
 
-        //if( $x > 0 && $y > 0 )
-                $matriz[ $socio->nivel ][ $y ]++;
+        if( $x > 0 && $y > 0 )
+                $matriz[ $socio->nivel -1 ][ $y -1 ]++;
         }
 
         echo json_encode( $matriz );
