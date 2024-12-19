@@ -552,8 +552,8 @@ class Dashboard extends BaseController
             $x = $socio->nivel;
             $y = intval( substr( $socio->calificacion, 4, 1 ) );
 
-         //   if( $x > 1 && $y > 0 )
-            $matriz[ $socio->nivel - 1 ][ $y ]++;
+            if( $x > 1  )
+                $matriz[ $socio->nivel - 1 ][ $y ]++;
         }
 
         echo json_encode( $matriz );
