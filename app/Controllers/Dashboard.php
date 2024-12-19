@@ -542,17 +542,19 @@ class Dashboard extends BaseController
         $ps = $db->query( "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym" )."' )" )->getResult();
 
         $matriz = [
-            [0,0,0,0,0],
-            [0,0,0,0,0],
-            [0,0,0,0,0],
-            [0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
         ];
 
         foreach( $ps as $socio ){
             $x = $socio->nivel;
             $y = intval( substr( $socio->calificacion, 4, 1 ) );
 
-        if( $x > 0 && $y > 0 )
+        //if( $x > 0 && $y > 0 )
                 $matriz[ $socio->nivel -1 ][ $y -1 ]++;
         }
 
