@@ -179,14 +179,14 @@ $(document).ready(function(){
     });
 
 
-    $( '.confirma_agregar_todos').on( 'click', function(){
+    $( '#confirma_agregar_todos').on( 'click', function(){
         var producto = $( '#modal_carga_todos' ).attr( 'producto' ),
             cantidad = $( '#modal_carga_todos' ).attr( 'cantidad' );
 
         for( a = 1; a <= cantidad; a++ ){
             $( '#check_' + producto + '_' + a ).prop( 'checked', true );
         }
-
+        
         $( '#modal_carga_todos' ).modal( 'hide' );
 
         update_conteo();
