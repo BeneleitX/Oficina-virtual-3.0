@@ -110,16 +110,6 @@ class Redes extends BaseController
             </div>
             ";
 
-            if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
-                ?>	
-                <a data-bs-toggle="tooltip" 
-            title="Regresar a sesión de Admin" class="menu-opcion" href="<?php echo base_url( "oauth/".session( "admin" ) ); ?>">
-            <i class="fa fa-shuffle xtext-marine"></i>
-            </a>
-            <?php
-            }
-
-
             if( session( "admin" ) ){
 
                 $id = urlencode( base64_encode( $d->password_original() ) );
