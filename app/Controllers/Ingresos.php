@@ -16,8 +16,10 @@ class Ingresos extends BaseController
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
         }
 
+        $modelo = MODELOS[ $modelo ];
+
         if( !$periodo ){
-            $periodo = codigo_periodo( $modelo );
+            $periodo = codigo_periodo( $modelo[ "codigo" ], null, $modelo[ "settings" ][ "periodo" ] );
         }
 
         $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
@@ -25,11 +27,21 @@ class Ingresos extends BaseController
         if( null == $this->data[ "periodo" ] ){
 
             $dto = new \DateTime();
-            $dto->setISODate( substr( $periodo, 3, 4 ), substr( $periodo, 7, 2 ) );
-            $inicia  = $dto->format('Y-m-d');
-            $dto->modify('+6 days');
-            $termina = $dto->format('Y-m-d');
-            $result  = $db->query( "INSERT IGNORE INTO t_periodos VALUES ( '{$periodo}', '250-EN-PROCESO', '{$modelo}', 'SEMANAL', '{$inicia}', '{$termina}', JSON_OBJECT() )" );
+            
+            if( $modelo[ "settings" ][ "periodo" ] == "SEMANAL" ){
+                $dto->setISODate( substr( $periodo, 3, 4 ), substr( $periodo, 7, 2 ) );
+                $inicia  = $dto->format('Y-m-d');
+                $dto->modify('+6 days');
+                $termina = $dto->format('Y-m-d');
+            }
+            elseif( $modelo[ "settings" ][ "periodo" ] == "MENSUAL" ){
+                $dto->setDate( substr( $periodo, 3, 4 ),  substr( $periodo, 7, 2 ), "01" );
+                $inicia  = $dto->format('Y-m-d');
+                $dto->modify('+1 month -1 day');
+                $termina  = $dto->format('Y-m-d');
+            }
+
+            $result  = $db->query( "INSERT IGNORE INTO t_periodos VALUES ( '{$periodo}', '250-EN-PROCESO', '{$modelo[ "codigo" ]}', '{$modelo[ "settings" ][ "periodo" ]}', '{$inicia}', '{$termina}', JSON_OBJECT() )" );
 
             $this->data[ "periodo" ] = model( "PeriodoModel" )->find( $periodo );
         }
@@ -37,13 +49,13 @@ class Ingresos extends BaseController
         $esq = json_decode( base64_decode( urldecode( $esquemas ) ), 1 );
 
         $this->data[ "navbar" ]     = true;
-        $this->data[ "modelo" ]     = $modelo;
+        $this->data[ "modelo" ]     = $modelo[ "codigo" ];
         $this->data[ "titulo" ]     = "Ingresos por periodo <span class=\"badge bg-marine\">".substr($periodo, 7, 2)."-".substr($periodo, 3, 4)."</span> <span style=\"font-size:16px\">".estatus( $this->data[ "periodo" ][ "estatus_codigo" ] )."</span>";
         $this->data[ "socio"  ]     = $this->data[ "usuario" ];       
 
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
-        WHERE esquema.modelo_codigo = '{$modelo}' 
+        WHERE esquema.modelo_codigo = '{$modelo[ "codigo" ]}' 
             AND esquema.settings->>'$.reparto' != 'puntos'
             AND esquema.settings->>'$.periodo' in ( 'SEMANAL', 'MENSUAL', 'ANUAL' )
         ORDER BY esquema.codigo";
@@ -59,7 +71,7 @@ class Ingresos extends BaseController
             }
         }
 
-        load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
+        load_catalogo( "esquemas", "modelo_codigo = '{$modelo[ "codigo" ]}'");
 
         echo template( "ingresos/balance", $this->data );
     }
@@ -219,32 +231,33 @@ class Ingresos extends BaseController
     public function heatmap()
     {
         echo "<div id=\"heatmap\" class=\"card-body\">";
+        $modelo = MODELOS[ $modelo ];
 
-            $ingresosxdia = $socio->getIngresosPorDia( $modelo );
-        
-            $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
-        
-            while( $inicia <= date( "Y-m-d") ){
-                $fecha = $inicia;
-                $mes = substr( $fecha, 5, 2 );
-                $semana = date("W",  strtotime( $fecha ) );
-        
-                $selected = ( $periodo[ "codigo" ] == codigo_periodo( $modelo, $inicia ) ) ? "selected" : "";
-        
-                echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo, $inicia )."\"><p class=\"m-2\">{$semana}</p>";
+        $ingresosxdia = $socio->getIngresosPorDia( $modelo[ "codigo" ] );
+    
+        $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
+    
+        while( $inicia <= date( "Y-m-d") ){
+            $fecha  = $inicia;
+            $mes    = substr( $fecha, 5, 2 );
+            $semana = date("W",  strtotime( $fecha ) );
+    
+            $selected = ( $periodo[ "codigo" ] == codigo_periodo( $modelo[ "codigo" ], $inicia, $modelo[ "settings" ][ "periodo" ] ) ) ? "selected" : "";
+    
+            echo "<div class=\"heatmap_columna {$selected}\" periodo=\"".codigo_periodo( $modelo[ "codigo" ], $inicia, $modelo[ "settings" ][ "periodo" ] )."\"><p class=\"m-2\">{$semana}</p>";
+            
+            for( $d = 0; $d < 7; $d++ ){
+                $fecha_next = date( "Y-m-d", strtotime( $fecha." + 1 day" ) );
+                $cantidad = $ingresosxdia[ $fecha ] ?? null;
+    
+                echo "<div class=\"heatmap_dia ".( $mes != substr( $fecha, 5, 2 ) ? "" : "" )."\" data-bs-toggle=\"tooltip\" title=\"{$fecha} : $".number_format( $cantidad, 2 )."\" semana=\"{$semana}\" cantidad=\"{$cantidad}\"></div>";
                 
-                for( $d = 0; $d < 7; $d++ ){
-                    $fecha_next = date( "Y-m-d", strtotime( $fecha." + 1 day" ) );
-                    $cantidad = $ingresosxdia[ $fecha ] ?? null;
-        
-                    echo "<div class=\"heatmap_dia ".( $mes != substr( $fecha, 5, 2 ) ? "" : "" )."\" data-bs-toggle=\"tooltip\" title=\"{$fecha} : $".number_format( $cantidad, 2 )."\" semana=\"{$semana}\" cantidad=\"{$cantidad}\"></div>";
-                    
-                    $fecha = $fecha_next;
-                }
-        
-                $inicia = date( "Y-m-d", strtotime( $inicia." + 1 week" ) );
-                echo "</div>";
+                $fecha = $fecha_next;
             }
+    
+            $inicia = date( "Y-m-d", strtotime( $inicia." + 1 week" ) );
+            echo "</div>";
+        }
         
         echo "</div>";
     }
