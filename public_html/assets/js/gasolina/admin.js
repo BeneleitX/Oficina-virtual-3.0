@@ -35,7 +35,7 @@ function do_recarga( socio ){
 $(document).ready(function(){
 
     new DataTable('#tabla_socios', {
-        pageLength: 50
+        pageLength: 500
     });
 
     
