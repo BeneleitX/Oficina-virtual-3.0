@@ -185,9 +185,7 @@ class Gasolina extends BaseController
             }
         }
 
-
         $html .= "</tbody></table></form></div>"; 
-
 
         echo $html;        
     }
