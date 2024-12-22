@@ -96,15 +96,16 @@ function update_puntos( promocion ){
 
     if( evento == 'false' || estatus == 'true' ){
    
-        if( $('.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).length ){
+        if( $( '.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).length ){
             $( '.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).each( function(){
                 var p = $( this ),
                     producto = p.attr( 'producto' ),
                     cantidad = p.find( 'input.cantidad' ).val(),
                     puntos   = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1,
-                    total    = cantidad * puntos;
+                    total    = Math.round( cantidad * puntos * 10 );
 
-                pedido.PTS[ promocion ] += total;
+                pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
+
                 pedido.data.peso += ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
                 pedido.data.productos += parseInt( cantidad );
             });
