@@ -3,6 +3,7 @@ function aprueba( socio ){
     $( '#modal_aceptar' ).modal( 'show' );
 }
 
+
 function rechaza( socio ){
     $( 'input[name=socio]' ).val( socio );
     $( '#modal_rechazar' ).modal( 'show' );
@@ -28,4 +29,5 @@ $(document).ready(function(){
         $( 'input[name=socio]' ).val( socio );
         $( '#modal_rechazar' ).modal( 'show' );
     });
+    
 });

@@ -6,4 +6,4 @@ $(document).ready(function(){
         order: [ [ 4, 'desc' ] ]
     });
 
-});
+}); 

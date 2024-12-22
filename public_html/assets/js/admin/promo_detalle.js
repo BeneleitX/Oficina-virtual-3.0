@@ -77,6 +77,7 @@ $(document).ready(function(){
         $( '#elegibles input:checked').each(function(){
             data.productos.elegibles.push( $( this ).val() );
         });
+        
         $( '#precargados [producto]').each(function(){
             data.productos.precarga.push( $( this ).attr( 'producto' ) );
         });
