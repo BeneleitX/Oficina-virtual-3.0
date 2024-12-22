@@ -130,7 +130,7 @@ class Gasolina extends BaseController
 
         $sql = "SELECT 
                     p.id AS pedido, p.referencia, p.PTS->>'$.\"414-GASOLINA\"' AS paquetes,
-                    g.id AS recarga, CONCAT( g.usuario_id, '-', g.id ) AS folio, g.estatus_codigo AS estatus, g.tarjeta, g.fecha
+                    g.id AS recarga, CONCAT( g.usuario_id, '-', g.id ) AS folio, g.estatus_codigo AS estatus, g.tarjeta, g.fecha, p.fechas->>'$.pagado' AS pagado
                 FROM t_pedidos p
                 LEFT JOIN t_gasolina g ON g.pedido_id = p.id AND g.estatus_codigo = '623-ENTREGA'
                 WHERE p.usuario_id = {$socio->id}
@@ -150,7 +150,8 @@ class Gasolina extends BaseController
                 <th>Folio</th>
                 <th class=\"text-start\">Pedido</th>
                 <th>Tarjeta</th>
-                <th>Fecha</th>
+                <th>Compra</th>
+                <th>Recarga</th>
                 <th>Estatus</th>
                 <th>&nbsp;</th>
             </tr></thead><tbody>";
@@ -165,6 +166,7 @@ class Gasolina extends BaseController
                                 <td><span class=\"badge bg-gray-600\">{$r->folio}</span></td>
                                 <td class=\"text-start\"><span class=\"badge bg-marine\">{$r->referencia}</span></td>
                                 <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$r->tarjeta}</strong></td>
+                                <td><span class=\"d-none\">{$r->pagado}</span>".date( "d-m-Y", strtotime( $r->pagado ) )."</td>
                                 <td><span class=\"d-none\">{$r->fecha}</span>".date( "d-m-Y", strtotime( $r->fecha ) )."</td>
                                 <td>".estatus( $r->estatus )."</td>
                                 <td></td>
