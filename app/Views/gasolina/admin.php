@@ -122,7 +122,7 @@
         ?>
     </tbody>
 </table>
-
+ 
 
 <div class="modal" tabindex="-1" id="modal_tarjeta">
 	<div class="modal-dialog modal-lg">
