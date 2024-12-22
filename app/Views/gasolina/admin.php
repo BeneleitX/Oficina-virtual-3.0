@@ -1,4 +1,4 @@
-<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<link href="<?php echo base_url();  ?>assets/css/datatables.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
@@ -98,11 +98,25 @@
             echo "\n
             <tr socio=\"{$u->id}\">
                 <td>".$u->id( "40-GASOLINAS", false, false )."</td>
+                
                 <td nowrap>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
+                
                 <td>{$paquetes}</td>
-                <td>".( $calificacion ? "<span class=\"badge bg-".( ESTATUS[ $u->data->estatus->modelos->{"40-GASOLINAS"} ][ "color" ])."\">NIVEL {$calificacion}" : "<span class=\"badge bg-gray-500\">NINGUNA" )."</span></td>
-                <td>".( $u->data->tarjeta ?? null ? "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."</td>
-                <td class=\"text-end\">".( ( $u->data->tarjeta->numero ?? null ) ? ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."</td>
+                
+                <td>".( $calificacion ? 
+                    "<span class=\"badge bg-".( ESTATUS[ $u->data->estatus->modelos->{"40-GASOLINAS"} ][ "color" ])."\">NIVEL {$calificacion}" : 
+                    "<span class=\"badge bg-gray-500\">NINGUNA" )."</span>
+                </td>
+
+                <td>".( $u->data->tarjeta ?? null ? 
+                    "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : 
+                    "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."
+                </td>
+
+                <td class=\"text-end\">".( ( $u->data->tarjeta->numero ?? null ) ? 
+                    ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : 
+                    "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."
+                </td>
             </tr>";
         }
         ?>
@@ -127,18 +141,18 @@
                             <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3">
                         </div>
                         <div class="col-lg-8">
-                        <p class="text-center m-0"><img class="w-50" src="<?php echo base_url();?>assets/img/efectivale.jpg"></p>
+                            <p class="text-center m-0"><img class="w-50" src="<?php echo base_url();?>assets/img/efectivale.jpg"></p>
 
-<div class="card"><div class="card-body">
-<div class="row">
-    <div class="col-4 text-end">16 dígitos</div>
-    <div class="col-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div>
-</div>
-<div class="row">
-    <div class="col-4 text-end">Repite 16 dígitos</div>
-    <div class="col-6"><input type="text" class="form-control" name="v_tarjeta2"></input></div>
-</div>
-</div></div>
+                            <div class="card"><div class="card-body">
+                            <div class="row">
+                                <div class="col-4 text-end">16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Repite 16 dígitos</div>
+                                <div class="col-6"><input type="text" class="form-control" name="v_tarjeta2"></input></div>
+                            </div>
+                            </div></div>
                         </div>
                     </div>
 				</div>
