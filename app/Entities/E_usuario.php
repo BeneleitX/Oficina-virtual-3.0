@@ -1050,9 +1050,10 @@ class E_usuario extends Entity
                     join t_esquemas esquema on esquema.codigo = comision.esquema_codigo
                     join t_periodos periodo on periodo.codigo = '{$periodo}'
                     join t_pedidos pedido on pedido.id = comision.pedido_id and substring( pedido.estatus_codigo, 1, 3 ) > 400
+                    JOIN t_modelos modelo ON modelo.codigo = periodo.modelo_codigo
                     WHERE comision.usuario_id = {$this->id} 
                     and substring( comision.estatus_codigo, 1, 3 ) > 200
-                    and ".( is_array( $esquema ) ? "esquema.codigo in ( '".implode( "', '", $esquema )."' )" : "esquema.settings->>'$.periodo' = 'SEMANAL'" )."
+                    and ".( is_array( $esquema ) ? "esquema.codigo in ( '".implode( "', '", $esquema )."' )" : "esquema.settings->>'$.periodo' = modelo.settings->>'$.periodo'" )."
                     AND comision.fecha between periodo.inicia and periodo.termina
                     AND ".substr( $periodo, 0, 2 )." = substring( esquema.modelo_codigo, 1, 2 );";
         }
