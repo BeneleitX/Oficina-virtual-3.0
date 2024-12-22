@@ -29,8 +29,10 @@ class Redes extends BaseController
         echo $socio->getDownlineJSON( $modelo );
     }
 
-    public function upline( $modelo ){
-        $this->data[ "socio" ] = $this->data[ "usuario" ];
+    public function upline( $modelo, $socio = null ){
+        
+        
+        $this->data[ "socio" ]  = $socio ? model( "UsuarioModel" )->find( $socio ) : $this->data[ "usuario" ];
         $this->data[ "modelo" ] = $modelo;
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Upline";

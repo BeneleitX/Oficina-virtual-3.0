@@ -419,7 +419,7 @@ nodeEnter.append("rect")
             .style( 'font-size', '7px' )
             .style( 'font-weight', 'bold' )
             .style( 'fill', 'white' )
-            .text( function( d ){ return d.rango.substring( 3 ); });            
+            .text( function( d ){ return d.rango.substring( 4 ); });            
 
         // Texto calificación mes anterior
         nodeEnter.append('text')

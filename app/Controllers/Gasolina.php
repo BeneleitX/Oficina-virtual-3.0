@@ -207,19 +207,31 @@ class Gasolina extends BaseController
         $pedido = model( "PedidoModel"  )->find( $p );
         $socio  = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
-        $sql = "insert into t_gasolina values ( NULL, '623-ENTREGA', {$pedido[ "id" ]}, {$socio->id}, '{$socio->data->tarjeta->numero}', NOW() )";
-        $db->query( $sql );
+        $sql = "SELECT count(*) as abonados FROM t_gasolina g WHERE g.pedido_id = {$pedido[ "id" ]}";
+        $abonados = $db->query( $sql )->getRow()->abonados;
 
-        // BITACORA Marca recompensa entregada
-        bitacora( 78, $this->data[ "usuario" ]->id, [ 
-            "socio"   => $socio->id,
-            "pedido"  => $pedido[ "id" ],
-            "tarjeta" => $socio->data->tarjeta
-        ] );
+        if( isset( $pedido[ "PTS" ][ "414-GASOLINA" ] ) && $pedido[ "PTS" ][ "414-GASOLINA" ] > $abonados ){
 
-        return redirect()->to( "admin_gasolina" )->with( "msg", [ 
-            "clase" => "success", 
-            "icono" => "check", 
-            "texto" => "Se ha aplicado la recarga de gasolina a la tarjeta del socio" ] );   
+            $sql = "INSERT into t_gasolina values ( NULL, '623-ENTREGA', {$pedido[ "id" ]}, {$socio->id}, '{$socio->data->tarjeta->numero}', NOW() )";
+            $db->query( $sql );
+
+            // BITACORA Marca recompensa entregada
+            bitacora( 78, $this->data[ "usuario" ]->id, [ 
+                "socio"   => $socio->id,
+                "pedido"  => $pedido[ "id" ],
+                "tarjeta" => $socio->data->tarjeta
+            ] );
+
+            return redirect()->to( "admin_gasolina" )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "check", 
+                "texto" => "Se ha aplicado la recarga de gasolina a la tarjeta del socio" ] );   
+        }
+        else{
+            return redirect()->to( "admin_gasolina" )->with( "msg", [ 
+                "clase" => "danger", 
+                "icono" => "warning", 
+                "texto" => "El saldo ya se había marcado anteriormente como abonado" ] );   
+        }
     }
 }

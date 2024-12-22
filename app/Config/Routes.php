@@ -125,6 +125,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "red",                    "Redes::downline" ); 
     $routes->get( "red/(:any)",             "Redes::downline/$1" ); 
     $routes->get( "upline/(:any)",          "Redes::upline/$1" ); 
+    $routes->get( "upline/(:any)/(:num)",   "Redes::upline/$1/$2" ); 
     $routes->post( "downlineJSON",          "Redes::downlineJSON" );
     $routes->post( "uplineJSON",            "Redes::uplineJSON" );
     $routes->post( "userdata",              "Redes::userdata" );
