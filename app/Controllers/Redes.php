@@ -112,7 +112,7 @@ class Redes extends BaseController
             </div>
             ";
 
-            if( session( "admin" ) ){
+            if( session( "admin" ) && 0 ){
 
                 $id = urlencode( base64_encode( $d->password_original() ) );
                 $html .= "<br><div class=\"card border-red\"><div class=\"card-header\"><h5 class=\"m-0 text-red\">Admin tools</h5><small>Usar con cuidado</small></div><div class=\"card-body\">
