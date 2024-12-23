@@ -183,7 +183,7 @@ class Gasolina extends BaseController
                     <td><span class=\"d-none\">{$r->pagado}</span>".date( "d-m-Y", strtotime( $r->pagado ) )."</td>
                     <td></td>
                     <td>".estatus( "330-EN-ESPERA" )."</td>
-                    <td class=\"text-end\">".( $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") ? "<a href=\"".base_url()."entrega_recarga/{$url}\" class=\"btn btn-sm btn-success\"><i class=\"fa fa-check\"></i> Marcar entregado</a>" : "" )."</td>
+                    <td class=\"text-end\">".( ( $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") || $this->data[ "usuario" ]->permiso( "40-ADMIN")) ? "<a href=\"".base_url()."entrega_recarga/{$url}\" class=\"btn btn-sm btn-success\"><i class=\"fa fa-check\"></i> Marcar entregado</a>" : "" )."</td>
                 </tr>";
             }
         }
