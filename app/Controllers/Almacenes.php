@@ -142,19 +142,17 @@ class Almacenes extends BaseController
         $pedido[ "fechas" ][ "entregado" ] = date( "Y-m-d H:i:s" );
         model( "PedidoModel" )->save( $pedido );
 
-        if( isset( $tarjeta ) && strlen( $tarjeta ) == 19 ){
+        if( $tarjeta == "1" ){
             $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
             $data = $u->data;
             $data->tarjeta->estatus = "623-ENTREGA";
-            $data->tarjeta->numero  = $tarjeta;
             $u->data = $data;
 
             model( "UsuarioModel" )->save( $u );
 
             // BITACORA Marca recompensa entregada
             bitacora( 77, $this->data[ "usuario" ]->id, [ 
-                "tarjeta" => $tarjeta,
                 "socio"   => $u->id,
                 "pedido"  => $pedido[ "id" ]
             ] );      

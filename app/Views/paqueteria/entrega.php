@@ -62,7 +62,7 @@
                 
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                <input type="hidden" name="tarjeta" value="">
+                <input type="hidden" name="tarjeta" value="0">
                 <button class="btn btn-lg my-5 btn-primary">Marcar pedido como enviado</button>
                 
             </div>
@@ -85,7 +85,12 @@
                 <?php for( $a = 1; $a <= $c; $a++ ){ ?>
                     <input type="checkbox" class="btn-check" id="check_<?php echo $p."_".$a; ?>">
                     <label producto="<?php echo $p; ?>" numero="<?php echo $a; ?>" class="btn btn-outline-yesno fs-1 px-3 mb-1" for="check_<?php echo $p."_".$a; ?>"><i class="far fa-circle-down"></i></label>
-                <?php } ?>
+                <?php }
+                
+                if( $p == "915-TARJETA" ){
+                    echo "<p class=\"mb-0 mt-3 text-red small\">Ya no es necesaria la vinculación del número de tarjeta al socio, los 16 dígitos deberán ser capturados en el sistema por el socio al momento de recibir la tarjeta y activarla.</p>";
+                }
+                ?>
             </div>
         </div>
         <?php } ?>
@@ -105,7 +110,8 @@
 			</div>
 
 			<div class="modal-body text-center">
-             <img style="width:200px">
+             <!img style="width:200px">
+             <img src="" class="img-fluid px-3 avat">
              <div class="nombre"></div>
              <button class="btn btn-primary my-2 confirma_agregar">AGREGAR</button>
             </div>

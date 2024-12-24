@@ -88,10 +88,18 @@ class Gasolina extends BaseController
         $db = db_connect();
         extract( $this->request->getPost() );
 
-        if( $v_tarjeta2 == $this->data[ "usuario" ]->data->tarjeta->numero ){
+        $sql = "SELECT count(*) as existe FROM t_usuarios WHERE data->>'$.tarjeta.numero' = '{$v_tarjeta2}'";
+        $existe = $db->query( $sql )->getRow()->existe;        
+
+        if( 
+            $this->data[ "usuario" ]->data->tarjeta->estatus != "625-ACTIVA" &&
+            substr( $v_tarjeta2, 0,  12) == "5062 5416 03" && 
+            $existe == 0
+        ){
             echo "true";
 
             $data = $this->data[ "usuario" ]->data;
+            $data->tarjeta->numero  = $v_tarjeta2;
             $data->tarjeta->estatus = "625-ACTIVA";
             $this->data[ "usuario" ]->data = $data;
 
@@ -102,7 +110,7 @@ class Gasolina extends BaseController
                 "tarjeta" => $v_tarjeta2
             ] );        
         }
-        else{
+        else{ 
             echo "false";
 
             // BITACORA Marca recompensa entregada

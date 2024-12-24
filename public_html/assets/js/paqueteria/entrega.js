@@ -131,6 +131,10 @@ $(document).ready(function(){
                 modal  = 'modal_confirma';           
                 imagen = cat_productos[ producto ].data.avatar ? producto : "NO-IMAGEN";
     
+                if( producto == '915-TARJETA' ){
+                    $( '[name=tarjeta]' ).val( '1' );
+                }
+
                 $( '#' + modal ).attr( 'producto', producto );
                 $( '#' + modal ).attr( 'numero', numero );
                 $( '#' + modal + ' img.avat' ).attr( 'src', base_url + 'assets/img/productos/' + imagen + '.png' );
@@ -149,7 +153,7 @@ $(document).ready(function(){
         $( '#check_' + producto + '_' + numero ).prop( 'checked', true );
         modal.modal( 'hide' );
 
-        $( '[name=tarjeta]' ).val( $( '[name=v_tarjeta2]' ).val() );
+        // $( '[name=tarjeta]' ).val( $( '[name=v_tarjeta2]' ).val() );
 
         update_conteo();
     });

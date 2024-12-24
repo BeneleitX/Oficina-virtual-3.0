@@ -79,17 +79,17 @@ $tarjeta = [
     
 
     <?php
-        if( $tarjeta[ "compra" ] > 0 ){
-            if( $tarjeta[ "numero" ] ){
-                echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( $tarjeta[ "estatus" ] )."</td></tr></table>".( $usuario->data->tarjeta->estatus == "623-ENTREGA" ? "<button class=\"btn btn-danger col-12\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card text-white small\"></i> ACTIVALA AQUI</button>" : "<div class=\"alert alert-info m-0 text-center fs-3 py-1\"><i class=\"fa fa-credit-card text-white small\"></i> {$tarjeta[ "numero" ]}</div>" );
-            }
+        //if( $tarjeta[ "compra" ] > 0 ){
+            //if( $usuario->data->tarjeta->estatus == "625-ACTIVA ){
+                echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( $tarjeta[ "estatus" ] )."</td></tr></table>".( $usuario->data->tarjeta->estatus != "625-ACTIVA" ? "<button class=\"btn btn-danger col-12\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card text-white small\"></i> ACTIVA AQUI TU TARJETA</button>" : "<div class=\"alert alert-info m-0 text-center fs-3 py-1\"><i class=\"fa fa-credit-card text-white small\"></i> {$tarjeta[ "numero" ]}</div>" );
+          /*   }
             else{
                 echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( "330-EN-ESPERA" )."</td></tr></table><div class=\"alert alert-warning m-0 text-center\">Tarjeta en espera de entrega a socio</div>";
-            }
-        }
+            } */
+        /* }
         else{
             echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( "126-NO-ADQUIRIDO" )."</td></tr></table><div class=\"alert alert-light m-0 text-center\">No cuentas aun con tu tarjeta física</div>";
-        }
+        } */
         
     ?>
 
