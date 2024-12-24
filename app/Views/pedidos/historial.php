@@ -9,6 +9,8 @@
         <?php 
         if( $modelo == '20-TELEFONIA' ){
             echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Paquetes y activaciones</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> Comprar SIM cards</a></div>";
+        }elseif( $modelo == '40-GASOLINAS' && 0  ){
+            echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><button class=\"btn btn-lg mt-4 col-12 btn-info2\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> Nuevos pedidos cards</a></div>";
         }else{
             echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
         }

@@ -88,7 +88,7 @@ class Gasolina extends BaseController
         $db = db_connect();
         extract( $this->request->getPost() );
 
-        $sql = "SELECT count(*) as existe FROM t_usuarios WHERE data->>'$.tarjeta.numero' = '{$v_tarjeta2}'";
+        $sql = "SELECT count(*) as existe FROM t_usuarios WHERE data->>'$.tarjeta.numero' = '{$v_tarjeta2}' and data->>'$.tarjeta.estatus' = '625-ACTIVA'";
         $existe = $db->query( $sql )->getRow()->existe;        
 
         if( 
