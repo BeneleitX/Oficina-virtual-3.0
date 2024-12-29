@@ -1088,7 +1088,8 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                     <div class="modal-body">
                         <?php   
                             $cc = 0;
-                            foreach( METODOSPAGO as $mp ){
+                            $mpp = array_reverse( METODOSPAGO );
+                            foreach( $mpp as $mp ){
                                 $imagen = "";
                                 if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
                                     $mp[ "settings" ][ "tipocomision" ] = "";
