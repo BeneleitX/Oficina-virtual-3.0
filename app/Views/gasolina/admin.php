@@ -113,7 +113,7 @@
                     "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."
                 </td>
 
-                <td class=\"text-end\">".( ( $u->data->tarjeta->numero ?? null ) ? 
+                <td class=\"text-end\"><span class=\"d-none\">".( $recargas - $s->recargas + ( $u->data->tarjeta->numero ?? 0 ? 1 : 0 ) )."</span>".( ( $u->data->tarjeta->numero ?? null ) ? 
                     ( $recargas > 0 ? "<button class=\"btn btn-sm btn-".( $s->recargas < $recargas ? "danger" : "light" )."\" onclick=\"do_recarga( {$u->id} )\"><i class=\"fa fa-gas-pump\"></i> Recargas</button>" : "" ) : 
                     "<button class=\"btn btn-sm btn-warning\" onclick=\"vincular_tarjeta( {$u->id} )\"><i class=\"fa fa-credit-card\"></i> Vincular tarjeta</button>")."
                 </td>

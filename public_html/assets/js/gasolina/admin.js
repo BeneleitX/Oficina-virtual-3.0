@@ -35,7 +35,8 @@ function do_recarga( socio ){
 $(document).ready(function(){
 
     new DataTable('#tabla_socios', {
-        pageLength: 500
+        pageLength: 500,
+        order: [ [ 5, 'desc' ] ]
     });
 
     

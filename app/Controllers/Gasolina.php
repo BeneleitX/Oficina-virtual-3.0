@@ -39,6 +39,7 @@ class Gasolina extends BaseController
                 ) AS recargas
                 from t_usuarios u 
                 where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT NULL
+                OR LENGTH( DATA->>'$.tarjeta.numero' ) = 19
                 GROUP BY u.id";
 
         // "select id from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null"
