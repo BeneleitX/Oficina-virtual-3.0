@@ -381,7 +381,7 @@ function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
     return 
         substr( $modelo, 0, 2 ).
         substr( $tipo, 0, 1 ).
-        substr( $fecha, 0, 4 ).
+        ( $tipo == "SEMANAL" ? date( "o", strtotime( $fecha ) ) : date( "Y", strtotime( $fecha ) ) ).
         str_pad( ( $tipo == "SEMANAL" ? date( "W", strtotime( $fecha ) ) : date( "m", strtotime( $fecha ) ) ), 2, "0", STR_PAD_LEFT );
 }
 

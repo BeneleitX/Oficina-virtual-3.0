@@ -713,7 +713,11 @@
 
                     if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
                 
-                        echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";                      
+                        echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
+                        
+                        if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] ){
+                            echo "<div class=\"alert alert-warning mt-2\"><i class=\"fa fa-file-invoice-dollar\"></i> ¿Requieres factura?</div>";
+                        }
                     }
 
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\" style=\"display:none\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";

@@ -9,8 +9,8 @@
         <?php 
         if( $modelo == '20-TELEFONIA' ){
             echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Paquetes y activaciones</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> Comprar SIM cards</a></div>";
-        }elseif( $modelo == '40-GASOLINAS' && 0  ){
-            echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><button class=\"btn btn-lg mt-4 col-12 btn-info2\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> Nuevos pedidos cards</a></div>";
+        }elseif( $modelo == '40-GASOLINAS'  ){
+            echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\">".( $usuario->data->tarjeta->numero ?? null ? "<div class=\"alert alert-info text-center py-2 mt-4 h4\">{$usuario->data->tarjeta->numero}</div>" : "<button class=\"btn btn-lg mt-4 col-12 btn-info2\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</button>" )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-credit-card\"></i> &nbsp;Nuevos pedidos</a></div>";
         }else{
             echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
         }
@@ -71,6 +71,36 @@
      
     </tbody>
 </table>
+
+
+<div class="modal" tabindex="-1" id="activa_tarjeta">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+            <div class="modal-header bg-blue">
+                <h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Activar tarjeta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-4 text-center">
+                        <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3">
+                    </div>
+                    <div class="col-lg-8 pt-4">
+                        <p class="mb-1">Escriba los 16 dígitos de la tarjeta</p>
+                        <div class="row"><div class="col-lg-6"><input type="text" class="form-control mb-3" name="v_tarjeta1"></input></div></div>
+
+                        <p class="mb-1">Repita con cuidado los 16 dígitos de la tarjeta</p>
+                        <div class="row"><div class="col-lg-6"><input type="text" class="form-control" name="v_tarjeta2" disabled></input></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" id="submit_tarjeta" disabled><i class="fa fa-check"></i> Activar</button>
+            </div>
+		</div>
+	</div>
+</div>
+
 
 <script>
     var modelo = '<?php echo $modelo ?>', 
