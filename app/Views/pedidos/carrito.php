@@ -629,7 +629,7 @@
                                             }
                                             ?></small>
                                         <span class="badge bg-marine">
-                                            <?php echo date( "W-Y", strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
+                                            <?php echo date( $periodo[ "tipo" ] == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
                                         </span>
                                         
                                     </td>
