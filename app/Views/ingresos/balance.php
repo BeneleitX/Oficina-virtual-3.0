@@ -77,10 +77,11 @@
     </div>
 </div>
 <?php
-$fecha = $periodo[ "inicia" ];
+$hoy = $periodo[ "inicia" ];
 
-for( $d = 0; $d < 7; $d++ ){ 
-    $hoy = date( "Y-m-d", strtotime( $fecha." + {$d} day" ) );
+// for( $d = 0; $d < 7; $d++ ){ 
+while( $hoy < $periodo[ "termina" ] ){ 
+    $hoy = date( "Y-m-d", strtotime( $hoy." + 1 day" ) );
     $cantidad = $ingresosxdia[ $hoy ] ?? null;
 
     if( $cantidad ){

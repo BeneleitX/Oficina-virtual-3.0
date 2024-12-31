@@ -13,7 +13,7 @@ $semanas  = [];
 $data     = [];
 $dto      = new \DateTime();
 
-$dto->setISODate( date( "Y" ), date( "W" ) );
+$dto->setISODate( date( "o" ), date( "W" ) );
 
 for( $q = 0; $q < 10; $q++ ){
     $semanas[] = $dto->format('W');

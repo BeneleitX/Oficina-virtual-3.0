@@ -59,7 +59,7 @@
 
             switch( $b[ "codigo" ] ){
                 case "30-INGRESOS-SEMANA" : 
-                    $b[ "data" ][ "titulo" ] .= " ".date( "W-Y" );
+                    $b[ "data" ][ "titulo" ] .= " ".date( "W-o" );
                     break;
 
                 case "18-MIS-PEDIDOS":
