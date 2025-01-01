@@ -629,7 +629,7 @@
                                             }
                                             ?></small>
                                         <span class="badge bg-marine">
-                                            <?php echo date( $periodo[ "tipo" ] == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ); ?>
+                                            <?php echo isset( $pedido[ "fechas" ][ "reparte" ] ) ? date( $periodo[ "tipo" ] == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ) : "-ERROR-" ; ?>
                                         </span>
                                         
                                     </td>
@@ -716,7 +716,13 @@
                         echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
                         
                         if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] ){
-                            echo "<div class=\"alert alert-warning mt-2\"><i class=\"fa fa-file-invoice-dollar\"></i> ¿Requieres factura?</div>";
+                            echo "<div class=\"alert alert-warning mt-2 py-0\"><table class=\"w-100 m-0\"><tr><td><i class=\"fa fa-file-invoice-dollar\"></i> ¿Requieres factura?</td>
+                            
+                            <td class=\"text-end pt-2\"><div title=\"Click aquí para confirmar la facturación de tu compra\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-factura\">
+                                        <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" >
+                                    </div></td></tr></table>
+                                    
+                            </div>";
                         }
                     }
 

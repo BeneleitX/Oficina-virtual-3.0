@@ -128,7 +128,7 @@ function bitacora( $accion, $usuario, array $variables = [] ){
 function update_estatus_random( $cantidad ){
     $db  = db_connect();
     $mes = date( "Ym" );
-    $sql = "SELECT id 
+ echo   $sql = "SELECT id 
             FROM t_usuarios 
             WHERE data->'$.updated' != '{$mes}' 
             AND estatus_codigo = '201-ACTIVO' 
@@ -139,8 +139,10 @@ function update_estatus_random( $cantidad ){
     foreach( $dat->getResult() as $socios ){
         $sql = "do f_get_estatus( {$socios->id} , 0)";
 
-        $db->query( $sql );
+      //  $db->query( $sql );
     }
+
+    die();
 }
 
 
