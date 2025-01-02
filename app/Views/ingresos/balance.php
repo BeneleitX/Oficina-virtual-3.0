@@ -80,10 +80,10 @@
 $hoy = $periodo[ "inicia" ];
 
 // for( $d = 0; $d < 7; $d++ ){ 
-while( $hoy < $periodo[ "termina" ] ){ 
-    $hoy = date( "Y-m-d", strtotime( $hoy." + 1 day" ) );
+while( $hoy <= $periodo[ "termina" ] ){ 
+    
     $cantidad = $ingresosxdia[ $hoy ] ?? null;
-
+    
     if( $cantidad ){
     ?>
     <div class="card mb-3">
@@ -148,7 +148,9 @@ while( $hoy < $periodo[ "termina" ] ){
             </table>
      
     </div>
-<?php } } ?>
+<?php } 
+$hoy = date( "Y-m-d", strtotime( $hoy." + 1 day" ) );
+} ?>
 
 <script>
     var modelo  = '<?php echo $modelo; ?>',
