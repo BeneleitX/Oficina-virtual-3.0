@@ -116,7 +116,7 @@ class Dashboard extends BaseController
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
 
-        $db->query( "do f_get_estatus(  {$socio->id}, 1 )" );
+        $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
         $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
 
