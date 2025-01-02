@@ -542,7 +542,9 @@ class Dashboard extends BaseController
 
     public function niveles_gas(){
         $db = db_connect();
-        $ps = $db->query( "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym" )."' )" )->getResult();
+
+        $sql = "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym" )."' )";
+        $ps = $db->query( $sql )->getResult();
 
         $matriz = [
             [0,0,0,0,0,0,0,0],
