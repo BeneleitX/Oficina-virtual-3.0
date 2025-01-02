@@ -92,7 +92,7 @@ class Dashboard extends BaseController
                 WHERE  first ORDER BY modelo_codigo;";
 
         $this->data[ "pedidos" ] = json_decode( $db->query( $sql )->getRow()->data, 1 );
-
+        
         echo template( "dashboard/sociodata", $this->data );
     }
 

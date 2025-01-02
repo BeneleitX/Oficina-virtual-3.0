@@ -33,10 +33,12 @@
 
 </div>
 
-<?php if( $socio ){
+<?php 
+
+if( $socio ){
     $patro = model( "UsuarioModel" )->find( $socio->redes->patrocinador );
 
-
+    
     ?>
 
     <form action="<?php echo base_url( "update_sociodata" ); ?>" method="post">
@@ -146,14 +148,20 @@
                 <div class="card" style="overflow:hidden">
                     <table class="table table-striped m-0">
                         <tr><th>Red</th><th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project"></i></a></th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
-
                     <?php 
                     
                     foreach( MODELOS as $m ){
                         
-                        $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre);
-                        $pat->valida_modelo();
-                        
+                        if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){
+                            
+                            $db  = db_connect();
+                            $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                            $socio = model( "UsuarioModel" )->find( $socio->id );    
+                           // if( "40-GASOLINAS" == $m[ "codigo" ] ) dd($socio->redes->modelos->{$m[ "codigo" ]});
+                        }
+//if( "40-GASOLINAS" == $m[ "codigo" ] ) dd($socio);
+                        $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre );
+                        //  $pat->valida_modelo();
                         echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5><a href=\"".base_url()."/sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
                         
                         if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
