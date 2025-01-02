@@ -49,6 +49,9 @@ class Dashboard extends BaseController
 
 
     public function sociodata( $request = null ){
+
+        $db = db_connect();
+
         if( $this->request->getPost( "search_id" ) ){
             $temp = model( "UsuarioModel" )->find( $this->request->getPost( "search_id" ) );
 
@@ -81,7 +84,7 @@ class Dashboard extends BaseController
         load_catalogo( "almacenes");
         
         // Obtenemos sus compras recientes
-        $db = db_connect();
+        
         $sql = "select JSON_OBJECTAGG( modelo_codigo, json_array( referencia, fecha, metodoentrega, entrega) ) as data
                 FROM ( SELECT  @prev := '' ) init
                 JOIN

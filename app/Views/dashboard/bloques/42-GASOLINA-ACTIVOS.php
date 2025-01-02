@@ -21,8 +21,8 @@ $tarjeta = [
                 <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:30px; position:absolute; top:60px; left: 54px"><?php echo $calificacion; ?></span>
             </td>
             <td nowrap>
-            <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; Niveles en tu red</div>
-            <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por calificación</p>
+            <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; NIVELES de tu red</div>
+            <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por VELOCIDAD</p>
                 <table id="niveles_gas" class="table table-striped table-bordered w-100 m-0 table-sm text-center">
                     <thead>
                         <tr>
