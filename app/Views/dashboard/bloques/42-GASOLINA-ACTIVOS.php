@@ -155,7 +155,7 @@ $(document).ready(function(){
 
                     
                         var td = tabla.find( 'tbody > tr:eq( ' + ( nivel - 1 ) + ' ) > td:eq( ' + calificacion + ' )' );
-                        td.html( '<div class="row g-1"><div class="col-6 text-end"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 0 ][ nivel - 1 ][ calificacion - 1 ] ? 'gray-600' : 'gray-200' ) + '">' + result[ 0 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div><div class="col-6 text-start"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 1 ][ nivel - 1 ][ calificacion - 1 ] ? ( califica < nivel ? 'teal' : 'red' ) : 'gray-200' ) + '">' + result[ 1 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div></div>' );
+                        td.html( '<div class="row g-1"><div class="col-6 text-end"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 0 ][ nivel - 1 ][ calificacion - 1 ] ? 'gray-600' : 'gray-200' ) + '">' + result[ 0 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div><div class="col-6 text-start"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 1 ][ nivel - 1 ][ calificacion - 1 ] ? ( califica < nivel ? 'red' : 'teal' ) : 'gray-200' ) + '">' + result[ 1 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div></div>' );
                     
                 }
             }
