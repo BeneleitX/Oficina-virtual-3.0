@@ -46,7 +46,7 @@ class Gasolina extends BaseController
 
         $this->data[ "socios" ] = $db->query( $sql )->getResult();
         
-        $sql = "SELECT sum( p.PTS->>'$.\"414-GASOLINA\"' ) as pedidos
+        $sql = "SELECT sum( p.PTS->>'$.\"414-GASOLINA\"' ) as total
                 FROM t_pedidos p
                 WHERE date_format( p.fechas->>'$.pagado', '%Y%m') = '{$mes}' 
                 and p.PTS->>'$.\"414-GASOLINA\"' > 0
