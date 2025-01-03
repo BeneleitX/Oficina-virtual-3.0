@@ -240,7 +240,7 @@
 
                 <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
 
-                            <select class="form-select" name="select_almacen" style="display:inline-block; width:50%">
+                            <select class="form-select bg-mustard text-white" name="select_almacen" style="display:inline-block; width:50%">
                                 <?php
                                 $existe_almacen = 0;
 
@@ -1144,9 +1144,8 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
             </div>
             <div class="modal-body">
                 <?php 
-                if( sizeof( $domicilios ) && substr( $pedido[ "metodoentrega_codigo" ], 3 ) == "PAQUETERIA" ){
 
-                foreach( $domicilios as $d ){
+foreach( $domicilios as $d ){
                     echo "\n<button domicilio_id=\"{$d[ "id" ]}\" class=\"w-100 btn btn-outline-success text-start mb-3\"><p><strong>{$d[ "nombre" ]}</strong></p>
                         {$d[ "calleynumero" ]}<br>
                         Colonia {$d[ "colonia" ]}<br>
@@ -1154,8 +1153,6 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                         C.P. {$d[ "codigopostal" ]}
                         </button>";
                 }
-            }
-
                 ?>
 
                 <div class="alert alert-info">

@@ -46,7 +46,11 @@ class Gasolina extends BaseController
 
         $this->data[ "socios" ] = $db->query( $sql )->getResult();
         
-        $sql = "SELECT COUNT(*) as total FROM t_gasolina g WHERE date_format( g.fecha, '%Y%m') = '{$mes}' AND g.estatus_codigo = '623-ENTREGA'";
+        $sql = "SELECT sum( p.PTS->>'$.\"414-GASOLINA\"' ) as pedidos
+                FROM t_pedidos p
+                WHERE date_format( p.fechas->>'$.pagado', '%Y%m') = '{$mes}' 
+                and p.PTS->>'$.\"414-GASOLINA\"' > 0
+                and substring( estatus_codigo, 1, 3 ) > 400";
         $this->data[ "total" ] = $db->query( $sql )->getRow()->total;
 
         echo template( "gasolina/admin", $this->data );
