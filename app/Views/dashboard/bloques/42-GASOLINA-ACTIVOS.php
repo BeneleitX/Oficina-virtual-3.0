@@ -16,9 +16,9 @@ $tarjeta = [
 <div class="card-body text-center">
     <table class="w-100 mb-3">
         <tr>
-            <td style="width:100px; position:relative" class="px-3" valign="bottom">
-                <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png"; ?>" style="width:100px">
-                <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:30px; position:absolute; top:60px; left: 54px"><?php echo $calificacion; ?></span>
+            <td style="width:70px; position:relative" class="ps-0 pe-2" valign="bottom">
+                <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png"; ?>" style="width:70px">
+                <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:40px; position:absolute; top:60px; left: 31px"><?php echo $calificacion; ?></span>
             </td>
             <td nowrap>
             <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; NIVELES de tu red</div>
