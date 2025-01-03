@@ -22,7 +22,7 @@ $tarjeta = [
             </td>
             <td nowrap>
             <div class="small" style="display:inline-block; width: 5%; vertical-align:bottom; writing-mode: tb-rl; transform: rotate(-180deg);">&nbsp; NIVELES de tu red</div>
-            <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por VELOCIDAD</p>
+            <div style="display:inline-block; width:95%" class="card small"><p class="my-2">Socios activos por VELOCIDAD (<?php echo mes( date( "m", strtotime( date( "Y-m" )."-1 - 1 month" ) ), 3)."/".mes( date("m"), 3 ); ?>)</p>
                 <table id="niveles_gas" class="table table-striped table-bordered w-100 m-0 table-sm text-center">
                     <thead>
                         <tr>
@@ -153,10 +153,10 @@ $(document).ready(function(){
             for( nivel = 1; nivel <= 4; nivel++ ){
                 for( calificacion = 1; calificacion <= 5; calificacion++ ){
 
-                    if( result[ nivel - 1][ calificacion - 1 ] > 0 ){
+                    
                         var td = tabla.find( 'tbody > tr:eq( ' + ( nivel - 1 ) + ' ) > td:eq( ' + calificacion + ' )' );
-                        td.html( '<h5 class="m-0 text-' + ( califica < nivel ? 'red' : 'teal' ) + '">' + result[ nivel - 1 ][ calificacion - 1 ] + '</h5>' );
-                    }
+                        td.html( '<div class="row g-1"><div class="col-6 text-end"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 0 ][ nivel - 1 ][ calificacion - 1 ] ? 'gray-600' : 'white' ) + '">' + result[ 0 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div><div class="col-6 text-start"><span style="padding:2px; border-radius:3px; display:inline-block; width:16px" class="badge bg-' + ( result[ 1 ][ nivel - 1 ][ calificacion - 1 ] ? ( califica < nivel ? 'red' : 'teal' ) : 'white' ) + '">' + result[ 1 ][ nivel - 1 ][ calificacion - 1 ] + '</span></div></div>' );
+                    
                 }
             }
         }

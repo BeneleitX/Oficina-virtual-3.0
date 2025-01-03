@@ -543,25 +543,47 @@ class Dashboard extends BaseController
     public function niveles_gas(){
         $db = db_connect();
 
-        $sql = "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym" )."' )";
-        $ps = $db->query( $sql )->getResult();
-
         $matriz = [
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
+            [
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+            ],
+            [
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+            ]
         ];
+
+        $sql = "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym", strtotime( date( "Ym" )."-01 - 1 month") )."' )";
+        $ps = $db->query( $sql )->getResult();
 
         foreach( $ps as $socio ){
             $x = $socio->nivel;
             $y = $socio->calificacion;
 
         if( $x > 0 && $y > 0 )
-                $matriz[ $socio->nivel -1 ][ $y -1 ]++;
+                $matriz[ 0 ][ $socio->nivel -1 ][ $y -1 ]++;
         }
+
+        $sql = "call p_get_paquetes( {$this->data[ "usuario" ]->id}, '".date( "Ym" )."' )";
+        $ps = $db->query( $sql )->getResult();
+
+        foreach( $ps as $socio ){
+            $x = $socio->nivel;
+            $y = $socio->calificacion;
+
+        if( $x > 0 && $y > 0 )
+                $matriz[ 1 ][ $socio->nivel -1 ][ $y -1 ]++;
+        }
+
 
         echo json_encode( $matriz );
     }
