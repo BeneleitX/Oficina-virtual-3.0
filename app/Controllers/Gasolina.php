@@ -35,7 +35,11 @@ class Gasolina extends BaseController
 
         $sql = "SELECT 
                 u.id, (
-                    SELECT COUNT(*) FROM t_gasolina g WHERE g.usuario_id = u.id AND date_format( g.fecha, '%Y%m') = '{$mes}' AND g.estatus_codigo = '623-ENTREGA'
+                    SELECT COUNT(*) FROM t_gasolina g 
+                    join t_pedidos p on p.id = g.pedido_id
+                    WHERE g.usuario_id = u.id
+                    AND date_format( p.fechas->>'$.pagado', '%Y%m') = '{$mes}' 
+                    AND g.estatus_codigo = '623-ENTREGA'                
                 ) AS recargas
                 from t_usuarios u 
                 where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT NULL
