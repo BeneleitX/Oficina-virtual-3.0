@@ -17,7 +17,7 @@ $tarjeta = [
     <table class="w-100 mb-3">
         <tr>
             <td style="width:70px; position:relative" class="ps-0 pe-2" valign="bottom">
-                <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png"; ?>" style="width:70px">
+                <img src="<?php echo base_url()."assets/img/gas_{$estatus}.png?".filemtime( "assets/img/gas_{$estatus}.png" ); ?>" style="width:70px">
                 <span class="badge bg-white text-gray-600 py-0 px-1" style="font-size:40px; position:absolute; top:60px; left: 31px"><?php echo $calificacion; ?></span>
             </td>
             <td nowrap>
