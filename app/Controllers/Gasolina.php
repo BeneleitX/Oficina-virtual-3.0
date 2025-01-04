@@ -179,11 +179,12 @@ class Gasolina extends BaseController
 
             foreach( $l as $r ){
                 if( $r->recarga ){
+
                     $suma++;
                     $html .= "\n<tr>
                                 <td><span class=\"badge bg-gray-600\">{$r->folio}</span></td>
                                 <td class=\"text-start\"><span class=\"badge bg-marine\">{$r->referencia}</span></td>
-                                <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$r->tarjeta}</strong></td>
+                                <td><strong><a href=\"javascript:navigator.clipboard.writeText( '".substr( $r->tarjeta, 11, 3).substr( $r->tarjeta, 15, 4)."' );\"><i class=\"fa fa-credit-card text-teal\"></i></a> {$r->tarjeta}</strong></td>
                                 <td><span class=\"d-none\">{$r->pagado}</span>".date( "d-m-Y", strtotime( $r->pagado ) )."</td>
                                 <td><span class=\"d-none\">{$r->fecha}</span>".date( "d-m-Y", strtotime( $r->fecha ) )."</td>
                                 <td>".estatus( $r->estatus )."</td>
@@ -197,7 +198,7 @@ class Gasolina extends BaseController
                 $html .= "\n<tr>
                     <td></td>
                     <td class=\"text-start\"><span class=\"badge bg-marine\">{$r->referencia}</span></td>
-                    <td><strong><i class=\"fa fa-credit-card text-gray-500\"></i> {$socio->data->tarjeta->numero}</strong></td>
+                    <td><strong><a href=\"javascript:navigator.clipboard.writeText( '".substr( $socio->data->tarjeta->numero, 11, 3).substr( $socio->data->tarjeta->numero, 15, 4)."' );\"><i class=\"fa fa-credit-card text-teal\"></i></a> {$socio->data->tarjeta->numero}</strong></td>
                     <td><span class=\"d-none\">{$r->pagado}</span>".date( "d-m-Y", strtotime( $r->pagado ) )."</td>
                     <td></td>
                     <td>".estatus( "330-EN-ESPERA" )."</td>
