@@ -95,6 +95,12 @@
                 $calificacion = 5;
             }
 
+            $icono = "<i class=\"fa fa-credit-card\"></i>";
+
+            if( strlen( $u->data->tarjeta->numero ) == 19 ){
+                $icono = "<a href=\"javascript:navigator.clipboard.writeText( '".substr( $u->data->tarjeta->numero, 11, 3).substr( $u->data->tarjeta->numero, 15, 4)."' );\">{$icono}</a>";
+            }
+
             echo "\n
             <tr socio=\"{$u->id}\">
                 <td>".$u->id( "40-GASOLINAS", false, false )."</td>
@@ -109,7 +115,7 @@
                 </td>
 
                 <td>".( $u->data->tarjeta ?? null ? 
-                    "<span class=\"badge bg-gray-400 text-marine\"><i class=\"fa fa-credit-card\"></i> {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : 
+                    "<span class=\"badge bg-gray-400 text-marine\">{$icono} {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : 
                     "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."
                 </td>
 
