@@ -393,7 +393,7 @@
                                         <br>Guía de rastreo: 
                                         <span class="badge bg-marine fs-5"><?php echo $pedido[ "data" ][ "guia" ] ?? ""; ?></span>
                                         <?php 
-                                        if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+                                        if( session( "admin" ) ){
                                             echo "<button data-bs-toggle=\"tooltip\" title=\"Editar guía\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_guia' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
                                         }?>
                                     </div>
