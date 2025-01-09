@@ -28,7 +28,7 @@ $(document).ready(function(){
         
             if( problema ) return;
 
-            if( producto == '915-TARJETA' ){
+            if( producto == '915-TARJETA' && 0){
                 modal  = 'modal_tarjeta';           
                 imagen = cat_productos[ producto ].data.avatar ? producto : "NO-IMAGEN";
     
