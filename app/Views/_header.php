@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="es" class="<?php echo $navbar ? "" : "full-body"; ?>">
     <head>
-        <link rel="manifest" href="manifest.webmanifest">
-        <meta http-equiv="Content-Type" content="application/x-web-app-manifest+json; charset=UTF-8">
+        <link rel="manifest" href="manifest.json">
+        <!meta http-equiv="Content-Type" content="application/x-web-app-manifest+json; charset=UTF-8">
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
