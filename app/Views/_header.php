@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="es" class="<?php echo $navbar ? "" : "full-body"; ?>">
     <head>
+        <link rel="manifest" href="manifest.webmanifest">
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">

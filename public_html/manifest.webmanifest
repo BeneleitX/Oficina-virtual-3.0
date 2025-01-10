@@ -1,0 +1,21 @@
+{
+    "shortcuts": [{
+        "name" : "BENELEIT",
+        "description": "Oficina Virtual BENELEIT",
+        "icons": [{
+            "src": "icon/lowres.webp",
+            "type": "image/webp"
+          }]      
+    }],
+    "lang": "es",
+    "dir": "ltr",
+    "name": "Oficina Virtual BENELEIT",
+    "short_name": "BENELEIT",
+    "icons": [{
+      "src": "icon/lowres.webp",
+      "type": "image/webp"
+    }],
+    "scope": "/",
+    "display": "fullscreen",
+    "orientation": "landscape"
+  }
