@@ -3,7 +3,7 @@
         "name" : "BENELEIT",
         "description": "Oficina Virtual BENELEIT",
         "icons": [{
-            "src": "assets/img/fav_beneleit.png",
+            "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
             "type": "image/png"
           }]      
     }],
@@ -12,8 +12,8 @@
     "name": "Oficina Virtual BENELEIT",
     "short_name": "BENELEIT",
     "icons": [{
-      "src": "icon/lowres.webp",
-      "type": "image/webp"
+      "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
+      "type": "image/png"
     }],
     "scope": "/",
     "display": "fullscreen",
