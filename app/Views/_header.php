@@ -9,7 +9,7 @@
         <meta name="description" content="">
         <meta name="author" content="scabbia@gmail.com">
         <meta name="generator" content="Hugo 0.122.0">
-        <link rel="icon" type="image/x-icon" href="<?php echo base_url(); ?>assets/img/fav_beneleit.png">
+        <link rel="icon" type="image/png" href="<?php echo base_url(); ?>assets/img/favicon/fav_beneleit.png">
         <?php echo csrf_meta() ?>
 
         <title>BENELEIT</title>
