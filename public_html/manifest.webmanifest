@@ -1,20 +1,25 @@
 {
-    "shortcuts": [{
-        "name" : "BENELEIT",
-        "description": "Oficina Virtual BENELEIT",
-        "icons": [{
-            "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
-            "type": "image/png"
-          }]      
-    }],
     "lang": "es",
     "dir": "ltr",
     "name": "Oficina Virtual BENELEIT",
     "short_name": "BENELEIT",
-    "icons": [{
-      "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
-      "type": "image/png"
-    }],
+    "icons": [
+        {
+            "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
+            "sizes" : "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
+            "sizes" : "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "https://app.beneleit.mx/assets/img/fav_beneleit.png",
+            "sizes" : "192x192",
+            "type": "image/png"
+        }
+    ],
     "scope": "/",
     "display": "fullscreen",
     "orientation": "landscape"
