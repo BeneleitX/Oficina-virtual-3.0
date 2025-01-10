@@ -872,6 +872,35 @@ $(document).ready(function()
             update_pedido( "switch evento" );
     });
 
+
+
+    $( '.switch-factura' ).on( 'change', function(){
+        var alerta  = $( this ).closest( '.alert' ),
+            estatus = alerta.find( 'input.form-check-input' ).is( ':checked' );
+
+        if( estatus ){
+
+            // si tiene documentos
+            if( usuario.data.sat.csf != null ){
+                alerta.removeClass( 'alert-warning' ).addClass( 'alert-success' );
+                $( '#modal_factura_instrucciones' ).modal( 'show' );
+            }
+
+            // carga documentos
+            else{
+                $( '#modal_factura' ).modal( 'show' );
+            }
+        }
+        else{
+            
+        }
+
+        pedido.data.factura = estatus;
+        update_pedido( "switch evento" );
+    });
+
+
+
     $( 'div[evento=true][estatus=true]' ).each( function(a, b){
         $( this ).find( 'input' ).click();
     });

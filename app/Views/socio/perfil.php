@@ -305,8 +305,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 			<div class="alert alert-warning mb-0">
 				<table><tr><td>
-					<input id="check_sat" type="checkbox" style="transform: scale(3); margin:0 15px" <?php if( $socio->data->sat->estatus == 0) echo "checked"; ?> <?php if( $socio->data->sat->csf ?? false ) echo "disabled"; ?>>
-				</td><td style="padding-left:10px" <?php if( $socio->data->sat->csf ) echo "class=\"text-gray-500\""; ?>> <strong>SI,</strong> estoy de acuerdo en que BENELEIT se haga cargo de la declaración de impuestos generados por los ingresos residuales obtenidos a mi nombre. 
+					<input id="check_sat" type="checkbox" style="transform: scale(3); margin:0 15px" <?php if( $socio->data->sat->estatus == 0) echo "checked"; ?> <?php if( 0 && $socio->data->sat->csf ?? false ) echo "disabled"; ?>>
+				</td><td style="padding-left:10px" <?php if( 0 && $socio->data->sat->csf ) echo "class=\"text-gray-500\""; ?>> <strong>SI,</strong> estoy de acuerdo en que BENELEIT se haga cargo de la declaración de impuestos generados por los ingresos residuales obtenidos a mi nombre. 
 				</td></tr></table>
 			</div>
 			<div id="sube_csf" <?php if( $socio->data->sat->estatus == 0) echo "style=\"display:none\""; ?>>
@@ -326,13 +326,13 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 						<div id="nota_rfc" style="<?php echo session( "errors.rfc" ) ? "" : "display:none"; ?>" class="mt-3">
 							<h5>Actualizar R.F.C.</h5>
-							<p>Proporciona tu RFC a 13 dígitos. Recuerda que si decides solicitar declarar tus impuestos por tu cuenta, debes cancelar la casilla azul siguiente y proporcionar tu constancia de situación fiscal en PDF. Al terminar haz click en el botón.</p>						
+							<p>Proporciona tu RFC a 13 dígitos. Al terminar haz click en el botón.</p>						
 							<button type="submit" class="btn btn-primary mb-3"><i class="fa fa-save"></i> Guardar cambios</button>
 						</div>
 					</form>
 
 					<div class="alert alert-<?php echo !$socio->data->sat->csf ? "danger" : "success"; ?> m-0">
-						<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente cancela tu constancia y marca de nuevo la casilla.</p>
+						<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente marca de nuevo la casilla.</p>
 
 						<?php if( $socio->data->sat->csf ){ ?>
 							<table><tr>
@@ -340,8 +340,8 @@ if( !$socio->data->verificacion->correo ){ ?>
 									<a href="<?php echo base_url()."data/{$socio->id}/csf/{$socio->data->sat->csf}"; ?>" target="_blank"><img src="<?php echo base_url(); ?>assets/img/csf.png" style="width:60%" class="rounded-3 border border-5 border-white"></a>
 								</td>
 								<td>
-									<p>La Constancia de Situación Fiscal ha sido recibida. La opción de declaración de impuestos por parte de la empresa ha quedado deshabilitada.</p>
-									<a href="<?php echo base_url("cancela_csf"); ?>" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Cancelar constancia</a></td>
+									<p>Tu perfil cuenta con una Constancia de Situación Fiscal vinculada a tus datos.</p>
+									<a href="<?php echo base_url("cancela_csf"); ?>" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar constancia</a></td>
 						</tr></table>
 						<?php } else { ?>
 							<button tipo="frente" onclick="$( '#carga_csf' ).click()" class="btn bg-white btn-outline-success col-6 xoffset-3 py-4 mt-3">Cargar <h5 class="text-green m-0">Constancia de Situación Fiscal</h5>reciente</button>

@@ -990,6 +990,39 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
     </div>
 </div>
 
+
+<div class="modal" tabindex="-1" id="modal_factura">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="<?php echo base_url( "carga_csf" ); ?>">
+                <?php echo csrf_field() ?>
+                <input type="hidden" name="usuario" value="<?php echo $pedido[ "usuario_id" ]; ?>">
+
+                <div class="modal-header bg-mustard">
+                    <h5 class="modal-title text-white"><i class="fa fa-file-invoice-dollar"></i> Cargar documentos para facturación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <h5>Para poder facturar tu compra, es necesario que cargues la siguiente información:</h5>
+                    <p class="m-0">Proporciona tu R.F.C.</p>
+                    <p><input type="text" class="form-control w-50" name="factura_rfc" value="<?php echo $usuario->data->sat->rfc; ?>"></p>
+
+                    <p class="m-0">Adjunta tu Constancia de Situación Fiscal</p>
+                    <p class="m-0"><input type="file" class="form-control" name="factura_csf"></p>
+                    <p class="m-1 small text-mustard">Archivo en formato PDF con una antiguedad no mayor a 3 meses</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning" disabled>Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 <div class="modal" tabindex="-1" id="edita_guia">
     <div class="modal-dialog">
         <div class="modal-content">

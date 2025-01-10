@@ -25,6 +25,5 @@
         { "src": "https://app.beneleit.mx/assets/img/favicon/fav_beneleit_512.png", "sizes" : "512x512", "type": "image/png" }
     ],
     "scope": "/",
-    "display": "fullscreen",
-    "orientation": "landscape"
+    "display": "fullscreen"
   }
