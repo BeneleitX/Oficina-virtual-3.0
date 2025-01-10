@@ -1,5 +1,7 @@
-<html lang="en" class=""><head>
+<html lang="en" class="">
+  <head>
 
+  <meta redirect="<?php echo $_SERVER[ "REDIRECT_URL" ]; ?>">
   <meta charset="UTF-8">
   <title>BENELEIT</title>
 
