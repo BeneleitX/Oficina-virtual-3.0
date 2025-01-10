@@ -3,8 +3,8 @@
         "name" : "BENELEIT",
         "description": "Oficina Virtual BENELEIT",
         "icons": [{
-            "src": "icon/lowres.webp",
-            "type": "image/webp"
+            "src": "assets/img/fav_beneleit.png",
+            "type": "image/png"
           }]      
     }],
     "lang": "es",
