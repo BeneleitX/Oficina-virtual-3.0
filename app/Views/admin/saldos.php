@@ -36,6 +36,15 @@
                     <td class=\"s_datos\">".$s->avatar( 24 )." ".$s->nombre( 2 )."</td>";
 
                 foreach( MODELOS as $m ){
+
+                    if( !isset( $s->data->saldo->{$m[ "codigo" ]} ) ){
+                        $data = $s->data;
+                        $data->saldo->{$m[ "codigo" ]} = (object)[ "cantidad" => 0, "estatus" => 0 ];
+                        $s->data = $data;
+
+                        model( "UsuarioModel" )->save( $s );
+                    }
+
                     echo "<td modelo=\"{$m[ "codigo" ]}\" saldo=\"".$s->data->saldo->{$m[ "codigo" ]}->cantidad."\" estatus=\"".$s->data->saldo->{$m[ "codigo" ]}->estatus."\" class=\"text-end\">".( $s->data->saldo->{$m[ "codigo" ]}->cantidad > 0 ? "$".number_format( $s->data->saldo->{$m[ "codigo" ]}->cantidad, 2) : "" )." <i class=\"fa fa-circle-check text-".( $s->data->saldo->{$m[ "codigo" ]}->estatus ? "teal" : "gray-400" )."\"></i></td>";
                 }
 
