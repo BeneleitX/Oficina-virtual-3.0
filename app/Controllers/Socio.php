@@ -684,7 +684,6 @@ class Socio extends BaseController
             "usuario" => $this->data[ "usuario" ]->id
         ] );
 
-
         // actualizaar pagos pendientes
         $db = db_connect();
         $db->query( "update t_pagos set data = json_set( data, '$.retencion', 0 ) where usuario_id = ".$this->data[ "socio" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );

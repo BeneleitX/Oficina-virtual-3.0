@@ -22,7 +22,7 @@
                             
                         <?php }else{ ?>
 
-                            <form method="post" action="<?php echo base_url( "pass_request" ); ?>">
+                            <form method="post" action="<?php echo base_url( "pass_request" ); ?>" id="form_recover">
                                 <?php echo csrf_field() ?>
 
                                 <input type="text" class="form-control ps-4 rounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo old( "socio_id" ); ?>" placeholder="No. de socio">

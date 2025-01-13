@@ -695,11 +695,6 @@
 
                         echo "</form>";
 
-
-
-
-
-                    
                         echo "\n<button class=\"btn btn-warning mb-2 col-12\" onclick=\"$( '#cambia_edicion' ).modal( 'show' );\"><i class=\"fa fa-undo\"></i> Regresar a editar pedido</button>";
                     
                         echo "\n<button class=\"btn btn-danger mb-2 col-12\" onclick=\"$( '#cancela_pedido2' ).modal( 'show' );\"><i class=\"fa fa-trash\"></i> Cancelar pedido</button>";
@@ -716,10 +711,21 @@
                         echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
                         
                         if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] ){
-                            echo "<div class=\"alert alert-warning mt-2 py-0\"><table class=\"w-100 m-0\"><tr><td><i class=\"fa fa-file-invoice-dollar\"></i> ¿Requieres factura?</td>
+
+                            $clase = "warning";
+                            $mensaje = "¿Requieres factura?";
+                            $estatus = "";
+
+                            if( $pedido[ "data"][ "factura" ] ?? null ){
+                                $clase = "success";
+                                $mensaje = "Con comprobante fiscal";
+                                $estatus = "checked";
+                            }
+
+                            echo "<div class=\"alert alert-{$clase} mt-2 py-0 get_factura\"><table class=\"w-100 m-0\"><tr><td><i class=\"fa fa-file-invoice-dollar\"></i> <span id=\"factura_mensaje\">{$mensaje}</span></td>
                             
                             <td class=\"text-end pt-2\"><div title=\"Click aquí para confirmar la facturación de tu compra\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-factura\">
-                                        <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" >
+                                        <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" {$estatus}>
                                     </div></td></tr></table>
                                     
                             </div>";
@@ -994,9 +1000,9 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 <div class="modal" tabindex="-1" id="modal_factura">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="<?php echo base_url( "carga_csf" ); ?>">
+            <form method="post" action="<?php echo base_url( "carga_csf_pedido" ); ?>" enctype="multipart/form-data">
                 <?php echo csrf_field() ?>
-                <input type="hidden" name="usuario" value="<?php echo $pedido[ "usuario_id" ]; ?>">
+                <input type="hidden" name="pedido_id" value="<?php echo $pedido[ "id" ]; ?>">
 
                 <div class="modal-header bg-mustard">
                     <h5 class="modal-title text-white"><i class="fa fa-file-invoice-dollar"></i> Cargar documentos para facturación</h5>
@@ -1006,15 +1012,15 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 <div class="modal-body">
                     <h5>Para poder facturar tu compra, es necesario que cargues la siguiente información:</h5>
                     <p class="m-0">Proporciona tu R.F.C.</p>
-                    <p><input type="text" class="form-control w-50" name="factura_rfc" value="<?php echo $usuario->data->sat->rfc; ?>"></p>
+                    <p><input type="text" onkeyup="this.value = this.value.toUpperCase();" class="finp form-control w-50" name="factura_rfc" value="<?php echo $usuario->data->sat->rfc; ?>"></p>
 
                     <p class="m-0">Adjunta tu Constancia de Situación Fiscal</p>
-                    <p class="m-0"><input type="file" class="form-control" name="factura_csf"></p>
+                    <p class="m-0"><input type="file" class="finp form-control" name="factura_csf"></p>
                     <p class="m-1 small text-mustard">Archivo en formato PDF con una antiguedad no mayor a 3 meses</p>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-warning" disabled>Continuar</button>
+                    <button type="submit" id="factura_submit" class="btn btn-warning" disabled>Continuar</button>
                 </div>
             </form>
         </div>

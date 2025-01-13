@@ -87,6 +87,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "save_pedido",           "Pedidos::save_pedido" ); 
     $routes->post( "paga_pedido",           "Pedidos::paga_pedido" ); 
     $routes->post( "cambia_edicion",        "Pedidos::cambia_edicion" ); 
+    $routes->post( "carga_csf_pedido",      "Pedidos::carga_csf" );
+
 
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 

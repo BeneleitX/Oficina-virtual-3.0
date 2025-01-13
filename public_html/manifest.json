@@ -4,7 +4,7 @@
     },
     "lang": "es",
     "dir": "ltr",
-    "name": "Oficina Virtual BENELEIT",
+    "name": "Oficina Virtual",
     "short_name": "BENELEIT",
     "theme_color": "#009779",
     "icons": [
@@ -24,7 +24,6 @@
         { "src": "https://app.beneleit.mx/assets/img/favicon/fav_beneleit_256.png", "sizes" : "256x256", "type": "image/png" },
         { "src": "https://app.beneleit.mx/assets/img/favicon/fav_beneleit_384.png", "sizes" : "384x384", "type": "image/png" }
     ],
-    "scope": "/",
     "start_url": "/",
     "display": "fullscreen"
   }

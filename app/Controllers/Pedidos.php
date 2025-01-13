@@ -754,4 +754,56 @@ class Pedidos extends BaseController
 
         echo template( "pedidos/ticket", $this->data );
     }
+
+
+    public function carga_csf(){
+        $socio    = $this->data[ "usuario" ];
+        $rfc      = $this->request->getPost( "factura_rfc" );
+        $pedido   = model( "PedidoModel" )->find( $this->request->getPost( "pedido_id" ) );
+
+        $json = $socio->data;
+
+        if( strlen( $socio->data->sat->rfc ) < 13 ){ 
+            $json->sat->rfc = $rfc;
+
+            // BITACORA Actualziar RFC
+            bitacora( 48, $socio->id, [ 
+                "rfc"   => $rfc,
+                "usuario" => $socio->id
+            ] );
+        }
+        $json->verificacion->csf = true;
+
+        $path     = "data/{$socio->id}/csf/";
+        $filename = $socio->id."_".time().".pdf";
+
+        $json->sat->csf = $filename;
+
+        $socio->data = $json; 
+        model( "UsuarioModel" )->save( $socio );
+
+        if( !is_dir( $path ) ){
+            mkdir( $path, 0755, true );
+        }
+
+        $fileTmpName = $_FILES[ "factura_csf" ][ "tmp_name" ];
+        move_uploaded_file( $fileTmpName, $path.$filename );
+
+        // BITACORA Carga de CSF
+        bitacora( 22, $socio->id, [ 
+            "archivo" => $filename,
+            "usuario" => $socio->id
+        ] );
+
+        $pedido[ "data" ][ "factura" ] = true;
+        model( "PedidoModel" )->save( $pedido );
+
+        // BITACORA Carga de CSF
+        bitacora( 81, $socio->id, [ 
+            "pedido" => $pedido[ "id" ],
+            "rfc"    => $socio->id
+        ] );
+        
+        return redirect()->to( "tienda/".$pedido[ "modelo_codigo" ] );
+    } 
 }

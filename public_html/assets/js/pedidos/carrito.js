@@ -872,7 +872,17 @@ $(document).ready(function()
             update_pedido( "switch evento" );
     });
 
+    $( '.finp' ).on( 'change', function(){
+        var rfc = $( '[name=factura_rfc]' ).val(),
+            csf = $( '[name=factura_csf]' ).val();
 
+        if( rfc.length > 12 && csf.length > 12 ){
+            $( '#factura_submit' ).prop( 'disabled', false );
+        }
+        else{
+            $( '#factura_submit' ).prop( 'disabled', true );
+        }
+    });
 
     $( '.switch-factura' ).on( 'change', function(){
         var alerta  = $( this ).closest( '.alert' ),
@@ -880,9 +890,11 @@ $(document).ready(function()
 
         if( estatus ){
 
+            alerta.removeClass( 'alert-warning' ).addClass( 'alert-success' );
+            $( '#factura_mensaje' ).text( 'Con comprobante fiscal' );
+
             // si tiene documentos
             if( usuario.data.sat.csf != null ){
-                alerta.removeClass( 'alert-warning' ).addClass( 'alert-success' );
                 $( '#modal_factura_instrucciones' ).modal( 'show' );
             }
 
@@ -892,11 +904,12 @@ $(document).ready(function()
             }
         }
         else{
-            
+            alerta.addClass( 'alert-warning' ).removeClass( 'alert-success' );
+            $( '#factura_mensaje' ).text( '¿Requieres factura?' );
         }
 
         pedido.data.factura = estatus;
-        update_pedido( "switch evento" );
+        update_pedido( "switch factura" );
     });
 
 
