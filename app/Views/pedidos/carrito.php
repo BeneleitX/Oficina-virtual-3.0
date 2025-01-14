@@ -529,7 +529,7 @@
                         </tr>
                         
                         <?php
-                        if( ( $pagado || $cancelado ) ){
+                        if( $pagado || $cancelado ){
                             $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                         }
                         else{
