@@ -573,7 +573,7 @@
                             
                             <td valign="middle" class="text-end" style="background:var(--bs-marine) !important">
                                 <h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo; ?>">
-                                    $<?php echo number_format( $tt - $saldo, 2 ); ?>
+                                    $<?php echo number_format( $tt, 2 ); ?>
                                 </h5>
                             </td>
                         </tr>
