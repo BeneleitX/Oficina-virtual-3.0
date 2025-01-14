@@ -146,9 +146,18 @@
                                     </div>
                                 </div>
                                 
-                                <table productos contenido style=\"".( $evento == "true" ? "display:none" : "" )."\" class=\"w-100\"></table>
+                                <table productos contenido style=\"".( $evento == "true" ? "display:none" : "" )."\" class=\"w-100\"></table>";
+                          
+                                if( isset( $p[ "settings" ][ "extras" ] ) ){
+                                    echo "\n<ul class=\"m-0 mb-3 text-info small\">";
+                                    foreach( $p[ "settings" ][ "extras" ] as $e ){
+                                        echo "<li>{$e}</li>";
+                                    }
+                                    echo "</ul>";
+                                }
+
                                 
-                                <div contenido class=\"card-footer bg-gray-300 text-end\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
+                    echo "<div contenido class=\"card-footer bg-gray-300 text-end\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
                                     <table align=\"right\">
                                         <tr>
                                             <td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td>
@@ -162,20 +171,12 @@
                 }
 			}
 
-            if( !($pagado || $bloqueado || $cancelado )){
-            if( isset( $p[ "settings" ][ "extras" ] ) ){
-                echo "\n<div class=\"alert alert-info small\"><ul class=\"m-0\">";
-                foreach( $p[ "settings" ][ "extras" ] as $e ){
-                    echo "<li>{$e}</li>";
-                }
-                echo "</ul></div>";
-            }
-
-
             if( $modelo == '20-TELEFONIA' ){
-                echo "<a class=\"btn btn-lg my-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\">¿Buscas recargas y activaciones? haz click aqui</a>";
+                if( !($pagado || $bloqueado || $cancelado )){
+
+                    echo "<a class=\"btn btn-lg my-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\">¿Buscas recargas y activaciones? haz click aqui</a>";
+                }
             }
-        }
 
             $domicilios = $socio->getDomicilios();
             $celulares  = $socio->getCelulares();
@@ -495,7 +496,10 @@
             </div>
             <?php 
         } 
-        ?>
+
+
+
+?>
 
         <div class="row">
             <div class="col-lg-6">
@@ -658,12 +662,12 @@
                         <?php
                     }
                     elseif( $bloqueado && !$pagado ){
-?>
- <form method="post" action="<?php echo base_url( "checkout" ); ?>">
-                    <?php echo csrf_field(); ?>
-            
-                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
-                    <?php
+                        ?>
+                        <form method="post" action="<?php echo base_url( "checkout" ); ?>">
+                        <?php echo csrf_field(); ?>
+                
+                        <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+                        <?php
 
 
                             $imagen = "";
@@ -702,37 +706,43 @@
                     else{
 
                         $boton  = "";
-                    if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
-                        $mp[ "settings" ][ "tipocomision" ] = "";
-                    }
-
-                    if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
-                
-                        echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
-                        
-                        if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] ){
-
-                            $clase = "warning";
-                            $mensaje = "¿Requieres factura?";
-                            $estatus = "";
-
-                            if( $pedido[ "data"][ "factura" ] ?? null ){
-                                $clase = "success";
-                                $mensaje = "Con comprobante fiscal";
-                                $estatus = "checked";
-                            }
-
-                            echo "<div class=\"alert alert-{$clase} mt-2 py-0 get_factura\"><table class=\"w-100 m-0\"><tr><td><i class=\"fa fa-file-invoice-dollar\"></i> <span id=\"factura_mensaje\">{$mensaje}</span></td>
-                            
-                            <td class=\"text-end pt-2\"><div title=\"Click aquí para confirmar la facturación de tu compra\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-factura\">
-                                        <input class=\"form-check-input\" type=\"checkbox\" role=\"switch\" {$estatus}>
-                                    </div></td></tr></table>
-                                    
-                            </div>";
+                        if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
+                            $mp[ "settings" ][ "tipocomision" ] = "";
                         }
-                    }
+
+                        if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
+                    
+                            echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
+                            
+                        }
 
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\" style=\"display:none\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
+                    }
+
+                    if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] && ( !( $pagado || $cancelado || $bloqueado ) || ( $pedido[ "data" ][ "factura" ] ?? null ) ) ){
+
+                        $clase = "warning";
+                        $mensaje = "¿Requieres factura?";
+                        $estatus = "";
+
+                        if( $pedido[ "data"][ "factura" ] ?? null ){
+                            $clase = "success";
+                            $mensaje = "Con comprobante fiscal";
+                            $estatus = "checked";
+                        }
+
+                        $disabled = "";
+                        if( $pagado || $cancelado || $bloqueado ){
+                            $disabled = "disabled";
+                        }
+
+                        echo "<div class=\"alert alert-{$clase} mt-2 py-0 get_factura\"><table class=\"w-100 m-0\"><tr><td><i class=\"fa fa-file-invoice-dollar\"></i> <span id=\"factura_mensaje\">{$mensaje}</span></td>
+                        
+                        <td class=\"text-end pt-2\"><div title=\"Click aquí para confirmar la facturación de tu compra\" data-bs-toggle=\"tooltip\" class=\"form-check form-switch switch-factura\">
+                                    <input {$disabled} class=\"form-check-input\" type=\"checkbox\" role=\"switch\" {$estatus}>
+                                </div></td></tr></table>
+                                
+                        </div>";
                     }
 
                     

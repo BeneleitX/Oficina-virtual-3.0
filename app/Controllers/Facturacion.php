@@ -17,10 +17,15 @@ class Facturacion extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Facturación y poagos especiales";
-
+        $this->data[ "titulo" ] = "Facturación y pagos especiales";
+        
+        $db  = db_connect();
+        $sql = "SELECT count(*) as total from t_pedidos
+                where data->>'$.factura' = '144-FACTURA-PENDIENTE'
+                and substring( estatus_codigo,1,3 ) > 400";
+        $this->data[ "facturas" ] = $db->query( $sql )->getRow()->total;
+        
         $this->data[ "no_retencion" ] = model( "UsuarioModel" )->where( "2 = json_unquote( json_extract( data, '$.sat.estatus' ) )" )->findAll();
-
         $this->data[ "ventas" ] = model( "UsuarioModel" )->where( "100 = json_unquote( json_extract( data, '$.sat.estatus' ) )" )->findAll();
 
         echo template( "facturacion/listado", $this->data );
@@ -48,6 +53,11 @@ class Facturacion extends BaseController
         ] );
 
         return redirect()->to( "facturacion" ); 
+    }
+
+
+    public function facturas(){
+        
     }
 
 

@@ -155,6 +155,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "carga_csf",             "Socio::carga_csf" );
 
     $routes->get( "facturacion",            "Facturacion::listado" ); 
+    $routes->get( "facturas",               "Facturacion::facturas" ); 
     $routes->post( "poner_ventas",          "Facturacion::poner_ventas" ); 
     $routes->post( "quitar_ventas",         "Facturacion::quitar_ventas" ); 
 

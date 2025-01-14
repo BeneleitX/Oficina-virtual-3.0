@@ -902,13 +902,17 @@ $(document).ready(function()
             else{
                 $( '#modal_factura' ).modal( 'show' );
             }
+
+            pedido.data.factura = '144-FACTURA-PENDIENTE';
         }
         else{
             alerta.addClass( 'alert-warning' ).removeClass( 'alert-success' );
             $( '#factura_mensaje' ).text( '¿Requieres factura?' );
+
+            pedido.data.factura = false;
         }
 
-        pedido.data.factura = estatus;
+        
         update_pedido( "switch factura" );
     });
 

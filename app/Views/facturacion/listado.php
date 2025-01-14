@@ -2,8 +2,18 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
+<div class="row">
+    <div class="col-6">
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <p><a href="<?php echo base_url( "admin" ); ?>" class="btn btn-sm btn-light"><i class="fa fa-undo"></i> Regresar a administración</a></p>
+    </div>
+
+    <div class="col-6 text-end text-red">
+        
+        <a href="<?php echo base_url( "facturas" ); ?>" class="btn btn-<?php echo $facturas ? "danger" : "success"; ?>"><i class="fa fa-file-invoice-dollar"></i> Facturación de pedidos <?php echo $facturas ? "<span class=\"\"> - Pendientes: {$facturas}</span>" : ""; ?> </a>
+    </div>
+</div>
+
 
 <div class="alert alert-info mb-5">
     <div class="row">
