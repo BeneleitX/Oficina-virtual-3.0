@@ -22,8 +22,8 @@
     <thead>
         <tr>
             <th>Código</th>
-            <th>Nombre</th>
             <th>Tipo</th>
+            <th>Nombre</th>
             <th>Responsable</th>
             <th>Por entregar</th>
             <th>Transferencias</th>

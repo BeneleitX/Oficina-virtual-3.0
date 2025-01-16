@@ -601,7 +601,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 							</div>
 
 							<div class="col-md-8 pt-3">
-							<small><i class="fa fa-circle-info"></i> Cada domicio que agregues debe estar identificado con un nombre.<br>Por ejemplo: "Mi casa", "oficina", "casa de luis", etc.</small>
+							<small><i class="fa fa-circle-info"></i> Cada domicilio que agregues debe estar identificado con un nombre.<br>Por ejemplo: "Mi casa", "oficina", "casa de luis", etc.</small>
 
 						</div>
 					</div>
