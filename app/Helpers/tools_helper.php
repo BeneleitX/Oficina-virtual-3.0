@@ -683,7 +683,11 @@ function nuevo_pedido( $modelo ){
         "usuario_id" => null,
         "data" => [
             "peso" => 0,
-            "factura" => "",
+            "sat" => [
+                "cfd" => null,
+                "fecha" => null,
+                "factura" => null,
+            ],
             "saldo" => 0,
             "mesanterior" => 0,
             "costoxbulto" => 0,

@@ -795,13 +795,13 @@ class Pedidos extends BaseController
             "usuario" => $socio->id
         ] );
 
-        $pedido[ "data" ][ "factura" ] = true;
+        $pedido[ "data" ][ "factura" ] = $rfc;
         model( "PedidoModel" )->save( $pedido );
 
         // BITACORA Carga de CSF
         bitacora( 81, $socio->id, [ 
             "pedido" => $pedido[ "id" ],
-            "rfc"    => $socio->id
+            "rfc"    => $rfc
         ] );
         
         return redirect()->to( "tienda/".$pedido[ "modelo_codigo" ] );

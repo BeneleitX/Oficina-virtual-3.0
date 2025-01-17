@@ -888,6 +888,10 @@ $(document).ready(function()
         var alerta  = $( this ).closest( '.alert' ),
             estatus = alerta.find( 'input.form-check-input' ).is( ':checked' );
 
+        if( pedido.data.sat == undefined ){ 
+            pedido.data.sat = { 'factura' : '', 'cfd' : '' }; 
+        }
+
         if( estatus ){
 
             alerta.removeClass( 'alert-warning' ).addClass( 'alert-success' );
@@ -903,13 +907,13 @@ $(document).ready(function()
                 $( '#modal_factura' ).modal( 'show' );
             }
 
-            pedido.data.factura = '144-FACTURA-PENDIENTE';
+            pedido.data.sat.factura = '144-FACTURA-PENDIENTE';
         }
         else{
             alerta.addClass( 'alert-warning' ).removeClass( 'alert-success' );
             $( '#factura_mensaje' ).text( '¿Requieres factura?' );
 
-            pedido.data.factura = false;
+            pedido.data.sat.factura = false;
         }
 
         

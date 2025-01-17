@@ -719,13 +719,13 @@
                         echo "<div class=\"alert alert-danger\" id=\"no_pago\" style=\"display:none\"><i class=\"fa fa-bug\"></i> ATENCION: No es posible mostrar metodos de pago disponibles. Favor de contactar a soporte</div>";
                     }
 
-                    if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] && ( !( $pagado || $cancelado || $bloqueado ) || ( $pedido[ "data" ][ "factura" ] ?? null ) ) ){
+                    if( MODELOS[ $modelo ][ "settings" ][ "facturaje" ] && ( !( $pagado || $cancelado || $bloqueado ) || ( $pedido[ "data" ][ "sat" ][ "factura" ] ?? null ) ) ){
 
                         $clase = "warning";
                         $mensaje = "¿Requieres factura?";
                         $estatus = "";
 
-                        if( $pedido[ "data"][ "factura" ] ?? null ){
+                        if( $pedido[ "data" ][ "sat" ][ "factura" ] ?? null ){
                             $clase = "success";
                             $mensaje = "Con comprobante fiscal";
                             $estatus = "checked";

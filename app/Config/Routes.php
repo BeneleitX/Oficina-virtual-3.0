@@ -156,8 +156,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "facturacion",            "Facturacion::listado" ); 
     $routes->get( "facturas",               "Facturacion::facturas" ); 
+    $routes->get( "facturas_historial",     "Facturacion::facturas_historial" ); 
     $routes->post( "poner_ventas",          "Facturacion::poner_ventas" ); 
     $routes->post( "quitar_ventas",         "Facturacion::quitar_ventas" ); 
+    $routes->post( "do_factura",            "Facturacion::do_factura" );     
 
     $routes->get( "transferencias/(:any)",  "Almacenes::transferencias/$1" ); 
     $routes->get( "almacenes/(:any)",       "Almacenes::listado/$1" ); 

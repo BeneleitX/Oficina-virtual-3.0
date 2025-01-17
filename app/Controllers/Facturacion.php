@@ -21,7 +21,7 @@ class Facturacion extends BaseController
         
         $db  = db_connect();
         $sql = "SELECT count(*) as total from t_pedidos
-                where data->>'$.factura' = '144-FACTURA-PENDIENTE'
+                where data->>'$.sat.factura' = '144-FACTURA-PENDIENTE'
                 and substring( estatus_codigo,1,3 ) > 400";
         $this->data[ "facturas" ] = $db->query( $sql )->getRow()->total;
         
@@ -57,8 +57,46 @@ class Facturacion extends BaseController
 
 
     public function facturas(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        load_catalogo( "metodospago" );
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Pedidos que han solicitado factura";
         
+        $sql = "substring( estatus_codigo, 1, 3 ) > 400
+                AND json_unquote( json_extract( data, '$.sat.factura' ) ) = '144-FACTURA-PENDIENTE'";
+
+        $this->data[ "pedidos" ] = model( "PedidoModel" )->where( $sql, null, false )->findAll();
+
+        echo template( "facturacion/facturas", $this->data );
     }
+
+    public function facturas_historial(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        load_catalogo( "metodospago" );
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Pedidos facturados";
+        
+        $sql = "substring( estatus_codigo, 1, 3 ) > 400
+                AND json_unquote( json_extract( data, '$.sat.factura' ) ) = '146-FACTURA-OK'";
+
+        $this->data[ "pedidos" ] = model( "PedidoModel" )->where( $sql, null, false )->findAll();
+
+        echo template( "facturacion/facturas_historial", $this->data );
+    }    
 
 
     public function quitar_ventas()
@@ -85,5 +123,32 @@ class Facturacion extends BaseController
         return redirect()->to( "facturacion" ); 
     }
 
+
+    public function do_factura(){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $folio    = $this->request->getPost( "r_folio" );
+        $pedido   = model( "PedidoModel" )->find( $this->request->getPost( "r_pedido" ) );
+
+        $pedido[ "data" ][ "sat" ][ "cfd" ]     = $this->request->getPost( "r_folio" );
+        $pedido[ "data" ][ "sat" ][ "fecha" ]   = $this->request->getPost( "r_fecha" );
+        $pedido[ "data" ][ "sat" ][ "factura" ] = "146-FACTURA-OK";
+        model( "PedidoModel" )->save( $pedido );
+
+        // BITACORA registro de folio factura
+        bitacora( 83, $this->data[ "usuario" ]->id, [ 
+            "pedido" => $pedido[ "id" ],
+            "folio"  => $this->request->getPost( "r_folio" ),
+            "fecha"  => $this->request->getPost( "r_fecha" )
+        ] );
+        
+        return redirect()->to( "facturas" );
+    }
 }
 

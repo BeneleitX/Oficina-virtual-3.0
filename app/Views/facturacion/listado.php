@@ -8,7 +8,7 @@
         <p><a href="<?php echo base_url( "admin" ); ?>" class="btn btn-sm btn-light"><i class="fa fa-undo"></i> Regresar a administración</a></p>
     </div>
 
-    <div class="col-6 text-end text-red">
+    <div class="col-6 text-end pt-4">
         
         <a href="<?php echo base_url( "facturas" ); ?>" class="btn btn-<?php echo $facturas ? "danger" : "success"; ?>"><i class="fa fa-file-invoice-dollar"></i> Facturación de pedidos <?php echo $facturas ? "<span class=\"\"> - Pendientes: {$facturas}</span>" : ""; ?> </a>
     </div>
