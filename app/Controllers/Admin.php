@@ -53,6 +53,11 @@ class Admin extends BaseController
         $this->data[ "recompensas" ]  = model( "RecompensaModel" )->where( $sql , null, false )->findAll(); 
         $this->data[ "banners" ]      = model( "BannerModel" )->where( $sql, null, false )->findAll();
 
+        $sql = "SELECT count(*) as total from t_pedidos
+                where data->>'$.sat.factura' = '144-FACTURA-PENDIENTE'
+                and substring( estatus_codigo,1,3 ) > 400";
+        $this->data[ "facturas" ] = $db->query( $sql )->getRow()->total;
+
         $this->data[ "tarjetas" ]     = $db->query( "select count(id) as uss from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null" )->getRow()->uss;
 
         echo template( "admin/dashboard", $this->data );
