@@ -873,10 +873,17 @@ $(document).ready(function()
     });
 
     $( '.finp' ).on( 'change', function(){
-        var rfc = $( '[name=factura_rfc]' ).val(),
-            csf = $( '[name=factura_csf]' ).val();
+        var rfc    = $( '[name=factura_rfc]' ).val(),
+            uso    = $( '[name=factura_uso]' ).val(),
+            correo = $( '[name=factura_correo]' ).val(),
+            mpx    = $( '[name=factura_mp]' ).val(),
+            csf    = $( '[name=factura_csf]' ).val();
 
-        if( rfc.length > 12 && csf.length > 12 ){
+            if( rfc.length > 12 && 
+                csf.length > 12 && 
+                correo.length > 8 && 
+                uso.length > 2 && 
+                mpx.length > 1 ){
             $( '#factura_submit' ).prop( 'disabled', false );
         }
         else{
@@ -897,15 +904,8 @@ $(document).ready(function()
             alerta.removeClass( 'alert-warning' ).addClass( 'alert-success' );
             $( '#factura_mensaje' ).text( 'Con comprobante fiscal' );
 
-            // si tiene documentos
-            if( usuario.data.sat.csf != null ){
-                $( '#modal_factura_instrucciones' ).modal( 'show' );
-            }
-
-            // carga documentos
-            else{
-                $( '#modal_factura' ).modal( 'show' );
-            }
+            $( '#modal_factura' ).modal( 'show' );
+            $( '[name=factura_mp]' ).change();
 
             pedido.data.sat.factura = '144-FACTURA-PENDIENTE';
         }

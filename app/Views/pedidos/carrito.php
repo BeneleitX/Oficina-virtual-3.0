@@ -1021,12 +1021,54 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
                 <div class="modal-body">
                     <h5>Para poder facturar tu compra, es necesario que cargues la siguiente información:</h5>
-                    <p class="m-0">Proporciona tu R.F.C.</p>
-                    <p><input type="text" onkeyup="this.value = this.value.toUpperCase();" class="finp form-control w-50" name="factura_rfc" value="<?php echo $usuario->data->sat->rfc; ?>"></p>
+                    <p class="m-0">Correo electrónico</p>
+                    <p><input type="text" class="finp form-control w-75" name="factura_correo" value="<?php echo $usuario->correo; ?>"></p>
 
-                    <p class="m-0">Adjunta tu Constancia de Situación Fiscal</p>
-                    <p class="m-0"><input type="file" class="finp form-control" name="factura_csf"></p>
-                    <p class="m-1 small text-mustard">Archivo en formato PDF con una antiguedad no mayor a 3 meses</p>
+                    <p class="m-0">Proporciona tu R.F.C.</p>
+                    <p><input type="text" onkeyup="this.value = this.value.toUpperCase();" class="finp form-control w-50" name="factura_rfc" value="<?php echo $usuario->data->sat->rfc ?? ""; ?>"></p>
+
+                    <p class="m-0">Método de pago</p>
+                    <p><select class="finp form-select" name="factura_mp">
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "" ? "selected" : ""; ?> value="">Selecciona una opción</option>
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "DR" ? "selected" : ""; ?> value="DR">Depósito referenciado</option>
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "DE" ? "selected" : ""; ?> value="DE">Depósito en efectivo</option>
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TE" ? "selected" : ""; ?> value="TE">Transferencia electrónica</option>
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TC" ? "selected" : ""; ?> value="TC">Tarjeta de crédito</option>
+                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TD" ? "selected" : ""; ?> value="TD">Tarjeta de débito</option>
+                    </select></p>
+
+                    <p class="m-0">Uso del CFDI</p>
+                    <p><select class="finp form-select" name="factura_uso">
+                        <option value="">Selecciona una opción</option>
+                        <option value="G01" <?php echo ( $usuario->data->sat->uso ?? "" ) == "G01" ? "selected" : ""; ?> >Adquisición de mercancías</option>
+                        <option value="G03" <?php echo ( $usuario->data->sat->uso ?? "" ) == "G03" ? "selected" : ""; ?> >Gastos en general</option>
+                        <option value="S01" <?php echo ( $usuario->data->sat->uso ?? "" ) == "S01" ? "selected" : ""; ?> >Sin efectos fiscales</option>
+                    </select></p>                  
+
+                    <?php 
+                    if( $usuario->data->sat->csf ?? null ){
+                        ?>
+                        <div class="row">
+                            <div class="col-10">
+                                <p class="m-0">Constancia de Situación Fiscal</p>
+                                <p class="small text-teal"><i class="fa fa-check text-teal"></i> El documendo ya ha sido cargado previamente</p>
+                            </div>
+                            <div class="col-2 text-end">
+                                <a class="btn btn-outline-success" href="<?php echo base_url()."data/{$usuario->id}/csf/".$usuario->data->sat->csf; ?>" target="_blank"><i class="fa fa-download"></i></a>
+                            </div>
+                        </div>
+                        <input type="hidden" name="factura_csf" value="<?php echo $usuario->data->sat->csf; ?>">
+                        <input type="hidden" name="factura_csf_carga" value="1">
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <input type="hidden" name="factura_csf_carga" value="0">
+                        <p class="m-0"><input type="file" class="finp form-control" name="factura_csf"></p>
+                        <p class="m-1 small text-mustard">Adjunta el archivo en formato PDF con una antiguedad no mayor a 3 meses</p>
+                        <?php
+                    } 
+                    ?>
                 </div>
 
                 <div class="modal-footer">

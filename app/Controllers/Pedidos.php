@@ -759,43 +759,54 @@ class Pedidos extends BaseController
     public function carga_csf(){
         $socio    = $this->data[ "usuario" ];
         $rfc      = $this->request->getPost( "factura_rfc" );
+        $uso      = $this->request->getPost( "factura_uso" );
+        $mp       = $this->request->getPost( "factura_mp" );
+        $correo   = $this->request->getPost( "factura_correo" );
         $pedido   = model( "PedidoModel" )->find( $this->request->getPost( "pedido_id" ) );
 
         $json = $socio->data;
 
-        if( strlen( $socio->data->sat->rfc ) < 13 ){ 
-            $json->sat->rfc = $rfc;
-
-            // BITACORA Actualziar RFC
-            bitacora( 48, $socio->id, [ 
-                "rfc"   => $rfc,
-                "usuario" => $socio->id
-            ] );
-        }
-        $json->verificacion->csf = true;
-
-        $path     = "data/{$socio->id}/csf/";
-        $filename = $socio->id."_".time().".pdf";
-
-        $json->sat->csf = $filename;
-
-        $socio->data = $json; 
-        model( "UsuarioModel" )->save( $socio );
-
-        if( !is_dir( $path ) ){
-            mkdir( $path, 0755, true );
-        }
-
-        $fileTmpName = $_FILES[ "factura_csf" ][ "tmp_name" ];
-        move_uploaded_file( $fileTmpName, $path.$filename );
-
-        // BITACORA Carga de CSF
-        bitacora( 22, $socio->id, [ 
-            "archivo" => $filename,
+        $json->sat->rfc    = $rfc;
+        $json->sat->uso    = $uso;
+        $json->sat->correo = $correo;
+       
+        // BITACORA Actualziar RFC
+        bitacora( 48, $socio->id, [ 
+            "rfc"     => $rfc,
+            "uso"     => $uso,
+            "correo"  => $correo,
             "usuario" => $socio->id
         ] );
 
-        $pedido[ "data" ][ "factura" ] = $rfc;
+        if( $this->request->getPost( "factura_csf_carga" ) == 0 ){
+            $path     = "data/{$socio->id}/csf/";
+            $filename = $socio->id."_".time().".pdf";
+
+            $json->sat->csf = $filename;
+
+            $socio->data = $json; 
+            model( "UsuarioModel" )->save( $socio );
+
+            if( !is_dir( $path ) ){
+                mkdir( $path, 0755, true );
+            }
+
+            $fileTmpName = $_FILES[ "factura_csf" ][ "tmp_name" ];
+            move_uploaded_file( $fileTmpName, $path.$filename );
+
+            // BITACORA Carga de CSF
+            bitacora( 22, $socio->id, [ 
+                "archivo" => $filename,
+                "usuario" => $socio->id
+            ] );
+
+        }
+
+        $pedido[ "data" ][ "sat" ][ "rfc" ]    = $rfc;
+        $pedido[ "data" ][ "sat" ][ "mp" ]     = $mp;
+        $pedido[ "data" ][ "sat" ][ "uso" ]    = $uso;
+        $pedido[ "data" ][ "sat" ][ "correo" ] = $correo;
+
         model( "PedidoModel" )->save( $pedido );
 
         // BITACORA Carga de CSF
