@@ -84,6 +84,17 @@
                         <div class="col-5"><input type="text" class="mb-3 form-control" name="r_rfc" disabled></div>
                         <div class="col-1"><a class="btn btn-light" id="r_link" href="" target="_blank"><i class="fa fa-download"></i></a></div>
 
+                        <div class="col-5 pt-1 text-end"><label>Correo electrónico</label></div>
+                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_correo" disabled></div>
+
+                        <div class="col-5 pt-1 text-end"><label>Método de pago</label></div>
+                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_mp" disabled></div>
+
+                        <div class="col-5 pt-1 text-end"><label>Uso de CFDI</label></div>
+                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_uso" disabled></div>
+
+
+                        <hr>
                         <div class="col-5 pt-1 text-end"><label>Folio de factura</label></div>
                         <div class="col-4"><input type="text" class="mb-3 form-control" name="r_folio" required></div>
 

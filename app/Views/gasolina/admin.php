@@ -171,7 +171,7 @@
 </div>
 
 
-<div class="modal" tabindex="-1" id="modal_factura">
+<div class="modal" tabindex="-1" id="modal_recargas">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<form method="post" action="<?php echo base_url( "do_factura" ); ?>">
