@@ -172,11 +172,11 @@
 
 
 <div class="modal" tabindex="-1" id="modal_recargas">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
-			<form method="post" action="<?php echo base_url( "do_factura" ); ?>">
+			<form method="post" action="<?php echo base_url( "do_recarga" ); ?>">
                 <?php echo csrf_field() ?>
-                <input type="hidden" name="r_pedido"  value="">
+                <input type="hidden" name="r_socio"  value="">
 
 				<div class="modal-header bg-marine">
                     <h5 class="modal-title text-white m-0">
