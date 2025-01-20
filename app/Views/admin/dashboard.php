@@ -30,7 +30,7 @@ $menu = [
     [ "success", "estatus", "layer-group", "Estatus de socios", 0,[] ],  
     [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ), ["40-ADMIN"] ], 
     [ "warning", "isr", "filter-circle-dollar", "Tablas de ISR", 0,[ "38-CONTABILIDAD", "40-ADMIN" ] ],     
-    [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos", 0,[ "38-CONTABILIDAD" ] ],     
+    [ "success", "layout_bancos", "money-bill-transfer", "Layout de bancos", 0,[ "40-ADMIN", "38-CONTABILIDAD" ] ],     
     [ "info", "apikeys", "network-wired", "API keys", 0,["40-ADMIN"] ],     
     [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],   
     [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],

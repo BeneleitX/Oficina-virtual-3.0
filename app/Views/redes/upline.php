@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-md-9 mb-3">
 
-	<?php echo pills( "upline", $modelo ); ?>
+	<?php echo pills( "upline", $modelo, null, $socio->id ); ?>
 
 	</div>
 	<div class="col-md-3 mb-3 text-end">

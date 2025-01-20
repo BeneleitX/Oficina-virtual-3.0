@@ -26,8 +26,6 @@
             <th>Modelo de negocio</th>
             <th>Cantidad</th>
             <th>Fecha de pago</th>
-            <th>Método de pago</th>
-            <th>Folio</th>
             <th></th>
         </tr>
     </thead>
@@ -38,7 +36,7 @@
                 $modelo = MODELOS[ $p[ "modelo_codigo" ] ];
                 $u  = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
-                echo "\n<tr pedido=\"{$p[ "id" ]}\" referencia=\"{$p[ "referencia" ]}\" rfc=\"{$u->data->sat->rfc}\" link=\"".base_url()."data/{$u->id}/csf/{$u->data->sat->csf}\">
+                echo "\n<tr pedido=\"{$p[ "id" ]}\" referencia=\"{$p[ "referencia" ]}\" correo=\"".( $p[ "data" ][ "sat" ][ "correo" ] ?? "" )."\" mp=\"".( $p[ "data" ][ "sat" ][ "mp" ] ?? "" )."\" uso=\"".( $p[ "data" ][ "sat" ][ "uso" ] ?? "" )."\" rfc=\"{$u->data->sat->rfc}\" link=\"".base_url()."data/{$u->id}/csf/{$u->data->sat->csf}\">
                     <td class=\"text-center\"><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
                     <td>".$u->id( $p[ "modelo_codigo" ] )."</td>
                     <td>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
@@ -48,11 +46,7 @@
                     <td class=\"text-end\"><strong>$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ] - $p[ "data" ][ "saldo" ], 2 )."</strong></td>
                     <td class=\"text-center\"><span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) )."</td>
                     
-                    <td>".METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ]."</td>
-
-                    <td class=\"text-center\">".( $p[ "data" ][ "sat" ][ "cfd" ] ?? null ? "<h5 class=\"m-0 text-teal\">{$p[ "data" ][ "sat" ][ "cfd" ]}</h5>" : "<span class=\"badge bg-red\">PENDIENTE</span>" )."</td>
-
-                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">DETALLES</a> <button class=\"btn btn-xs btn-primary\" onclick=\"registra_folio( {$p[ "id" ]} )\">REGISTRA FOLIO</a></td>
+                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a> <button class=\"btn btn-xs btn-primary\" onclick=\"registra_folio( {$p[ "id" ]} )\">REGISTRA FOLIO</button></td>
                 </tr>";
             }
         ?>
@@ -85,26 +79,33 @@
                         <div class="col-1"><a class="btn btn-light" id="r_link" href="" target="_blank"><i class="fa fa-download"></i></a></div>
 
                         <div class="col-5 pt-1 text-end"><label>Correo electrónico</label></div>
-                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_correo" disabled></div>
+                        <div class="col-7"><input type="text" class="mb-3 form-control" name="r_correo" disabled></div>
 
                         <div class="col-5 pt-1 text-end"><label>Método de pago</label></div>
-                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_mp" disabled></div>
+                        <div class="col-7"><input type="text" class="mb-3 form-control" name="r_mp" disabled></div>
 
                         <div class="col-5 pt-1 text-end"><label>Uso de CFDI</label></div>
-                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_uso" disabled></div>
+                        <div class="col-7"><input type="text" class="mb-3 form-control" name="r_uso" disabled></div>
 
+                        <div class="col-12">
+                            <p class="text-marine m-0 mb-1">Para registro en sistema:</p>
+                            <div class="alert alert-info m-0">
+                                <div class="row">
 
-                        <hr>
-                        <div class="col-5 pt-1 text-end"><label>Folio de factura</label></div>
-                        <div class="col-4"><input type="text" class="mb-3 form-control" name="r_folio" required></div>
+                                    <div class="col-5 pt-1 text-end"><label>Folio de factura</label></div>
+                                    <div class="col-4"><input type="text" class="mb-3 form-control" name="r_folio" required></div>
 
-                        <div class="col-5 pt-1 text-end"><label>Fecha de factura</label></div>
-                        <div class="col-6"><input type="date" class="mb-3 form-control" name="r_fecha" required></div>
+                                    <div class="col-5 pt-1 text-end"><label>Fecha de factura</label></div>
+                                    <div class="col-6"><input type="date" class="mb-3 form-control" name="r_fecha" required></div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> Registrar datos</button>
+                    <button class="btn btn-secondary" type="submit"><i class="fa fa-check"></i> Registrar datos</button>
                 </div>                
 			</form>
 		</div>

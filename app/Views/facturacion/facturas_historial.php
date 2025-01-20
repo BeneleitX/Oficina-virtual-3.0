@@ -25,7 +25,6 @@
             <th>Modelo de negocio</th>
             <th>Cantidad</th>
             <th>Fecha de pago</th>
-            <th>Método de pago</th>
             <th>Folio</th>
             <th></th>
         </tr>
@@ -47,11 +46,9 @@
                     <td class=\"text-end\"><strong>$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ] - $p[ "data" ][ "saldo" ], 2 )."</strong></td>
                     <td class=\"text-center\"><span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) )."</td>
                     
-                    <td>".METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ]."</td>
-
                     <td class=\"text-center\">".( $p[ "data" ][ "sat" ][ "cfd" ] ?? null ? "<h5 class=\"m-0 text-teal\">{$p[ "data" ][ "sat" ][ "cfd" ]}</h5>" : "<span class=\"badge bg-red\">PENDIENTE</span>" )."</td>
 
-                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">DETALLES</a> <button class=\"btn btn-xs btn-primary\" onclick=\"registra_folio( {$p[ "id" ]} )\">REGISTRA FOLIO</a></td>
+                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a></td>
                 </tr>";
             }
         ?>

@@ -64,8 +64,6 @@ class Facturacion extends BaseController
             return redirect()->to( "inicio" ); 
         }
 
-        load_catalogo( "metodospago" );
-
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pedidos que han solicitado factura";
         
@@ -84,8 +82,6 @@ class Facturacion extends BaseController
         ) ){
             return redirect()->to( "inicio" ); 
         }
-
-        load_catalogo( "metodospago" );
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Pedidos facturados";
