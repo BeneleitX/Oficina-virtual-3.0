@@ -1029,12 +1029,12 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
                     <p class="m-0">Método de pago</p>
                     <p><select class="finp form-select" name="factura_mp">
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "" ? "selected" : ""; ?> value="">Selecciona una opción</option>
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "DR" ? "selected" : ""; ?> value="DR">Depósito referenciado</option>
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "DE" ? "selected" : ""; ?> value="DE">Depósito en efectivo</option>
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TE" ? "selected" : ""; ?> value="TE">Transferencia electrónica</option>
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TC" ? "selected" : ""; ?> value="TC">Tarjeta de crédito</option>
-                        <option  <?php echo ( $pedido[ "data" ][ "sat" ][ "mp" ] ?? "" ) == "TD" ? "selected" : ""; ?> value="TD">Tarjeta de débito</option>
+                        <option value="">Selecciona una opción</option>
+                        <option  <?php echo ( $usuario->data->sat->mp ?? "" ) == "DR" ? "selected" : ""; ?> value="DR">Depósito referenciado</option>
+                        <option  <?php echo ( $usuario->data->sat->mp ?? "" ) == "DE" ? "selected" : ""; ?> value="DE">Depósito en efectivo</option>
+                        <option  <?php echo ( $usuario->data->sat->mp ?? "" ) == "TE" ? "selected" : ""; ?> value="TE">Transferencia electrónica</option>
+                        <option  <?php echo ( $usuario->data->sat->mp ?? "" ) == "TC" ? "selected" : ""; ?> value="TC">Tarjeta de crédito</option>
+                        <option  <?php echo ( $usuario->data->sat->mp ?? "" ) == "TD" ? "selected" : ""; ?> value="TD">Tarjeta de débito</option>
                     </select></p>
 
                     <p class="m-0">Uso del CFDI</p>

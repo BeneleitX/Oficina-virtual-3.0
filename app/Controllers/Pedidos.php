@@ -767,15 +767,17 @@ class Pedidos extends BaseController
         $json = $socio->data;
 
         $json->sat->rfc    = $rfc;
+        $json->sat->mp     = $mp; 
         $json->sat->uso    = $uso;
         $json->sat->correo = $correo;
        
         // BITACORA Actualziar RFC
         bitacora( 48, $socio->id, [ 
-            "rfc"     => $rfc,
-            "uso"     => $uso,
-            "correo"  => $correo,
-            "usuario" => $socio->id
+            "rfc"    => $rfc,
+            "uso"    => $uso,
+            "mp"     => $mp,
+            "correo" => $correo,
+            "pedido" => $pedido[ "id" ]
         ] );
 
         if( $this->request->getPost( "factura_csf_carga" ) == 0 ){
@@ -783,9 +785,6 @@ class Pedidos extends BaseController
             $filename = $socio->id."_".time().".pdf";
 
             $json->sat->csf = $filename;
-
-            $socio->data = $json; 
-            model( "UsuarioModel" )->save( $socio );
 
             if( !is_dir( $path ) ){
                 mkdir( $path, 0755, true );
@@ -802,10 +801,16 @@ class Pedidos extends BaseController
 
         }
 
-        $pedido[ "data" ][ "sat" ][ "rfc" ]    = $rfc;
-        $pedido[ "data" ][ "sat" ][ "mp" ]     = $mp;
-        $pedido[ "data" ][ "sat" ][ "uso" ]    = $uso;
-        $pedido[ "data" ][ "sat" ][ "correo" ] = $correo;
+        $socio->data = $json; 
+        model( "UsuarioModel" )->save( $socio );
+
+        $pedido[ "data" ][ "sat" ] = [ 
+            "rfc"     => $rfc,
+            "mp"      => $mp,
+            "uso"     => $uso,
+            "correo"  => $correo,
+            "factura" => "144-FACTURA-PENDIENTE"
+        ];
 
         model( "PedidoModel" )->save( $pedido );
 

@@ -876,14 +876,14 @@ $(document).ready(function()
         var rfc    = $( '[name=factura_rfc]' ).val(),
             uso    = $( '[name=factura_uso]' ).val(),
             correo = $( '[name=factura_correo]' ).val(),
-            mpx    = $( '[name=factura_mp]' ).val(),
+            mp    = $( '[name=factura_mp]' ).val(),
             csf    = $( '[name=factura_csf]' ).val();
 
             if( rfc.length > 12 && 
                 csf.length > 12 && 
                 correo.length > 8 && 
                 uso.length > 2 && 
-                mpx.length > 1 ){
+                mp.length > 1 ){
             $( '#factura_submit' ).prop( 'disabled', false );
         }
         else{
@@ -896,7 +896,10 @@ $(document).ready(function()
             estatus = alerta.find( 'input.form-check-input' ).is( ':checked' );
 
         if( pedido.data.sat == undefined ){ 
-            pedido.data.sat = { 'factura' : '', 'cfd' : '' }; 
+            pedido.data.sat = { 
+                'factura' : '', 
+                'cfd' : '' 
+            }; 
         }
 
         if( estatus ){
