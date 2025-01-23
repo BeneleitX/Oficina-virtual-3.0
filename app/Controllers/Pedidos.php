@@ -149,6 +149,7 @@ class Pedidos extends BaseController
             if( !$staff && $this->data[ "usuario" ]->id !=intval(  $this->data[ "pedido" ][ "usuario_id" ] ) && !(
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
                 $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+                $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
             ) ){
                 return template( "pedidos/no_permiso", $this->data );
