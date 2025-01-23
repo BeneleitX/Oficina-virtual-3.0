@@ -107,7 +107,7 @@ class Pedidos extends BaseController
 
             $this->data[ "titulo" ] = "Detalles de pedido";
             $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
-
+ 
             if( !$this->data[ "pedido" ] ){ 
                 // return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
                 return template( "pedidos/no_pedido", $this->data );
