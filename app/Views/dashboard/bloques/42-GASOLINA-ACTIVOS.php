@@ -81,7 +81,7 @@ $tarjeta = [
     <?php
         //if( $tarjeta[ "compra" ] > 0 ){
             //if( $usuario->data->tarjeta->estatus == "625-ACTIVA ){
-                echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( $tarjeta[ "estatus" ] )."</td></tr></table>".( $usuario->data->tarjeta->estatus != "625-ACTIVA" ? "<button class=\"btn btn-danger col-12\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card text-white small\"></i> ACTIVA AQUI TU TARJETA</button>" : "<div class=\"alert alert-info m-0 text-center fs-3 py-1\"><i class=\"fa fa-credit-card text-white small\"></i> {$tarjeta[ "numero" ]}</div>" );
+                echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( $tarjeta[ "estatus" ] )."</td></tr></table>".( $usuario->data->tarjeta->estatus != "625-ACTIVA" ? "<button class=\"btn btn-danger col-12\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card text-white small\"></i> ACTIVA AQUI TU TARJETA</button>" : "<div class=\"alert alert-info m-0 text-center fs-3 py-1\"><i class=\"fa fa-credit-card text-white small\"></i> {$tarjeta[ "numero" ]}</div><p class=\"small\"><a href=\"javascript:efectivale_modal()\" class=\"\">Click aquí para consultar tu número de cliente EFECTIVALE</a></p>" );
           /*   }
             else{
                 echo "\n<table class=\"mb-1\" align=\"center\"><tr><td><strong>TARJETA</strong></td><td class=\"small\">".estatus( "330-EN-ESPERA" )."</td></tr></table><div class=\"alert alert-warning m-0 text-center\">Tarjeta en espera de entrega a socio</div>";
@@ -98,6 +98,32 @@ $tarjeta = [
 <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
     <div class="progress-bar bg-teal" style="width: <?php echo $porc_bono; ?>%"><?php echo $porc_bono."%"; ?></div>
 </div>     
+</div>
+
+
+<div class="modal" tabindex="-1" id="efectivale_modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+            <div class="modal-header bg-red ">
+                <h5 class="modal-title text-white"><i class="fa fa-credit-card"></i> Datos EFECTIVALE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-4 text-center">
+                        <img src="<?php echo base_url(); ?>assets/img/productos/915-TARJETA.png" class="img-fluid px-3">
+                    </div>
+                    <div class="col-lg-8">
+                        <p class="mb-1">Tarjeta</p>
+                        <input type="text" class="form-control mb-3" value="<?php echo $tarjeta[ "numero" ]; ?>" disabled></input>
+
+                        <p class="mb-1">Número de cliente</p>
+                        <input type="text" class="form-control mb-3" value="234" disabled></input>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
 </div>
 
 
@@ -132,6 +158,10 @@ $tarjeta = [
 
 <script>
 var califica = <?php echo $calificacion; ?>;
+
+function efectivale_modal(){
+    $( '#efectivale_modal' ).modal( 'show' );
+}
 
 $(document).ready(function(){
     var tabla = $( '#niveles_gas' );

@@ -29,7 +29,7 @@ class Pedidos extends BaseController
         
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
         load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
-        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
+        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
 
         if( $this->data[ "usuario" ] === null ){
             return redirect()->to( "logout" );
@@ -121,7 +121,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
             load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
-            load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$modelo}'");
 
@@ -161,7 +161,7 @@ class Pedidos extends BaseController
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
 
-            $sql = "/* estatus_codigo = '201-ACTIVO' AND */ modelo_codigo = '{$modelo}'";
+            $sql = "modelo_codigo = '{$modelo}' OR data->'$.universal' = true";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
             $this->data[ "enproceso" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 250 && ( $this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id ) ? 1 : 0;
@@ -175,7 +175,7 @@ class Pedidos extends BaseController
         else{
             $modelo = $data;
             $activo = "estatus_codigo = '201-ACTIVO'";
-            $sql    = "{$activo} AND modelo_codigo = '{$modelo}'";
+            $sql    = "{$activo} AND ( modelo_codigo = '{$modelo}' OR data->'$.universal' = true )";
 
             $this->data[ "socio" ]     = $this->data[ "usuario" ];
             $this->data[ "pagado" ]    = 0;
@@ -186,7 +186,7 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -226,7 +226,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
             load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
-            load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$modelo}'");
 
@@ -290,7 +290,7 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'", "stocks" );
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -748,7 +748,7 @@ class Pedidos extends BaseController
 
         $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-        load_catalogo( "promociones",    "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "modelo" ]}'");
+        load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}' OR settings->'$.universal' = true");
         load_catalogo( "metodospago",    "modelo_codigo  = '{$this->data[ "modelo" ]}'");
         load_catalogo( "metodosentrega", "modelo_codigo  = '{$this->data[ "modelo" ]}' OR codigo = '00-ALMACEN'");
         load_catalogo( "almacenes",      "modelo_codigo  = '{$this->data[ "modelo" ]}'");

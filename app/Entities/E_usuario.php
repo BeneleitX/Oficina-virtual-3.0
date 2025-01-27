@@ -161,7 +161,7 @@ class E_usuario extends Entity
         $PTS = [];
 
         if( !defined( "PROMOCIONES" ) ) {
-            load_catalogo( "promociones", "modelo_codigo = '{$modelo}'");
+            load_catalogo( "promociones", "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
         }
 
         foreach( PROMOCIONES as $promo ){
@@ -787,7 +787,7 @@ class E_usuario extends Entity
 
             $usuario = $this;
 
-            load_catalogo( "promociones",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
+            load_catalogo( "promociones",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
             load_catalogo( "metodosentrega", "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
             load_catalogo( "almacenes",      "modelo_codigo = '{$pedido[ "modelo_codigo" ]}'");
