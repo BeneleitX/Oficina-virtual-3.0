@@ -53,6 +53,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "usuarios/(:any)",        "Usuarios::busqueda/$1" );
     $routes->post( "usuarios",              "Usuarios::busqueda" );
 
+    $routes->get( "eventos",                "Eventos::listado" );
+    $routes->get( "evento/(:any)",          "Eventos::detalle/$1" );
+
     $routes->get( "bitacora/(:num)",        "Bitacora::listado/$1" );
 
     $routes->get( "reportes",               "Reportes::menu" );

@@ -8,7 +8,8 @@ $calificacion = substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 1 );
 $tarjeta = [
     "compra"  => strlen( $usuario->historial->modelos->{"40-GASOLINAS"}->primercompra->{"412-TARJETA"} ?? "" ),
     "numero"  => ( ( $usuario->data->tarjeta->numero ?? null ) ? ( $usuario->data->tarjeta->estatus == "625-ACTIVA" ? $usuario->data->tarjeta->numero : "**** **** **** ****" ) : null ),
-    "estatus" => $usuario->data->tarjeta->estatus ?? "126-NO-ADQUIRIDO"
+    "estatus" => $usuario->data->tarjeta->estatus ?? "126-NO-ADQUIRIDO",
+    "cliente" => ( $usuario->data->tarjeta->cliente ?? "desconocido" )
 ];
 
 ?>
@@ -118,7 +119,7 @@ $tarjeta = [
                         <input type="text" class="form-control mb-3" value="<?php echo $tarjeta[ "numero" ]; ?>" disabled></input>
 
                         <p class="mb-1">Número de cliente</p>
-                        <input type="text" class="form-control mb-3" value="234" disabled></input>
+                        <input type="text" class="form-control mb-3" value="<?php echo $tarjeta[ "cliente" ]; ?>" disabled></input>
                     </div>
                 </div>
             </div>
