@@ -118,7 +118,7 @@ class E_usuario extends Entity
             if( $data->tarjeta->estatus == "625-ACTIVA" && ( $data->tarjeta->cliente ?? 0 ) == 0 ){
                 $db = db_connect();
                 $sql = " select empleado from t_tarjetas where tarjeta = ".substr($data->tarjeta->numero, 11, 3).substr($data->tarjeta->numero, 15, 4)." ";
-                $data->tarjeta->cliente = $db->query( $sql )->getRow()->empleado;
+                $data->tarjeta->cliente = $db->query( $sql )->getRow()->empleado ?? "número no encontrado";
             }
         }
 
