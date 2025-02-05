@@ -14,6 +14,7 @@ $data     = [];
 $dto      = new \DateTime();
 
 $dto->setISODate( date( "o" ), date( "W" ) );
+$colores = [];
 
 for( $q = 0; $q < 10; $q++ ){
     $semanas[] = $dto->format('W');
@@ -22,6 +23,10 @@ for( $q = 0; $q < 10; $q++ ){
         $comisiones = $usuario->getComisiones( codigo_periodo( $m[ "codigo" ], $dto->format('Y-m-d') ) );
 
         $total[ $m[ "codigo" ] ][ $q ] = 0;
+
+        if(!$q){
+            $colores[] = $m[ "settings" ][ "color" ];
+        }
 
         foreach( $comisiones as $c ){
             $total[ $m[ "codigo" ] ][ $q ] += ( $c->cantidad );
@@ -79,7 +84,8 @@ $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
 <script>
 
     var options = {
-        colors: ['var(--bs-teal)', 'var(--bs-cyan)', 'var(--bs-light-green)'],
+        colors: ['var(--bs-teal)', 'var(--bs-cyan)', 'var(--bs-mustard)', 'var(--bs-light-pink)'],
+        //colors: [<?php echo "'var(--bs-".implode( ")', 'var(--bs-", $colores ).")'"; ?>],
         series: <?php echo json_encode( $data ); ?>,
         chart: {
             type: 'bar',

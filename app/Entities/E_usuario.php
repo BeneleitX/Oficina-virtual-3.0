@@ -323,7 +323,10 @@ class E_usuario extends Entity
                 case "40-GASOLINAS" : 
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
                     break;
-                        }
+                case "50-INVERSION" : 
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
+                    break;
+                                    }
 
             return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span><span class='badge w-100 bg-".$estatus[ "color" ]."'>{$estatus[ "descripcion" ]}</span><div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
