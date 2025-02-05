@@ -29,7 +29,7 @@ for( $q = 0; $q < 10; $q++ ){
         }
 
         foreach( $comisiones as $c ){
-            $total[ $m[ "codigo" ] ][ $q ] += ( $c->cantidad );
+            $total[ $m[ "codigo" ] ][ $q ] += ( $m[ "settings" ][ "periodo" ] == "SEMANAL" ? $c->cantidad : 0 );
         }   
         
         if( !$q ){

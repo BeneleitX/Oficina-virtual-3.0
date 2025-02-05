@@ -61,11 +61,11 @@ class E_usuario extends Entity
 
 
     public function valida_modelo(){
-        foreach( MODELOS as $m ){
+        $historial = $this->historial;
+        $data      = $this->data;
+        $redes     = $this->redes;
 
-            $historial = $this->historial;
-            $data      = $this->data;
-            $redes     = $this->redes;
+        foreach( MODELOS as $m ){
 
             if( $m[ "settings" ][ "efectivo" ] ){
 
@@ -74,6 +74,7 @@ class E_usuario extends Entity
                     !isset( $this->redes->modelos->{$m[ "codigo" ]} ) ||
                     !isset( $this->data->estatus->modelos->{$m[ "codigo" ]} ) 
                 ){
+
                     $historial->modelos->{$m[ "codigo" ]} = [
                         "primercompra"   => json_decode( "{}" ),
                         "ultimacompra"   => null,
@@ -92,7 +93,7 @@ class E_usuario extends Entity
                         "estatus"  => 0
                     ];
                     $data->estatus->modelos->{$m[ "codigo"]} = $this->verificado->estatus ? "220-NUEVO-VERIFICADO" : "210-NUEVO"; 
-
+                    
                     $redes->modelos->{$m[ "codigo" ]} = [
                         "padre" => $redes->patrocinador,
                         "hijos" => [],
@@ -105,7 +106,7 @@ class E_usuario extends Entity
                 }
             }
         }
-
+        
         if( !isset( $data->tarjeta) ){
             $data->tarjeta = [
                 "numero"   => "",
@@ -121,11 +122,11 @@ class E_usuario extends Entity
                 $data->tarjeta->cliente = $db->query( $sql )->getRow()->empleado ?? "número no encontrado";
             }
         }
-
+        
         $this->historial = $historial;
         $this->data = $data;
         $this->redes = $redes;
-    
+      
         // Actualización de datos de socio al agregar un nuevo modelo de negocio
         model( "UsuarioModel" )->save( $this );
     }
@@ -301,7 +302,7 @@ class E_usuario extends Entity
             $db  = db_connect();
             $sql = "select f_get_calificacion( {$this->id}, '{$m_1}', '{$modelo}' ) as '{$m_1}', f_get_calificacion( {$this->id}, '{$m_0}', '{$modelo}' ) as '{$m_0}'";
             
-            if( !isset( $this->data->estatus->modelos->{$modelo}) ){
+            if( !isset( $this->data->estatus->modelos->{$modelo} ) ){
                 $this->valida_modelo();
             }
 
