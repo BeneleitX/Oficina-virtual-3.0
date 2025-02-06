@@ -432,6 +432,7 @@
                 <?php 
                 switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) ){
                     case "ALMACEN" : 
+                        echo ALMACENES[ $pedido[ "data" ][ "entrega" ] ] ?? "no existe ".$pedido[ "data" ][ "entrega" ];
                         if( !isset( ALMACENES[ $pedido[ "data" ][ "entrega" ] ] ) ){
                             $pedido[ "data" ][ "entrega" ] = (substr( $modelo, 0, 1 ) - 1 )."11-OFICINAS";
                         }
