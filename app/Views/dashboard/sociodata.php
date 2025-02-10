@@ -51,6 +51,11 @@ if( $socio ){
                     <div class="card-body text-center">
                         <p>SOCIO<br><?php echo $socio->id( null, "marine" ); ?></p>
                         <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
+                        <?php
+if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
+    echo "<a class=\"btn btn-sm btn-outline-danger\" href=\"javascript:modal_cambia_patrocinador()\"><i class=\"fa fa-warning\"></i> Cambiar patrocinador</a>";
+}                      
+                        ?>
                         <p><?php echo $socio->avatar( 120 ); ?></p>
                         <p><?php echo $socio->rango( 150 ); ?></p>
                         <p><span class="badge bg-<?php echo RANGOS[ $socio->data->rango ][ "color" ]?>"><?php echo RANGOS[ $socio->data->rango ][ "nombre" ]?></span></p>
@@ -149,7 +154,7 @@ if( $socio ){
                     <table class="table table-striped m-0">
                         <tr><th>Red</th><th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project"></i></a></th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
                     <?php 
-                    
+                    $pats = [];
                     foreach( MODELOS as $m ){
                         
                         if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){
@@ -161,6 +166,8 @@ if( $socio ){
                         }
 //if( "40-GASOLINAS" == $m[ "codigo" ] ) dd($socio);
                         $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre );
+                        
+                        $pats[ $m[ "codigo" ] ] = $pat;
                         //  $pat->valida_modelo();
                         echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5><a href=\"".base_url()."/sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
                         
@@ -243,6 +250,40 @@ if( $socio ){
     </div>
 
 
+    <div class="modal" tabindex="-1" id="modal_cambia_patrocinador">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+
+                <div class="modal-header bg-red">
+                    <h5 class="modal-title text-white m-0"><i class="fa fa-warning"></i> Cambiar patrocinador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-red text-center">
+                    <p><i class="fa fa-warning"></i> ATENCION:</p>
+                    <p>Cambiar este dato afectará las redes del patrocinador anterior y el nuevo</p>
+                    <div class="card mb-3" style="overflow:hidden">
+                    <table class="table m-0" id="datos_patrocinador" original="<?php echo $socio->redes->patrocinador; ?>"><tr>
+                    </tr></table>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 text-end pt-1">Patrocinador</div>
+                        <div class="col-2"><input class="form-control form-lg" id="patrocinador_id" value="<?php echo $socio->redes->patrocinador; ?>"></div>
+                        <div class="col-5 text-start"><button class="btn btn-outline-danger" onclick="load_padres( true )">Previsualizar</button></div>
+                    </div>
+                    
+                </div>
+
+                <div class="modal-footer text-center">
+                    <form action="<?php echo base_url( "cambia_patrocinador" ); ?>" method="post">
+                        <?php echo csrf_field() ?>
+                        <input type="hidden" name="n_socio" value="<?php echo $socio->id; ?>">
+                        <input type="hidden" name="n_patrocinador" value="">
+                        <button type="submit" class="btn btn-danger" disabled id="aplicar_cambio"><i class="fa fa-warning"></i> Aplicar cambio de patrocinador</button>
+                    </form>
+                </div>
+        </div>
+        </div>
+    </div>
 
 
 <?php } ?>

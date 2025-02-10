@@ -43,11 +43,13 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "update_estatus/(:any)",  "Dashboard::update_estatus/$1" );
     $routes->get( "sociodata/(:any)",       "Dashboard::sociodata/$1" );
     $routes->post( "sociodata",             "Dashboard::sociodata" );
+    $routes->post( "load_padres",           "Dashboard::load_padres" );
     $routes->post( "update_sociodata",      "Dashboard::update_sociodata" );
     $routes->post( "save_layout",           "Dashboard::save_layout" );
     $routes->post( "reset_password",        "Dashboard::reset_password" );
     $routes->post( "datos_moviles",         "Dashboard::datos_moviles" );
     $routes->post( "niveles_gas",           "Dashboard::niveles_gas" );
+    $routes->post( "cambia_patrocinador",   "Dashboard::cambia_patrocinador" );
 
     $routes->get( "usuarios",               "Usuarios::busqueda" );
     $routes->get( "usuarios/(:any)",        "Usuarios::busqueda/$1" );

@@ -133,6 +133,68 @@ class Dashboard extends BaseController
     }
 
 
+    public function load_padres(){
+        if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $html = "";
+        $pat  = model( "UsuarioModel" )->find( $this->request->getPost( "patrocinador" ) );
+
+        if($pat){
+
+            $pat->valida_modelo();
+
+            foreach( MODELOS as $m ){
+                $pat2 = $pat;
+
+                while( substr( $pat2->data->estatus->modelos->{$m["codigo"]}, 0, 3 ) < 200 ){
+                    $pat2 = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
+                }
+
+                $html .= "<td class=\"text-center\" width=\"20%\"><div class=\"py-3\">".$pat2->avatar(80)."</div><h5 class=\"mb-1\">".$pat2->id( $m[ "codigo" ], null, false )."</h5><span class=\"small text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td>";
+            } 
+        }
+        else{
+            $html .= "<td class=\"text-center\"><h3 class=\"text-red\">El socio no existe</h3></td>";
+        }
+        
+        echo $html;
+    }
+
+
+    public function cambia_patrocinador(){
+        if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) );
+        $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "n_patrocinador" ) );
+
+        if( $socio->redes->patrocinador != $patrocinador->id ){
+            $redes = $socio->redes;
+            $redes->patrocinador = $patrocinador->id;
+            $socio->redes = $redes;
+            
+            model( "UsuarioModel" )->save( $socio );
+
+            // BITACORA Cambio de patrocinador
+            bitacora( 84, $this->data[ "usuario" ]->id, [ 
+                "socio"        => $socio->id,
+                "patrocinador" => $patrocinador->id
+            ] );
+
+            $db = db_connect();
+            foreach( MODELOS as $m ){
+                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+            }
+        }
+
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
+    }
+
+
     public function update_sociodata(){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
