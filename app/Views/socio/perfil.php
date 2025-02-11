@@ -492,11 +492,12 @@ if( !$socio->data->verificacion->correo ){ ?>
 				<?php
 
 				$puntos_verificacion = admin( "puntos_verificacion" );	
+				
 					foreach( $puntos_verificacion as $codigo => $punto){
 
 						$p = $socio->verificado->puntos->{$codigo};
 
-						if( $p->requerido ){ 
+						if( $punto->requerido ){ 
 							if( $p->checked ){
 								echo "<p class=\"\"><i class=\"fas fa-square-check text-teal\"></i> {$punto->nombre}</p>";
 							}

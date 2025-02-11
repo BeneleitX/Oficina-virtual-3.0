@@ -338,7 +338,7 @@ function update_pedido( flag = null ){
         }
     }
     
-    if( !pedido.data.peso && pedido.data.productos > 0 ){
+    if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' ){
         $( '.metodosentrega, .me_respuesta' ).hide();
 
         $( '#no_costo' ).show();
