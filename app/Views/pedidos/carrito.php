@@ -629,12 +629,12 @@
                                             <small><?php
                                             $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
 
-                                            if( isset( $periodo[ "estatus_codigo" ] ) and $periodo[ "estatus_codigo" ] ){
+                                            if( $periodo ){
                                                 echo estatus( $periodo[ "estatus_codigo" ] );
                                             }
                                             ?></small>
                                         <span class="badge bg-marine">
-                                            <?php echo isset( $pedido[ "fechas" ][ "reparte" ] ) ? date( $periodo[ "tipo" ] == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ) : "-ERROR-" ; ?>
+                                            <?php echo isset( $pedido[ "fechas" ][ "reparte" ] ) ? date( ( $periodo[ "tipo" ] ?? "SEMANAL" ) == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ) : "-ERROR-" ; ?>
                                         </span>
                                         
                                     </td>
