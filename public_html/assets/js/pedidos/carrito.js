@@ -269,7 +269,7 @@ function update_pedido( flag = null ){
             if( pedido.promociones[ promocion ].activo == 'true' && cat_promociones[ promocion ].settings.exacto == 'true' && ( cat_promociones[ promocion ].settings.obligatoria == "true" || ( cuenta_productos % 3 ) > 0 ) ){
                 pendientes = 1;
 
-                console.log(promocion);
+                // console.log(promocion);
                 $( '.card[promocion=' + promocion + '] .agrega_productos' ).removeClass( 'btn-light' ).addClass( 'btn-warning' );
             }
             else{

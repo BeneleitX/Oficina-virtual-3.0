@@ -12,7 +12,7 @@
         }elseif( $modelo == '40-GASOLINAS'  ){
             echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\">".( $usuario->data->tarjeta->numero ?? null ? "<div class=\"alert alert-info text-center py-2 mt-4 h4\">{$usuario->data->tarjeta->numero}</div>" : "<button class=\"btn btn-lg mt-4 col-12 btn-info2\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</button>" )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-credit-card\"></i> &nbsp;Nuevos pedidos</a></div>";
         }elseif( $modelo == '50-INVERSION'  ){
-            echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-money-bill-trend-up\"></i> Nueva inversión</a></div>";
+            echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-hand-holding-dollar\"></i> Nueva inversión</a></div>";
         }else{
             echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
         }

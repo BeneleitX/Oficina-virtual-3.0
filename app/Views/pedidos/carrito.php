@@ -1279,7 +1279,20 @@ foreach( $domicilios as $d ){
                         $pts = $p->data->puntos->{"010-DISTRIBUIDOR"} ?? 0;
 
                         if( substr( $p->estatus_codigo, 0, 3 ) > 200 ){
-						    echo "\n<div class=\"col-lg-6 col-xl-4\" producto=\"{$p->codigo}\"><div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" onclick=\"agrega_producto( '{$p->codigo}' )\" style=\"position:relative\"><div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:10px\">".number_format( $pts, 1 )."<br>pts</div><div class=\"row g-0\"><div class=\"col-2 pt-3 ps-3\"><img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded\"></div><div class=\"col-10\"><div class=\"card-body pt-3\"><h5 class=\"mb-1\">".strtoupper( $p->data->nombre )."</h5><p class=\"small m-0\">{$p->data->descripcion}</p></div></div></div></div></div>";
+						    echo "\n<div class=\"col-lg-6 col-xl-4\" producto=\"{$p->codigo}\"><div class=\"card mb-3 boton\" title=\"Click para agregar al pedido\" ".( $modelo != "50-INVERSION" ? "onclick=\"agrega_producto( '{$p->codigo}' )\"" : "" )." style=\"position:relative\"><div class=\"badge puntos bg-gray-500\" style=\"position:absolute; right:10px; top:10px\">".number_format( $pts, 1 )."<br>pts</div><div class=\"row g-0\"><div class=\"col-2 pt-3 ps-3\"><img src=\"".base_url()."assets/img/productos/".( $p->data->avatar ? $p->codigo : "NO-IMAGEN" ).".png\" class=\"img-fluid rounded\"></div><div class=\"col-10\"><div class=\"card-body pt-3\"><h5 class=\"mb-1\">".strtoupper( $p->data->nombre )."</h5><p class=\"small m-0\">{$p->data->descripcion}".( $modelo == "50-INVERSION" ? "<br><span class=\"text-{$p->data->color}\">Inversión inicial mínima: $".number_format( $p->precio->total, 2 )." USD</span>" : "" )."</p>";
+                            
+                            if( $modelo == "50-INVERSION" ) {
+                                echo "<div class=\"row\">
+                                    <div class=\"col-7 pt-2\">
+                                        Cantidad a invertir
+                                    </div>
+                                    <div class=\"col-5\">
+                                        <input class=\"form-control text-end\" type=\"number\" value=\"{$p->precio->total}\" id=\"cantidad_{$p->codigo}\" readonly>
+                                    </div>
+                                </div><button class=\"btn btn-sm btn-outline-light border-{$p->data->color} text-{$p->data->color}\" onclick=\"agrega_producto( '{$p->codigo}' )\">Seleccionar paquete</button>";
+                            }
+                            
+                            echo "</div></div></div></div></div>";
                         }
 					}
 					?>

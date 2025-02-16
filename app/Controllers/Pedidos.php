@@ -713,11 +713,18 @@ class Pedidos extends BaseController
 
             $domicilios = $this->data[ "socio" ]->getDomicilios();
             
-            if( !$this->data[ "pedido" ][ "metodoentrega_codigo" ] && $this->data[ "pedido" ][ "modelo_codigo" ] == "40-GASOLINAS" ){
-                $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
+            if( !$this->data[ "pedido" ][ "metodoentrega_codigo" ] ){ 
+                switch ($this->data[ "pedido" ][ "modelo_codigo" ]) {
+                    case "40-GASOLINAS":
+                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
+                        break;
+                    case "50-INVERSION":
+                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "19-USDT";
+                        break;
+                }
             }
             
-            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13", "15" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
+            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13", "15", "19" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
 
             $total = $this->data[ "pedido" ][ "data" ][ "total" ] - $this->data[ "socio" ]->saldo( $this->data[ "modelo" ] ) + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
 
