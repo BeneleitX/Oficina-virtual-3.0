@@ -715,6 +715,9 @@ class Pedidos extends BaseController
             
             if( !$this->data[ "pedido" ][ "metodoentrega_codigo" ] ){ 
                 switch ($this->data[ "pedido" ][ "modelo_codigo" ]) {
+                    case "10-NUTRICION":
+                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "90-NO-ENTREGA";
+                        break;
                     case "40-GASOLINAS":
                         $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
                         break;

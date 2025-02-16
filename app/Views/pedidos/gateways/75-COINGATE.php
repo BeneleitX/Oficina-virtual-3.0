@@ -1,83 +1,44 @@
 <?php 
 
-$auth_token = 'FtGVgmPj3QyJeofNhFczo3wwebAkZ4rigHrEhMA2';
-
-$headers   = array();
-$headers[] = 'Authorization: Token ' . $auth_token;
-$curl      = curl_init();
-
-curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-
-
 require '../vendor/autoload.php';
 
-$client = new \GuzzleHttp\Client();
+$client = new \CoinGate\Client('FtGVgmPj3QyJeofNhFczo3wwebAkZ4rigHrEhMA2', true);
+$client->setEnvironment('sandbox');
+$socio = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+$producto = array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] );
 
-$response = $client->request('POST', 'https://api-sandbox.coingate.com/api/v2/orders/id/checkout', [
-  'headers' => [
-    'accept' => 'application/json',
-    "content-type"  => "application/json",
-  ],
-]);
+$params = [
+    'order_id'          => $pedido[ "referencia" ],
+    'purchaser_email'   => $socio->correo,
+    'price_amount'      => $pedido[ "data" ][ "total" ],
+    'price_currency'    => 'USD',
+    'receive_currency'  => 'USDT',
+    'callback_url'      => 'https://example.com/payments?token=6tCENGUYI62ojkuzDPX7Jg',
+    'cancel_url'        => 'https://example.com/cart',
+    'success_url'       => 'https://example.com/account/orders',
+    'title'             => "Capital24 ".$pedido[ "referencia" ],
+    'description'       => $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ][ $producto[ 0 ] ][ "nombre"],
+    "shopper"           => [
+        "type"          => "personal",
+        "email"         => $socio->correo,
+        "country"       => "MX",
+        "language"      => "es",
+        "phone"         => $socio->telefono,
+        "first_name"    => $socio->data->nombre,
+        "last_name"     => implode( " ", $socio->data->apellidos ),
+        "date_of_birth" => $socio->fechanac,
+        "residence_country" => "MX",
+    ],  
+];
 
-echo $response->getBody();
+try {
+    $order = $client->order->create($params);
+} catch (\CoinGate\Exception\ApiErrorException $e) {
+    // something went wrong...
+    // var_dump($e->getErrorDetails());
+}
 
-
-/*
-
-
-use Conekta\Api\OrdersApi;
-use Conekta\Model\OrderRequest;
-use Conekta\Configuration;
-use Conekta\ApiException;
-
-$ambiente = VARIABLES[ "conekta" ][ "valor" ];
-$conekta  = $ambiente[ "ambientes" ][ $ambiente[ "ambiente" ] ];
-$client   = new \GuzzleHttp\Client();
-
-$subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
-$comisionbanco = ceil( $subtotal * 2 / 100 );
-$total    = $subtotal + $comisionbanco;
-
-$json     = [
-    "body" => json_encode( [
-        "customer_info" => [
-            "name"  => limpia_acentos( $socio->nombre( 2, false, true ) ),
-            "email" => trim( $socio->correo ),
-            "phone" => $socio->telefono
-        ],
-        "line_items" => [
-            [
-                "unit_price" => $total * 100,
-                "name"       => $pedido[ "referencia" ],
-                "quantity"   => 1
-            ]
-        ],
-        "metadata" => [
-            "referencia" => $pedido[ "referencia" ]
-        ],        
-        "checkout" => [
-            "type" => "Integration",
-            "allowed_payment_methods" => [ "card", "cash", "bank_transfer" ],
-            "expires_at"       => ( time() + ( 60 * 60 * 24 * 15 ) ) , 
-            "redirection_time" => 0,
-            "success_url"      => "https://app.beneleit.mx/ConektaRedirect"
-        ],
-        "currency" => "MXN"
-    ]),
-    "headers" => [
-        "accept"        => "application/vnd.conekta-v2.1.0+json",
-        "authorization" => "Bearer ".$conekta[ "private_key" ],
-        "content-type"  => "application/json",
-    ],
-]; 
-
-$response = $client->request('POST', 'https://api.conekta.io/orders', $json );
-$stream   = json_decode( $response->getBody() );
-
-$pedido[ "data" ][ "conekta" ][ "order" ] = $stream->id;
-$pedido[ "data" ][ "conekta" ][ "checkout" ] = $stream->checkout->id;
+$pedido[ "data" ][ "coingate" ][ "order" ] = $order->id;
 
 model( "PedidoModel" )->save( $pedido );
 
@@ -87,32 +48,17 @@ model( "PedidoModel" )->save( $pedido );
 	<a href="<?php echo base_url( "pedido/{$pedido[ "referencia" ]}" ); ?>" class="btn btn-danger"><i class="fa fa-undo"></i> Regresar al pedido</a>
 </p>
 
-<script crossorigin src="https://pay.conekta.com/v1.0/js/conekta-checkout.min.js"></script>
+<iframe 
+    src="<?php echo $order->payment_url; ?>"
+    width="100%" 
+    height="750px" 
+    frameborder="0" 
+    scrolling="no"
+    seamless="seamless"
+    id="coingate"
+  ></iframe> 
 
-<div id="conekta_component" style="height: 714px"></div>
 <script>
-    const options = {
-        backgroundMode: 'lightMode', //lightMode o darkMode
-        colorPrimary:   '#009779', //botones y bordes
-        colorText: 	    '#1A2542', // títulos
-        colorLabel: 	'#1A2542', // input labels
-        inputType: 		'flatMode', // minimalMode o flatMode
-    };
-    const config = {
-        locale: 	  	   'es',
-        targetIFrame: 	   '#conekta_component',
-        publicKey:    	   '<?php echo $conekta[ "public_key" ]; ?>',
-        checkoutRequestId: '<?php echo $stream->checkout->id; ?>',
-    };
 
-    const callbacks = {
-        onGetInfoSuccess:  function( lTime ){ console.log('loading time en milisegundos', lTime.initLoadTime ); },
-        onFinalizePayment: function( order ){ console.log('success: ', JSON.stringify(order)); },
-        onErrorPayment:    function( error ){ console.log('error en pago: ', error); },
-    };
-
-    window.ConektaCheckoutComponents.Integration({config, callbacks, options });
 </script>
 
-
-*/
