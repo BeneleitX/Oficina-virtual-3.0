@@ -485,7 +485,7 @@ function update_pedido( flag = null ){
         }
 
         const tooltip = bootstrap.Tooltip.getInstance('#btn-wrapper');
-        tooltip.setContent( { '.tooltip-inner': $errores } ); 
+        if( !( pagado || bloqueado || cancelado ) )  tooltip.setContent( { '.tooltip-inner': $errores } ); 
 
     });
     

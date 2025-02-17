@@ -108,6 +108,7 @@
             }
 
 			foreach( PROMOCIONES as $p ){
+              
                 if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
 
