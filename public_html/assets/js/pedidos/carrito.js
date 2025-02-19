@@ -531,7 +531,7 @@ function test(){
       };
 
       $.ajax({
-        url: base_url + "CoingateCallback", 
+        url: "https://api.beneleit.mx/CoingateCallback", 
         type: "POST",
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: { datos : datos },
