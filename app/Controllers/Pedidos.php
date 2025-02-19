@@ -101,12 +101,12 @@ class Pedidos extends BaseController
     public function carrito( $tipo, $data )
     {
 
-        if($this->data[ "usuario" ]->id == 55 ){
+        if( 0 && $this->data[ "usuario" ]->id == 55 ){
 
              $datos = json_decode( '{
                 "id": 208747,
                 "order_id": "11564382",
-                "status": "invalid",
+                "status": "test",
                 "pay_amount": "2521.093743",
                 "pay_currency": "USDT",
                 "price_amount": "2500.0",
