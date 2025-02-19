@@ -910,10 +910,10 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                     $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
                                     echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\" selected>{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
-                                    if( $modelo != "50-INVERSION" )
-                                    $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
-                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
-
+                                    if( $modelo != "50-INVERSION" ){
+                                        $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
+                                        echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                                    }
                                     $pago = METODOSPAGO[ "1".substr( $modelo, 0, 1 )."-REFERENCIA" ];
                                     echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
