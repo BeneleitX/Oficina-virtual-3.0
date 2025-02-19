@@ -442,6 +442,15 @@ function update_pedido( flag = null ){
         
             $errores = '';
         
+console.log(
+    ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
+    !pendientes,
+    !pedido.no_stock,
+    total_productos_pedido > 0,
+    ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
+    ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
+);
+
         if( !permitepagos ){
             $( this ).prop( 'disabled', true );
             $( this ).removeClass( 'btn-primary' );
