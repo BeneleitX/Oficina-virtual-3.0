@@ -397,21 +397,18 @@ function update_pedido( flag = null ){
         caption  = Moneda.format( total_productos + total_entrega );
         b.find( '.cantidad' ).html( caption );
         b.show();
-        console.log( 'show' );
     }
     else{
         b.hide();
     }
      
-    console.log( total_productos );
-
     $( 'div.metodopago' ).each( function( a, b){
         var metodopago  = $( this ).attr( 'metodopago' ),
             boton       = $( this ).find( '[name=metodopago]' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
             comision    = 0;
-            console.log( metodopago );
+        
 /*     $( 'button[name=metodopago]' ).each( function( a, b){
         var metodopago  = $( this ).attr( 'value' ),
             cantidad    = $( this ).find( '.cantidad' ),
@@ -444,14 +441,14 @@ function update_pedido( flag = null ){
         
             $errores = '';
         
-console.log(
+/* console.log(
     ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
     !pendientes,
     !pedido.no_stock,
     total_productos_pedido > 0,
     ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
     ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
-);
+); */
 
         if( !permitepagos ){
             $( this ).prop( 'disabled', true );
@@ -537,9 +534,9 @@ function test(){
         url: base_url + "CoingateCallback", 
         type: "POST",
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        data: { [csrf_token] : csrf_hash, json : json },
+        data: { datos : datos },
         success: function( result ){
-            // console.log( 'log' );
+            console.log( 'ok' );
         }
     });
 }

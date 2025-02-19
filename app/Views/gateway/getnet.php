@@ -10,7 +10,7 @@
 
         <div class="card my-5">
             <div class="card-header text-center">Mensaje del banco</div>
-            <div class="card-body py-5"><?php echo $respuesta[ "nbResponse" ] == "Aprobado" ? "Cobro realizado con éxito" : $respuesta[ "nb_error" ?? "Error ( {$respuesta[ "nbResponse" ]})" ]; ?></div>
+            <div class="card-body py-5"><?php echo $respuesta[ "nbResponse" ] == "Aprobado" ? "Cobro realizado con éxito" : $respuesta[ "nb_error" ] ?? "Error ( {$respuesta[ "nbResponse" ]})"; ?></div>
         </div>
 
 
