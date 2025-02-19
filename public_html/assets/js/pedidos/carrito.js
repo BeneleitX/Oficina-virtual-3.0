@@ -403,13 +403,15 @@ function update_pedido( flag = null ){
         b.hide();
     }
      
+    console.log( total_productos );
+
     $( 'div.metodopago' ).each( function( a, b){
-        var metodopago  = $( this ).attr( 'metodopago' ),
+        var   = $( this ).attr( 'metodopago' ),
             boton       = $( this ).find( '[name=metodopago]' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
             comision    = 0;
-
+            console.log( metodopago );
 /*     $( 'button[name=metodopago]' ).each( function( a, b){
         var metodopago  = $( this ).attr( 'value' ),
             cantidad    = $( this ).find( '.cantidad' ),
