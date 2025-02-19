@@ -100,40 +100,6 @@ class Pedidos extends BaseController
 
     public function carrito( $tipo, $data )
     {
-
-        if( 0 && $this->data[ "usuario" ]->id == 55 ){
-
-             $datos = json_decode( '{
-                "id": 208747,
-                "order_id": "11564382",
-                "status": "test",
-                "pay_amount": "2521.093743",
-                "pay_currency": "USDT",
-                "price_amount": "2500.0",
-                "price_currency": "USD",
-                "receive_currency": "USDT",
-                "receive_amount": "2494.708194",
-                "created_at": "2025-02-18T18:12:58+00:00",
-                "token": "gjPJtXHEVU3zSxKLf1YjuQyBcLi5WA",
-                "underpaid_amount": "2521.093743",
-                "overpaid_amount": "0",
-                "is_refundable": false,
-                "fees": []
-              }' );
-
-
-              $curl = curl_init();
-              curl_setopt($curl, CURLOPT_URL, "https://api.beneleit.mx/CoingateCallback" );
-              curl_setopt($curl, CURLOPT_POST, true );
-              curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query( $datos ) );
-              curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
-              $respuesta = curl_exec( $curl );
-              curl_close($curl);
-
-        d($respuesta); 
-    }
-
-        /*********************************************************************************/
         $this->data[ "navbar" ] = true;
 
         // Entrar a pedido en espera de pago o pagado (usando referencia)
