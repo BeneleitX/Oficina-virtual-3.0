@@ -101,7 +101,9 @@ class Pedidos extends BaseController
     public function carrito( $tipo, $data )
     {
 
-        /*     $datos = json_decode( '{
+        if($this->data[ "usuario" ]->id == 55 ){
+
+             $datos = json_decode( '{
                 "id": 208747,
                 "order_id": "11564382",
                 "status": "invalid",
@@ -128,8 +130,8 @@ class Pedidos extends BaseController
               $respuesta = curl_exec( $curl );
               curl_close($curl);
 
-        dd($respuesta); */
-
+        d($respuesta); 
+    }
 
         /*********************************************************************************/
         $this->data[ "navbar" ] = true;
