@@ -28,7 +28,7 @@ class Pedidos extends BaseController
         }
         
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
+        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
         load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
 
         if( $this->data[ "usuario" ] === null ){
@@ -119,7 +119,7 @@ class Pedidos extends BaseController
 
             $modelo = $this->data[ "pedido" ][ "modelo_codigo" ];
 
-            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
             load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -187,7 +187,7 @@ class Pedidos extends BaseController
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
             load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
-            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
+            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' ) )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
 
@@ -224,7 +224,7 @@ class Pedidos extends BaseController
 
             $modelo = $this->data[ "pedido" ][ "modelo_codigo" ];
 
-            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN'");
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
             load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -291,7 +291,7 @@ class Pedidos extends BaseController
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
             load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
-            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo = '00-ALMACEN')");
+            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' ) )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'", "stocks" );
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
 
@@ -722,7 +722,7 @@ class Pedidos extends BaseController
                         $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
                         break;
                     case "50-INVERSION":
-                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "19-USDT";
+                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "90-NO-ENTREGA";
                         break;
                 }
             }
@@ -762,7 +762,7 @@ class Pedidos extends BaseController
 
         load_catalogo( "promociones",    "modelo_codigo = '{$this->data[ "modelo" ]}' OR settings->'$.universal' = true");
         load_catalogo( "metodospago",    "modelo_codigo  = '{$this->data[ "modelo" ]}'");
-        load_catalogo( "metodosentrega", "modelo_codigo  = '{$this->data[ "modelo" ]}' OR codigo = '00-ALMACEN'");
+        load_catalogo( "metodosentrega", "modelo_codigo  = '{$this->data[ "modelo" ]}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
         load_catalogo( "almacenes",      "modelo_codigo  = '{$this->data[ "modelo" ]}'");
 
         echo template( "pedidos/ticket", $this->data );

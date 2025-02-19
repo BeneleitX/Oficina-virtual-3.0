@@ -503,6 +503,37 @@ function update_pedido( flag = null ){
 }
 
 
+function test(){
+    var datos = {
+        "id": 208747,
+        "order_id": "11564382",
+        "status": "invalid",
+        "pay_amount": "2521.093743",
+        "pay_currency": "USDT",
+        "price_amount": "2500.0",
+        "price_currency": "USD",
+        "receive_currency": "USDT",
+        "receive_amount": "2494.708194",
+        "created_at": "2025-02-18T18:12:58+00:00",
+        "token": "gjPJtXHEVU3zSxKLf1YjuQyBcLi5WA",
+        "underpaid_amount": "2521.093743",
+        "overpaid_amount": "0",
+        "is_refundable": false,
+        "fees": []
+      };
+
+      $.ajax({
+        url: base_url + "CoingateCallback", 
+        type: "POST",
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: { [csrf_token] : csrf_hash, json : json },
+        success: function( result ){
+            // console.log( 'log' );
+        }
+    });
+}
+
+
 function show_modal_productos( promocion ){
     $( '#modal_productos div[producto]' ).attr( 'activo', 'false' ).hide();
     $( '#busca_producto' ).val( '' );

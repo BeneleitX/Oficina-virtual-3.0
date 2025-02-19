@@ -431,6 +431,7 @@
                 </div>
 
                 <?php 
+
                 switch( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) ){
                     case "ALMACEN" : 
                         

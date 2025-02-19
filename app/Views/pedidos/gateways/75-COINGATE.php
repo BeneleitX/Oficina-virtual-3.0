@@ -13,9 +13,9 @@ $params = [
     'price_amount'      => $pedido[ "data" ][ "total" ],
     'price_currency'    => 'USD',
     'receive_currency'  => 'USDT',
-    'callback_url'      => 'https://example.com/payments?token=6tCENGUYI62ojkuzDPX7Jg',
-    'cancel_url'        => 'https://example.com/cart',
-    'success_url'       => 'https://example.com/account/orders',
+    'callback_url'      => "https://api.beneleit.mx/CoingateCallback",
+    'cancel_url'        => base_url()."CoingateFinish",
+    'success_url'       => base_url()."CoingateFinish",
     'title'             => "Capital24 ".$pedido[ "referencia" ],
     'description'       => $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ][ $producto[ 0 ] ][ "nombre"],
     "shopper"           => [

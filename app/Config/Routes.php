@@ -26,6 +26,9 @@ $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 $routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" ); 
 $routes->get( "ConektaRedirect",            "Gateway::ConektaRedirect" ); 
 
+$routes->get( "CoingateFinish",             "Coingate::Finish" );
+$routes->post( "CoingateCallback",          "Coingate::Callback" );
+
 $routes->get( "no_internet",                        "Tools::no_internet" );   
 $routes->get( "compresion/(:any)/(:num)/(:num)",   "Tools::compresion/$1/$2/$3" );     
 
@@ -35,7 +38,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "procesa_registro/(:num)/(:any)",    "Registro::procesa_registro/$1/$2" );
 
     $routes->get( "dashboard",              "Panel::inicio" );    
-
+    
     $routes->get( "",                       "Dashboard::inicio" );
     $routes->get( "inicio",                 "Dashboard::inicio" );
     $routes->post( "splash",                "Dashboard::splash" );

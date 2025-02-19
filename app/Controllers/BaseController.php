@@ -22,6 +22,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseController extends Controller
 {
+    protected $session; 
+    protected $db; 
     /**
      * Instance of the main Request object.
      *
@@ -90,7 +92,7 @@ abstract class BaseController extends Controller
         
         if( !defined( "MESES" ) ) define( "MESES", $meses );
 
-        load_catalogo( "modelos", "estatus_codigo = '201-ACTIVO'" );
+        load_catalogo( "modelos", session( "usuario" ) != 55 ? "estatus_codigo = '201-ACTIVO'" : "" );
         load_catalogo( "estatus" );
         load_catalogo( "rangos" );
         load_catalogo( "variables" );
