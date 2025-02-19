@@ -406,7 +406,7 @@ function update_pedido( flag = null ){
     console.log( total_productos );
 
     $( 'div.metodopago' ).each( function( a, b){
-        var   = $( this ).attr( 'metodopago' ),
+        var metodopago  = $( this ).attr( 'metodopago' ),
             boton       = $( this ).find( '[name=metodopago]' ),
             cantidad    = $( this ).find( '.cantidad' ),
             costo_extra = $( this ).find( '.costo_extra' ),
