@@ -54,10 +54,7 @@ class Usuarios extends BaseController
             $this->data[ "socios" ] = null;
 
             $sql = "SELECT fecha, JSON_EXTRACT( d.variables, '$.socio' ) AS socio FROM t_bitacoras d
-                WHERE accion_id IN (50) AND usuario_id = 55 
-                and d.fecha IN (
-                    SELECT MAX( d2.fecha ) FROM t_bitacoras d2 WHERE accion_id IN (50) AND usuario_id = 55 and d.variables = d2.variables 
-                ) 
+                WHERE accion_id IN (50) AND usuario_id = {$this->data[ "usuario" ]->id} 
                 ORDER BY fecha desc limit 10";
                 
             $socios = [];
