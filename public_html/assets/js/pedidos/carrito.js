@@ -184,7 +184,7 @@ function update_pedido( flag = null ){
     
             if( cat_promociones[ promocion ].settings.forced == "true" ){
                 $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
-    
+
                 $.each( cat_promociones[ promocion ].productos.precarga, function( codigo, producto ){
                     agrega_producto( producto, promocion, 1, true );
                 });
@@ -554,9 +554,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
     }
 
-
     if( existe.length ){
-
         campo.val( parseInt( campo.val() ) + cantidad );
 
         if( cat_promociones[ promocion ].formulas.minimo !== undefined && campo.val() < cat_promociones[ promocion ].formulas.minimo ){
@@ -571,7 +569,15 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         }        
         orden  = get_orden_next( promocion );
         
-        precio = ( auto ? pedido.promociones[ promocion ].productos[ producto ].precio : ( modelo == '50-INVERSION' ? $( '#cantidad_' + producto ).val() : cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) ) );
+        precio = 
+            modelo == '50-INVERSION' ? 
+                $( '#cantidad_' + producto ).val() : (
+                    cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 
+                        0 : 
+                        eval( cat_promociones[ promocion ].formulas.precio )
+        );  
+
+//        precio = ( cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
 
         $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><a href="javascript:lightbox( \'' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png\' );" class="lightbox_trigger"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></a></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || bloqueado|| cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
 
@@ -584,6 +590,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         update_pedido( "agrega pedido" );
     }
 }
+
 
 
 function get_orden_next( promocion ){
