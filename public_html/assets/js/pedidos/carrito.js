@@ -160,11 +160,11 @@ function update_pedido( flag = null ){
     $( '.card[promocion]' ).each( function(){
 
         var tag = $( this ), 
-            cuenta_productos = 0,
-            total_promo      = 0,
+            cuenta_productos   = 0,
+            total_promo        = 0,
             total_comisionable = 0,
-            promocion        = tag.attr( 'promocion' ),
-            disponible       = 0;
+            promocion          = tag.attr( 'promocion' ),
+            disponible         = 0;
 
         disponible = eval( cat_promociones[ promocion ].formulas.disponible );
 
@@ -178,8 +178,6 @@ function update_pedido( flag = null ){
         };
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
-
-        console.log( formula, promocion );
 
         if( formula ){
             $( '.card[promocion=' + promocion + ']' ).show();
@@ -235,6 +233,8 @@ function update_pedido( flag = null ){
                     total_promo += ( cantidad * unitario );
                     total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
                     $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
+
+                    console.log( unitario, total_promo );
                 }
                 else{
                     $( this ).remove();
@@ -571,7 +571,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         }        
         orden  = get_orden_next( promocion );
         
-        precio = cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
+        precio = ( auto ? pedido.promociones[ promocion ].productos[ producto ].precio : ( modelo == '50-INVERSION' ? $( '#cantidad_' + producto ).val() : cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) ) );
 
         $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><a href="javascript:lightbox( \'' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png\' );" class="lightbox_trigger"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></a></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || bloqueado|| cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
 
@@ -629,6 +629,13 @@ var pendientes = 0;
 
 $(document).ready(function()
 { 
+    $( '.limitado' ).on( 'keyup', function(){
+        var value = parseInt($(this).val());
+
+        if( value % 100 !== 0 ){
+            $( this ).val( Math.ceil( value / 100 ) * 100 );
+        }
+    });
     
 	function delay(fn, ms) {
 		let timer = 0
@@ -863,6 +870,7 @@ $(document).ready(function()
         $( '#calcula_total' ).text( Moneda.format( v ) );
     });
 
+
     $( '.switch-evento' ).on( 'change', function(){
         var padre   = $( this ).closest( 'div[promocion]' ),
             promo   = padre.attr( 'promocion' ),
@@ -880,6 +888,7 @@ $(document).ready(function()
         if( !pagado )
             update_pedido( "switch evento" );
     });
+
 
     $( '.finp' ).on( 'change', function(){
         var rfc    = $( '[name=factura_rfc]' ).val(),
@@ -899,6 +908,7 @@ $(document).ready(function()
             $( '#factura_submit' ).prop( 'disabled', true );
         }
     });
+
 
     $( '.switch-factura' ).on( 'change', function(){
         var alerta  = $( this ).closest( '.alert' ),
@@ -931,7 +941,6 @@ $(document).ready(function()
         
         update_pedido( "switch factura" );
     });
-
 
 
     $( 'div[evento=true][estatus=true]' ).each( function(a, b){

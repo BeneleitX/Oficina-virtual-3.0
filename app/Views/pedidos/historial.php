@@ -11,7 +11,7 @@
             echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Paquetes y activaciones</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> SIM cards y Promocionales</a></div>";
         }elseif( $modelo == '40-GASOLINAS'  ){
             echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\">".( $usuario->data->tarjeta->numero ?? null ? "<div class=\"alert alert-info text-center py-2 mt-4 h4\">{$usuario->data->tarjeta->numero}</div>" : "<button class=\"btn btn-lg mt-4 col-12 btn-info2\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</button>" )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-credit-card\"></i> &nbsp;Nuevos pedidos</a></div>";
-        }elseif( $modelo == '50-INVERSION'  ){
+        }elseif( $modelo == '50-INVERSION' ){
             echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-hand-holding-dollar\"></i> Nueva inversión</a></div>";
         }else{
             echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
@@ -26,7 +26,7 @@
             <th>Estatus</th>
             <th>promociones</th>
             <th>productos</th>
-            <th>Precio</th>
+            <th><?php echo $modelo == "50-INVERSION"  ? "Inversión" : "Precio"; ?></th>
             <th>Fecha pago</th>
             <th>Califica</th>
             <th>pago</th>
@@ -56,9 +56,19 @@
                 }
              
                 echo "</td>
-                    <td class=\"text-center\">".( isset( $p[ "promociones" ][ "310-TELEFONIA" ] )  ?  "<span class=\"badge bg-light-blue\">".substr( array_keys( $p[ "promociones" ][ "310-TELEFONIA" ][ "productos" ] ?? [""] )[ 0 ] , 4 )."</span>" : $p[ "data" ][ "productos" ] )."</td>
+                    <td class=\"text-center\">";
                     
-                    <td class=\"text-end\">".( $p[ "data" ][ "sat" ][ "factura" ] ?? null ? " <small class=\"\"><span style=\"vertical-align: text-top;\" class=\"badge bg-".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? ( $p[ "data" ][ "cfd" ] ?? null ? "teal" : "red" ) : "mustard" )."\">".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? $p[ "data" ][ "cfd" ] ?? "ERROR" : "<i class=\"fa fa-file-invoice-dollar\"></i>" )."</span></small> " : "" ).( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 255 ? "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
+                    if( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ){
+                        echo "<span class=\"badge bg-light-blue\">".substr( array_keys( $p[ "promociones" ][ "310-TELEFONIA" ][ "productos" ] ?? [""] )[ 0 ] , 4 )."</span>";
+                    }
+                    elseif( isset( $p[ "promociones" ][ "510-SEMILLA" ] ) ){
+                        echo "<span class=\"badge bg-light-green\">".substr( array_keys( $p[ "promociones" ][ "510-SEMILLA" ][ "productos" ] ?? [""] )[ 0 ] , 4 )."</span>";
+                    }
+                    else{
+                        echo $p[ "data" ][ "productos" ];
+                    }
+
+                    echo "</td><td class=\"text-end\">".( $p[ "data" ][ "sat" ][ "factura" ] ?? null ? " <small class=\"\"><span style=\"vertical-align: text-top;\" class=\"badge bg-".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? ( $p[ "data" ][ "cfd" ] ?? null ? "teal" : "red" ) : "mustard" )."\">".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? $p[ "data" ][ "cfd" ] ?? "ERROR" : "<i class=\"fa fa-file-invoice-dollar\"></i>" )."</span></small> " : "" ).( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 255 ? "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
                     
                     <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? "<span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) ) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
                     

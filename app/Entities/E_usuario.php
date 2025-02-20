@@ -474,6 +474,7 @@ class E_usuario extends Entity
             $m->variables = json_decode( $m->variables ); 
 
             foreach($m->variables as $k => $v){
+                if(!is_object($v))
                 $m->string = str_replace( "#{$k}#", $v, $m->string );
             }
         }
@@ -921,6 +922,20 @@ class E_usuario extends Entity
         return $db->query( $sql )->getRow()->r;  
     }
 
+
+    public function getPrimerCompraProducto( $producto ){
+        $db = db_connect();
+
+        $sql = "SELECT MIN(fechas->>'$.pagado') as fecha 
+                FROM t_pedidos 
+                WHERE usuario_id = {$this->id} 
+                and substring( estatus_codigo,1,3) > 400
+                AND promociones like '%\"{$producto}\"%'";
+        $result = $db->query($sql)->getRow();
+        return $result ? $result->fecha : null;
+    }
+
+    
 
     public function getChecks( $modelo ){
         $a = json_decode( json_encode( $this->data->checks ?? [] ), 1);
