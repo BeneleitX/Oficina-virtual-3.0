@@ -108,6 +108,7 @@ class ComposerStaticInit971ac293b03c472381b0322be557b3c1
         ),
         'C' => 
         array (
+            'Cryptomus\\Api\\' => 14,
             'Conekta\\' => 8,
             'Composer\\XdebugHandler\\' => 23,
             'Composer\\Semver\\' => 16,
@@ -305,6 +306,10 @@ class ComposerStaticInit971ac293b03c472381b0322be557b3c1
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Cryptomus\\Api\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src',
         ),
         'Conekta\\' => 
         array (
@@ -998,6 +1003,11 @@ class ComposerStaticInit971ac293b03c472381b0322be557b3c1
         'Conekta\\Model\\WebhookUpdateRequest' => __DIR__ . '/..' . '/conekta/conekta-php/lib/Model/WebhookUpdateRequest.php',
         'Conekta\\Model\\WhitelistlistRuleResponse' => __DIR__ . '/..' . '/conekta/conekta-php/lib/Model/WhitelistlistRuleResponse.php',
         'Conekta\\ObjectSerializer' => __DIR__ . '/..' . '/conekta/conekta-php/lib/ObjectSerializer.php',
+        'Cryptomus\\Api\\Client' => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src/Client.php',
+        'Cryptomus\\Api\\Payment' => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src/Payment.php',
+        'Cryptomus\\Api\\Payout' => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src/Payout.php',
+        'Cryptomus\\Api\\RequestBuilder' => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src/RequestBuilder.php',
+        'Cryptomus\\Api\\RequestBuilderException' => __DIR__ . '/..' . '/cryptomus/api-php-sdk/src/RequestBuilderException.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
         'DeepCopy\\Exception\\PropertyException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/PropertyException.php',

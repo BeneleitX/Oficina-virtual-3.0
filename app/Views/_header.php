@@ -7,6 +7,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
+        <meta name="cryptomus" content="ce9af27a" />
         <meta name="author" content="scabbia@gmail.com">
         <meta name="generator" content="Hugo 0.122.0">
         <link rel="icon" type="image/png" href="<?php echo base_url(); ?>assets/img/favicon/fav_beneleit.png">

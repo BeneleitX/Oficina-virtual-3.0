@@ -16,6 +16,7 @@
         "ext-mbstring": "*",
         "coingate/coingate-php": "^4.1",
         "conekta/conekta-php": "*@dev",
+        "cryptomus/api-php-sdk": "^1.0",
         "guzzlehttp/guzzle": "^7.9",
         "laminas/laminas-escaper": "^2.9",
         "phpoffice/phpspreadsheet": "^2.1",

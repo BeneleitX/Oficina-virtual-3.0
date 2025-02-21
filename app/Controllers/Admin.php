@@ -59,7 +59,8 @@ class Admin extends BaseController
                 and substring( estatus_codigo,1,3 ) > 400";
         $this->data[ "facturas" ] = $db->query( $sql )->getRow()->total;
 
-        $this->data[ "tarjetas" ]     = $db->query( "select count(id) as uss from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null" )->getRow()->uss;
+        $this->data[ "tarjetas" ] = $db->query( "select count(id) as uss from t_usuarios where historial->>'$.modelos.\"40-GASOLINAS\".primercompra.\"412-TARJETA\"' IS NOT null" )->getRow()->uss;
+        $this->data[ "hash" ]     = $db->query( "select count(pedido_id) as uss from t_inversiones where estatus_codigo = '420-PAGADO'" )->getRow()->uss;
 
         echo template( "admin/dashboard", $this->data );
     }

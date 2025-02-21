@@ -570,8 +570,9 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
         orden  = get_orden_next( promocion );
         
         precio = 
-            modelo == '50-INVERSION' ? 
-                $( '#cantidad_' + producto ).val() : (
+            modelo == '50-INVERSION' ? (
+                auto ? pedido.data.total  : $( '#cantidad_' + producto ).val()
+            ) : (
                     cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 
                         0 : 
                         eval( cat_promociones[ promocion ].formulas.precio )

@@ -35,7 +35,8 @@ $menu = [
     [ "success", "saldos", "hand-holding-dollar", "Saldo a favor", $saldos,["40-ADMIN"] ],   
     [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],
     [ "warning", "eventos", "person-chalkboard", "Eventos", $eventos ,[""] ],
-    [ "danger", "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN", "31-GASOLINA"] ],
+    [ "danger",  "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN", "31-GASOLINA"] ],
+    [ "success", "capital", "hand-holding-dollar", "Capital24", $hash ,["40-ADMIN"] ],
 ];
 
 foreach( $menu as $opcion ){
@@ -49,7 +50,7 @@ foreach( $menu as $opcion ){
     }
 
     if( $permiso ){
-        echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-{$opcion[0]} col-12 ".($opcion[0] == "secondary" ? "disabled" : "" )."\"  href=\"".base_url( $opcion[1] )."\"><i class=\"fa fa-{$opcion[2]} m-2\" style=\"font-size:50px\"></i><p class=\"mb-1\">{$opcion[3]}</p><div class=\"contador text-center\">".( isset( $opcion[4] ) && $opcion[4] > 0 ? "<span class=\"badge rounded-pill bg-marine\">{$opcion[4]}</span><br>" : "" ).( str_contains( $opcion[1], "/" ) ? "<i class=\"fa fa-circle elipsis text-mustard\"></i><i class=\"fa fa-circle text-pink elipsis\"></i><i class=\"fa fa-circle text-light-blue elipsis\"></i>" : "")."</div></a></div>";
+        echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-{$opcion[0]} col-12 ".($opcion[0] == "secondary" ? "disabled" : "" )."\"  href=\"".base_url( $opcion[1] )."\"><i class=\"fa fa-{$opcion[2]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$opcion[3]}</p><div class=\"contador text-center\">".( isset( $opcion[4] ) && $opcion[4] > 0 ? "<span class=\"badge rounded-pill bg-marine\">{$opcion[4]}</span><br>" : "" ).( str_contains( $opcion[1], "/" ) ? "<i class=\"fa fa-circle elipsis text-mustard\"></i><i class=\"fa fa-circle text-pink elipsis\"></i><i class=\"fa fa-circle text-light-blue elipsis\"></i>" : "")."</div></a></div>";
     }
 }
 

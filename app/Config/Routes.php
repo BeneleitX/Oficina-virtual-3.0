@@ -23,14 +23,14 @@ $routes->get( "registro_exito/(:any)",      "Registro::registro_exito/$1" );
 $routes->post( "procesa_registro",          "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",       "Registro::valida_patrocinador" );
 
-$routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" ); 
-$routes->get( "ConektaRedirect",            "Gateway::ConektaRedirect" ); 
+$routes->get( "GetnetRedirect",             "Gateway::GetnetRedirect" );
+$routes->get( "ConektaRedirect",            "Gateway::ConektaRedirect" );
 
 $routes->get( "CoingateFinish",             "Coingate::Finish" );
 $routes->post( "CoingateCallback",          "Coingate::Callback" );
 
-$routes->get( "no_internet",                        "Tools::no_internet" );   
-$routes->get( "compresion/(:any)/(:num)/(:num)",   "Tools::compresion/$1/$2/$3" );     
+$routes->get( "no_internet",                        "Tools::no_internet" );
+$routes->get( "compresion/(:any)/(:num)/(:num)",   "Tools::compresion/$1/$2/$3" );
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                 "Sesion::logout" );
@@ -96,7 +96,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "paga_pedido",           "Pedidos::paga_pedido" ); 
     $routes->post( "cambia_edicion",        "Pedidos::cambia_edicion" ); 
     $routes->post( "carga_csf_pedido",      "Pedidos::carga_csf" );
-
+    $routes->post( "txhash",                "Pedidos::txhash" );
 
     $routes->get( "balance",                "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",  "Ingresos::balance/$1/$2" ); 
@@ -184,6 +184,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "paqueteria/(:any)",      "Paqueteria::detalle/$1" );
     $routes->post( "envia",                 "Paqueteria::entrega" );
     $routes->post( "marca_enviado",         "Paqueteria::marca_enviado" );
+
+    $routes->get( "capital",                "Capital::dashboard" );
 
     $routes->get( "roles",                  "Roles::listado" ); 
 

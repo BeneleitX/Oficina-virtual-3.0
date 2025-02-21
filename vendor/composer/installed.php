@@ -3,7 +3,7 @@
         'name' => 'codeigniter4/framework',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '69dd35d97984713d1c31b4596f46cb721cc5ce36',
+        'reference' => '26bb21dc6a01c7beea6178efb7532932f1f446c3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -31,7 +31,7 @@
         'codeigniter4/framework' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '69dd35d97984713d1c31b4596f46cb721cc5ce36',
+            'reference' => '26bb21dc6a01c7beea6178efb7532932f1f446c3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -82,6 +82,15 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
+            'dev_requirement' => false,
+        ),
+        'cryptomus/api-php-sdk' => array(
+            'pretty_version' => '1.0.0',
+            'version' => '1.0.0.0',
+            'reference' => '7d4cd3b50114951b649cb533fd8a2cb9a889e4c6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../cryptomus/api-php-sdk',
+            'aliases' => array(),
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(

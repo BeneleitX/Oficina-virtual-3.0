@@ -835,4 +835,85 @@ class Pedidos extends BaseController
         
         return redirect()->to( "tienda/".$pedido[ "modelo_codigo" ] );
     } 
+
+    public function txhash(){
+        $hash = $this->request->getPost( "hash" );
+
+        $respuesta = [
+            "error"   => "Error desconocido",
+            "success" => false
+        ];
+
+        if( strlen( $hash ) == 64 ){
+            $respuesta[ "success" ] = true;
+            $respuesta[ "error" ]   = false;
+
+            // cambiar estatus de pedido
+            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+            $pedido[ "estatus_codigo" ] = "420-PAGADO";
+            
+            $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+
+            $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
+            $total = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $saldo;
+            $fecha = date( "Y-m-d H:i:s" );
+        
+            $pedido[ "fechas" ][ "pagado" ]    = $fecha;
+            $pedido[ "fechas" ][ "califica" ]  = $fecha;
+            $pedido[ "fechas" ][ "reparte" ]   = $fecha;
+            $pedido[ "data" ][ "saldo" ]       = $saldo;
+
+            model( "PedidoModel" )->save( $pedido );
+
+            $data      = $u->data;                                    
+            $historial = $u->historial;  
+
+            $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = 0;
+            $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus  = 0;
+        
+            foreach( $pedido[ "PTS" ] as $promo => $pts ){
+                if( !is_object( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra ) ){
+                    $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
+                }
+
+                if( !isset( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
+                    $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                }    
+            } 
+
+            $historial->modelos->{$pedido[ "modelo_codigo" ]}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
+
+            $u->data      = $data;
+            $u->historial = $historial;
+
+            model( "UsuarioModel" )->save( $u );    
+
+            $db = db_connect();
+            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
+            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+            $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
+        
+            // BITACORA Marcar pedido como pagado
+            bitacora( 56, $this->data[ "usuario" ]->id, [ 
+                "pedido"   => $pedido[ "id" ],
+                "pagado"   => $fecha,
+                "califica" => $fecha,
+                "reparte"  => $fecha
+            ] );
+
+
+            $inversion = model( "InversionModel" )->find( $pedido[ "id" ] );
+            $inversion[ "fechas" ][ "pagado" ]   = $fecha;
+            $inversion[ "fechas" ][ "califica" ] = $fecha;
+            $inversion[ "fechas" ][ "reparte" ]  = $fecha;
+            
+            $inversion[ "extras" ][ "TxHash" ]   = $hash; 
+            model( "InversionModel" )->save( $inversion );
+        }
+        else{
+            $respuesta[ "error" ] = "Hash incorrecto (".strlen( $hash ).")";
+        }
+
+        echo json_encode( $respuesta );
+    }
 }
