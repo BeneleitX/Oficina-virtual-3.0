@@ -844,7 +844,52 @@ class Pedidos extends BaseController
             "success" => false
         ];
 
-        if( strlen( $hash ) == 64 ){
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://apilist.tronscanapi.com/api/transaction-info?hash={$hash}" );
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+        $d = json_decode( curl_exec( $curl ) );
+        curl_close($curl);
+
+        $data  = [
+            "contractRet" => "SUCCESS",
+            "contractInfo" => [
+                "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" => [
+                    "publicTag" => "USDT Token"
+                ]
+            ],
+            "confirmed" => true,
+            "trc20TransferInfo" => [
+                [
+                    "icon_url" => "https://static.tronscan.org/production/logo/usdtlogo.png",
+                    "symbol" => "USDT",
+                    "to_address" => "TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP",
+                    "type" => "Transfer",
+                    "name" => "Tether USD",
+                    "decimals" => 6,
+                    "from_address" => "TJy2LR9FFrP7ZQw99CRfHeiFCG2RZUasGF",
+                    "amount_str" => "500000000",
+                ]
+            ],
+            "cost" => [
+                "net_fee_cost" => 1000,
+                "date_created" => 1736902989,
+                "fee" => 0,
+                "energy_fee_cost" => 210,
+                "net_usage" => 0,
+                "multi_sign_fee" => 0,
+                "net_fee" => 345000,
+                "energy_penalty_total" => 49635,
+                "energy_usage" => 0,
+                "energy_fee" => 13499850,
+                "energy_usage_total" => 64285,
+                "memoFee" => 0,
+                "origin_energy_usage" => 0
+            ]
+        ];
+
+        $respuesta[ "error" ] = json_encode( $data );
+
+        /* if( strlen( $hash ) == 64 ){
             $respuesta[ "success" ] = true;
             $respuesta[ "error" ]   = false;
 
@@ -912,8 +957,11 @@ class Pedidos extends BaseController
         }
         else{
             $respuesta[ "error" ] = "Hash incorrecto (".strlen( $hash ).")";
-        }
+        } */
 
-        echo json_encode( $respuesta );
+        echo json_encode( $respuesta, JSON_PRETTY_PRINT );
     }
 }
+
+
+

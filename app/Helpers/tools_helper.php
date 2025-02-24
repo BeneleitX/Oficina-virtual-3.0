@@ -371,6 +371,11 @@ function marca( $queries, $texto, $case = null ){
 }
 
 
+function tarjeta( $tarjeta ){
+    return substr($tarjeta, 0, 4).substr($tarjeta, 5, 4)."0 ".substr($tarjeta, 11, 3).substr($tarjeta, 15, 4);
+}
+
+
 function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
     if( null == $fecha ){
         $fecha = date( "Y-m-d" );

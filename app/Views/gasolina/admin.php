@@ -115,7 +115,7 @@
                 </td>
 
                 <td>".( $u->data->tarjeta ?? null ? 
-                    "<span class=\"badge bg-gray-400 text-marine\">{$icono} {$u->data->tarjeta->numero}</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : 
+                    "<span class=\"badge bg-gray-400 text-marine\">{$icono} ".tarjeta($u->data->tarjeta->numero)."</span> ".estatus( $u->data->tarjeta->numero ? $u->data->tarjeta->estatus : "330-EN-ESPERA" ) : 
                     "<i class=\"fa fa-warning text-red\"></i> Sin vincular")."
                 </td>
 

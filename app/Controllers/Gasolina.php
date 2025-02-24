@@ -184,7 +184,7 @@ class Gasolina extends BaseController
                     $html .= "\n<tr>
                                 <td><span class=\"badge bg-gray-600\">{$r->folio}</span></td>
                                 <td class=\"text-start\"><span class=\"badge bg-marine\">{$r->referencia}</span></td>
-                                <td><strong><a href=\"javascript:navigator.clipboard.writeText( '".substr( $r->tarjeta, 11, 3).substr( $r->tarjeta, 15, 4)."' );\"><i class=\"fa fa-credit-card text-teal\"></i></a> {$r->tarjeta}</strong></td>
+                                <td><strong><a href=\"javascript:navigator.clipboard.writeText( '".substr( $r->tarjeta, 11, 3).substr( $r->tarjeta, 15, 4)."' );\"><i class=\"fa fa-credit-card text-teal\"></i></a> ".tarjeta( $r->tarjeta )."</strong></td>
                                 <td><span class=\"d-none\">{$r->pagado}</span>".date( "d-m-Y", strtotime( $r->pagado ) )."</td>
                                 <td><span class=\"d-none\">{$r->fecha}</span>".date( "d-m-Y", strtotime( $r->fecha ) )."</td>
                                 <td>".estatus( $r->estatus )."</td>
