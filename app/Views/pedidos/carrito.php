@@ -1343,7 +1343,7 @@ foreach( $productos as $p ){
 ?>
 
 <script>
-    <?php echo "// {$socio->historial->registro} - ".date( "Y-m-25" ); ?>
+    <?php echo "// ".substr( $socio->historial->registro, 0, 10 )." - ".date( "Y-m-25" ); ?>
 
     var modelo 			= '<?php echo $modelo; ?>',
         tarjeta_Activa  = <?php echo isset( $socio->data->tarjeta ) && $socio->data->tarjeta->estatus == '625-ACTIVA' ? "true" : "false"; ?>,
