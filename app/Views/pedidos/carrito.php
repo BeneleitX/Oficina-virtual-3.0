@@ -1348,7 +1348,7 @@ foreach( $productos as $p ){
     var modelo 			= '<?php echo $modelo; ?>',
         tarjeta_Activa  = <?php echo isset( $socio->data->tarjeta ) && $socio->data->tarjeta->estatus == '625-ACTIVA' ? "true" : "false"; ?>,
         es_primermes    = <?php echo !$pc || date( "Ym", strtotime( $pc ) ) == date( "Ym" ) ? "true" : "false"; ?>,
-        es_nuevo        = <?php echo $socio->historial->registro > date( "Y-m-25" ) ? "true" : "false"; ?>,
+        es_nuevo        = <?php echo substr( $socio->historial->registro, 0, 10 ) > date( "Y-m-25" ) ? "true" : "false"; ?>,
         usuario 		= <?php echo json_encode( $socio->getDatos() ) ?>,
         cat_promociones = <?php echo json_encode( PROMOCIONES ); ?>,
         cat_productos   = <?php echo json_encode( $prods ); ?>,
