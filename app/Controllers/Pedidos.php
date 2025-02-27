@@ -844,120 +844,196 @@ class Pedidos extends BaseController
             "success" => false
         ];
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "https://apilist.tronscanapi.com/api/transaction-info?hash={$hash}" );
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
-        $d = json_decode( curl_exec( $curl ) );
-        curl_close($curl);
+        // validamos que tenga una longitud correcta
 
-        $data  = [
-            "contractRet" => "SUCCESS",
-            "contractInfo" => [
-                "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" => [
-                    "publicTag" => "USDT Token"
-                ]
-            ],
-            "confirmed" => true,
-            "trc20TransferInfo" => [
-                [
-                    "icon_url" => "https://static.tronscan.org/production/logo/usdtlogo.png",
-                    "symbol" => "USDT",
-                    "to_address" => "TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP",
-                    "type" => "Transfer",
-                    "name" => "Tether USD",
-                    "decimals" => 6,
-                    "from_address" => "TJy2LR9FFrP7ZQw99CRfHeiFCG2RZUasGF",
-                    "amount_str" => "500000000",
-                ]
-            ],
-            "cost" => [
-                "net_fee_cost" => 1000,
-                "date_created" => 1736902989,
-                "fee" => 0,
-                "energy_fee_cost" => 210,
-                "net_usage" => 0,
-                "multi_sign_fee" => 0,
-                "net_fee" => 345000,
-                "energy_penalty_total" => 49635,
-                "energy_usage" => 0,
-                "energy_fee" => 13499850,
-                "energy_usage_total" => 64285,
-                "memoFee" => 0,
-                "origin_energy_usage" => 0
-            ]
-        ];
+        if( strlen( $hash ) == 64 ){
 
-        $respuesta[ "error" ] = json_encode( $data );
+            // endpoint GET de tronscan para verificar la transaccion
+            // la URL se obtiene de la tabla t_variables
+            // devuelve un JSON con la informacion de la transaccion del que tomaremos los datos más importantes
 
-        /* if( strlen( $hash ) == 64 ){
-            $respuesta[ "success" ] = true;
-            $respuesta[ "error" ]   = false;
+            $vars = ( VARIABLES[ "inversiones" ]["valor"] );
 
-            // cambiar estatus de pedido
-            $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
-            $pedido[ "estatus_codigo" ] = "420-PAGADO";
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, str_replace( "%hash%", $hash,  $vars[ "url" ] ) );
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+            $d = json_decode(  curl_exec( $curl ), true );
+            curl_close($curl);
+
+            if( sizeof( $d ) ){
+                $data  = [
+                    "block"                 => $d[ "block" ], // 68750547,
+                    "contractRet"           => $d[ "contractRet" ], // "SUCCESS",
+                    "confirmed"             => $d[ "confirmed" ], // true,
+                    "icon_url"              => $d[ "tokenTransferInfo" ][ "icon_url" ], // "https://static.tronscan.org/production/logo/usdtlogo.png",  
+                    "symbol"                => $d[ "tokenTransferInfo" ][ "symbol" ], // "USDT",
+                    "to_address"            => $d[ "tokenTransferInfo" ][ "to_address" ], // "TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP",
+                    "name"                  => $d[ "tokenTransferInfo" ][ "name" ], // "Tether USD",
+                    "decimals"              => $d[ "tokenTransferInfo" ][ "decimals" ], // 6,
+                    "from_address"          => $d[ "tokenTransferInfo" ][ "from_address" ], // "TJy2LR9FFrP7ZQw99CRfHeiFCG2RZUasGF"
+                    "amount_str"            => $d[ "tokenTransferInfo" ][ "amount_str" ], // "500000000",
+                    "cost" => [
+                        "date_created"          => date( "Y-m-d", $d[ "cost" ][ "date_created" ] ), // 1736902989,
+                        "net_fee_cost"          => $d[ "cost" ][ "net_fee_cost" ], // 1000,
+                        "fee"                   => $d[ "cost" ][ "fee" ], // 0,
+                        "energy_fee_cost"       => $d[ "cost" ][ "energy_fee_cost" ], // 210,
+                        "net_usage"             => $d[ "cost" ][ "net_usage" ], // 0,
+                        "multi_sign_fee"        => $d[ "cost" ][ "multi_sign_fee" ], // 0,
+                        "net_fee"               => $d[ "cost" ][ "net_fee" ], // 345000,
+                        "energy_penalty_total"  => $d[ "cost" ][ "energy_penalty_total" ], // 49635,
+                        "energy_usage"          => $d[ "cost" ][ "energy_usage" ], // 0,
+                        "energy_fee"            => $d[ "cost" ][ "energy_fee" ], // 13499850,
+                        "energy_usage_total"    => $d[ "cost" ][ "energy_usage_total" ], // 64285,
+                        "memoFee"               => $d[ "cost" ][ "memoFee" ], // 0,
+                        "origin_energy_usage"   => $d[ "cost" ][ "origin_energy_usage" ] // 0
+                    ]
+                ];
+
+                $respuesta[ "data" ]    = json_encode( $data );
+                $respuesta[ "error" ]   = false;
+                $respuesta[ "success" ] = [];
+
+                // validamos que sea una transacción confirmada
+
+                if( $data[ "contractRet" ] == "SUCCESS" && $data[ "confirmed" ] == true ){
+                    
+                    // validamos que sea al wallet destino correcto
+
+                    $address = false;
+                    foreach( $vars[ "wallets" ] as $wallet ){
+                        if( $data[ "to_address" ] == $wallet[ "token"] && $wallet[ "estatus" ] == "201-ACTIVO" ){
+                            $address = true;
+                        }
+                    }
+
+                    // Si se encontró wallet
+
+                    if( $address ){
+                        
+                        // nos aseguramos de que la transacción no haya sido registrada antes
+
+                        $db     = db_connect();
+                        $sql    = "select count(*) as existe from t_fondeos where operacion = '{$hash}'";
+
+                        if( !$db->query( $sql )->getrow()->existe ){
+                            // validamos cantidad
+
+                            $pedido    = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+                            $u         = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+
+                            $cantidad  = $data[ "amount_str" ] / pow( 10, $data[ "decimals" ] );
+                            $fecha     = date( "Y-m-d H:i:s" );
+                            $saldo     = $u->saldo( $pedido[ "modelo_codigo" ] );
+                            $total     = $pedido[ "data" ][ "total" ] - $saldo;
+
+                            // Al no existir antes, la registramos en la base de datos de fondeos
+
+                            model( "FondeoModel" )->ignore( true )->save( [
+                                "operacion"         => $hash, 
+                                "fecha"             => $fecha,
+                                "estatus_codigo"    => "420-PAGADO",
+                                "metodopago_codigo" => $pedido[ "metodopago_codigo" ],
+                                "usuario_id"        => $u->id,
+                                "referencia"        => $pedido[ "referencia" ],
+                                "cantidad"          => $cantidad,
+                                "extras"            => $data
+                            ] );
+
+                            $data      = $u->data;                                    
+                            $historial = $u->historial;  
+
+                            // si el deposito es suficiente
+
+                            if( $cantidad >= $total ){
+
+                                // cambiar estatus de pedido
+                    
+                                $pedido[ "estatus_codigo" ]        = "420-PAGADO";
+                                $pedido[ "fechas" ][ "pagado" ]    = $fecha;
+                                $pedido[ "fechas" ][ "califica" ]  = $fecha;
+                                $pedido[ "fechas" ][ "reparte" ]   = $fecha;
+                                $pedido[ "data" ][ "saldo" ]       = $saldo;
             
-            $u = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
+                                // model( "PedidoModel" )->save( $pedido );
+            
+                                if( $cantidad > $total ){
+                                    $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = $cantidad - $total;
+                                }
+                                else{
+                                    $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = 0;
+                                    $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus  = 0;
+                                }
 
-            $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
-            $total = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $saldo;
-            $fecha = date( "Y-m-d H:i:s" );
-        
-            $pedido[ "fechas" ][ "pagado" ]    = $fecha;
-            $pedido[ "fechas" ][ "califica" ]  = $fecha;
-            $pedido[ "fechas" ][ "reparte" ]   = $fecha;
-            $pedido[ "data" ][ "saldo" ]       = $saldo;
+                                foreach( $pedido[ "PTS" ] as $promo => $pts ){
+                                    if( !is_object( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra ) ){
+                                        $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
+                                    }
+            
+                                    if( !isset( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
+                                        $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
+                                    }    
+                                } 
 
-            model( "PedidoModel" )->save( $pedido );
+                                $historial->modelos->{$pedido[ "modelo_codigo" ]}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
 
-            $data      = $u->data;                                    
-            $historial = $u->historial;  
+                                $db = db_connect();
+                                $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
+                                $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+                                $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
+                            
+                                // BITACORA Marcar pedido como pagado
 
-            $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = 0;
-            $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus  = 0;
-        
-            foreach( $pedido[ "PTS" ] as $promo => $pts ){
-                if( !is_object( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra ) ){
-                    $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
+                                bitacora( 56, $this->data[ "usuario" ]->id, [ 
+                                    "pedido"   => $pedido[ "id" ],
+                                    "pagado"   => $fecha,
+                                    "califica" => $fecha,
+                                    "reparte"  => $fecha
+                                ] );
+
+                                // Si entra la inversión, se registra con sus fechas para comenzar el cálculo de rendimientos
+    
+                            /* $inversion = model( "InversionModel" )->find( $pedido[ "id" ] );
+
+                                $inversion[ "fechas" ][ "pagado" ]   = $fecha;
+                                $inversion[ "fechas" ][ "califica" ] = $fecha;
+                                $inversion[ "fechas" ][ "reparte" ]  = $fecha;
+                                $inversion[ "extras" ][ "TxHash" ]   = $hash; 
+
+                                model( "InversionModel" )->save( $inversion ); */
+                            }
+                            else{
+
+                                $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Cantidad transferida insuficiente</h5>La transferencia por $".number_format( $cantidad, 2 )." no es suficiente para cubrir el monto requerido<br>de la compra por $".number_format( $total, 2 );
+
+                                // agregamos saldo a favor al socio
+
+                                $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad += $cantidad;                   
+                            }
+
+                            $u->data      = $data;
+                            $u->historial = $historial;
+
+                            model( "UsuarioModel" )->save( $u );    
+                        }
+                        else{
+                            $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">TxHash ya registrado</h5>Esta transacción ya ha sido registrada anteriormente en la base de datos";
+                        }
+                    }
+                    else{
+                        $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Wallet destino incorrecta</h5>La transacción ingresada no tiene como destino alguna wallet de Beneleit / Capital24";
+                    }
                 }
-
-                if( !isset( $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
-                    $historial->modelos->{$pedido[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $pedido[ "fechas" ][ "califica" ], 0, 10 );
-                }    
-            } 
-
-            $historial->modelos->{$pedido[ "modelo_codigo" ]}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
-
-            $u->data      = $data;
-            $u->historial = $historial;
-
-            model( "UsuarioModel" )->save( $u );    
-
-            $db = db_connect();
-            $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
-            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
-            $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
-        
-            // BITACORA Marcar pedido como pagado
-            bitacora( 56, $this->data[ "usuario" ]->id, [ 
-                "pedido"   => $pedido[ "id" ],
-                "pagado"   => $fecha,
-                "califica" => $fecha,
-                "reparte"  => $fecha
-            ] );
-
-
-            $inversion = model( "InversionModel" )->find( $pedido[ "id" ] );
-            $inversion[ "fechas" ][ "pagado" ]   = $fecha;
-            $inversion[ "fechas" ][ "califica" ] = $fecha;
-            $inversion[ "fechas" ][ "reparte" ]  = $fecha;
-            
-            $inversion[ "extras" ][ "TxHash" ]   = $hash; 
-            model( "InversionModel" )->save( $inversion );
+                else{
+                    $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">TxHash no confirmado</h5>La transacción no ha sido confirmada en la blockchain";
+                }
+            }
+            else{
+                $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">TxHash no encontrado</h5>No existe información en la red para el hash ingresado";
+            }
         }
         else{
-            $respuesta[ "error" ] = "Hash incorrecto (".strlen( $hash ).")";
-        } */
+            $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Hash incorrecto</h5>Ingresaste ".strlen( $hash )." caracteres";
+        } 
 
         echo json_encode( $respuesta, JSON_PRETTY_PRINT );
     }

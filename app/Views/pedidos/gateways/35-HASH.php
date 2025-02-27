@@ -20,7 +20,7 @@ $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][
 
             <div id="finaliza" class="card-body text-center my-5" style="display: none;">
                 <p style="font-size:100px"><i class="fa fa-circle-check text-teal"></i></p>
-                <h5>TxHash correcto<br>Se ha registrado la inversión</h5>
+                <h5>TxHash correcto<br>Se ha registrado la inversión <span class="badge bg-marine"><?php echo $pedido[ "id" ]; ?></span></h5>
             </div>
 
             <div id="principal" style="display: none;">
@@ -46,7 +46,7 @@ $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][
                     <div class="text-center my-4">
                         <h5>Pega aquí tu TxHash</h5>
                         <input type="text" class="form-control text-center" name="_txhash">
-                        <pre id="error" class="text-red" style="display:none"></pre>
+                        <pre id="error" class="mt-2 alert alert-danger" style="display:none"></pre>
                     </div>
 
                     <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar inversión</button></p>

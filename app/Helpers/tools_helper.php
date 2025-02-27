@@ -304,6 +304,36 @@ function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
     return $desglose; 
 }
 
+
+function check_biex(){
+    $sql = null;
+    $dia_limite = 25;
+    $mes = date( "d" );
+
+    $db = db_connect();
+
+    if( VARIABLES[ "check_biex" ][ "valor" ] == "0" && date( "d") > $dia_limite ){
+        $sql = "UPDATE t_pedidos
+                set PTS = json_set( PTS, '$.\"230-REGALOBIEX\"', 0),
+                data = json_set( data, '$.productos', data->'$.productos' - 1),
+                promociones = json_set( promociones, '$.\"230-REGALOBIEX\".productos', json_object() )
+                where PTS->>'$.\"230-REGALOBIEX\"' > 0 
+                and cast( fechas->>'$.creado' as date ) between '2025-{$mes}-01' and '2025-{$mes}-25'
+                and substring( estatus_codigo,1 ,3 ) > 200
+                and (substring( estatus_codigo,1 ,3 ) < 400 or cast( fechas->>'$.pagado' as date ) > '2025-{$mes}-25' );";
+
+        $db->query("update t_variables set valor = '1' where codigo = 'check_biex'");
+    }
+    elseif( VARIABLES[ "check_biex" ][ "valor" ] == "1" && date( "d") < $dia_limite ){
+        $db->query("update t_variables set valor = '0' where codigo = 'check_biex'");
+    }
+
+    if( $sql ){
+        $db->query( $sql );
+    }
+}
+
+
 function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
 
     $sql = "SELECT fijo, porcentaje, minimo 

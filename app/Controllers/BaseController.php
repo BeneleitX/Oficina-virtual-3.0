@@ -97,6 +97,8 @@ abstract class BaseController extends Controller
         load_catalogo( "rangos" );
         load_catalogo( "variables" );
 
+        check_biex();
+
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
 }
