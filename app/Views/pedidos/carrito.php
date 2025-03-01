@@ -157,6 +157,29 @@
                                     echo "</ul>";
                                 }
 
+                                if( $modelo == "50-INVERSION" && $paquete = get_hash( $pedido[ "id" ] ) ){
+
+                                    $paquete[ "extras" ] = json_decode( $paquete[ "extras" ], 1 );
+                                    $paquete[ "fechas" ] = json_decode( $paquete[ "fechas" ], 1 );
+
+                                    echo "\n<div class=\"mx-3 alert alert-success\"><div class=\"row\">
+                                                <div class=\"col-6\">
+                                                Capital semilla recibido 
+                                                <img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\">
+                                                $".number_format( $paquete[ "cantidad" ], 2 )."<br>
+                                                Fecha de envío: ".date( "d-m-Y", strtotime( $paquete[ "fechas" ][ "pagado" ] ) )."<br>
+                                                ".estatus( $paquete[ "estatus_codigo" ] )."</div>
+                                                <div class=\"col-6\">
+                                                <div class=\"m-0 small text-marine alert xalert-info border-0 bg-gray-300\" style=\"font-family:'Courier New'; font-weight:900\">
+                                                    ".substr( $paquete[ "extras" ][ "TxHash" ], 0, 32 )."<br>
+                                                    ".substr( $paquete[ "extras" ][ "TxHash" ], 32 )."<br>
+                                                    {$paquete[ "extras" ][ "wallets" ][ "from" ]}<br>
+                                                    {$paquete[ "extras" ][ "wallets" ][ "to" ]}
+                                                </div>
+                                                </div></div>
+                                                </div>";
+                                }                                
+
                                 
                     echo "<div contenido class=\"card-footer bg-gray-300 text-end\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
                                     <table align=\"right\">
@@ -1294,7 +1317,7 @@ echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pa
                                         Cantidad a invertir
                                     </div>
                                     <div class=\"col-5\">
-                                        <input class=\"form-control ".( $modelo == "50-INVERSION" ? "limitado" : "" )." text-end\" type=\"number\" value=\"{$total}\" id=\"cantidad_{$p->codigo}\" ".( $primera ? "min=\"0\" step=\"100\"" : "readonly").">
+                                        <input class=\"form-control ".( $modelo == "50-INVERSION" ? "limitado" : "" )." text-end\" type=\"number\" value=\"{$total}\" id=\"cantidad_{$p->codigo}\" min=\"{$total}\" step=\"100\" max=\"99900\">
                                     </div>
                                 </div><button class=\"btn btn-sm btn-outline-light border-{$p->data->color} text-{$p->data->color}\" onclick=\"agrega_producto( '{$p->codigo}' )\">Seleccionar paquete</button>";
                             }

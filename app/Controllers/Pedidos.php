@@ -861,7 +861,7 @@ class Pedidos extends BaseController
             curl_close($curl);
 
             if( sizeof( $d ) ){
-                $data  = [
+                $tx  = [
                     "block"                 => $d[ "block" ], // 68750547,
                     "contractRet"           => $d[ "contractRet" ], // "SUCCESS",
                     "confirmed"             => $d[ "confirmed" ], // true,
@@ -889,19 +889,19 @@ class Pedidos extends BaseController
                     ]
                 ];
 
-                $respuesta[ "data" ]    = json_encode( $data );
+                $respuesta[ "data" ]    = json_encode( $tx );
                 $respuesta[ "error" ]   = false;
                 $respuesta[ "success" ] = [];
 
                 // validamos que sea una transacción confirmada
 
-                if( $data[ "contractRet" ] == "SUCCESS" && $data[ "confirmed" ] == true ){
+                if( $tx[ "contractRet" ] == "SUCCESS" && $tx[ "confirmed" ] == true ){
                     
                     // validamos que sea al wallet destino correcto
 
                     $address = false;
                     foreach( $vars[ "wallets" ] as $wallet ){
-                        if( $data[ "to_address" ] == $wallet[ "token"] && $wallet[ "estatus" ] == "201-ACTIVO" ){
+                        if( $tx[ "to_address" ] == $wallet[ "token"] && $wallet[ "estatus" ] == "201-ACTIVO" ){
                             $address = true;
                         }
                     }
@@ -919,9 +919,10 @@ class Pedidos extends BaseController
                             // validamos cantidad
 
                             $pedido    = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+                            $producto  = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
                             $u         = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
-                            $cantidad  = $data[ "amount_str" ] / pow( 10, $data[ "decimals" ] );
+                            $cantidad  = $tx[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
                             $fecha     = date( "Y-m-d H:i:s" );
                             $saldo     = $u->saldo( $pedido[ "modelo_codigo" ] );
                             $total     = $pedido[ "data" ][ "total" ] - $saldo;
@@ -936,7 +937,7 @@ class Pedidos extends BaseController
                                 "usuario_id"        => $u->id,
                                 "referencia"        => $pedido[ "referencia" ],
                                 "cantidad"          => $cantidad,
-                                "extras"            => $data
+                                "extras"            => $tx
                             ] );
 
                             $data      = $u->data;                                    
@@ -954,7 +955,7 @@ class Pedidos extends BaseController
                                 $pedido[ "fechas" ][ "reparte" ]   = $fecha;
                                 $pedido[ "data" ][ "saldo" ]       = $saldo;
             
-                                // model( "PedidoModel" )->save( $pedido );
+                                model( "PedidoModel" )->save( $pedido );
             
                                 if( $cantidad > $total ){
                                     $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = $cantidad - $total;
@@ -992,28 +993,43 @@ class Pedidos extends BaseController
 
                                 // Si entra la inversión, se registra con sus fechas para comenzar el cálculo de rendimientos
     
-                            /* $inversion = model( "InversionModel" )->find( $pedido[ "id" ] );
+                                $inversion = [
+                                    "id"                => null,
+                                    "pedido_id"         => $pedido[ "id" ],
+                                    "usuario_id"        => $u->id,
+                                    "producto_codigo"   => $producto->codigo,
+                                    "cantidad"          => $pedido[ "data" ][ "total" ],
+                                    "estatus_codigo"    => "530-ENVIADO",
+                                    "fechas"            => [
+                                        "creado"        => $pedido[ "fechas" ][ "creado" ],
+                                        "pagado"        => $pedido[ "fechas" ][ "pagado" ]
+                                    ],
+                                    "extras"            => [
+                                        "TxHash"        => $hash,
+                                        "saldo"         => $saldo,
+                                        "wallets"       => [
+                                            "from"      => $tx[ "from_address" ],
+                                            "to"        => $tx[ "to_address" ]
+                                        ]
+                                    ]
+                                ];
 
-                                $inversion[ "fechas" ][ "pagado" ]   = $fecha;
-                                $inversion[ "fechas" ][ "califica" ] = $fecha;
-                                $inversion[ "fechas" ][ "reparte" ]  = $fecha;
-                                $inversion[ "extras" ][ "TxHash" ]   = $hash; 
-
-                                model( "InversionModel" )->save( $inversion ); */
+                                model( "InversionModel" )->save( $inversion );
                             }
                             else{
 
-                                $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Cantidad transferida insuficiente</h5>La transferencia por $".number_format( $cantidad, 2 )." no es suficiente para cubrir el monto requerido<br>de la compra por $".number_format( $total, 2 );
+                                $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Cantidad transferida insuficiente</h5>La transferencia por $".number_format( $cantidad, 2 )." ha sido registrada en el sistema, sin embargo<br>no es suficiente para cubrir el monto requerido<br>de la compra por $".number_format( $total, 2 )."<br><strong>Saldo pendiente: $".number_format( $total - $cantidad, 2 )."</strong>";
 
                                 // agregamos saldo a favor al socio
 
-                                $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad += $cantidad;                   
+                                $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad += $cantidad;
+                                $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus = 1;
                             }
 
                             $u->data      = $data;
                             $u->historial = $historial;
 
-                            model( "UsuarioModel" )->save( $u );    
+                            model( "UsuarioModel" )->save( $u );
                         }
                         else{
                             $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">TxHash ya registrado</h5>Esta transacción ya ha sido registrada anteriormente en la base de datos";

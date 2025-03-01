@@ -304,6 +304,15 @@ function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
     return $desglose; 
 }
 
+function get_hash( $pedido ){
+    $db = db_connect();
+    $sql = "SELECT * FROM t_inversiones 
+            WHERE pedido_id = $pedido 
+            AND SUBSTRING( estatus_codigo, 1, 3 ) > 400";
+
+    return $db->query( $sql )->getRowArray();
+}
+
 
 function check_biex(){
     $sql = null;

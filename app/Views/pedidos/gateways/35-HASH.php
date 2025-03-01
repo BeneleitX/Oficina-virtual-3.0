@@ -2,7 +2,8 @@
 $socio = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[0];
 
-
+$saldo = $socio->saldo( $modelo );
+$total = $pedido[ "data" ][ "total" ] - $saldo;
 ?>
 
 <p class="text-center mb-4">
@@ -29,18 +30,18 @@ $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][
                 <div class="card-body text-start">
                     <table class="w-100 mb-4"><tr>
                         <td class="w-25"><img src="<?php echo base_url()."assets/img/productos/{$producto->codigo}.png"; ?>" class="img-fluid"></td>
-                        <td class="w-75">
+                        <td class="w-75 pt-3">
                             <h1 class="m-0"><?php echo $producto->data->nombre; ?></h1>
-                            <p><?php echo $producto->data->descripcion; ?></p>
-                            <div class="row">
-                                <div class="col-4"><input readonly class="form-control text-end" value="<?php echo $pedido[ "data" ][ "total" ]; ?>"></div>
-                                <div class="col-6 pt-2">USD</div>
-                            </div>
+                            <p class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></p>
+                            <h5>Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?><??>
+                            <br>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
+                            <p class="small text-marine">Cantidades en $USD <img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:24px"></p>
                         </td>
                     </tr></table>
 
                     <div class="alert alert-warning">
                     El TxHash o hash de transacción es el identificador que genera la transacción de tu inversión. También se le conoce como ID de transacción (TxID). 
+                    
                     </div>
 
                     <div class="text-center my-4">
