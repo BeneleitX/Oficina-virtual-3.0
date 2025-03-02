@@ -6,12 +6,13 @@
         foreach( $inversiones as $i ){
             $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-            echo "\n<div class=\"row\"><div class=\"col-2 py-2\">
+            echo "\n<div class=\"row border border-{$p->data->color} rounded my-2 m-0\">
+                    <div class=\"col-2 py-2\">
                         <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
                     </div>
                     <div class=\"col-5 pt-3\">
-                        <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
-                        ".estatus( $i[ "estatus_codigo" ] )."
+                        <strong class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</strong>
+                        <span class=\"small\">".estatus( $i[ "estatus_codigo" ] )."</span>
                     </div>
                     <div class=\"col-5 pt-3 text-end\">
                         <h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $i[ "cantidad" ], 2 )."</h5>
@@ -75,7 +76,7 @@
 
 
 
-<div class="p-3 small">
+    <div class="p-3 small">
                 <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
                     <thead>
                         <tr>
@@ -107,6 +108,5 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
 
     </div>

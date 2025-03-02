@@ -10,13 +10,11 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
 	<a href="<?php echo base_url( "pedido/{$pedido[ "referencia" ]}" ); ?>" class="btn btn-danger"><i class="fa fa-undo"></i> Regresar al pedido</a>
 </p>
 
-<div class="row">
-    <div class="col-lg-6 offset-lg-3">
 
 
         <div class="card mt-4">
             <div id="loader" class="card-body text-center">
-                <img src="<?php echo base_url(); ?>assets/img/loader.gif" class="img-fluid px-5">
+                <img src="<?php echo base_url(); ?>assets/img/loader.gif" style="width:150px; height:150px; opacity:0.4" class="m-5">
             </div>
 
             <div id="finaliza" class="card-body text-center my-5" style="display: none;">
@@ -25,37 +23,72 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
             </div>
 
             <div id="principal" style="display: none;">
-                <div class="card-header"><h5 class="text-teal m-0 py-2">Registro de capital semilla</h5></div>
+                <div class="card-header"><h5 class="text-teal m-0 py-2">Transferencia de capital semilla</h5></div>
 
                 <div class="card-body text-start">
-                    <table class="w-100 mb-4"><tr>
-                        <td class="w-25"><img src="<?php echo base_url()."assets/img/productos/{$producto->codigo}.png"; ?>" class="img-fluid"></td>
-                        <td class="w-75 pt-3">
-                            <h1 class="m-0"><?php echo $producto->data->nombre; ?></h1>
-                            <p class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></p>
-                            <h5>Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?><??>
-                            <br>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
-                            <p class="small text-marine">Cantidades en $USD <img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:24px"></p>
-                        </td>
-                    </tr></table>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <table class="w-100 mb-3"><tr>
+                                <td><img src="<?php echo base_url(); ?>assets/img/wallet.png" style="width:150px;margin-right:10px"></td>
+                                <td class="w-100">
+                                    <div class="card">
 
-                    <div class="alert alert-warning">
-                    El TxHash o hash de transacción es el identificador que genera la transacción de tu inversión. También se le conoce como ID de transacción (TxID). 
-                    
+                                        <table class="table m-0">
+                                            <tr>
+                                                <td>Cantidad a transferir</td>
+                                                <td><strong>$<?php echo number_format( $total, 2 ); ?> USDT</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Red</td>
+                                                <td><strong>TRON (TRC20) Network</strong></td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </td>
+                            </tr></table>
+
+
+                            <p class="m-0">Destino (address)</p>
+
+
+                            <h5 class="mb-3"><strong>TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP</strong> <button class="btn btn-light small" onclick="navigator.clipboard.writeText( 'TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP ')"><i class="fa fa-copy"></i></button></h5>
+
+
+                            <div class="alert alert-warning small">
+                            <ul class="m-0">
+                                <li>Una vez finalizada la transacción, deberás colocar el TxHash en el campo de la derecha</li>
+                                <li>El TxHash o hash de transacción es el identificador que genera la transacción de tu inversión. También se le conoce como ID de transacción (TxID)</li>
+                            
+                            </div>
+
+                        </div>
+                        <div class="col-lg-6">
+                            <table class="w-100 mb-4">
+                                <tr>
+                                    <td class="w-25"><img src="<?php echo base_url()."assets/img/productos/{$producto->codigo}.png"; ?>" class="img-fluid"></td>
+                                    <td class="w-75 pt-3">
+                                        <h1 class="m-0"><?php echo $producto->data->nombre; ?></h1>
+                                        <p class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></p>
+                                        <h5>Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?><??>
+                                        <br>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
+                                        <p class="small text-marine">Cantidades en $USD <img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:24px"></p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="text-center my-4">
+                                <h5>Pega aquí tu TxHash</h5>
+                                <input type="text" class="form-control text-center" name="_txhash">
+                                <pre id="error" class="mt-2 alert alert-danger" style="display:none"></pre>
+                            </div>
+
+                            <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar inversión</button></p>
+                        </div>
                     </div>
-
-                    <div class="text-center my-4">
-                        <h5>Pega aquí tu TxHash</h5>
-                        <input type="text" class="form-control text-center" name="_txhash">
-                        <pre id="error" class="mt-2 alert alert-danger" style="display:none"></pre>
-                    </div>
-
-                    <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar inversión</button></p>
                 </div>    
             </div>
         </div>
-    </div>
-</div>
 
 <script>
     function check_hash(){

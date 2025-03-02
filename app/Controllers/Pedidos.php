@@ -999,7 +999,7 @@ class Pedidos extends BaseController
                                     "usuario_id"        => $u->id,
                                     "producto_codigo"   => $producto->codigo,
                                     "cantidad"          => $pedido[ "data" ][ "total" ],
-                                    "estatus_codigo"    => "530-ENVIADO",
+                                    "estatus_codigo"    => "625-ACTIVA",
                                     "fechas"            => [
                                         "creado"        => $pedido[ "fechas" ][ "creado" ],
                                         "pagado"        => $pedido[ "fechas" ][ "pagado" ]

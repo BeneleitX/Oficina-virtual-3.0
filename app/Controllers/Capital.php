@@ -9,7 +9,7 @@ class Capital extends BaseController
     }
     
 
-    public function dashboard(){
+    public function admin(){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -17,6 +17,15 @@ class Capital extends BaseController
         }
         
         /**********************************/
+                
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Capital24";
+
+
+        echo template( "capital/admin", $this->data );
+    }     
+
+    public function dashboard(){
                 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Capital24";

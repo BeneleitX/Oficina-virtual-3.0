@@ -219,6 +219,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pines/(:any)",                       "Rangos::pines/$1" ); 
     $routes->post( "excel_pines_pendientes",            "Rangos::excel_pines_pendientes" ); 
 
+    $routes->get( "capital24",                          "Capital::dashboard" );
+    $routes->get( "capital",                            "Capital::admin" );
 });
 
 $routes->set404Override('App\Controllers\Errors::error_404'); 
