@@ -19,7 +19,12 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
 
             <div id="finaliza" class="card-body text-center my-5" style="display: none;">
                 <p style="font-size:100px"><i class="fa fa-circle-check text-teal"></i></p>
-                <h5>TxHash correcto<br>Se ha registrado la inversión <span class="badge bg-marine"><?php echo $pedido[ "id" ]; ?></span></h5>
+                <h5>TxHash correcto, ¡Felicidades!<br>Se ha registrado con éxito la inversión <span class="badge bg-marine"><?php echo $pedido[ "id" ]; ?></span></h5>
+                <p class="m-0">Fecha de registro</p>
+                <h1><?php echo date( "d-m-Y" ); ?></h1>
+                <p class="small">
+                <a href="<?php echo base_url( "pedido/{$pedido[ "referencia" ]}" ); ?>" class="mt-5">Ya puedes regresar al pedido</a>
+                </p>
             </div>
 
             <div id="principal" style="display: none;">
