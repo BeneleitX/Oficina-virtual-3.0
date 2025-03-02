@@ -176,6 +176,10 @@ class E_usuario extends Entity
 
         foreach( PROMOCIONES as $promo ){
 
+            if( !isset( $this->historial->modelos->{$modelo} ) ){
+                $this->valida_modelo();
+            }
+
             if( $m ){
                 if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]} ) ){
                     $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]};
