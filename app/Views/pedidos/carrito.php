@@ -170,8 +170,8 @@
                                                 Fecha de envío: ".date( "d-m-Y", strtotime( $paquete[ "fechas" ][ "pagado" ] ) )."<br>
                                                 ".estatus( $paquete[ "estatus_codigo" ] )."</div>
                                                 <div class=\"col-6\">
-                                                <div class=\"m-0 small text-marine alert xalert-info border-0 bg-gray-300\" style=\"font-family:'Courier New'; font-weight:900\">
-                                                    ".substr( $paquete[ "extras" ][ "TxHash" ], 0, 32 )."<br>
+                                                <div class=\"m-0 small text-marine alert xalert-info border-0 bg-gray-300\" style=\"font-family:'Courier New'; font-weight:900\"><i class=\"fa fa-arrow-right small\"></i>
+                                                    ".substr( $paquete[ "extras" ][ "TxHash" ], 0, 32 )."<br><i class=\"fa fa-arrow-left small\"></i>
                                                     ".substr( $paquete[ "extras" ][ "TxHash" ], 32 )."<br>
                                                     {$paquete[ "extras" ][ "wallets" ][ "from" ]}<br>
                                                     {$paquete[ "extras" ][ "wallets" ][ "to" ]}
@@ -679,7 +679,7 @@
                                     
                                     <td valign="middle" class="text-end">
                                         <h5 class="m-0">
-                                            <?php echo $pedido[ "fechas" ][ "cancela" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancela" ] ) ) : ""; ?>
+                                            <?php echo ( $pedido[ "fechas" ][ "cancela" ] ?? null ) ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "cancela" ] ) ) : ""; ?>
                                         </h5>
                                     </td>
                                 </tr>
