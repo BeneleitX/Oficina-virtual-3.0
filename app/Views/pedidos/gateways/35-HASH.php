@@ -31,13 +31,17 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
                             <table class="w-100 mb-3"><tr>
                                 <td><img src="<?php echo base_url(); ?>assets/img/wallet.png" style="width:150px;margin-right:10px"></td>
                                 <td class="w-100">
-                                    <div class="card">
+                                    <div class="card" style="overflow:hidden">
 
                                         <table class="table m-0">
                                             <tr>
+                                                <td>Socio</td>
+                                                <td><?php echo $socio->id( "50-INVERSION" ); ?></td>
+                                            </tr>
+                                            <tr>
                                                 <td>Cantidad a transferir</td>
                                                 <td><strong>$<?php echo number_format( $total, 2 ); ?> USDT</strong></td>
-                                            </tr>
+                                            </tr>                                            
                                             <tr>
                                                 <td>Red</td>
                                                 <td><strong>TRON (TRC20) Network</strong></td>
@@ -70,15 +74,15 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
                                     <td class="w-75 pt-3">
                                         <h1 class="m-0"><?php echo $producto->data->nombre; ?></h1>
                                         <p class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></p>
-                                        <h5>Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?><??>
-                                        <br>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
+                                        <p class="m-0">Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?></p>
+                                        <h5>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
                                         <p class="small text-marine">Cantidades en $USD <img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:24px"></p>
                                     </td>
                                 </tr>
                             </table>
 
                             <div class="text-center my-4">
-                                <h5>Pega aquí tu TxHash</h5>
+                                <h3>Pega aquí tu TxHash:</h3>
                                 <input type="text" class="form-control text-center" name="_txhash">
                                 <pre id="error" class="mt-2 alert alert-danger" style="display:none"></pre>
                             </div>
