@@ -69,6 +69,11 @@ foreach( MODELOS as $m ){
             <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
             <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>CALIFICADO - ".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
             break;
+
+        case "50-INVERSION": 
+            $cal = "<div class=\"input-group input-group-sm\" data-bs-toggle=\"tooltip\" title=\"\">
+            <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\"></div>";
+            break;                
     }
 
     echo "\n{$cal}\n</div></div></div></div>";

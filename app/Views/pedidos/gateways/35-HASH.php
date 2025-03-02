@@ -61,7 +61,7 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
                             <p class="m-0">Destino (address)</p>
 
 
-                            <h5 class="mb-3"><strong>TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP</strong> <button class="btn btn-light small" onclick="navigator.clipboard.writeText( 'TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP ')"><i class="fa fa-copy"></i></button></h5>
+                            <h5 class="mb-3"><strong>TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP</strong> <button class="btn btn-light small" onclick="navigator.clipboard.writeText( 'TAr7YFFgxkRs2zEHGm34dcj8M4TqAv2eGP')"><i class="fa fa-copy"></i></button></h5>
 
 
                             <div class="alert alert-warning small">
