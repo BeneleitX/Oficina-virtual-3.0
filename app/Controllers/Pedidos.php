@@ -977,8 +977,9 @@ class Pedidos extends BaseController
 
                                 $historial->modelos->{$pedido[ "modelo_codigo" ]}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
 
-                                $db = db_connect();
-                                $db->query( "do f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' )" );  
+                                $db  = db_connect();
+                                $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' ) as kok" )->getRow()->kok;  
+                                
                                 $db->query( "do f_get_estatus( {$u->id}, 0 )" );
                                 $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
                             
