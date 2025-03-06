@@ -345,13 +345,23 @@ function check_biex(){
 
 function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
 
+    // Protección para rangos fuera de lo contemplado en la base de datos
+    
+    if( $y < 2024 ){
+        $y = 2024;
+    }
+    if( $y > date( "Y" ) ){
+        $y = date( "Y" );
+    }
+
+    $db = db_connect();
+
     $sql = "SELECT fijo, porcentaje, minimo 
             FROM t_isr
             WHERE tipo = '{$t}' and anio = {$y} and {$cantidad} BETWEEN minimo AND maximo";
 	
-    $db = db_connect();
-
     $isr = $db->query( $sql )->getRowArray();
+
     $excedente = $cantidad - $isr[ "minimo" ];	
     
     $entero = 100 * ( $isr[ "fijo" ] + ( ( $excedente *  $isr[ "porcentaje" ] ) / 100 ) );

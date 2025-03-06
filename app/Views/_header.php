@@ -15,6 +15,8 @@
 
         <title>BENELEIT</title>
 
+        <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+        
         <link href="<?php echo base_url(); ?>assets/css/bootstrap.css?<?php echo filemtime( "assets/css/bootstrap.css" ); ?>" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/colores.css?<?php echo filemtime( "assets/css/colores.css" ); ?>" rel="stylesheet">
         <link href="<?php echo base_url(); ?>assets/css/fontawesome.css" rel="stylesheet">

@@ -9,8 +9,14 @@ class BeneleitRules
         $this->db = db_connect();
     }
 
-    public function curp( $value ): bool
+    public function curp( $value, string $params, array $data ): bool
     {
+        $params = explode(',', $params);
+
+        if( $params[0] != 'MX' ){
+            return true;
+        }
+        
         if(strlen( $value ) != 18)
             return false;
 

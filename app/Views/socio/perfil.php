@@ -5,7 +5,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 <div class="alert alert-warning"><i class="fa fa-warning"></i> Tu dirección de correo <strong><?php echo $socio->correo; ?></strong> no ha sido validada. Haz <a class="btn btn-warning btn-sm" href="<?php echo base_url( "valida_correo" ) ?>">Click aquí</a> para enviarte un mensaje, abre tu correo y sigue las instrucciones.</div>
 <?php } ?>
 
-<h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
+<h4 class="mt-1 mb-3"><?php echo $titulo; ?>  <span class="iconify rounded-1" data-width="24" data-icon="flag:<?php echo strtolower( $usuario->data->ubicacion->origen ); ?>-4x3"></span></h4>
 
 		<a href="javascript:$( '#verificacion').modal( 'show' )" data-bs-toggle="tooltip" title="Click para ver detalles de verificación" class="col-12">
 		

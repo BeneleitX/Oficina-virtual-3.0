@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-lg-8 col-sm-6">
-        <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+        <h4 class="mt-1 mb-0"><?php echo $titulo; ?> <span class="iconify rounded-1" data-width="24" data-icon="flag:<?php echo strtolower( $usuario->data->ubicacion->origen ); ?>-4x3"></span></h4>
         <p class="mb-3">Hoy es <?php echo dia( date("N") )." ".date("d")." de ".mes( date("m") ).", ".date("Y") ?></p>
     </div>
 

@@ -28,7 +28,9 @@ class Registro extends BaseController
                 "correo" => "demo".rand(10000,99999)."@demo.com",
                 "celular" => rand(10000,99999).rand(10000,99999),
                 "curp" => $abc[ array_rand( $abc ) ]."X".$abc[ array_rand( $abc ) ].$abc[ array_rand( $abc ) ].rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
-                "patrocinador" => $demo
+                "patrocinador" => $demo,
+                "origen" => "MX",
+                "pais"   => "MX"
             ];
         }
         else{
@@ -38,10 +40,11 @@ class Registro extends BaseController
             $validation->setRules( [
                 "nombre"       => "required",
                 "apellido1"    => "required",
-                "curp"         => "required|curp|curp_existe",
+                "curp"         => "required|curp[{$data[ "origen" ]}]|curp_existe",
                 "correo"       => "valid_email|correo_existe",
-                "celular"      => "numeric|exact_length[10]|celular_existe",
-                "patrocinador" => "required|patrocinador_activo",
+                "celular"      => "numeric|celular_existe",
+                "nacion"       => "required",
+                "patrocinador" => "required|patrocinador_activo"
             ] );
 
             // Si hay errores de validacióna utomática, regresar a formulario
@@ -70,6 +73,10 @@ class Registro extends BaseController
                     "activo"        => null
                 ],
                 "verificacion"  => [],
+                "ubicacion"     => [
+                    "code"          => $data[ "pais" ],
+                    "origen"        => $data[ "origen" ]
+                ],
                 "splash" => [
                     [
                         "tipo" => "bienvenida",
@@ -197,7 +204,8 @@ class Registro extends BaseController
 
             foreach( MODELOS as $m ){
                 if( $m[ "settings" ][ "efectivo" ] ){
-                    $redes->modelos->{$m[ "codigo"]}->hijos[] = $usuario->id;
+                    // feature pendiente de implementación, no es requerimiento de impacto
+                    // $redes->modelos->{$m[ "codigo"]}->hijos[] = $usuario->id;
                 }
             }
             
