@@ -367,6 +367,9 @@ $(document).ready(function(){
 	$( '.option' ).on('click', selectOption );
 	$( '.search-box' ).on( 'input', searchCountry );
 
+	$( '#nacionalidad [country=US]' ).remove();
+	$( '#nacionalidad [country=UM]' ).remove();
+
 	$( '#telefono [country=' + country + ']' ).click();
 	$( '#nacionalidad [country=' + origen + ']' ).click();
 });
