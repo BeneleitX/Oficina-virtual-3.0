@@ -53,7 +53,7 @@
                 }
 
                 echo "\n<tr almacen=\"{$a[ "codigo" ]}\">
-                    <td><span style=\"display:inline-block\" class=\"w-100 badge bg-gray-500\">{$a[ "codigo" ]}</a></td>
+                    <td><span style=\"display:inline-block\" class=\"w-100 badge bg-".(substr( $a[ "estatus_codigo" ], 0, 3 ) > 200 ? "teal" : "gray-500" )."\">{$a[ "codigo" ]}</a></td>
                     <td class=\"text-center\"><span class=\"badge bg-{$clase}\">{$a[ "settings" ][ "tipo" ]}</span></td>
                     <td><strong>{$a[ "nombre" ]}</strong></td>
                     <td>".( $socio ? $socio->avatar(24)." ".$socio->id( null, "marine" )." ".$socio->nombre(2) : "" )."</td>
