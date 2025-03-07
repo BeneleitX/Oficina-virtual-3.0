@@ -4,7 +4,7 @@
 
 <h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
 
-<div class="row">
+
 
 <?php 
 
@@ -12,7 +12,10 @@ $inversiones = $usuario->get_inversiones();
 
 if( sizeof( $inversiones ) ){
     foreach( $inversiones as $i ){
+
         $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+
+        $i[ "fechas" ] = update_fecha_inversion( $i, $p );
 
         echo "\n<div class=\"col-lg-6\">
                     <div class=\"card\">
@@ -32,12 +35,56 @@ if( sizeof( $inversiones ) ){
 
                         </div>
 
-                        <div class=\"card-body text-red py-5\"><tt class=\"my-5 py-5\">NO-DATA</tt></div>
+                        <div class=\"card-body text-red py-3\">
+                            <div class=\"row\">
+                                <div class=\"col-6\">
+                                    <table class=\"table table-sm m-0\">
+                                        <tr>
+                                            <td>Fecha de pago</td>
+                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "pagado" ] )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inicio de inversión</td>
+                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "inversion" ] )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cierre de inversión</td>
+                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "cierre" ] )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Días efectivos en el mes</td>
+                                            <td class=\"text-end\">".( $i[ "fechas" ][ "dias" ] )."</td>
+                                        </tr>                                        
+                                    </table>
+                                </div>
+                                <div class=\"col-6\">
+                                    <table class=\"table table-sm m-0\">
+                                        <tr>
+                                            <td>Mes</td>
+                                            <td class=\"text-end\">".mes( date( "m" ) )." ".date( "Y" )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rendimiento mensual</td>
+                                            <td class=\"text-end\"><span class=\"badge bg-teal\">".( $p->data->porcentaje )."%</span> $".number_format( $i[ "cantidad" ] * ( $p->data->porcentaje / 100 ), 2 )."</td>
+                                        </tr>                                        
+                                        <tr>
+                                            <td>Rendimiento diario</td>
+                                            <td class=\"text-end\">$".( $diario = number_format( rendimiento_diario( $i[ "cantidad" ], $p->data->porcentaje, date( "Ym" ) ), 2 ) )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rendimiento total</td>
+                                            <td class=\"text-end\"><strong>$".number_format( $i[ "fechas" ][ "dias" ] * $diario, 2 )."</strong></td>
+                                        </tr>
+                                                                         
+                                    </table>                                
+                                </div>
+                            </div>
+                        </div>
 
                         <div class=\"card-footer text-red text-end\">
-                            <button class=\"btn btn-sm btn-success\"><i class=\"fa fa-file-arrow-down\"></i> Estado de cuenta</button>
-                            <button class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
-                            <button class=\"btn btn-sm btn-danger\"><i class=\"fa fa-right-from-bracket\"></i> Retiro de rendimiento</button>
+                            <button class=\"btn d-none btn-sm btn-success\"><i class=\"fa fa-file-arrow-down\"></i> Estado de cuenta</button>
+                            <button class=\"btn d-none btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
+                            <button class=\"btn btn-sm btn-danger\" disabled><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
                         </div>
                     </div>
                 </div>";

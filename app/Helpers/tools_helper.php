@@ -180,7 +180,7 @@ function estatus( $codigo, $bn = false ){
 function fecha( $fecha ){
     $f = explode( "-", $fecha );
 
-    return $f[2]." de ".mes( $f[ 1 ] ).", ".$f[ 0 ];
+    return substr( $f[2], 0, 2 )." de ".mes( $f[ 1 ] ).", ".$f[ 0 ];
 }
 
 
@@ -766,4 +766,66 @@ function nuevo_pedido( $modelo ){
     ];
     
     return $nuevo;
+}
+
+
+function get_fecha_inversion( $fecha ){
+
+    // Calcula la fecha del lunes inicial de la inversión
+
+    $date = new DateTime( $fecha );
+    $date->modify( "next saturday + 2 days" );
+
+    return $date->format( "Y-m-d" );
+}
+
+
+function get_fecha_cierre( $fecha, $producto, $paquete ){
+
+    // Calcula la fecha del lunes inicial de la inversión
+
+    $date = new DateTime( $fecha );
+    $date->modify( "first day of this month" );
+    $date->modify( "+ 1 month" );
+    $date->modify( "- 1 day" );
+
+    return $date->format( "Y-m-d" );
+}
+
+function get_fecha_dias( $inicia, $termina ){
+
+    $dias = 0;
+
+    $dias = (new DateTime($termina))->diff(new DateTime($inicia))->days + 1;
+
+    return $dias;
+}
+
+
+
+function update_fecha_inversion( $i, $paquete ){
+    if( !isset( $i[ "fechas" ][ "inversion" ] ) ){
+        $i[ "fechas" ][ "inversion" ] = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
+    }
+    
+    if( !isset( $i[ "fechas" ][ "cierre" ] ) ){
+        $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $i[ "fechas" ][ "pagado" ], $i[ "producto_codigo" ], $paquete );
+    }
+
+    if( !isset( $i[ "fechas" ][ "dias" ] ) ){
+        $i[ "fechas" ][ "dias" ] = get_fecha_dias( $i[ "fechas" ][ "inversion" ], $i[ "fechas" ][ "cierre" ] );
+    }
+
+    model( "inversionModel" )->save( $i );  
+
+    return $i[ "fechas" ];
+}
+
+
+
+function rendimiento_diario( $cantidad, $porcentaje, $mes ){
+
+    $dias = cal_days_in_month( CAL_GREGORIAN, substr( $mes, 4, 2), date( "Y" ) );
+    $rendimiento = $cantidad * ( $porcentaje / 100 ) / $dias ;
+    return $rendimiento;
 }

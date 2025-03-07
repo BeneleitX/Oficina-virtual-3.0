@@ -346,14 +346,8 @@ class E_usuario extends Entity
 
 
     public function get_inversiones(){
-        $db  = db_connect();
-
-        if( !isset( $this->data->estatus->modelos->{"50-INVERSIONES"} ) ){
-            $this->valida_modelo();
-        }
-
-        $sql = "select * from t_inversiones where usuario_id = {$this->id} and substring( estatus_codigo, 1, 3 ) > 400";
-        return $db->query( $sql )->getResultArray();
+        $where = "usuario_id = {$this->id} and substring( estatus_codigo, 1, 3 ) > 400";
+        return model( "InversionModel" )->where( $where )->findAll();
     }
 
 

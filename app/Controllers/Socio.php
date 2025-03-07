@@ -211,7 +211,7 @@ class Socio extends BaseController
         $beneficiario = $this->request->getPost( "old_beneficiario" );
 
         $json = $this->data["socio"]->data;
-        $temp = $json->beneficiarios[ $beneficiario ];
+        $temp = $json->beneficiarios[ $beneficiario ] ?? "";
 
         unset( $json->beneficiarios[ $beneficiario ] );
 

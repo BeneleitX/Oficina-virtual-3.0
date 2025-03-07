@@ -1,0 +1,14 @@
+totales x mes x empresa x metodopago (filtros) 
+descargar documento con totales x mes x empresa (rango de fechas)
+agregar letra inicial de negocio en referencia NTACI
+al cancelar pago de impuestos avisar implicaciones de opción
+cancelar solicitud de factura al cerrar modal en carrito
+asalariado no puede solicitar factura
+revisar dfescuento del 1.25 % en pagos semanales de lideres
+
+
+
+nombre de socio en comisiones (movil)
+total de semana en ingresos por semana (al lado del heatmap)
+imagenes de directos en telefonia
+grafica de activos en gasolina
