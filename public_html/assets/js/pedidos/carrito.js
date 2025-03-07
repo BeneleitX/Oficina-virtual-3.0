@@ -637,11 +637,13 @@ var pendientes = 0;
 
 $(document).ready(function()
 { 
-    $( '.limitado' ).on( 'keyup', function(){
-        var value = parseInt($(this).val());
+    $( '.limitado' ).on( 'blur', function(){
+        var value = parseInt( $( this ).val() ),
+            min   = $( this ).attr( 'min' ) ?? 0;
 
         if( value % 100 !== 0 ){
-            $( this ).val( Math.ceil( value / 100 ) * 100 );
+            res = Math.ceil( value / 100 ) * 100;
+            $( this ).val( res < min ? min : res );
         }
     });
     
