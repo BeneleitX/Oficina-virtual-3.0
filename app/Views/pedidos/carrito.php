@@ -285,7 +285,7 @@
 
                             
                             <?php 
-                            if( $pagado && !$entregado ){ 
+                            if( $bloqueado && !$entregado ){ 
                                 if( $usuario->es_admin() || ( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ) ){
                                     echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_almacen' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
                                 }

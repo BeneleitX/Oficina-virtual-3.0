@@ -524,8 +524,11 @@ class Pedidos extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA" )
          ){
 
-            $previo = $pedido[ "data" ][ "entrega" ];
-            $pedido[ "data" ][ "entrega" ] = $this->request->getPost( "nuevo_almacen" );
+            $previo  = $pedido[ "data" ][ "entrega" ];
+            $almacen = model( "AlmacenModel" )->find( $this->request->getPost( "nuevo_almacen" ) );
+
+            $pedido[ "data" ][ "entrega" ] = $almacen[ "codigo" ];
+            $pedido[ "data" ][ "comisionentrega" ] = VARIABLES[ "tarifas_almacen" ][ "valor" ][ $almacen[ "settings" ][ "tarifa" ] ];
 
             model( "PedidoModel" )->save( $pedido );
 
