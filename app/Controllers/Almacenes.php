@@ -19,7 +19,7 @@ class Almacenes extends BaseController
         $this->data[ "modelo" ] = $modelo;
 
         $db = db_connect();
-        $sql = "SELECT a.codigo, a.nombre, a.settings, COUNT(p.id) AS pedidos, (
+        $sql = "SELECT a.codigo, a.estatus_codigo, a.nombre, a.settings, COUNT(p.id) AS pedidos, (
                     SELECT COUNT(DISTINCT t.fecha) FROM t_transferencias t where t.destino = a.codigo AND estatus_codigo = '530-ENVIADO'
                 ) AS transferencias
                 FROM t_almacenes a 
