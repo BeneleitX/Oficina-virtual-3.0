@@ -2,7 +2,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
+<h4 class="mt-1 mb-4"><?php echo $titulo; ?> <span class="badge bg-marine"><?php echo mes( date( "m" ) )." ".date( "Y" ); ?></span></h4>
 
 
 
@@ -40,10 +40,6 @@ if( sizeof( $inversiones ) ){
                                 <div class=\"col-6\">
                                     <table class=\"table table-sm m-0\">
                                         <tr>
-                                            <td>Fecha de pago</td>
-                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "pagado" ] )."</td>
-                                        </tr>
-                                        <tr>
                                             <td>Inicio de inversión</td>
                                             <td class=\"text-end\">".fecha( $i[ "fechas" ][ "inversion" ] )."</td>
                                         </tr>
@@ -59,10 +55,7 @@ if( sizeof( $inversiones ) ){
                                 </div>
                                 <div class=\"col-6\">
                                     <table class=\"table table-sm m-0\">
-                                        <tr>
-                                            <td>Mes</td>
-                                            <td class=\"text-end\">".mes( date( "m" ) )." ".date( "Y" )."</td>
-                                        </tr>
+                                   
                                         <tr>
                                             <td>Rendimiento mensual</td>
                                             <td class=\"text-end\"><span class=\"badge bg-teal\">".( $p->data->porcentaje )."%</span> $".number_format( $i[ "cantidad" ] * ( $p->data->porcentaje / 100 ), 2 )."</td>
