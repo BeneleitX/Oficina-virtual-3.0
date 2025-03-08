@@ -1023,7 +1023,7 @@ echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pa
                 </div>
 
                 <div class="modal-body">
-                Al regresar a su modo de edición, se podrán modificar las camtidades de productos, metodos de pago y de entrega.
+                Al regresar a su modo de edición, se podrán modificar las cantidades de productos, metodos de pago y de entrega.
                 </div>
 
                 <div class="modal-footer">
