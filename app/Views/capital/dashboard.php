@@ -17,7 +17,7 @@ if( sizeof( $inversiones ) ){
 
         $i[ "fechas" ] = update_fecha_inversion( $i, $p );
 
-        echo "\n<div class=\"col-lg-6\">
+        echo "\n<div class=\"col-lg-6 mb-4\">
                     <div class=\"card\">
                         <div class=\"card-header\">
                             <div class=\"row\">
@@ -77,7 +77,7 @@ if( sizeof( $inversiones ) ){
                         <div class=\"card-footer text-red text-end\">
                             <button class=\"btn d-none btn-sm btn-success\"><i class=\"fa fa-file-arrow-down\"></i> Estado de cuenta</button>
                             <button class=\"btn d-none btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
-                            <button class=\"btn btn-sm btn-danger\" disabled><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
+                            <button class=\"btn btn-sm btn-danger\" onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
                         </div>
                     </div>
                 </div>";
@@ -90,4 +90,40 @@ if( sizeof( $inversiones ) ){
 
 
     
+</div>
+
+
+
+<div class="modal" tabindex="-1" id="stock_modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-red">
+				<div class="modal-title me-3">
+                    <h5 class="text-white">Programar retiro</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+            <form action="<?php echo base_url( "addstock" ); ?>" method="post">
+                <?php echo csrf_field(); ?>
+                <input type="hidden" id="stock_producto" name="producto" value="">
+                <div class="modal-body">
+                    <div class="row">
+                    <div class="col-4">
+                            <img id="stock_avatar" class="img-fluid p-2" src="">
+                        </div>
+                        <div class="col-8">
+                            <p>DATA</p>
+                            <input class="form-control w-50" name="cantidad">
+                        </div>                        
+
+                    </div>
+                    <div class="nombre"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger my-2" id="confirma_agregar">Programar retiro ahora</button>
+                </div>
+            </form>
+		</div>
+	</div>
 </div>

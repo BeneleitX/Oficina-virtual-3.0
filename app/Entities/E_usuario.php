@@ -725,6 +725,48 @@ class E_usuario extends Entity
 
     
     public function saldo( $modelo ){
+        $bolsa = 0;
+
+        if( $modelo == "50-INVERSION" ){
+            if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) == "2" ){
+                $db = db_connect();
+
+                $sql = "SELECT c.id, c.cantidad
+                        FROM t_comisiones c
+                        JOIN t_periodos p 
+                            ON c.fecha between p.inicia and p.termina 
+                            AND p.modelo_codigo = '50-INVERSION' 
+                            AND p.estatus_codigo = '422-PERIODO-PAGADO'
+                        WHERE c.usuario_id = {$this->id}
+                        AND c.esquema_codigo IN ('510-INVERSION')
+                        AND c.estatus_codigo = '112-BOLSA'";
+
+                $comisiones = $db->query( $sql )->getResult();
+
+                if( sizeof( $comisiones ) ){
+                    
+                    foreach( $comisiones as $c ){
+                        $bolsa += $c->cantidad;
+
+                        $sql = "UPDATE t_comisiones
+                        SET estatus_codigo = '421-APLICADO'
+                        WHERE id = {$c->id}";
+
+                        $db->query( $sql );
+                    }                  
+                }
+
+                if( $bolsa ){
+                    $data = $this->data;
+                    $data->saldo->{$modelo}->cantidad += $bolsa;
+                    $data->saldo->{$modelo}->estatus = 1;
+                    $this->data = $data;
+
+                    model( "UsuarioModel" )->save( $this );
+                }
+            }
+        }
+
         return $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad : 0;
     }
 

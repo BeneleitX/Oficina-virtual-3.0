@@ -559,7 +559,7 @@
                             $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                         }
                         else{
-                            $saldo = $socio->data->saldo->{$modelo}->estatus ? ( $socio->data->saldo->{$modelo}->cantidad ?? 0 ) : 0;
+                            $saldo = $socio->saldo( $modelo );
                         }
 
                         if( $saldo == "" ) $saldo = 0;
@@ -1288,17 +1288,26 @@ echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pa
 		<div class="modal-content">
 
 			<div class="modal-header">
-				<div class="modal-title me-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa fa-magnifying-glass"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar productos" id="busca_producto">
-                    </div>
-				</div>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
+                        <div class="modal-title">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-magnifying-glass"></i></span>
+                                <input type="text" class="form-control" placeholder="Buscar productos" id="busca_producto">
+                            </div>
+                        </div>
+                               
 
+ 
+ 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+           
 			<div class="modal-body">
-				<div class="row">
+                <?php if( $saldo > 0 ){ ?>
+                <div class="alert alert-success py-2">
+                    <strong>Tienes un saldo a favor de $<?php echo number_format( $saldo, 2 ); ?></strong>
+                </div>
+                <?php } ?>
+				
+                <div class="row">
 					<?php 
                   
 					foreach( $productos as $p ){

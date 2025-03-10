@@ -4,6 +4,10 @@ $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][
 
 $saldo = $socio->saldo( $modelo );
 $total = $pedido[ "data" ][ "total" ] - $saldo;
+
+if( $total < 0 ){
+    $total = 0;
+}
 ?>
 
 <p class="text-center mb-4">
@@ -79,7 +83,7 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
                                     <td class="w-75 pt-3">
                                         <h1 class="m-0"><?php echo $producto->data->nombre; ?></h1>
                                         <p class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></p>
-                                        <p class="m-0">Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?></p>
+                                        <h5 class="m-0"><span class="badge bg-<?php echo $saldo ? "mustard" : "gray-400"; ?>">Saldo a favor: $<?php echo number_format( $saldo, 2 ); ?></span></h5>
                                         <h5>Total a depositar: $<?php echo number_format( $total, 2 ); ?></h5>
                                         <p class="small text-marine">Cantidades en $USD <img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:24px"></p>
                                     </td>
@@ -87,9 +91,25 @@ $total = $pedido[ "data" ][ "total" ] - $saldo;
                             </table>
 
                             <div class="text-center my-4">
+                                <?php 
+                                if( $saldo >= $pedido[ "data" ][ "total" ]  ){
+                                ?>
+                                    <input type="hidden" name="_txhash" value="saldo">
+                                    <div class="alert alert-success">
+                                        <h3>¡Felicidades!</h3>
+                                        <p>Tu saldo a favor cubre la totalidad del costo de tu pedido. Haz click en el siguiente botón para finalizar tu pago y activar tu inversión</p>
+                                    </div>
+                                <?php
+                                }
+                                else{
+                                ?>
                                 <h3>Pega aquí tu TxHash:</h3>
-                                <input type="text" class="form-control text-center" name="_txhash">
+                                <input type="text" class="form-control text-center border-3 border-teal" name="_txhash">
                                 <pre id="error" class="mt-2 alert alert-danger" style="display:none"></pre>
+
+                                <?php 
+                                }
+                                ?>
                             </div>
 
                             <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar inversión</button></p>
