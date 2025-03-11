@@ -1124,7 +1124,7 @@ class E_usuario extends Entity
         $sql = "SELECT id 
                 FROM t_usuarios 
                 WHERE redes->>'$.modelos.\"{$modelo}\".padre' = {$this->id} 
-                AND SUBSTRING( json_unquote( json_extract( data, concat( '$.estatus.modelos.\"', '{$modelo}','\"') ) ), 1 ,3 ) > 200";
+                AND SUBSTRING( json_unquote( json_extract( data, concat( '$.estatus.modelos.\"', '{$modelo}','\"') ) ), 1 ,3 ) > 400";
 
         $db  = db_connect();
         return $db->query($sql)->getResultArray();
@@ -1166,5 +1166,30 @@ class E_usuario extends Entity
 
         $db = db_connect();
         return $db->query($sql)->getResult();
+    }
+
+
+    public function getRangoInversion( $directos ){
+
+        // Identificar rango corresponidente
+
+        foreach( RANGOS as $r ){
+            if( $r[ "modelo_codigo" ] == "50-INVERSION" ){
+                if( $directos >= $r[ "cantidades" ][ "directos" ][ 0 ] && $directos <= $r[ "cantidades" ][ "directos" ][ 1 ] ){
+                    $rango = $r[ "codigo" ];
+                }
+            }
+        }
+
+        // Si hay cambios, guardar dato
+
+        if( !isset( $this->data->rango_inversion ) || $this->data->rango_inversion != $rango ){
+            $data = $this->data;
+            $data->rango_inversion = $rango;
+            $this->data = $data;
+            model( "UsuarioModel" )->save( $this );
+        }
+
+        return RANGOS[ $this->data->rango_inversion ];
     }
 }

@@ -30,16 +30,11 @@
     <div class="card-body py-2">
         <p class="text-center"><strong>Socios directos activos en primer nivel</strong></p>
         <table class="w-100 m-0"><tr>
-        
-<!--         <td><strong>Socios</strong></td>
-        <td><strong>Bono</strong></td>
- -->        </tr>
-        <tr>
             <?php 
 
                 $directos = $usuario->getDirectosActivos( "50-INVERSION" );
                 $a = 0;
-                
+             
                 foreach( $directos as $d){
                     $u = model( "UsuarioModel" )->find( $d[ "id" ] );
 
@@ -55,22 +50,25 @@
                         echo "<td width=\"8%\"> </td>";
                     }
                 }
+
+                $rango_inversion = $usuario->getRangoInversion( sizeof( $directos ) );
             ?>
         </tr></table>
     </div>
 </div>
 
-<div class="row text-center mx-1">
+<div class="row text-center mx-1 mb-0">
     <div class="col-4"><div class="card"><div class="card-body">
         <p class="text-teal">Directos</p>
         <h4 style="line-height:0.5rem" class=""><?php echo sizeof( $directos ); ?></h4>
     </div></div></div>
-    <div class="col-4"><div class="cxard"><div class="card-body">
-        <p class="text-teal">Sin rango</p>
-    </div></div></div>
+    <div class="col-4">
+        <img src="<?php echo base_url()."assets/img/rangos/".$rango_inversion[ "codigo" ]; ?>.png" class="img-fluid">
+        <p style="line-height:0" class="m-0"><span class="badge bg-<?php echo $rango_inversion[ "color" ]; ?>"><?php echo $rango_inversion[ "nombre" ]; ?></span></p>
+    </div>
     <div class="col-4"><div class="card"><div class="card-body">
         <p class="text-teal">Bono</p>
-        <h4 style="line-height:0.5rem" class="">0.00%</h4>
+        <h4 style="line-height:0.5rem" class=""><?php echo number_format( $rango_inversion[ "cantidades" ][ "porcentaje" ], 2 ); ?>%</h4>
     </div></div></div>
 </div>
 

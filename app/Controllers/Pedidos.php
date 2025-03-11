@@ -740,6 +740,13 @@ class Pedidos extends BaseController
 
             model( "PedidoModel" )->save( $this->data[ "pedido" ] );
 
+            // BITACORA Procesa pedido para pago
+
+            bitacora( 85, $this->data[ "usuario" ]->id, [ 
+                "pedido"     => $this->data[ "pedido" ][ "id" ],
+                "metodopago" => $this->data[ "metodopago" ][ "codigo" ]
+            ] );
+            
             $this->data[ "cantidad" ] = $total + $this->data[ "pedido" ][ "data" ][ "comisionbanco" ];
      //   }
 
