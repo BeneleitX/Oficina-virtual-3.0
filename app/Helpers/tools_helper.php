@@ -780,13 +780,13 @@ function get_fecha_inversion( $fecha ){
 }
 
 
-function get_fecha_cierre( $fecha, $producto, $paquete ){
+function get_fecha_cierre( $fecha ){
 
     // Calcula la fecha del lunes inicial de la inversión
 
     $date = new DateTime( $fecha );
     $date->modify( "first day of this month" );
-    $date->modify( "+ 1 month" );
+    $date->modify( "+ 25 month" );
     $date->modify( "- 1 day" );
 
     return $date->format( "Y-m-d" );
@@ -804,16 +804,46 @@ function get_fecha_dias( $inicia, $termina ){
 
 
 function update_fecha_inversion( $i, $paquete ){
+
+    // Fecha del LUNES de inicio de inversión mes 0
+
     if( !isset( $i[ "fechas" ][ "inversion" ] ) ){
         $i[ "fechas" ][ "inversion" ] = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
     }
+
+    // Meses
+
+    if( !isset( $i[ "fechas" ][ "meses" ] ) ){
+        $meses = [];
+
+        // mes 0
+
+        $meses[ 0 ][ "Ym" ] = date( "Ym", strtotime( intval( date( "d", strtotime( $i[ "fechas" ][ "inversion" ] ) ) ) == 1 ? $i[ "fechas" ][ "pagado" ] : $i[ "fechas" ][ "inversion" ] ) );
+
+        // calcular cierre de inversión 24 meses
+       
+        $date = new DateTime( substr( $meses[ 0 ][ "Ym" ], 0, 4 )."-".substr( $meses[ 0 ][ "Ym" ], 4, 2 )."-01" );
+
+        for( $a = 1; $a <= 12; $a++ ){
+            $date->modify( "+ 1 month" );
+
+            $meses[ $a ] = [
+                "Ym" => $date->format( "Ym" )
+            ];
+        }
+
+        $i[ "fechas" ][ "meses" ]  = $meses;
+    }
     
+    // dias utiles del mes 0
     if( !isset( $i[ "fechas" ][ "cierre" ] ) ){
-        $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $i[ "fechas" ][ "pagado" ], $i[ "producto_codigo" ], $paquete );
+        $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $i[ "fechas" ][ "inversion" ] );
     }
 
+
     if( !isset( $i[ "fechas" ][ "dias" ] ) ){
-        $i[ "fechas" ][ "dias" ] = get_fecha_dias( $i[ "fechas" ][ "inversion" ], $i[ "fechas" ][ "cierre" ] );
+        $cierre = get_fecha_cierre( $i[ "fechas" ][ "pagado" ], $i[ "producto_codigo" ], $paquete );
+        $i[ "fechas" ][ "dias" ] = get_fecha_dias( $i[ "fechas" ][ "inversion" ], $cierre );
     }
 
     model( "inversionModel" )->save( $i );  

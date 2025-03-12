@@ -2,9 +2,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
-<h4 class="mt-1 mb-4"><?php echo $titulo; ?> <span class="badge bg-marine"><?php echo mes( date( "m" ) )." ".date( "Y" ); ?></span></h4>
-
-
+<h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
 
 <?php 
 
@@ -17,82 +15,117 @@ if( sizeof( $inversiones ) ){
 
         $i[ "fechas" ] = update_fecha_inversion( $i, $p );
 
-        echo "\n<div class=\"col-lg-6 mb-4\">
-                    <div class=\"card\">
+        $date1 = new DateTime( $i[ "fechas" ][ "inversion" ] );
+        $date2 = new DateTime( $i[ "fechas" ][ "cierre" ] );
+        $interval = $date1->diff( $date2 );
+        $total_dias = $interval->days + 1;
+
+        $date2 = new DateTime( date( "Y-m-d" ) );
+        $interval = $date1->diff( $date2 );
+        $transcurridos = $interval->days;
+
+        $porc_bono = ceil( $transcurridos * 100 / $total_dias );
+
+        if( $i[ "extras" ][ "TxHash" ] && strlen( $i[ "extras" ][ "TxHash" ] ) == 64 ){
+            $hash = $i[ "extras" ][ "TxHash" ];
+        }
+        else{
+            $hash = "<i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash";
+        }
+
+        echo "\n
+                    <div class=\"card mb-4\">
                         <div class=\"card-header\">
                             <div class=\"row\">
-                                <div class=\"col-1\">
+                                <div class=\"col-2 col-lg-1\">
                                     <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
                                 </div>
-                                <div class=\"col-6 pt-2\">
+                                <div class=\"col-10 col-lg-3 pt-2\">
                                     <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
                                     ".estatus( $i[ "estatus_codigo" ] )."
                                 </div>
-                                <div class=\"col-5 pt-1 text-end\">
-                                    <h1 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $i[ "cantidad" ], 2 )."</h1>
+
+                                <div class=\"col-lg-4 text-center\">
+                                    <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $i[ "cantidad" ], 2 )."</span>
                                 </div>
+
+                                <div class=\"col-lg-4\">
+                                    <p class=\"text-center mt-1 mb-0\">Día {$transcurridos} de {$total_dias}</p>
+                                    <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
+                                        <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
+                                    </div>                                  
+                                </div>
+
                             </div>
 
                         </div>
 
                         <div class=\"card-body text-red py-3\">
                             <div class=\"row\">
-                                <div class=\"col-6\">
-                                    <table class=\"table table-sm m-0\">
-                                        <tr>
-                                            <td>Inicio de inversión</td>
-                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "inversion" ] )."</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Cierre de inversión</td>
-                                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "cierre" ] )."</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Días efectivos en el mes</td>
-                                            <td class=\"text-end\">".( $i[ "fechas" ][ "dias" ] )."</td>
-                                        </tr>                                        
-                                    </table>
+                                <div class=\"col-lg-8\">
+                                <h5 class=\"text-center text-gray-400 mb-3 mb-lg-3\">{$hash}</h5>
+                                    <div class=\"row\">
+                                        <div class=\"col-lg-6\">
+                                            <table class=\"table table-sm m-0\">
+                                                <tr>
+                                                    <td>Inicio de inversión</td>
+                                                    <td class=\"text-end\">".fecha( $i[ "fechas" ][ "inversion" ] )."</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cierre de inversión</td>
+                                                    <td class=\"text-end\">".fecha( $i[ "fechas" ][ "cierre" ] )."</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rendimiento mensual</td>
+                                                    <td class=\"text-end\">{$p->data->porcentaje}%</td>
+                                                </tr>
+                                            </table>
+                                            
+                                        </div>
+                                        <div class=\"col-lg-6\">
+                                            <table class=\"table table-sm m-0\">
+                                        
+                                                <tr>
+                                                    <td>Capital semilla</td>
+                                                    <td class=\"text-end\">$".number_format( $i[ "cantidad" ], 2 )."</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rendimiento</td>
+                                                    <td class=\"text-end\">$".number_format( $p->cantidad, 2 )."</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Retiros</td>
+                                                    <td class=\"text-end\">$".number_format( $p->cantidad, 2 )."</td>
+                                                </tr>
+                                                                                
+                                            </table>  
+                                            
+                                        </div>
+                                    </div>
+                                    <div class=\"row mb-3 my-lg-0 \">
+                                        <div class=\"col-lg-6\"><button disabled class=\"btn btn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</button></div>
+                                        <div class=\"col-lg-6\"><button disabled class=\"btn btn-lg btn-outline-danger w-100 mt-4 \" onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>                                         
+                                    </div>
+                                    
                                 </div>
-                                <div class=\"col-6\">
-                                    <table class=\"table table-sm m-0\">
-                                   
-                                        <tr>
-                                            <td>Rendimiento mensual</td>
-                                            <td class=\"text-end\"><span class=\"badge bg-teal\">".( $p->data->porcentaje )."%</span> $".number_format( $i[ "cantidad" ] * ( $p->data->porcentaje / 100 ), 2 )."</td>
-                                        </tr>                                        
-                                        <tr>
-                                            <td>Rendimiento diario</td>
-                                            <td class=\"text-end\">$".( $diario = number_format( rendimiento_diario( $i[ "cantidad" ], $p->data->porcentaje, date( "Ym" ) ), 2 ) )."</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rendimiento total</td>
-                                            <td class=\"text-end\"><strong>$".number_format( $i[ "fechas" ][ "dias" ] * $diario, 2 )."</strong></td>
-                                        </tr>
-                                                                         
-                                    </table>                                
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class=\"card-footer text-red text-end\">
-                            <button class=\"btn d-none btn-sm btn-success\"><i class=\"fa fa-file-arrow-down\"></i> Estado de cuenta</button>
-                            <button class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
-                            <button class=\"btn d-none btn-sm btn-danger\" disabled onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
+                                <div class=\"col-lg-4\">
+                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"img-fluid p-3 border border-teal rounded\">
+                                </div>
+                            </div>   
+                            
+                               
                         </div>
                     </div>
-                </div>";
+                
+                ";
     }
 }else{
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
 
 ?>
-
-
     
-</div>
-
-
 
 <div class="modal" tabindex="-1" id="stock_modal">
 	<div class="modal-dialog">
