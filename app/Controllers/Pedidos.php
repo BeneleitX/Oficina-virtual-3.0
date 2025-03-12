@@ -863,10 +863,15 @@ class Pedidos extends BaseController
         $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
         $u        = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
+        // validamos cantidad
+            
+        $fecha = date( "Y-m-d H:i:s" );
+        $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
+        
         if( $hash == "saldo" ){
             $pagado   = true;
             $hash    .= "_".time();
-            $cantidad = $u->saldo( $pedido[ "modelo_codigo" ] );
+            $cantidad = $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
                 "from_address" => "",
@@ -973,10 +978,6 @@ class Pedidos extends BaseController
         }
 
         if( $pagado ){
-            // validamos cantidad
-            
-            $fecha = date( "Y-m-d H:i:s" );
-            $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
 
             // Al no existir antes, la registramos en la base de datos de fondeos
 
