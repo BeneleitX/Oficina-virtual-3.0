@@ -76,8 +76,8 @@ if( sizeof( $inversiones ) ){
 
                         <div class=\"card-footer text-red text-end\">
                             <button class=\"btn d-none btn-sm btn-success\"><i class=\"fa fa-file-arrow-down\"></i> Estado de cuenta</button>
-                            <button class=\"btn d-none btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
-                            <button class=\"btn btn-sm btn-danger\" disabled onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
+                            <button class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button>
+                            <button class=\"btn d-none btn-sm btn-danger\" disabled onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button>
                         </div>
                     </div>
                 </div>";

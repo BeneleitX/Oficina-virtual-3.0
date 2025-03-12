@@ -1116,11 +1116,11 @@ class E_usuario extends Entity
 
 
     public function getDirectosActivos( $modelo ){
-/*         $sql = "SELECT id 
+        /* $sql = "SELECT id 
                 FROM t_usuarios 
                 WHERE redes->>'$.modelos.\"{$modelo}\".padre' = {$this->id} 
                 AND SUBSTRING( f_get_calificacion(id, '".date( "Ym" )."', '{$modelo}'), 4 ) != '--'";
- */            
+             */
         $sql = "SELECT id 
                 FROM t_usuarios 
                 WHERE redes->>'$.modelos.\"{$modelo}\".padre' = {$this->id} 

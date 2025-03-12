@@ -945,7 +945,7 @@ class Pedidos extends BaseController
 
                             if( !$db->query( $sql )->getrow()->existe ){
                                 $pagado   = true;
-                                $cantidad = $pedido[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
+                                $cantidad = $tx[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
                                 $total    = $pedido[ "data" ][ "total" ] - $saldo;
                                 
                                 $respuesta[ "error" ]   = false;
