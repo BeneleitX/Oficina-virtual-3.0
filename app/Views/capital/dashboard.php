@@ -110,7 +110,7 @@ if( sizeof( $inversiones ) ){
                                 </div>
 
                                 <div class=\"col-lg-4\">
-                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"img-fluid p-3 border border-teal rounded\">
+                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"img-fluid p-3 border border-teal rounded\" style=\"opacity:0.2\">
                                 </div>
                             </div>   
                             
