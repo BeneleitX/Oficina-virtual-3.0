@@ -717,7 +717,7 @@
                                         $imagen = file_exists($file = "assets/img/metodospago/{$mp[ "codigo" ]}.png" ) ? "<img class=\"img-fluid mb-3 w-100 rounded-bottom-1\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" xstyle=\"zoom:2; xdisplay:none\">" : "<div class=\"mb-3\"></div>";
                                     } 
                                     
-                                    $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br><span class=\"small costo_extra text-marine\">+ Comisión de $".number_format( $comisionbanco, 2 )."</span><h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
+                                    $boton .= "\" type=\"submit\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\" style=\"line-height: 0.9; display:none\">{$mp[ "nombre" ]}<br>".( $comisionbanco ? "<span class=\"small costo_extra text-marine\">+ Comisión de $".number_format( $comisionbanco, 2 )."</span>" : "" )."<h4 class=\"cantidad m-0 mt-1 text-white\">$".number_format( $tt, 2 )."</h4></button>";                      
                                 }
 
                                 echo $boton.$imagen;
