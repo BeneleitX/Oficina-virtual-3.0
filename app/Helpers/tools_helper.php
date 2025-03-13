@@ -833,8 +833,7 @@ function genera_meses( $pedido, $producto = null ){
         $inicia_mes_f    = $date->format( "Y-m-d" );
 
         $date->modify( "last day of this month" );
-echo $pedido[ "data" ][ "total" ] ." - ". $producto->data->porcentaje ;
-die();
+        
         $dias_en_mes     = intval( $date->format( "d" ) );
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
