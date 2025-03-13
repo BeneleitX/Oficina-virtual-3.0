@@ -13,10 +13,8 @@ if( sizeof( $inversiones ) ){
 
         $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-        $i[ "fechas" ] = update_fecha_inversion( $i, $p );
-
         $date1 = new DateTime( $i[ "fechas" ][ "inversion" ] );
-        $date2 = new DateTime( $i[ "fechas" ][ "cierre" ] );
+        $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
         $interval = $date1->diff( $date2 );
         $total_dias = $interval->days + 1;
 
@@ -33,6 +31,16 @@ if( sizeof( $inversiones ) ){
             $hash = "<i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash";
         }
 
+        $mes_actual = 24;
+
+        for( $a = 0; $a < 24; $a++ ){
+            if( $i[ "extras" ][ "meses" ][ $a ][ "Ym" ] == date( "Ym" ) ){
+                $mes_actual = $a;
+            }
+        }
+
+        $bt = balance_inversion( $i );
+
         echo "\n
                     <div class=\"card mb-4\">
                         <div class=\"card-header\">
@@ -46,11 +54,11 @@ if( sizeof( $inversiones ) ){
                                 </div>
 
                                 <div class=\"col-lg-4 text-center\">
-                                    <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $i[ "cantidad" ], 2 )."</span>
+                                    <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</span>
                                 </div>
 
                                 <div class=\"col-lg-4\">
-                                    <p class=\"text-center mt-1 mb-0\">Día {$transcurridos} de {$total_dias}</p>
+                                    <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual+1)." de 24</p>
                                     <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
                                         <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
                                     </div>                                  
@@ -73,11 +81,11 @@ if( sizeof( $inversiones ) ){
                                                 </tr>
                                                 <tr>
                                                     <td>Cierre de inversión</td>
-                                                    <td class=\"text-end\">".fecha( $i[ "fechas" ][ "cierre" ] )."</td>
+                                                    <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Rendimiento mensual</td>
-                                                    <td class=\"text-end\">{$p->data->porcentaje}%</td>
+                                                    <td class=\"text-end\">{$i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] }%</td>
                                                 </tr>
                                             </table>
                                             
@@ -87,15 +95,15 @@ if( sizeof( $inversiones ) ){
                                         
                                                 <tr>
                                                     <td>Capital semilla</td>
-                                                    <td class=\"text-end\">$".number_format( $i[ "cantidad" ], 2 )."</td>
+                                                    <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Rendimiento</td>
-                                                    <td class=\"text-end\">$".number_format( $p->cantidad, 2 )."</td>
+                                                    <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Retiros</td>
-                                                    <td class=\"text-end\">$".number_format( $p->cantidad, 2 )."</td>
+                                                    <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
                                                 </tr>
                                                                                 
                                             </table>  
