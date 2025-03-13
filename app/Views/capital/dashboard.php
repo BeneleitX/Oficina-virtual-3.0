@@ -1,14 +1,15 @@
-<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
-<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
 
+<script> var chart = []; </script>
 <?php 
 
 $inversiones = $usuario->get_inversiones();
 
 if( sizeof( $inversiones ) ){
+
+    
     foreach( $inversiones as $i ){
 
         $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
@@ -32,14 +33,40 @@ if( sizeof( $inversiones ) ){
         }
 
         $mes_actual = 24;
+        $meses       = [];
+        $semilla     = [];
+        $rendimiento = [];
+        $r = 0;
 
-        for( $a = 0; $a < 24; $a++ ){
-            if( $i[ "extras" ][ "meses" ][ $a ][ "Ym" ] == date( "Ym" ) ){
-                $mes_actual = $a;
+        for( $a = 0; $a < 25; $a++ ){
+            $m = $i[ "extras" ][ "meses" ][ $a ];
+
+            if( $m[ "Ym" ] < date( "Ym" ) ){
+                $semilla[]     = $m[ "semilla" ];
+                $r += $m[ "rendimiento_mes" ];
             }
+            elseif( $m[ "Ym" ] == date( "Ym" ) ){
+                $mes_actual = $a;
+                $semilla[] = $m[ "semilla" ];
+
+                $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
+
+                if( $dias < 0 ){
+                    $dias = 0;
+                }                
+                $r += $m[ "rendimiento_dia" ] * $dias ;
+            }
+            else{
+                $semilla[] = 0;
+                $r = 0;
+            }
+
+            $rendimiento[] = $r;
+            $meses[] = mes( substr( $m[ "Ym" ], 4, 2 ), 3 )." ".substr( $m[ "Ym" ], 2, 2 );
         }
 
         $bt = balance_inversion( $i );
+        
 
         echo "\n
                     <div class=\"card mb-4\">
@@ -48,7 +75,7 @@ if( sizeof( $inversiones ) ){
                                 <div class=\"col-2 col-lg-1\">
                                     <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
                                 </div>
-                                <div class=\"col-10 col-lg-3 pt-2\">
+                                <div class=\"col-10 col-lg-2 pt-2\">
                                     <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
                                     ".estatus( $i[ "estatus_codigo" ] )."
                                 </div>
@@ -57,7 +84,7 @@ if( sizeof( $inversiones ) ){
                                     <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</span>
                                 </div>
 
-                                <div class=\"col-lg-4\">
+                                <div class=\"col-lg-5\">
                                     <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual+1)." de 24</p>
                                     <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
                                         <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
@@ -68,9 +95,9 @@ if( sizeof( $inversiones ) ){
 
                         </div>
 
-                        <div class=\"card-body text-red py-3\">
+                        <div class=\"card-body text-red pt-3 pb-0\">
                             <div class=\"row\">
-                                <div class=\"col-lg-8\">
+                                <div class=\"col-lg-7\">
                                 <h5 class=\"text-center text-gray-400 mb-3 mb-lg-3\">{$hash}</h5>
                                     <div class=\"row\">
                                         <div class=\"col-lg-6\">
@@ -117,15 +144,26 @@ if( sizeof( $inversiones ) ){
                                     
                                 </div>
 
-                                <div class=\"col-lg-4\">
-                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"img-fluid p-3 border border-teal rounded\" style=\"opacity:0.2\">
+                                <div class=\"col-lg-5\">
+                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"d-none img-fluid p-3 border border-teal rounded\" style=\"opacity:0.2\">
+
+<div id=\"chart_{$i[ "id" ]}\"></div>                                    
                                 </div>
                             </div>   
                             
                                
                         </div>
                     </div>
-                
+                    
+        <script> 
+            chart.push( { 
+                \"id\": {$i[ "id" ]}, 
+                \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
+                \"valores\" : [
+                    {\"name\":\"Capital Semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
+                ]
+            });
+        </script>
                 ";
     }
 }else{
@@ -168,3 +206,5 @@ if( sizeof( $inversiones ) ){
 		</div>
 	</div>
 </div>
+
+
