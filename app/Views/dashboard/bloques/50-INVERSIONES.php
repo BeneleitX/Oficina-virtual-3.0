@@ -4,7 +4,8 @@
 
     if( sizeof( $inversiones ) ){
         foreach( $inversiones as $i ){
-            $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+            $p  = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+            $bt = balance_inversion( $i );
 
             echo "\n<div class=\"row border border-{$p->data->color} rounded my-2 m-0\">
                     <div class=\"col-2 py-2\">
@@ -15,7 +16,7 @@
                         <span class=\"small\">".estatus( $i[ "estatus_codigo" ] )."</span>
                     </div>
                     <div class=\"col-5 pt-3 text-end\">
-                        <h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $i[ "cantidad" ], 2 )."</h5>
+                        <h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</h5>
                     </div></div>";
         }
     }else{
@@ -110,7 +111,7 @@
 
 <?php
 
-if( $usuario->id == 55 ){
+/* if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
     foreach( $inversiones as $i ){
@@ -119,4 +120,4 @@ if( $usuario->id == 55 ){
 
         model( "InversionModel" )->save( $i );
     }
-}
+} */
