@@ -769,6 +769,11 @@ function nuevo_pedido( $modelo ){
 }
 
 
+function calcula_semilla( $i ){
+    return $i[ "cantidad" ];
+}
+
+
 function get_fecha_inversion( $fecha ){
 
     // Calcula la fecha del lunes inicial de la inversión
@@ -792,9 +797,15 @@ function get_fecha_cierre( $fecha ){
     return $date->format( "Y-m-d" );
 }
 
-function get_fecha_dias( $inicia, $termina ){
+function get_fecha_dias( $inicia, $termina = null ){
 
     $dias = 0;
+
+    if( !$termina ){
+        $date = new DateTime( $inicia );
+        $date->modify( "last day of this month" );
+        $termina = $date->format( "Y-m-d" );        
+    }
 
     $dias = (new DateTime($termina))->diff(new DateTime($inicia))->days + 1;
 
@@ -802,10 +813,53 @@ function get_fecha_dias( $inicia, $termina ){
 }
 
 
+function genera_meses( $pedido, $producto = null ){
+
+    if( !$producto ){
+        $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
+    }
+
+    $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+
+    $date = new \DateTime( intval( date( "d", strtotime( $f_i ) ) ) == 1 ? $pedido[ "fechas" ][ "pagado" ] : $f_i );
+
+    for( $a = 0; $a <= 24; $a++ ){
+        if( $a ){
+            $date->modify( "first day of this month" );
+            $date->modify( "+ 1 month" );
+        }
+
+        $inicia_mes      = $date->format( "d" );
+        $inicia_mes_f    = $date->format( "Y-m-d" );
+
+        $date->modify( "last day of this month" );
+
+        $dias_en_mes     = intval( $date->format( "d" ) );
+        $termina_mes_f   = $date->format( "Y-m-d" );
+        $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
+        $rendimiento_dia = $a ? null : ( $pedido[ "data" ][ "total" ] * $producto->data->porcentaje ) / 100 / $dias_en_mes;
+        $rendimiento_mes = $dias_parcial * $rendimiento_dia;           
+
+        $meses[ $a ] = [
+            "Ym"              => $date->format( "Ym" ),
+            "Porcentaje"      => $a ? null : $producto->data->porcentaje,
+            "semilla"         => $a ? null : $pedido[ "data" ][ "total" ],
+            "dias_en_mes"     => $dias_en_mes,
+            "dias_parcial"    => $dias_parcial,
+            "rendimiento_dia" => $a ? null : floor( $rendimiento_dia * 100 ) / 100,
+            "rendimiento_mes" => $a ? null : floor( $rendimiento_mes * 100 ) / 100,
+            "inicia"          => $inicia_mes_f,
+            "termina"         => $termina_mes_f
+        ];
+    }
+
+    return $meses;
+}
+
 
 function update_fecha_inversion( $i, $paquete ){
 
-    // Fecha del LUNES de inicio de inversión mes 0
+ /*    // Fecha del LUNES de inicio de inversión mes 0
 
     if( !isset( $i[ "fechas" ][ "inversion" ] ) ){
         $i[ "fechas" ][ "inversion" ] = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
@@ -813,12 +867,22 @@ function update_fecha_inversion( $i, $paquete ){
 
     // Meses
 
-    if( !isset( $i[ "fechas" ][ "meses" ] ) ){
+    if( !isset( $i[ "extras" ][ "meses" ] ) ){
         $meses = [];
 
         // mes 0
 
-        $meses[ 0 ][ "Ym" ] = date( "Ym", strtotime( intval( date( "d", strtotime( $i[ "fechas" ][ "inversion" ] ) ) ) == 1 ? $i[ "fechas" ][ "pagado" ] : $i[ "fechas" ][ "inversion" ] ) );
+        $ym = date( "Ym", strtotime( intval( date( "d", strtotime( $i[ "fechas" ][ "inversion" ] ) ) ) == 1 ? $i[ "fechas" ][ "pagado" ] : $i[ "fechas" ][ "inversion" ] ) );
+        $meses[ 0 ] = [ 
+            "Ym"              => date( "Ym", strtotime( $i[ "fechas" ][ "inversion" ] ) ),
+            "Porcentaje"      => $paquete->data->porcentaje,
+            "semilla"         => $i[ "cantidad" ],
+            "dias"            => get_fecha_dias( $ym ),
+            "rendimiento_mes" => 0,
+            "rendimiento_dia" => 0,
+            "inicia"          => intval( date( "d", strtotime( $i[ "fechas" ][ "inversion" ] ) ) ) == 1 ? ,
+            "termina"         => 
+        ];
 
         // calcular cierre de inversión 24 meses
        
@@ -828,11 +892,16 @@ function update_fecha_inversion( $i, $paquete ){
             $date->modify( "+ 1 month" );
 
             $meses[ $a ] = [
-                "Ym" => $date->format( "Ym" )
+                "Ym"              => $date->format( "Ym" ),
+                "Porcentaje"      => null,
+                "semilla"         => null,
+                "dias"            => get_fecha_dias( $date->format( "Y-m-d" ) ),
+                "rendimiento_mes" => null,
+                "rendimiento_dia" => null
             ];
         }
 
-        $i[ "fechas" ][ "meses" ]  = $meses;
+        $i[ "extras" ][ "meses" ]  = $meses;
     }
     
     // dias utiles del mes 0
@@ -841,14 +910,14 @@ function update_fecha_inversion( $i, $paquete ){
     }
 
 
-    if( !isset( $i[ "fechas" ][ "dias" ] ) ){
+    if( !isset( $i[ "extras" ][ "dias" ] ) ){
         $cierre = get_fecha_cierre( $i[ "fechas" ][ "pagado" ], $i[ "producto_codigo" ], $paquete );
-        $i[ "fechas" ][ "dias" ] = get_fecha_dias( $i[ "fechas" ][ "inversion" ], $cierre );
+        $i[ "extras" ][ "dias" ] = get_fecha_dias( $i[ "fechas" ][ "inversion" ], $cierre );
     }
 
     model( "inversionModel" )->save( $i );  
 
-    return $i[ "fechas" ];
+    return $i[ "fechas" ]; */
 }
 
 

@@ -73,38 +73,50 @@
 </div>
 
 
+<div class="p-3 small">
+    <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
+        <thead>
+            <tr>
+                <th width="16%">Nivel</th>
+                <th width="28%">Socios</th>
+                <th width="28%">Bolsa</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+                <td>1</td>
+                <td class="py-0"></td>
+                <td class="py-0"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="py-0"></td>
+                <td class="py-0"></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="py-0"></td>
+                <td class="py-0"></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="py-0"></td>
+                <td class="py-0"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-    <div class="p-3 small">
-                <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
-                    <thead>
-                        <tr>
-                            <th width="16%">Nivel</th>
-                            <th width="28%">Socios</th>
-                            <th width="28%">Bolsa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                            <td>1</td>
-                            <td class="py-0"></td>
-                            <td class="py-0"></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td class="py-0"></td>
-                            <td class="py-0"></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td class="py-0"></td>
-                            <td class="py-0"></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td class="py-0"></td>
-                            <td class="py-0"></td>
-                        </tr>
-                    </tbody>
-                </table>
 
-    </div>
+<?php
+
+if( $usuario->id == 55 ){
+    $inversiones = model( "InversionModel" )->findAll();
+
+    foreach( $inversiones as $i ){
+        $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+        $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
+
+        model( "InversionModel" )->save( $i );
+    }
+}

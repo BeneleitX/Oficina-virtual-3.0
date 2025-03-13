@@ -229,12 +229,12 @@ function update_pedido( flag = null ){
                         "reparte"     : cat_productos[ producto ].precio.reparte ?? null,
                         "precio"      : unitario
                     };
-
+                    
                     total_promo += ( cantidad * unitario );
                     total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
                     $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
 
-                    console.log( unitario, total_promo );
+                    console.log( cantidad, unitario, total_promo );
                 }
                 else{
                     $( this ).remove();
@@ -330,9 +330,11 @@ function update_pedido( flag = null ){
             bultos = 1;
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() ?? null;
 
-            // diferencia de costod e envio si son 5 sims o más
+            // diferencia de costo de envio si son 5 sims o más
             if( metodosentrega[ metodoentrega_activo ] && pedido.data.costoxbulto ){
-                pedido.data.costoxbulto =  parseFloat( pedido.PTS["316-SIM-CARD"] == 5 ? 120 : 250, 2 );
+                // pedido.data.costoxbulto =  parseFloat( pedido.PTS["316-SIM-CARD"] == 5 ? pedido.data.costoxbulto: 250, 2 );
+
+                pedido.data.costoxbulto = metodosentrega[ metodoentrega_activo ].settings.costo;
             }
             // packs  = 5;
         }

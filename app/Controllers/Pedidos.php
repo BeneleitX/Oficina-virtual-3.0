@@ -857,15 +857,14 @@ class Pedidos extends BaseController
 
         // validamos que tenga una longitud correcta
 
-        $pagado = false;
-
+        $pagado   = false;
         $pedido   = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
         $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
         $u        = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
 
         // validamos cantidad
             
-        $fecha = date( "Y-m-d H:i:s" );
+        $fecha = "2025-08-28 12:00:00"; // date( "Y-m-d H:i:s" );
         $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
         
         if( $hash == "saldo" ){
@@ -1007,8 +1006,6 @@ class Pedidos extends BaseController
                 $pedido[ "fechas" ][ "reparte" ]  = $fecha;
                 $pedido[ "data" ][ "saldo" ]      = $saldo;
 
-                model( "PedidoModel" )->save( $pedido );
-
                 if( $cantidad > $total ){
                     $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = $cantidad - $total;
                 }
@@ -1046,6 +1043,8 @@ class Pedidos extends BaseController
 
                 // Si entra la inversión, se registra con sus fechas para comenzar el cálculo de rendimientos
 
+                $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+
                 $inversion = [
                     "id"                => null,
                     "pedido_id"         => $pedido[ "id" ],
@@ -1055,10 +1054,13 @@ class Pedidos extends BaseController
                     "estatus_codigo"    => "625-ACTIVA",
                     "fechas"            => [
                         "creado"        => $pedido[ "fechas" ][ "creado" ],
-                        "pagado"        => $pedido[ "fechas" ][ "pagado" ]
+                        "pagado"        => $pedido[ "fechas" ][ "pagado" ],
+                        "inversion"     => $f_i,
+                        "cierre"        => get_fecha_cierre( $f_i )
                     ],
                     "extras"            => [
                         "TxHash"        => $hash,
+                        "meses"         => [],
                         "saldo"         => $saldo,
                         "wallets"       => [
                             "from"      => $tx[ "from_address" ],
@@ -1067,7 +1069,11 @@ class Pedidos extends BaseController
                     ]
                 ];
 
-                model( "InversionModel" )->save( $inversion );            
+                $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $producto );
+
+                model( "InversionModel" )->save( $inversion );   
+                model( "PedidoModel" )->save( $pedido );
+         
             }
             else{
 
