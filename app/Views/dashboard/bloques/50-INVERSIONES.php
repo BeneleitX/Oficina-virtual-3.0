@@ -111,7 +111,7 @@
 
 <?php
 
- if( $usuario->id == 55 ){
+/*  if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
     foreach( $inversiones as $i ){
@@ -119,4 +119,4 @@
         $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
         model( "InversionModel" )->save( $i );
     }
-} 
+}  */
