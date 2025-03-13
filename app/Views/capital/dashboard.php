@@ -35,6 +35,7 @@ if( sizeof( $inversiones ) ){
         $mes_actual = 24;
         $meses       = [];
         $semilla     = [];
+        $compuesto   = [];
         $rendimiento = [];
         $r = 0;
 
@@ -62,6 +63,7 @@ if( sizeof( $inversiones ) ){
             }
 
             $rendimiento[] = $r;
+            $compuesto[] = $m[ "compuesto" ];
             $meses[] = mes( substr( $m[ "Ym" ], 4, 2 ), 3 )." ".substr( $m[ "Ym" ], 2, 2 );
         }
 

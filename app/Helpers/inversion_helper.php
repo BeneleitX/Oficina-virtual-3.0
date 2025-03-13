@@ -67,16 +67,19 @@ function genera_meses( $pedido, $producto = null ){
 
         $date->modify( "last day of this month" );
         
+        $cantidad = $pedido[ "data" ][ "total" ] + ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 );
+
         $dias_en_mes     = intval( $date->format( "d" ) );
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
-        $rendimiento_dia = ( $pedido[ "data" ][ "total" ] * $producto->data->porcentaje ) / 100 / $dias_en_mes;
+        $rendimiento_dia = ( $cantidad * $producto->data->porcentaje ) / 100 / $dias_en_mes;
         $rendimiento_mes = $dias_parcial * $rendimiento_dia;           
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
             "Porcentaje"      => $producto->data->porcentaje,
             "semilla"         => $pedido[ "data" ][ "total" ],
+            "compuesto"       => floor( 100 * ( ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) ) ) / 100,
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
             "rendimiento_dia" => floor( $rendimiento_dia * 100 ) / 100,

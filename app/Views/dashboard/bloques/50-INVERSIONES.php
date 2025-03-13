@@ -111,13 +111,12 @@
 
 <?php
 
-/* if( $usuario->id == 55 ){
+ if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
     foreach( $inversiones as $i ){
         $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
         $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
-
         model( "InversionModel" )->save( $i );
     }
-} */
+} 
