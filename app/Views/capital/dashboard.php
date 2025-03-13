@@ -44,26 +44,29 @@ if( sizeof( $inversiones ) ){
 
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
-                $r += $m[ "rendimiento_mes" ];
+                $r = $m[ "rendimiento_mes" ];
+                $compuesto[] = $m[ "compuesto" ];
             }
             elseif( $m[ "Ym" ] == date( "Ym" ) ){
                 $mes_actual = $a;
                 $semilla[] = $m[ "semilla" ];
+                $compuesto[] = $m[ "compuesto" ];
 
                 $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
 
                 if( $dias < 0 ){
                     $dias = 0;
                 }                
-                $r += $m[ "rendimiento_dia" ] * $dias ;
+                $r = $m[ "rendimiento_dia" ] * $dias ;
             }
             else{
                 $semilla[] = 0;
+                $compuesto[] = 0;
                 $r = 0;
             }
 
             $rendimiento[] = $r;
-            $compuesto[] = $m[ "compuesto" ];
+            
             $meses[] = mes( substr( $m[ "Ym" ], 4, 2 ), 3 )." ".substr( $m[ "Ym" ], 2, 2 );
         }
 
@@ -162,7 +165,7 @@ if( sizeof( $inversiones ) ){
                 \"id\": {$i[ "id" ]}, 
                 \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
                 \"valores\" : [
-                    {\"name\":\"Capital Semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
+                    {\"name\":\"Capital semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
                 ]
             });
         </script>

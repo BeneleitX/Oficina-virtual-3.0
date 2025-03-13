@@ -2,7 +2,7 @@
 
 var 
   options = {
-    colors: ['var(--bs-gray-400)', 'var(--bs-teal)'],
+    colors: ['var(--bs-gray-400)', 'var(--bs-teal)', 'var(--bs-mustard)'],
     series: null,
     chart: {
         type: 'bar',

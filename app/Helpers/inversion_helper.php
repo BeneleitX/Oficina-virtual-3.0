@@ -72,7 +72,8 @@ function genera_meses( $pedido, $producto = null ){
         $dias_en_mes     = intval( $date->format( "d" ) );
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
-        $rendimiento_dia = ( $cantidad * $producto->data->porcentaje ) / 100 / $dias_en_mes;
+        
+        $rendimiento_dia = floor( $cantidad * $producto->data->porcentaje / $dias_en_mes ) / 100;
         $rendimiento_mes = $dias_parcial * $rendimiento_dia;           
 
         $meses[ $a ] = [
@@ -82,8 +83,8 @@ function genera_meses( $pedido, $producto = null ){
             "compuesto"       => floor( 100 * ( ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) ) ) / 100,
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
-            "rendimiento_dia" => floor( $rendimiento_dia * 100 ) / 100,
-            "rendimiento_mes" => floor( $rendimiento_mes * 100 ) / 100,
+            "rendimiento_dia" => $rendimiento_dia,
+            "rendimiento_mes" => $rendimiento_mes,
             "inicia"          => $inicia_mes_f,
             "termina"         => $termina_mes_f
         ];
@@ -177,6 +178,7 @@ function balance_inversion( $i ){
 
     for( $a = 0; $a < 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
+        
         if( $j[ "Ym" ] < date( "Ym" ) ){
             if( $j[ "dias_en_mes" ] ){
                 
@@ -189,7 +191,7 @@ function balance_inversion( $i ){
             }
         }
         elseif( $j[ "Ym" ] == date( "Ym" ) ){
-            $respuesta[ "semilla" ] = $j[ "semilla" ] ?? $i[ "extras" ][ "meses" ][ 0 ][ "semilla" ];
+            $respuesta[ "semilla" ] = $j[ "semilla" ];
             $dias = date( "d" ) - ( $j[ "dias_en_mes" ] - $j[ "dias_parcial" ] );
 
             if( $dias < 0 ){
