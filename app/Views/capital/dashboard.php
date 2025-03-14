@@ -33,7 +33,7 @@ if( sizeof( $inversiones ) ){
 
         $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
-        if( $i[ "extras" ][ "TxHash" ] && strlen( $i[ "extras" ][ "TxHash" ] ) == 64 ){
+        if( $i[ "extras" ][ "TxHash" ] ){
             $hash = "<span class=\"text-teal\">{$i[ "extras" ][ "TxHash" ]}</span>";
         }
         else{
