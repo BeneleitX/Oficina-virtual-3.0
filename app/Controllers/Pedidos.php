@@ -868,7 +868,7 @@ class Pedidos extends BaseController
         $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
         
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
-            $h = explode( "_", $hash );
+            $h = explode( "_", trim( $hash ) );
             $fecha = $h[1];
             $hash  = "Capital24_hash";
             $saldo = $pedido[ "data" ][ "total" ];
@@ -876,7 +876,7 @@ class Pedidos extends BaseController
 
         if( $hash == "saldo" || $hash == "Capital24_hash" ){
             $pagado   = true;
-            $hash    .= "_".time()."_".md5( $pedido[ "codigo" ] );
+            $hash    .= "_".time()."_".md5( $pedido[ "id" ] );
             $cantidad = $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
