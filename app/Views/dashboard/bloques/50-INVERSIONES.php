@@ -6,7 +6,7 @@
         foreach( $inversiones as $i ){
             $p  = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-            if( !isset($i[ "extras" ][ "meses" ] ) ){
+            if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
                 $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
     
