@@ -876,7 +876,7 @@ class Pedidos extends BaseController
 
         if( $hash == "saldo" || $hash == "Capital24_hash" ){
             $pagado   = true;
-            $hash    .= "_".time();
+            $hash    .= "_".time()."_".md5( $pedido[ "codigo" ] );
             $cantidad = $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
