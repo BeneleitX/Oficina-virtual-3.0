@@ -96,12 +96,12 @@ $(document).ready(function(){
                 setTimeout(function() {
                     $( '#loader' ).slideUp();
 
-                    if( respuesta.ok ){
-                        window.location.href = base_url + 'capital';
-                    }
-                    else{
+                    if( respuesta.error ){
                         $( '#error' ).html( respuesta.error ).show();
                         $( '#principal' ).slideDown();
+                    }
+                    else{
+                        window.location.href = base_url + 'capital';
                     }
                 }, 1000);
 

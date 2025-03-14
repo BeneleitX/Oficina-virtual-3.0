@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class InversionModel extends Model
 {
     protected $table      = "t_inversiones";
-    protected $primaryKey = "pedido_id";
+    protected $primaryKey = "id";
     protected $useAutoIncrement = false;
     protected $returnType     = "array";
     protected $useSoftDeletes = false;

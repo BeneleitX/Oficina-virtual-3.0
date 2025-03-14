@@ -15,6 +15,13 @@ if( sizeof( $inversiones ) ){
 
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
+        if( !isset($i[ "extras" ][ "meses" ] ) ){
+            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
+
+            model( "InversionModel" )->save( $i );
+        }
+        
         $date1 = new DateTime( $f_i );
         $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
         $interval = $date1->diff( $date2 );

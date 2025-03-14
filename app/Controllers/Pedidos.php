@@ -864,7 +864,7 @@ class Pedidos extends BaseController
 
         // validamos cantidad
             
-        $fecha = "2025-08-28 12:00:00"; // date( "Y-m-d H:i:s" );
+        $fecha = date( "Y-m-d H:i:s" );
         $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
         
         if( $hash == "saldo" ){

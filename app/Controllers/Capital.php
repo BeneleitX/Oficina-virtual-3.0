@@ -105,62 +105,40 @@ class Capital extends BaseController
                     if( $address ){
                         
                         $inversion = model( "InversionModel" )->find( $this->request->getPost( "inversion" ) );
-
-                        print_r( $inversion );
-                        return;
                         $pedido    = model( "PedidoModel" )->find( $inversion[ "pedido_id" ] );
+                        $producto  = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
+
+                        $fecha = $pedido[ "fechas" ][ "pagado" ];
+                        $saldo = 0;
 
                         // nos aseguramos de que la transacción no haya sido registrada antes
 
                         $db  = db_connect();
                         $sql = "select count(*) as existe from t_fondeos where operacion = '{$hash}'";
+                        $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
 
                         if( !$db->query( $sql )->getrow()->existe ){
                             
                             // Al no existir antes, la registramos en la base de datos de fondeos
+                            $cantidad = $tx[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
+                            $total    = $pedido[ "data" ][ "total" ] - $saldo;
 
                             model( "FondeoModel" )->ignore( true )->save( [
                                 "operacion"         => $hash, 
                                 "fecha"             => $fecha,
                                 "estatus_codigo"    => "420-PAGADO",
                                 "metodopago_codigo" => $pedido[ "metodopago_codigo" ],
-                                "usuario_id"        => $u->id,
+                                "usuario_id"        => $pedido[ "usuario_id" ],
                                 "referencia"        => $pedido[ "referencia" ],
                                 "cantidad"          => $cantidad,
                                 "extras"            => $tx
-                            ] );
+                            ] );                           
 
-                            $cantidad = $tx[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
-                            $total    = $pedido[ "data" ][ "total" ] - $saldo;
-                            
-
-                            $inversion = [
-                                "id"                => null,
-                                "pedido_id"         => $pedido[ "id" ],
-                                "usuario_id"        => $u->id,
-                                "producto_codigo"   => $producto->codigo,
-                                "cantidad"          => $pedido[ "data" ][ "total" ],
-                                "estatus_codigo"    => "625-ACTIVA",
-                                "fechas"            => [
-                                    "creado"        => $pedido[ "fechas" ][ "creado" ],
-                                    "pagado"        => $pedido[ "fechas" ][ "pagado" ],
-                                    "inversion"     => $f_i,
-                                    "cierre"        => get_fecha_cierre( $f_i )
-                                ],
-                                "extras"            => [
-                                    "TxHash"        => $hash,
-                                    "meses"         => [],
-                                    "saldo"         => $saldo,
-                                    "wallets"       => [
-                                        "from"      => $tx[ "from_address" ],
-                                        "to"        => $tx[ "to_address" ]
-                                    ]
-                                ]
-                            ];
+                            $inversion[ "extras" ][ "TxHash" ] = $hash;
+                            $inversion[ "extras" ][ "wallets" ][ "from" ] = $tx[ "from_address" ];
+                            $inversion[ "extras" ][ "wallets" ][ "to" ] = $tx[ "to_address" ];
             
-                            $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $producto );
-            
-                            model( "InversionModel" )->save( $inversion );   
+                            model( "InversionModel" )->save( $inversion );
 
                             $respuesta[ "error" ]   = false;
                             $respuesta[ "success" ] = [];
