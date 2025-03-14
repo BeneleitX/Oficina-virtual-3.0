@@ -1034,7 +1034,7 @@ class Pedidos extends BaseController
                 $historial->modelos->{$pedido[ "modelo_codigo" ]}->ultimacompra = $pedido[ "fechas" ][ "califica" ];
 
                 model( "PedidoModel" )->save( $pedido );
-                
+
                 $db  = db_connect();
                 $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' ) as kok" )->getRow()->kok;  
                 
@@ -1081,8 +1081,6 @@ class Pedidos extends BaseController
                 $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $producto );
 
                 model( "InversionModel" )->save( $inversion );   
-                
-         
             }
             else{
 
