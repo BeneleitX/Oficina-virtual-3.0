@@ -867,10 +867,12 @@ class Pedidos extends BaseController
         $fecha = date( "Y-m-d H:i:s" );
         $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
         
+        // marcado de inversiones por administrador sin necesidad de TxHash
+
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
             $h = explode( "_", trim( $hash ) );
             $fecha = $h[1];
-            $hash  = "saldo";
+            $hash  = "saldo"; 
             $saldo = $pedido[ "data" ][ "total" ];
         }
 
