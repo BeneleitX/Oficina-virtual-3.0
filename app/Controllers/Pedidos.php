@@ -870,7 +870,7 @@ class Pedidos extends BaseController
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
             $h = explode( "_", trim( $hash ) );
             $fecha = $h[1];
-            $hash  = "saldo";
+            $hash  = "admin";
             $saldo = $pedido[ "data" ][ "total" ];
         }
 
@@ -1011,7 +1011,7 @@ class Pedidos extends BaseController
                 $pedido[ "fechas" ][ "pagado" ]   = $fecha;
                 $pedido[ "fechas" ][ "califica" ] = date( "Y-m-d H:i:s" );
                 $pedido[ "fechas" ][ "reparte" ]  = date( "Y-m-d H:i:s" );
-                $pedido[ "data" ][ "saldo" ]      = $saldo;
+                $pedido[ "data" ][ "saldo" ]      = session( "admin" ) ? 0 : $saldo;
 
                 if( $cantidad > $total ){
                     $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = $cantidad - $total;
@@ -1036,7 +1036,7 @@ class Pedidos extends BaseController
                 model( "PedidoModel" )->save( $pedido );
 
                 $db  = db_connect();
-                $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha ) )."' ) as kok" )->getRow()->kok;  
+                $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym" )."' ) as kok" )->getRow()->kok;  
                 
                 $db->query( "do f_get_estatus( {$u->id}, 0 )" );
                 $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
@@ -1046,8 +1046,8 @@ class Pedidos extends BaseController
                 bitacora( 56, $this->data[ "usuario" ]->id, [ 
                     "pedido"   => $pedido[ "id" ],
                     "pagado"   => $fecha,
-                    "califica" => $fecha,
-                    "reparte"  => $fecha
+                    "califica" => date( "Y-m-d H:i:s" ),
+                    "reparte"  => date( "Y-m-d H:i:s" )
                 ] );
                
                 // Si entra la inversión, se registra con sus fechas para comenzar el cálculo de rendimientos
