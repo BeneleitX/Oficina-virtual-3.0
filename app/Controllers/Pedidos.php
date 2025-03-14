@@ -876,6 +876,8 @@ class Pedidos extends BaseController
             $saldo = $pedido[ "data" ][ "total" ];
         }
 
+        // marcado de inversiones por saldo a favor y/o acumulación de comisiones
+
         if( $hash == "saldo" ){
             $pagado   = true;
             $hash     = time()."_".md5( $pedido[ "id" ] );
