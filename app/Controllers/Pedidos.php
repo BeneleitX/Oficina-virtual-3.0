@@ -876,7 +876,7 @@ class Pedidos extends BaseController
 
         if( $hash == "saldo" || $hash == "Capital24_hash" ){
             $pagado   = true;
-            $hash    .= "_".time()."_".md5( $pedido[ "id" ] );
+            $hash     = time()."_".md5( $pedido[ "id" ] );
             $cantidad = $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
@@ -1047,7 +1047,7 @@ class Pedidos extends BaseController
                     "califica" => $fecha,
                     "reparte"  => $fecha
                 ] );
-
+               
                 // Si entra la inversión, se registra con sus fechas para comenzar el cálculo de rendimientos
 
                 $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
