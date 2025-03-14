@@ -1046,7 +1046,7 @@ class Pedidos extends BaseController
                 $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
 
                 $inversion = [
-                    "id"                => null,
+                    "id"                => NULL,
                     "pedido_id"         => $pedido[ "id" ],
                     "usuario_id"        => $u->id,
                     "producto_codigo"   => $producto->codigo,
