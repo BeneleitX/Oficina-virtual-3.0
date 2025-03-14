@@ -8,7 +8,7 @@ class InversionModel extends Model
 {
     protected $table      = "t_inversiones";
     protected $primaryKey = "id";
-    protected $useAutoIncrement = false;
+    protected $useAutoIncrement = true;
     protected $returnType     = "array";
     protected $useSoftDeletes = false;
 
