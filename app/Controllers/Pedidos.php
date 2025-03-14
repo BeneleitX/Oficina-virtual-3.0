@@ -1009,8 +1009,8 @@ class Pedidos extends BaseController
 
                 $pedido[ "estatus_codigo" ]       = "420-PAGADO";
                 $pedido[ "fechas" ][ "pagado" ]   = $fecha;
-                $pedido[ "fechas" ][ "califica" ] = $fecha;
-                $pedido[ "fechas" ][ "reparte" ]  = $fecha;
+                $pedido[ "fechas" ][ "califica" ] = date( "Y-m-d H:i:s" );
+                $pedido[ "fechas" ][ "reparte" ]  = date( "Y-m-d H:i:s" );
                 $pedido[ "data" ][ "saldo" ]      = $saldo;
 
                 if( $cantidad > $total ){
