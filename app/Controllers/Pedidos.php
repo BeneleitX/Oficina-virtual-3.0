@@ -1042,7 +1042,7 @@ class Pedidos extends BaseController
                 $db  = db_connect();
                 $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym" )."' ) as kok" )->getRow()->kok;  
                 
-                $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+                
                 $db->query( "do f_reparte_comisiones( {$pedido[ "id" ]}, 0 )" );
             
                 // BITACORA Marcar pedido como pagado
@@ -1073,6 +1073,7 @@ class Pedidos extends BaseController
                     ],
                     "extras"            => [
                         "TxHash"        => $hash,
+                        "PTS"           => $respuesta[ "PTS" ],
                         "meses"         => [],
                         "saldo"         => $saldo,
                         "wallets"       => [
@@ -1100,6 +1101,7 @@ class Pedidos extends BaseController
             $u->historial = $historial;
 
             model( "UsuarioModel" )->save( $u );
+            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
         }
 
         echo json_encode( $respuesta, JSON_PRETTY_PRINT );
