@@ -867,10 +867,10 @@ class Pedidos extends BaseController
         $fecha = date( "Y-m-d H:i:s" );
         $saldo = $u->saldo( $pedido[ "modelo_codigo" ] );
         
-        if( $hash == "saldo" || $hash == "unknown" ){
+        if( $hash == "saldo" || ( session( "admin" ) && $hash == "Capital24_hash" ) ){
             $pagado   = true;
             $hash    .= "_".time();
-            $cantidad = $hash == "unknown" ? $pedido[ "data" ][ "total" ] : $saldo;
+            $cantidad = $hash == "Capital24_hash" ? $pedido[ "data" ][ "total" ] : $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
                 "from_address" => "",
