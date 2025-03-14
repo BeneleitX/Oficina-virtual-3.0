@@ -15,7 +15,7 @@ if( sizeof( $inversiones ) ){
 
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-        if( !isset($i[ "extras" ][ "meses" ] ) ){
+        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
             $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
 
