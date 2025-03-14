@@ -870,11 +870,11 @@ class Pedidos extends BaseController
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
             $h = explode( "_", trim( $hash ) );
             $fecha = $h[1];
-            $hash  = "Capital24_hash";
+            $hash  = "saldo";
             $saldo = $pedido[ "data" ][ "total" ];
         }
 
-        if( $hash == "saldo" || $hash == "Capital24_hash" ){
+        if( $hash == "saldo" ){
             $pagado   = true;
             $hash     = time()."_".md5( $pedido[ "id" ] );
             $cantidad = $saldo;
