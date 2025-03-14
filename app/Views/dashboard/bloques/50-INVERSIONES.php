@@ -5,6 +5,14 @@
     if( sizeof( $inversiones ) ){
         foreach( $inversiones as $i ){
             $p  = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+
+            if( !isset($i[ "extras" ][ "meses" ] ) ){
+                $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+                $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
+    
+                model( "InversionModel" )->save( $i );
+            }
+
             $bt = balance_inversion( $i );
 
             echo "\n<div class=\"row border border-{$p->data->color} rounded my-2 m-0\">
