@@ -119,12 +119,18 @@
 
 <?php
 
-/*  if( $usuario->id == 55 ){
+  if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
     foreach( $inversiones as $i ){
         $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+
+        $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
+
+        $i[ "fechas" ][ "inversion" ] = $f_i;
+        $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $f_i );
         $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
+
         model( "InversionModel" )->save( $i );
     }
-}  */
+}  
