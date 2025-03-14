@@ -927,7 +927,7 @@ class Pedidos extends BaseController
 
                     // validamos que sea una transacción confirmada
 
-                    if( $tx[ "cost" ][ "date_created" ] > "2025-03-10" && $tx[ "contractRet" ] == "SUCCESS" && $tx[ "confirmed" ] == true ){
+                    if( ( es_admin() || $tx[ "cost" ][ "date_created" ] > "2025-03-10" ) && $tx[ "contractRet" ] == "SUCCESS" && $tx[ "confirmed" ] == true ){
                         
                         // validamos que sea al wallet destino correcto
 
