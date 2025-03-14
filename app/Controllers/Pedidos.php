@@ -871,12 +871,13 @@ class Pedidos extends BaseController
             $h = explode( "_", $hash );
             $fecha = $h[1];
             $hash  = "Capital24_hash";
+            $saldo = $pedido[ "data" ][ "total" ];
         }
 
         if( $hash == "saldo" || $hash == "Capital24_hash" ){
             $pagado   = true;
             $hash    .= "_".time();
-            $cantidad = $hash == "Capital24_hash" ? $pedido[ "data" ][ "total" ] : $saldo;
+            $cantidad = $saldo;
             $total    = $pedido[ "data" ][ "total" ];
             $tx       = [
                 "from_address" => "",
