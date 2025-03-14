@@ -12,9 +12,11 @@ if( sizeof( $inversiones ) ){
     
     foreach( $inversiones as $i ){
 
-        $p = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+        $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-        $date1 = new DateTime( $i[ "fechas" ][ "inversion" ] );
+        $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+
+        $date1 = new DateTime( $f_i );
         $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
         $interval = $date1->diff( $date2 );
         $total_dias = $interval->days + 1;
@@ -26,10 +28,10 @@ if( sizeof( $inversiones ) ){
         $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
         if( $i[ "extras" ][ "TxHash" ] && strlen( $i[ "extras" ][ "TxHash" ] ) == 64 ){
-            $hash = $i[ "extras" ][ "TxHash" ];
+            $hash = "<span class=\"text-teal\">{$i[ "extras" ][ "TxHash" ]}</span>";
         }
         else{
-            $hash = "<i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash";
+            $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
         }
 
         $mes_actual = 24;
@@ -208,6 +210,32 @@ if( sizeof( $inversiones ) ){
                     <button class="btn btn-danger my-2" id="confirma_agregar">Programar retiro ahora</button>
                 </div>
             </form>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal" tabindex="-1" id="carga_hash">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-mustard">
+				<div class="modal-title">
+                    <h5 class="text-white m-0"><i class="fa fa-qrcode"></i> Actualizar TxHash de inversión</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+            <div id="loader" class="modal-body text-center">
+                <img src="<?php echo base_url(); ?>assets/img/loader.gif" style="width:150px; height:150px; opacity:0.4" class="m-5">
+            </div>            
+            <div class="modal-body text-center" id="principal">
+                <p class="text-center">
+                <h3 class="text-center">Pega aquí tu TxHash:</h3>
+                    <input type="text" class="form-control text-center border-3 border-teal" name="_txhash">
+                    <pre id="error" class="mt-2 alert alert-danger text-center" style="display:none"></pre>
+                </p>
+
+                <p class="text-end mt-4 mb-0"><button class="btn btn-warning my-2" id="confirma_hash"><i class="fa fa-check"></i> Registrar inversión</button></p>
+            </div>
 		</div>
 	</div>
 </div>

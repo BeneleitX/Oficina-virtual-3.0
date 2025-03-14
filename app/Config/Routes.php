@@ -221,6 +221,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "capital24",                          "Capital::dashboard" );
     $routes->get( "capital",                            "Capital::admin" );
+    $routes->post( "quick_data",                        "Capital::quick_data" ); 
+    
 });
 
 $routes->set404Override('App\Controllers\Errors::error_404'); 

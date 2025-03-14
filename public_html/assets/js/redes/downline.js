@@ -4,7 +4,7 @@ function userdata( s ){
 
     formData.append( 'socio', s );
     formData.append( 'modelo', modelo );
-    formData.append( [csrf_token] , csrf_hash ),
+    formData.append( [csrf_token] , csrf_hash );
     
     $( 'g.vaciado' ).empty();
 
