@@ -870,7 +870,7 @@ class Pedidos extends BaseController
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
             $h = explode( "_", trim( $hash ) );
             $fecha = $h[1];
-            $hash  = "admin";
+            $hash  = "saldo";
             $saldo = $pedido[ "data" ][ "total" ];
         }
 
