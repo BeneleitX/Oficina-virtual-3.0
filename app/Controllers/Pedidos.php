@@ -871,9 +871,12 @@ class Pedidos extends BaseController
 
         if( session( "admin" ) && substr( $hash, 0, 8 ) == 'beneleit' ){
             $h = explode( "_", trim( $hash ) );
-            $fecha = $h[1];
-            $hash  = "saldo"; 
-            $saldo = $pedido[ "data" ][ "total" ];
+
+            if( strlen( $h[1] ) == 10 && strtotime( $h[1] ) ){
+                $fecha = $h[1];
+                $hash  = "saldo"; 
+                $saldo = $pedido[ "data" ][ "total" ];
+            }
         }
 
         // marcado de inversiones por saldo a favor y/o acumulación de comisiones

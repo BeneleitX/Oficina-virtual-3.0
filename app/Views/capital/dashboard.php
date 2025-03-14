@@ -80,7 +80,6 @@ if( sizeof( $inversiones ) ){
 
         $bt = balance_inversion( $i );
         
-
         echo "\n
                     <div class=\"card mb-4\">
                         <div class=\"card-header\">
@@ -182,6 +181,7 @@ if( sizeof( $inversiones ) ){
 }else{
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
+
 
 ?>
     
