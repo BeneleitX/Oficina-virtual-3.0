@@ -8,13 +8,12 @@
 $inversiones = $usuario->get_inversiones();
 
 if( sizeof( $inversiones ) ){
-
     
     foreach( $inversiones as $i ){
 
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-        $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
+        $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
         $date1 = new DateTime( $f_i );
         $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
