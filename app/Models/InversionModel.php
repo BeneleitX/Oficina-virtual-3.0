@@ -13,6 +13,7 @@ class InversionModel extends Model
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
+        "id",
         "estatus_codigo",
         "pedido_id",
         "usuario_id",
