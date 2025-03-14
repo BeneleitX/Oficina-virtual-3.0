@@ -925,7 +925,7 @@ class Pedidos extends BaseController
 
                     $respuesta[ "data" ]    = json_encode( $tx );
 
-                    // validamos que sea una transacción confirmada
+                    // validamos que sea una transacción confirmada  
 
                     if( ( session( "admin" ) || $tx[ "cost" ][ "date_created" ] > "2025-03-10" ) && $tx[ "contractRet" ] == "SUCCESS" && $tx[ "confirmed" ] == true ){
                         
