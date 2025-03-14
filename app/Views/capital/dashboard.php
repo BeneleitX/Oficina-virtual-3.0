@@ -110,7 +110,7 @@ if( sizeof( $inversiones ) ){
                                             <table class=\"table table-sm m-0\">
                                                 <tr>
                                                     <td>Inicio de inversión</td>
-                                                    <td class=\"text-end\">".fecha( $i[ "fechas" ][ "inversion" ] )."</td>
+                                                    <td class=\"text-end\">".fecha( $f_i )."</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Cierre de inversión</td>
