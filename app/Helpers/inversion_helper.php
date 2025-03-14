@@ -74,7 +74,7 @@ function genera_meses( $pedido, $producto = null ){
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
         
         $rendimiento_dia = floor( $cantidad * $producto->data->porcentaje / $dias_en_mes ) / 100;
-        $rendimiento_mes = $dias_parcial * $rendimiento_dia;           
+        $rendimiento_mes = floor( $dias_parcial * $rendimiento_dia * 100 ) / 100;
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
