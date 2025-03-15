@@ -768,6 +768,8 @@ $(document).ready(function()
                 pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
                 entrega = pedido.data.domicilio;
             }
+
+            console.log(metodoentrega_activo, pedido.data.costoxbulto);
         }
         else{
             metodoentrega_activo = null;
