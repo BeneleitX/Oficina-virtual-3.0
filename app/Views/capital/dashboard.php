@@ -37,7 +37,7 @@ if( sizeof( $inversiones ) ){
             $hash = "<span class=\"text-teal\">{$i[ "extras" ][ "TxHash" ]}</span>";
         }
         else{
-            $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
+            $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
         }
 
         $mes_actual = 24;

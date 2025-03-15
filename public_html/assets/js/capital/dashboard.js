@@ -44,6 +44,7 @@ var options = {
 
 
 function carga_hash( inversion ){
+    return;
     var modal    = $( '#carga_hash' );
 
     modal.attr( 'inversion', inversion );
