@@ -46,6 +46,7 @@ if( sizeof( $inversiones ) ){
         $compuesto   = [];
         $rendimiento = [];
         $r = 0;
+        $h = 0;
 
         for( $a = 0; $a < 25; $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
@@ -53,19 +54,20 @@ if( sizeof( $inversiones ) ){
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
                 $r = $m[ "rendimiento_mes" ];
+                $h += $m[ "rendimiento_mes" ];
                 $compuesto[] = $m[ "compuesto" ];
             }
             elseif( $m[ "Ym" ] == date( "Ym" ) ){
                 $mes_actual = $a;
                 $semilla[] = $m[ "semilla" ];
                 $compuesto[] = $m[ "compuesto" ];
-
+                $h += $m[ "rendimiento_mes" ];
                 $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
 
                 if( $dias < 0 ){
                     $dias = 0;
                 }                
-                $r = $m[ "rendimiento_dia" ] * $dias ;
+                $r = $m[ "rendimiento_dia" ] * $dias;
             }
             else{
                 $semilla[] = 0;
@@ -79,147 +81,211 @@ if( sizeof( $inversiones ) ){
         }
 
         $bt = balance_inversion( $i );
+
+        $retiros_pendientes = "";
+        $retiros = model( "RetiroModel" )->where( "estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]}" )->findAll();
+
+        if( sizeof( $retiros ) ){
+            $retiros_pendientes = "<table class=\"table table-sm m-0\">";
+
+            foreach( $retiros as $retiro ){
+                $retiros_pendientes .= "\n<tr class=\"\">
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\">Solicitud de retiro <span class=\"badge bg-red\">".strtoupper( substr( md5( $retiro[ "id" ] ), 10, 4 ) )."</span></td>
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"mb-0 mt-2\"><button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar solicitud</button></td>
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\">".estatus( $retiro[ "estatus_codigo" ] )."</td>
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+            }
+
+            $retiros_pendientes .= "</table>";
+        }
         
         echo "\n
-                    <div class=\"card mb-4\">
-                        <div class=\"card-header\">
-                            <div class=\"row\">
-                                <div class=\"col-2 col-lg-1\">
-                                    <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
-                                </div>
-                                <div class=\"col-10 col-lg-2 pt-2\">
-                                    <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
-                                    ".estatus( $i[ "estatus_codigo" ] )."
-                                </div>
-
-                                <div class=\"col-lg-4 text-center\">
-                                    <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</span>
-                                </div>
-
-                                <div class=\"col-lg-5\">
-                                    <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual+1)." de 24</p>
-                                    <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
-                                        <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
-                                    </div>                                  
-                                </div>
-
-                            </div>
-
+            <div class=\"card mb-4\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$h}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
+                <div class=\"card-header\">
+                    <div class=\"row\">
+                        <div class=\"col-2 col-lg-1\">
+                            <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
+                        </div>
+                        <div class=\"col-10 col-lg-2 pt-2\">
+                            <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
+                            ".estatus( $i[ "estatus_codigo" ] )."
                         </div>
 
-                        <div class=\"card-body text-red pt-3 pb-0\">
+                        <div class=\"col-lg-4 text-center\">
+                            <span style=\"display:block; width:100%\" class=\"mt-2 fs-3 badge bg-gray-300 text-marine\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</span>
+                        </div>
+
+                        <div class=\"col-lg-5\">
+                            <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual )." de 24</p>
+                            <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
+                                <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
+                            </div>                                  
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class=\"card-body pt-3 pb-0\">
+                    <div class=\"row\">
+                        <div class=\"col-lg-7\">
+                            <h5 class=\"text-center text-gray-400 mb-3 mb-lg-3\">{$hash}</h5>
                             <div class=\"row\">
-                                <div class=\"col-lg-7\">
-                                <h5 class=\"text-center text-gray-400 mb-3 mb-lg-3\">{$hash}</h5>
-                                    <div class=\"row\">
-                                        <div class=\"col-lg-6\">
-                                            <table class=\"table table-sm m-0\">
-                                                <tr>
-                                                    <td>Inicio de inversión</td>
-                                                    <td class=\"text-end\">".fecha( $f_i )."</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cierre de inversión</td>
-                                                    <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Rendimiento mensual</td>
-                                                    <td class=\"text-end\">{$i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] }%</td>
-                                                </tr>
-                                            </table>
-                                            
-                                        </div>
-                                        <div class=\"col-lg-6\">
-                                            <table class=\"table table-sm m-0\">
-                                        
-                                                <tr>
-                                                    <td>Capital semilla</td>
-                                                    <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Rendimiento</td>
-                                                    <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Retiros</td>
-                                                    <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
-                                                </tr>
-                                                                                
-                                            </table>  
-                                            
-                                        </div>
-                                    </div>
-                                    <div class=\"row mb-3 my-lg-0 \">
-                                        <div class=\"col-lg-6\"><button disabled class=\"btn btn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</button></div>
-                                        <div class=\"col-lg-6\"><button disabled class=\"btn btn-lg btn-outline-danger w-100 mt-4 \" onclick=\"$( '#stock_modal' ).modal( 'show' )\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>                                         
-                                    </div>
+                                <div class=\"col-lg-6\">
+                                    <table class=\"table table-sm m-0\">
+                                        <tr>
+                                            <td>Inicio de inversión</td>
+                                            <td class=\"text-end\">".fecha( $f_i )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cierre de inversión</td>
+                                            <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rendimiento mensual</td>
+                                            <td class=\"text-end\">{$i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] }%</td>
+                                        </tr>
+                                    </table>
                                     
                                 </div>
-
-                                <div class=\"col-lg-5\">
-                                    <img src=\"".base_url()."assets/img/chart.png\" class=\"d-none img-fluid p-3 border border-teal rounded\" style=\"opacity:0.2\">
-
-<div id=\"chart_{$i[ "id" ]}\"></div>                                    
+                                <div class=\"col-lg-6\">
+                                    <table class=\"table table-sm m-0\">
+                                
+                                        <tr>
+                                            <td>Capital semilla</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rendimiento</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Retiros</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
+                                        </tr>
+                                                                        
+                                    </table>  
+                                    
                                 </div>
-                            </div>   
+                            </div>
+                            {$retiros_pendientes}
+
+                            <div class=\"row mb-3 mt-lg-0 \">
+                                <div class=\"col-lg-6\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" class=\"btn btn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</a></div>
+                                ".( $retiros_pendientes ? "" : "
+                                <div class=\"col-lg-6\"><button class=\"btn btn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>" ) ."             
+                            </div>
                             
-                               
+                            
                         </div>
-                    </div>
+
+                        <div class=\"col-lg-5\"><div id=\"chart_{$i[ "id" ]}\"></div></div>
+                    </div>   
                     
-        <script> 
-            chart.push( { 
-                \"id\": {$i[ "id" ]}, 
-                \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
-                \"valores\" : [
-                    {\"name\":\"Capital semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
-                ]
-            });
-        </script>
+                        
+                </div>
+            </div>
+            
+            <script> 
+                chart.push( { 
+                    \"id\": {$i[ "id" ]}, 
+                    \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
+                    \"valores\" : [
+                        {\"name\":\"Capital semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
+                    ]
+                });
+            </script>
                 ";
     }
 }else{
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
 
-
-?>
-    
+?>  
 
 <div class="modal" tabindex="-1" id="stock_modal">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-red">
 				<div class="modal-title me-3">
-                    <h5 class="text-white">Programar retiro</h5>
+                    <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro</h5>
 				</div>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 
-            <form action="<?php echo base_url( "addstock" ); ?>" method="post">
+            <form action="<?php echo base_url( "crea_retiro" ); ?>" method="post">
                 <?php echo csrf_field(); ?>
-                <input type="hidden" id="stock_producto" name="producto" value="">
+                <input type="hidden" name="inversion_id" value="">
                 <div class="modal-body">
-                    <div class="row">
-                    <div class="col-4">
-                            <img id="stock_avatar" class="img-fluid p-2" src="">
-                        </div>
-                        <div class="col-8">
-                            <p>DATA</p>
-                            <input class="form-control w-50" name="cantidad">
-                        </div>                        
+                    
+                    
 
+                    <div class="row mb-4">
+                        <div class="col-lg-4">
+                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
+                            <label class="btn btn-outline-info text-start" for="type_1">
+                                <p class="fs-4">Retiro mensual</p>                                   
+                                <p>Retirar el rendimiento del mes actual</p>
+                                <input readonly value="" id="cantidad_1" name="mes" class="cantidades form-control text-center mb-1"></i>
+                            </label>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
+                            <label class="btn btn-outline-info text-start" for="type_2">
+                                <p class="fs-4">Retiro total</p>                                   
+                                <p>Retirar el total de rendimiento acumulado</p>
+                                <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
+                                </label>
+                        </div>
+
+                        <div class="col-lg-4">
+                            </label>
+                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
+                            <label class="btn btn-outline-info text-start" for="type_3">
+                                <p class="fs-4">Retiro parcial</p>                                   
+                                <p>Retirar una cantidad específicada pro el socio</p>
+                                <input type="number" step="0.01" class="cantidades form-control text-center mb-1" id="cantidad_3" name="custom"></i>
+                            </label>
+                        </div>
                     </div>
-                    <div class="nombre"></div>
+
+                    <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 32 ) ) { ?>
+                        <div class="alert alert-warning mb-0">
+                            <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
+                            
+
+                            <select name="mes_apply" class="form-select w-25">
+                                <?php
+                                    $date = new DateTime( date( "Y-m-d" ) );
+                                    $date->modify( "first day of this month" );
+                                                                    
+                                    do{
+                                        echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
+                                        $date->modify( "- 1 month" );
+                                    }
+                                    while( intval( $date->format( "Ym" ) ) >= ( session( "admin" ) ? 202408 : date( "Ym" ) ) );
+                                ?>
+                            </select>
+                        </div>
+
+                    <?php } else { ?>
+                        <div class="alert alert-danger mb-0">
+                        No puedes programar retiros en este momento. No existe una dirección (wallet) para recepción de transferencias. Registrala en tu <a href="<?php echo base_url(); ?>perfil">perfil de usuario</a>.
+                        </div>
+                    <?php }?>
+
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger my-2" id="confirma_agregar">Programar retiro ahora</button>
-                </div>
+
+                <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 32 ) ) { ?>
+                    <div class="modal-footer">
+                        <button type="submit" name="submit_socio" value="1" class="btn btn-danger my-2" disabled id="confirma_agregar">Programar retiro</button>
+                    </div>
+                <?php } ?>
             </form>
 		</div>
 	</div>
 </div>
-
 
 <div class="modal" tabindex="-1" id="carga_hash">
 	<div class="modal-dialog modal-lg">
@@ -247,3 +313,25 @@ if( sizeof( $inversiones ) ){
 </div>
 
 
+<div class="modal" tabindex="-1" id="cancela_retiro">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-red">
+				<div class="modal-title">
+                    <h5 class="text-white m-0"><i class="fa fa-trash"></i> Cancelar solicitud de retiro</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+            <div class="modal-body text-center">
+                <p class="text-center">¿Estas seguro de cancelar esta solicitud?</p>
+
+                <form method="post" action="<?php echo base_url(); ?>cancela_retiro">
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="solicitud_id" value="">
+
+                <p class="text-end mt-4 mb-0"><button class="btn btn-danger" type="submit"><i class="fa fa-check"></i> Continuar</button></p>
+                </form>
+            </div>
+		</div>
+	</div>
+</div>

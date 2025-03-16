@@ -124,16 +124,16 @@
 
     foreach( $inversiones as $i ){
     
-        // $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+        $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
     //    $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
     //    $i[ "fechas" ][ "inversion" ] = $f_i;
     //    $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $f_i );
-    //    $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
+        $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
 
-        if( !$i[ "extras" ][ "TxHash" ] || $i[ "extras" ][ "TxHash" ] == 'null' ){
-            $i[ "extras" ][ "TxHash" ] = time()."_".md5( $i[ "pedido_id" ] );
+    /*     if( !$i[ "extras" ][ "TxHash" ] || $i[ "extras" ][ "TxHash" ] == 'null' ){
+            $i[ "extras" ][ "TxHash" ] = time()."_".md5( $i[ "pedido_id" ] );*/
             model( "InversionModel" )->save( $i );
-        }
-    }
+        } 
+   // }
 }  

@@ -186,8 +186,6 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "envia",                             "Paqueteria::entrega" );
     $routes->post( "marca_enviado",                     "Paqueteria::marca_enviado" );
 
-    $routes->get( "capital",                            "Capital::dashboard" );
-
     $routes->get( "roles",                              "Roles::listado" ); 
 
     $routes->get( "esquemas/(:any)",                    "Esquemas::listado/$1" );
@@ -219,9 +217,13 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pines/(:any)",                       "Rangos::pines/$1" ); 
     $routes->post( "excel_pines_pendientes",            "Rangos::excel_pines_pendientes" ); 
 
-    $routes->get( "capital24",                          "Capital::dashboard" );
-    $routes->get( "capital",                            "Capital::admin" );
+    $routes->get( "capital",                            "Capital::dashboard" );
+    $routes->get( "capital24",                          "Capital::admin" );
+    $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
+    $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
+    $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
+    $routes->post( "cancela_retiro",                    "Capital::cancela_retiro" ); 
     
 });
 

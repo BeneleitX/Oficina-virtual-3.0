@@ -43,9 +43,7 @@ $(document).ready(function(){
     if( g_todas > 0 ){
         $( '#totales' ).text( g_todas );
         $( '#totales' ).removeClass( 'bg-gray-500' ).addClass( g_todas == g_pagadas ? 'bg-teal' : 'bg-red' );
-    }
-    
-    if( g_pagadas ){
+ 
         $( '#pendientes' ).text( g_pagadas );
         $( '#pendientes' ).removeClass( 'bg-gray-500' ).addClass( g_todas == g_pagadas ? 'bg-teal' : 'bg-red' );
     }    

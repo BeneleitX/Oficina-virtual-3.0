@@ -9,18 +9,24 @@ class Capital extends BaseController
     }
     
 
-    public function admin(){
+    public function admin( $mes = null ){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "inicio" ); 
         }
         
+        if( !$mes ){
+            $mes = date( "Ym" );
+        }
+
         /**********************************/
                 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Capital24";
+        $this->data[ "mes" ]    = $mes;
 
+        $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "estatus_codigo = '255-PENDIENTE' AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
 
         echo template( "capital/admin", $this->data );
     }     
@@ -164,5 +170,117 @@ class Capital extends BaseController
         } 
 
         echo json_encode( $respuesta );
+    }
+
+
+    public function crea_retiro(){
+        $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
+        $p    = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+        $tipo = intval( $this->request->getPost( "opciones_retiro" ) );
+        $bt   = balance_inversion( $i );
+
+        $retiro = [
+            $bt[ "rendimiento_mes" ], 
+            $bt[ "full" ], 
+            floatval( $this->request->getPost( "custom" ) )
+        ];
+
+        if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
+            // BITACORA Solicita retiro
+
+            bitacora( 86, $this->data[ "usuario" ]->id, [ 
+                "inversion" => $i[ "id" ],
+                "tipo"      => $tipo,
+                "cantidad"  => $retiro[ $tipo -1 ],
+                "opciones"  => $retiro,
+                "requested" => [
+                    $this->request->getPost( "mes" ),
+                    $this->request->getPost( "total" ),
+                    $this->request->getPost( "custom" )
+                ]
+            ] );
+
+            // generar retiro
+
+            $retiro_add = [
+                "id" => NULL,
+                "estatus_codigo" => "255-PENDIENTE",
+                "usuario_id"     => $i[ "usuario_id" ], 
+                "inversion_id"   => $i[ "id" ],
+                "cantidad"       => $retiro[ $tipo -1 ],
+                "tipo"           => $tipo,
+                "fechas"         => [
+                    "creacion"       => date( "Y-m-d" ),
+                    "mes"            => $this->request->getPost( "mes_apply" ),
+                    "deposito"       => null
+                ]
+            ];
+
+            model( "RetiroModel" )->save( $retiro_add );
+
+            // redirect para refresh
+
+            return redirect()->to( "capital" )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "check", 
+                "texto" => "Se generó solicitud de retiro" ] );  
+        }
+        else{
+            return redirect()->to( "capital" );
+        }
+    }
+
+
+    public function cancela_retiro(){
+        
+        $retiro = model( "RetiroModel" )->find( $this->request->getPost( "solicitud_id" ) );
+
+        if ($retiro && $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ) {
+
+            $retiro["estatus_codigo"] = "150-CANCELADO";
+            $retiro[ "fechas" ][ "cancelado" ] = date( "Y-m-d H:i:s" );
+
+            model("RetiroModel")->save($retiro);
+
+            // BITACORA Cancela retiro
+            bitacora( 87, $this->data[ "usuario"]->id, [
+                "retiro_id" => $retiro[ "id" ]
+            ]);
+
+            return redirect()->to( "capital" )->with( "msg", [
+                "clase" => "success",
+                "icono" => "check",
+                "texto" => "Se canceló la solicitud de retiro"
+            ]);
+        } else {
+            return redirect()->to( "capital" );
+        }
+    }
+
+
+    public function estadodecuenta( $hash ){
+        $hash = base64_decode( urldecode( $hash ) );
+
+        $i = model( "InversionModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( extras, '$.TxHash' ) ) = '{$hash}' " )->findAll();
+
+        if( !sizeof( $i ) ){
+            return redirect()->to( "capital" );
+        }
+
+        $this->data[ "i" ] = $i[ 0 ];
+
+        if( $this->data[ "usuario" ]->id != intval(  $this->data[ "i" ][ "usuario_id" ] ) && !(
+            $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
+            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return template( "pedidos/no_permiso", $this->data );
+        }
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Detalle de inversión Capital24";
+
+        echo template( "capital/detalle", $this->data );
     }
 }

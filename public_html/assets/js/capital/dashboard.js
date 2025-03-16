@@ -62,7 +62,32 @@ function carga_hash( inversion ){
 }
 
 
+function ask_retiro( inversion ){
+    var i   = $( '[inversion=' + inversion + ']' ),
+        rendimiento = i.attr( 'rendimiento' ),
+        mes         = i.attr( 'mes' );
+
+    $( '#cantidad_3' ).val( '' );
+    $( '[name=inversion_id]' ).val( inversion );
+    $( '#cantidad_1' ).val( mes );
+    $( '#cantidad_2' ).val( rendimiento );
+    $( '[name=opciones_retiro]' ).prop( 'checked', false );
+    $( '#confirma_agregar' ).prop( 'disabled', true );
+    $( '#stock_modal' ).modal( 'show' );
+}
+
+
+function cancela_retiro( solicitud ){
+    $( '[name=solicitud_id]' ).val( solicitud );
+    $( '#cancela_retiro' ).modal( 'show' );
+}
+
 $(document).ready(function(){
+    $( '.cantidades' ).on( 'click', function(){
+        $( this ).closest( 'label' ).click();
+        $( this ).focus();
+    });
+
     $.each( chart, function( a, b){
 
         options.series = b.valores;
@@ -109,5 +134,29 @@ $(document).ready(function(){
             }
         }); 
     });    
+
+    $( '[name=opciones_retiro]' ).on( 'click', function(){
+        if( $( this ).attr( 'id' ) == 'type_3' ){
+            $( '#cantidad_3' ).keyup();
+        }
+        else{
+            $( '#confirma_agregar' ).prop( 'disabled', false );
+        }
+
+
+    } );
+
+    $( '#cantidad_3' ).on( 'keyup', function(){
+        var total = $( this).val();
+
+        if( parseFloat( $( '#cantidad_3' ).val() ) > 0 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
+            $( '#confirma_agregar' ).prop( 'disabled', false );
+        }
+        else{
+            $( '#confirma_agregar' ).prop( 'disabled', true );
+        }
+        
+    });
+
 });
 

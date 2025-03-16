@@ -569,8 +569,6 @@ class Pedidos extends BaseController
             $metodopago = METODOSPAGO[ $metodopago ];
             $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
-            
-
             $p[ "estatus_codigo" ]    = "420-PAGADO";
             $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
 
