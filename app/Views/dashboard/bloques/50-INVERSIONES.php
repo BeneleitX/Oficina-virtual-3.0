@@ -119,7 +119,7 @@
 
 <?php
 
-  if( $usuario->id == 55 ){
+/*   if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
     foreach( $inversiones as $i ){
@@ -136,4 +136,4 @@
             model( "InversionModel" )->save( $i );
       //   } 
     } 
-  }
+  } */
