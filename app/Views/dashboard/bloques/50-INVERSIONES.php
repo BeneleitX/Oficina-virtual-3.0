@@ -8,7 +8,7 @@
 
             if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-                $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
+                $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
     
                 model( "InversionModel" )->save( $i );
             }
@@ -118,7 +118,7 @@
 
 
 <?php
-/*
+
   if( $usuario->id == 55 ){
     $inversiones = model( "InversionModel" )->findAll();
 
@@ -129,10 +129,11 @@
     //    $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
     //    $i[ "fechas" ][ "inversion" ] = $f_i;
     //    $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $f_i );
-        $i[ "extras" ][ "meses" ] = genera_meses( $pedido );
+        $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
 
-         if( !$i[ "extras" ][ "TxHash" ] || $i[ "extras" ][ "TxHash" ] == 'null' ){
-            $i[ "extras" ][ "TxHash" ] = time()."_".md5( $i[ "pedido_id" ] );
+      //    if( !$i[ "extras" ][ "TxHash" ] || $i[ "extras" ][ "TxHash" ] == 'null' ){
+      //       $i[ "extras" ][ "TxHash" ] = time()."_".md5( $i[ "pedido_id" ] );
             model( "InversionModel" )->save( $i );
-        } 
-   // } */
+      //   } 
+    } 
+  }

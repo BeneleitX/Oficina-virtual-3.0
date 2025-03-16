@@ -9,16 +9,13 @@
 
 <?php
 
-$pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-$i[ "extras" ][ "meses" ] = genera_meses( $pedido );
-
 $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
 if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
+    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
 
     model( "InversionModel" )->save( $i );
 }
@@ -46,6 +43,7 @@ $meses       = [];
 $semilla     = [];
 $compuesto   = [];
 $rendimiento = [];
+$retiros     = [];
 
 $tablas = [];
 $r      = 0;
@@ -62,11 +60,13 @@ for( $a = 0; $a < 25; $a++ ){
         $dias = $m[ "dias_parcial" ];
         $r  = $m[ "rendimiento_mes" ];
         $h += $m[ "rendimiento_mes" ];
+        $retiros[] = $m[ "retiros" ];
     }
     elseif( $m[ "Ym" ] == date( "Ym" ) ){
         $mes_actual  = $a;
         $semilla[]   = $m[ "semilla" ];
         $compuesto[] = $m[ "compuesto" ];
+        $retiros[] = $m[ "retiros" ];
         
         $h   += $m[ "rendimiento_mes" ];
         $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
@@ -82,6 +82,7 @@ for( $a = 0; $a < 25; $a++ ){
         $compuesto[] = 0;
         $r = 0;
         $dias = 0;
+        $retiros[] = 0;
     }
 
     $rendimiento[] = $r;
@@ -97,10 +98,10 @@ for( $a = 0; $a < 25; $a++ ){
             <td class=\"text-end\">$".number_format( $compuesto[ $a ], 2 )."</td>
             <td class=\"text-center\">{$m[ "Porcentaje" ]}%</td>
             <td class=\"text-end\">$".number_format( $m[ "rendimiento_dia" ], 2 )."</td>
-            <td class=\"text-end\">{$dias}</td>
+            <td class=\"text-center\">{$dias}</td>
             <td class=\"text-end\">$".number_format( $r, 2 )."</td>
-            <td class=\"text-end\">$".number_format( 0, 2 )."</td>
-            <td class=\"text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r, 2 )."</td>
+            <td class=\"text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</span></td>
+            <td class=\"text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r - $retiros[ $a ], 2 )."</td>
             </tr>";
     }
 
@@ -198,7 +199,7 @@ echo "\n
             <th class=\"text-end\">Int. Compuesto</th>
             <th class=\"text-center\">Porcentaje</th>
             <th class=\"text-end\">Rend. x día</th>
-            <th class=\"text-end\">Días</th>
+            <th class=\"text-center\">Días</th>
             <th class=\"text-end\">Rend del mes</th>
             <th class=\"text-end\">Retiros</th>
             <th class=\"text-end\">Saldo final</th>

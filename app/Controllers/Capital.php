@@ -218,6 +218,12 @@ class Capital extends BaseController
 
             model( "RetiroModel" )->save( $retiro_add );
 
+            // actualizar meses de inversión
+
+            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+            model( "InversionModel" )->save( $i );
+
             // redirect para refresh
 
             return redirect()->to( "capital" )->with( "msg", [ 
@@ -242,6 +248,13 @@ class Capital extends BaseController
 
             model("RetiroModel")->save($retiro);
 
+            // actualizar meses de inversión
+
+            $i = model( "InversionModel" )->find( $retiro[ "inversion_id" ] );
+            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+            model( "InversionModel" )->save( $i );
+            
             // BITACORA Cancela retiro
             bitacora( 87, $this->data[ "usuario"]->id, [
                 "retiro_id" => $retiro[ "id" ]

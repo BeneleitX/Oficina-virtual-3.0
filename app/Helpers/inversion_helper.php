@@ -46,13 +46,14 @@ function get_fecha_dias( $inicia, $termina = null ){
 }
 
 
-function genera_meses( $pedido, $producto = null ){
+function genera_meses( $pedido, $i, $producto = null ){
 
     if( !$producto ){
         $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
     }
 
     $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+    $rts = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}" )->findAll();
 
     $date = new \DateTime( intval( date( "d", strtotime( $f_i ) ) ) == 1 ? $pedido[ "fechas" ][ "pagado" ] : $f_i );
 
@@ -62,27 +63,40 @@ function genera_meses( $pedido, $producto = null ){
             $date->modify( "+ 1 month" );
         }
 
+        $retiros_mes = 0;
+        foreach( $rts as $rt ){
+            if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){
+                $retiros_mes += $rt[ "cantidad" ];
+            }
+        }
+
         $inicia_mes      = $date->format( "d" );
         $inicia_mes_f    = $date->format( "Y-m-d" );
 
         $date->modify( "last day of this month" );
         
-        $cantidad = $pedido[ "data" ][ "total" ] + ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 );
+        $cantidad = $pedido[ "data" ][ "total" ] + ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
 
         $dias_en_mes     = intval( $date->format( "d" ) );
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
+
         
-        $rendimiento_dia = ( $cantidad * $producto->data->porcentaje / 100 ) / $dias_en_mes;
-        $rendimiento_mes = floor( $dias_parcial * $rendimiento_dia * 100 ) / 100;
+        $rendimiento_mes = floor( $cantidad * $producto->data->porcentaje ) / 100;
+        $rendimiento_dia = floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100; 
+
+        if( $dias_parcial < $dias_en_mes ){
+            $rendimiento_mes = floor( $dias_parcial * $rendimiento_dia * 100 ) / 100;
+        }
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
             "Porcentaje"      => $producto->data->porcentaje,
             "semilla"         => $pedido[ "data" ][ "total" ],
-            "compuesto"       => floor( 100 * ( ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) ) ) / 100,
+            "compuesto"       => ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 ),
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
+            "retiros"         => $retiros_mes,
             "rendimiento_dia" => $rendimiento_dia,
             "rendimiento_mes" => $rendimiento_mes,
             "inicia"          => $inicia_mes_f,

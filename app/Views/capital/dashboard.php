@@ -12,12 +12,13 @@ if( sizeof( $inversiones ) ){
     foreach( $inversiones as $i ){
 
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+        
 
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
         if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $p );
+            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
 
             model( "InversionModel" )->save( $i );
         }
@@ -83,7 +84,7 @@ if( sizeof( $inversiones ) ){
         $bt = balance_inversion( $i );
 
         $retiros_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( "estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]}" )->findAll();
+        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]}" )->findAll();
 
         if( sizeof( $retiros ) ){
             $retiros_pendientes = "<table class=\"table table-sm m-0\">";

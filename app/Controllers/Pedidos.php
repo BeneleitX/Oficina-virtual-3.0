@@ -1084,7 +1084,7 @@ class Pedidos extends BaseController
                     ]
                 ];
 
-                $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $producto );
+                $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $inversion[ "id" ], $producto );
 
                 model( "InversionModel" )->save( $inversion );   
             }
