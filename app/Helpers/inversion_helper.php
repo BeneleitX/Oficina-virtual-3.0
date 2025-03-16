@@ -203,6 +203,7 @@ function balance_inversion( $i ){
                 }
 
                 $respuesta[ "rendimiento" ] += $j[ "rendimiento_mes" ];
+                $respuesta[ "retiros" ] += $j[ "retiros" ];
                 $respuesta[ "full" ] += $j[ "rendimiento_mes" ];
             }
         }

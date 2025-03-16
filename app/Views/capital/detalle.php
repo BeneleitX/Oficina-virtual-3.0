@@ -100,6 +100,7 @@ for( $a = 0; $a < 25; $a++ ){
             <td class=\"text-end\">$".number_format( $m[ "rendimiento_dia" ], 2 )."</td>
             <td class=\"text-center\">{$dias}</td>
             <td class=\"text-end\">$".number_format( $r, 2 )."</td>
+            <td class=\"text-end\">$".number_format( $r + $compuesto[ $a ], 2 )."</td>
             <td class=\"text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</span></td>
             <td class=\"text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r - $retiros[ $a ], 2 )."</td>
             </tr>";
@@ -201,6 +202,7 @@ echo "\n
             <th class=\"text-end\">Rend. x día</th>
             <th class=\"text-center\">Días</th>
             <th class=\"text-end\">Rend del mes</th>
+            <th class=\"text-end\">Rend acumulado</th>
             <th class=\"text-end\">Retiros</th>
             <th class=\"text-end\">Saldo final</th>
         </tr>
