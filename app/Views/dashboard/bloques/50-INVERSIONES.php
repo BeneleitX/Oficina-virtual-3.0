@@ -1,6 +1,6 @@
 <div class="pt-3 px-3 mb-1">
 <?php
-    echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) ==  ? 
+    echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
         "<a href=\"".base_url()."capital\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de Capital24\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
         "<a href=\"".base_url()."perfil\" data-bs-toggle=\"tooltip\" title=\"Click para agregar wallet digital\"  class=\"btn btn-outline-danger p-0 w-100\" style=\"overflow:hidden\">"; 
  ?>
