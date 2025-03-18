@@ -1,13 +1,13 @@
 <div class="pt-3 px-3 mb-1">
 <?php
-    echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34? 
+    echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) ==  ? 
         "<a href=\"".base_url()."capital\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de Capital24\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
         "<a href=\"".base_url()."perfil\" data-bs-toggle=\"tooltip\" title=\"Click para agregar wallet digital\"  class=\"btn btn-outline-danger p-0 w-100\" style=\"overflow:hidden\">"; 
  ?>
     <table class="w-100 m-0">
     <tr>
         <td class="px-4 py-1" nowrap><i class="fa fa-wallet fs-3"></i></td>
-        <td class="xp-0 w-100"><?php echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 32 ? $usuario->data->wallet : "Wallet personal no registrada"; ?></td>
+        <td class="xp-0 w-100"><?php echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? $usuario->data->wallet : "Wallet personal no registrada"; ?></td>
     </tr>
     </table>
 </a>
