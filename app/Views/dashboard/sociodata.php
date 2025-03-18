@@ -268,7 +268,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                     <div class="row">
                         <div class="col-5 text-end pt-1">Patrocinador</div>
                         <div class="col-2"><input class="form-control form-lg" id="patrocinador_id" value="<?php echo $socio->redes->patrocinador; ?>"></div>
-                        <div class="col-5 text-start"><button class="btn btn-outline-danger" onclick="load_padres( true )">Previsualizar</button></div>
+                        <div class="col-5 text-start"></div>
                     </div>
                     
                 </div>
@@ -278,7 +278,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         <?php echo csrf_field() ?>
                         <input type="hidden" name="n_socio" value="<?php echo $socio->id; ?>">
                         <input type="hidden" name="n_patrocinador" value="">
-                        <button type="submit" class="btn btn-danger" disabled id="aplicar_cambio"><i class="fa fa-warning"></i> Aplicar cambio de patrocinador</button>
+                        <button class="btn btn-outline-danger" onclick="load_padres( true )">Previsualizar</button> <button type="submit" class="btn btn-danger" disabled id="aplicar_cambio"><i class="fa fa-warning"></i> Aplicar cambio de patrocinador</button>
                     </form>
                 </div>
         </div>

@@ -1,4 +1,4 @@
-<div class="pt-3 px-3 mb-1">
+<div class="pt-3 px-3 mb-3">
 <?php
     echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
         "<a href=\"".base_url()."capital\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de Capital24\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
@@ -7,7 +7,7 @@
     <table class="w-100 m-0">
     <tr>
         <td class="px-4 py-1" nowrap><i class="fa fa-wallet fs-3"></i></td>
-        <td class="xp-0 w-100"><?php echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? $usuario->data->wallet : "Wallet personal no registrada"; ?></td>
+        <td class="xp-0 w-100"><?php echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? "<span class=\"small\">{$usuario->data->wallet}</span>" : "Wallet personal no registrada"; ?></td>
     </tr>
     </table>
 </a>
@@ -30,17 +30,17 @@
 
             $bt = balance_inversion( $i );
 
-            echo "\n<div class=\"row border border-{$p->data->color} rounded my-2 m-0\">
+            echo "\n<a href=\"".base_url()."capital\" class=\"btn btn-outline-light border border-{$p->data->color} p-0\"><div class=\"row m-0\">
                     <div class=\"col-2 py-2\">
                         <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
                     </div>
-                    <div class=\"col-5 pt-3\">
+                    <div class=\"col-5 pt-3 text-start\">
                         <strong class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</strong>
                         <span class=\"small\">".estatus( $i[ "estatus_codigo" ] )."</span>
                     </div>
                     <div class=\"col-5 pt-3 text-end\">
                         <h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</h5>
-                    </div></div>";
+                    </div></div></a>";
         }
     }else{
         echo "<div class=\"row m-3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
