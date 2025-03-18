@@ -281,9 +281,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 								<input name="wallet" id="wallet" style="font-weight:bold" <?php echo session( "errors.wallet" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.wallet" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.wallet" ) ? old( "wallet" ) : ( $socio->data->wallet ?? ""); ?>">
 								<p class="small text-red"><?php echo session( "errors.wallet" ); ?></p>
 							</td>
-							<?php if( !$socio->es_menor() ){ ?>
 							<td class="pt-1 ps-3" nowrap><h5><a href="javascript:edita_wallet()" data-bs-toggle="tooltip" title="Click para editar tu WALLET DIGITAL"><i class="fa fa-edit"></i></a></h5></td>
-							<?php } ?>
 						</tr>
 					</table>
 
