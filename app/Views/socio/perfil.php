@@ -271,7 +271,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 	<div class="col-md-6">
 	<div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0">Wallet digital</h5></div>
+            <div class="card-header"><h5 class="mb-0">Wallet digital (USDT - TRON)</h5></div>
             <div class="card-body">	
 				<form method="post" action="<?php echo base_url( "guarda_wallet" ); ?>">
 					<?php echo csrf_field() ?>

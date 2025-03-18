@@ -258,30 +258,35 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                     <h5 class="modal-title text-white m-0"><i class="fa fa-warning"></i> Cambiar patrocinador</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-red text-center">
-                    <p><i class="fa fa-warning"></i> ATENCION:</p>
-                    <p>Cambiar este dato afectará las redes del patrocinador anterior y el nuevo</p>
-                    <div class="card mb-3" style="overflow:hidden">
-                    <table class="table m-0" id="datos_patrocinador" original="<?php echo $socio->redes->patrocinador; ?>"><tr>
-                    </tr></table>
-                    </div>
-                    <div class="row">
-                        <div class="col-5 text-end pt-1">Patrocinador</div>
-                        <div class="col-2"><input class="form-control form-lg" id="patrocinador_id" value="<?php echo $socio->redes->patrocinador; ?>"></div>
-                        <div class="col-5 text-start"></div>
-                    </div>
-                    
-                </div>
+                <form action="<?php echo base_url( "cambia_patrocinador" ); ?>" method="post">
+                    <div class="modal-body text-red text-center">
+                        <p><i class="fa fa-warning"></i> ATENCION:</p>
+                        <p>Cambiar este dato afectará las redes del patrocinador anterior y el nuevo</p>
+                        <div class="card mb-3" style="overflow:hidden">
+                        <table class="table m-0" id="datos_patrocinador" original="<?php echo $socio->redes->patrocinador; ?>"><tr>
+                        </tr></table>
+                        </div>
 
-                <div class="modal-footer text-center">
-                    <form action="<?php echo base_url( "cambia_patrocinador" ); ?>" method="post">
-                        <?php echo csrf_field() ?>
-                        <input type="hidden" name="n_socio" value="<?php echo $socio->id; ?>">
-                        <input type="hidden" name="n_patrocinador" value="">
-                        <button class="btn btn-outline-danger" onclick="load_padres( true )">Previsualizar</button> <button type="submit" class="btn btn-danger" disabled id="aplicar_cambio"><i class="fa fa-warning"></i> Aplicar cambio de patrocinador</button>
-                    </form>
-                </div>
-        </div>
+                        <table><tr>
+                            <?php 
+                            foreach( MODELOS as $m ){
+                                echo "\n<td class=\"px-3\"><input class=\"form-control text-center pat\" name=\"patrocinador[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" value=\"".$socio->patrocinador( $m[ "codigo" ] )."\"></td>";
+                            }
+                            ?>
+                        </tr></table>
+                        
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        
+                            <?php echo csrf_field() ?>
+                            <input type="hidden" name="n_socio" value="<?php echo $socio->id; ?>">
+                            <input type="hidden" name="n_patrocinador" value="">
+                            <button class="btn btn-outline-danger" id="previsualizar">Previsualizar</button> <button type="submit" class="btn btn-danger" disabled id="aplicar_cambio"><i class="fa fa-warning"></i> Aplicar cambio de patrocinador</button>
+                        
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

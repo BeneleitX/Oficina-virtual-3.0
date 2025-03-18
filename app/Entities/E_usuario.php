@@ -98,6 +98,7 @@ class E_usuario extends Entity
                     
                     $redes->modelos->{$m[ "codigo" ]} = [
                         "padre" => $redes->patrocinador,
+                        "patrocinador" => $redes->patrocinador,
                         "hijos" => [],
                         "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
                         "profundidad" => [
@@ -155,6 +156,20 @@ class E_usuario extends Entity
         $this->historial = $historial;
     }
 
+    public function patrocinador( $modelo ){
+        // validar que existe
+        // si no existe, tomamos el general y creamso el registro
+
+        if( !isset( $this->redes->modelos->{$modelo}->patrocinador ) ){
+            $redes = $this->redes;
+            $redes->modelos->{$modelo}->patrocinador = $this->redes->patrocinador;
+            $this->redes = $redes; 
+
+            model( "UsuarioModel" )->save( $this );
+        }
+
+        return $this->redes->modelos->{$modelo}->patrocinador;
+    }
 
     public function getPassword(): string 
     {

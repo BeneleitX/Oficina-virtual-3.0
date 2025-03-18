@@ -7,14 +7,21 @@ function modal_cambia_patrocinador( $patrocinador = null){
 
 
 function load_padres( extra = null){
+    var patrocinadores = {};
+
     $( '#datos_patrocinador tr' ).html( loader );
     
+    $( 'input.pat' ).each( function(){
+        patrocinadores[ $( this ).attr( 'modelo' ) ] = $( this ).val();
+    });
+console.log( patrocinadores );
     $.ajax({
         url: base_url + 'load_padres',
         type: 'POST',
         data: {
             [csrf_token] : csrf_hash, 
-            'patrocinador': $( '#patrocinador_id' ).val()
+            'patrocinador': patrocinadores,
+            'n_socio' : $( '[name=n_socio]' ).val()
         },
         success: function( response ){
             $( '#datos_patrocinador tr' ).html( response );
@@ -41,5 +48,13 @@ $(document).ready(function(){
 
         $( 'input' ).prop( 'disabled', false ).addClass( 'border border-red' );
         $( '#edicion' ).show();
+    });
+
+    
+    $( '#previsualizar' ).on( 'click', function(e){
+        e.stopPropagation();
+        e.preventDefault();
+
+        load_padres( true );
     });
 });

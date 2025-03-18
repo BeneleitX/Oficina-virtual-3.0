@@ -168,30 +168,37 @@ class Dashboard extends BaseController
             return redirect()->to( "inicio" ); 
         }
 
-        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) );
-        $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "n_patrocinador" ) );
-
-        if( $socio->redes->patrocinador != $patrocinador->id ){
-            $redes = $socio->redes;
-            $redes->patrocinador = $patrocinador->id;
-            $socio->redes = $redes;
-            
-            model( "UsuarioModel" )->save( $socio );
-
-            // BITACORA Cambio de patrocinador
-            bitacora( 84, $this->data[ "usuario" ]->id, [ 
-                "socio"        => $socio->id,
-                "patrocinador" => $patrocinador->id
-            ] );
+        if( $socio = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) ) ){
+            $patrocinadores = $this->request->getPost( "patrocinador" );
 
             $db = db_connect();
+
             foreach( MODELOS as $m ){
-                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                $patrocinador = $patrocinadores[ $m[ "codigo" ] ];
+
+/*                 if( $socio->patrocinador( $m[ "codigo" ] ) != $patrocinador ){
+                    $redes = $socio->redes;
+                    $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
+                    $socio->redes = $redes;
+                    
+                    model( "UsuarioModel" )->save( $socio );
+
+                    // BITACORA Cambio de patrocinador
+                    bitacora( 84, $this->data[ "usuario" ]->id, [ 
+                        "socio"        => $socio->id,
+                        "patrocinador" => $patrocinador,
+                        "modelo"       => $m[ "codigo" ]
+                    ] );
+
+                    $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                } */
             }
+            $ruta = urlencode( base64_encode( $socio->password_original() ) );
+            return redirect()->to( "sociodata/{$ruta}" );
+    
         }
 
-        $ruta = urlencode( base64_encode( $socio->password_original() ) );
-        return redirect()->to( "sociodata/{$ruta}" );
+        return redirect()->to( "usuarios" );
     }
 
 
