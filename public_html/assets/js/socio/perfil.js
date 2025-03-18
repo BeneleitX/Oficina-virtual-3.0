@@ -12,6 +12,13 @@ function edita_clabe(){
 }
 
 
+function edita_wallet(){
+	$( '#nota_wallet' ).slideDown();
+	$( '#wallet' ).attr( 'disabled', false );
+	$( '#wallet' ).focus();
+}
+
+
 function edita_rfc(){
 	$( '#nota_rfc' ).slideDown();
 	$( '#rfc' ).attr( 'disabled', false );

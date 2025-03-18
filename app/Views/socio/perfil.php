@@ -270,6 +270,35 @@ if( !$socio->data->verificacion->correo ){ ?>
 	</div>
 
 	<div class="col-md-6">
+	<div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">Wallet digital</h5></div>
+            <div class="card-body">	
+				<form method="post" action="<?php echo base_url( "guarda_wallet" ); ?>">
+					<?php echo csrf_field() ?>
+					<table class="mb-3">
+						<tr>
+							<td style="width:100%; padding: 15px 0 0 20px;">
+								<input name="wallet" id="wallet" style="font-weight:bold" <?php echo session( "errors.wallet" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.wallet" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.wallet" ) ? old( "wallet" ) : ( $socio->data->wallet ?? ""); ?>">
+								<p class="small text-red"><?php echo session( "errors.wallet" ); ?></p>
+							</td>
+							<?php if( !$socio->es_menor() ){ ?>
+							<td class="pt-1 ps-3" nowrap><h5><a href="javascript:edita_wallet()" data-bs-toggle="tooltip" title="Click para editar tu WALLET DIGITAL"><i class="fa fa-edit"></i></a></h5></td>
+							<?php } ?>
+						</tr>
+					</table>
+
+					<div id="nota_wallet" style="<?php echo session( "errors.wallet" ) ? "" : "display:none"; ?>" class="mb-3 small">
+						<h5>Actualizar WALLET DIGITAL</h5>
+						<p>Pega en el recuadro la dirección de tu wallet digital a 34 caracteres. Al terminar haz click en el botón.</p>
+						<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar cambios</button>
+					</div>
+
+					<p class="text-mustard m-0"><i class="fa fa-circle-info"></i> La dirección de tu <strong>WALLET DIGITAL</strong> es una cadena de 34 caracteres. Es necesaria para recibir pagos y comisiones de <strong>Capital24</strong>.</p>
+
+				</form>
+			</div>
+		</div>
+
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">CLABE Interbancaria</h5></div>
             <div class="card-body">	
@@ -288,15 +317,16 @@ if( !$socio->data->verificacion->correo ){ ?>
 						</tr>
 					</table>
 
-					<div class="alert alert-info small mb-0"><i class="fa fa-circle-info"></i> La <strong>CLABE</strong> interbancaria se compone de 18 dígitos y es un requisito indispensable para la correcta operación de la oficina virtual para todos los socios mayores de edad.</div>	
-					<div id="nota_clabe" style="<?php echo session( "errors.clabe" ) ? "" : "display:none"; ?>" class="mt-3">
+					<div id="nota_clabe" style="<?php echo session( "errors.clabe" ) ? "" : "display:none"; ?>" class="mb-3 small">
 						<h5>Actualizar CLABE interbancaria</h5>
 						<p>Proporciona tu clabe interbancaria a 18 dígitos. Esta CLABE debe pertenecer a una cuenta bancaria de la que seas titular y se encuentre activa. Al terminar haz click en el botón.</p>
 						<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar cambios</button>
 					</div>
+
+					<p class="text-mustard m-0"><i class="fa fa-circle-info"></i> La <strong>CLABE</strong> interbancaria se compone de 18 dígitos y es un requisito indispensable para la correcta operación de la oficina virtual para todos los socios mayores de edad.</p>
 				</form>
 			</div>
-		</div>
+		</div>		
 
 
 		<div class="card mb-4">

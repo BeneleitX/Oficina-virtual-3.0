@@ -155,6 +155,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "add_beneficiario",                  "Socio::add_beneficiario" );
     $routes->post( "cancela_beneficiario",              "Socio::cancela_beneficiario" );
     $routes->post( "guarda_clabe",                      "Socio::guarda_clabe" );
+    $routes->post( "guarda_wallet",                     "Socio::guarda_wallet" );
     $routes->post( "guarda_rfc",                        "Socio::guarda_rfc" );
     $routes->post( "valida_cp",                         "Socio::valida_cp" );
     $routes->post( "create_domicilio",                  "Socio::create_domicilio" );

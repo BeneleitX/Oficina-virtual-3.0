@@ -300,7 +300,7 @@ class Socio extends BaseController
         model( "UsuarioModel" )->save( $socio );
 
         // actualizaar pagos pendientes
-        $db->query( "update t_pagos set clabe = '{$clabe}' where usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+        $db->query( "update t_pagos set clabe = '{$clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
 
         // BITACORA Actualziar CLABE interbancaria
         bitacora( 13, $socio->id, [ 
@@ -312,6 +312,72 @@ class Socio extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Se actualizó la CLABE interbancaria" ] );        
+    }
+
+
+    public function guarda_wallet(){
+        $socio = $this->data[ "usuario" ];
+
+        $wallet = $this->request->getPost( "wallet" );
+
+        $validation = service( "validation" );
+        $validation->setRules( [
+            "wallet" => "required|exact_length[34]"
+        ] );
+
+        // Si hay errores de validación automática, regresar a formulario
+        if( !$validation->withRequest( $this->request )->run() ){
+
+            // BITACORA Error al agregar WALLET
+            bitacora( 38, $socio->id, [ 
+                "wallet"   => $wallet,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", $validation->getErrors() )
+                ->withInput();
+        } 
+
+        // validar que no exista ya un socio activo con esa misma WALLET
+        
+        $db = db_connect();
+
+        if( $db->query( "select count(*) as existe from t_usuarios where json_unquote( json_extract( data, '$.wallet' ) ) = '{$wallet}' ")->getRow()->existe ){
+            // BITACORA Error al agregar WALLET
+            bitacora( 38, $socio->id, [ 
+                "wallet"   => $wallet,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", [ "wallet" => "WALLET ya vinculada a otro socio" ] )
+                ->withInput();           
+        }
+
+
+        $json = $socio->data;
+        $json->wallet = $wallet;
+        $json->verificacion->wallet = true;
+        $socio->data = $json; 
+
+        model( "UsuarioModel" )->save( $socio );
+
+        // actualizaar pagos pendientes
+        $db->query( "update t_pagos set clabe = '{$wallet}' where modelo_codigo = '50-INVERSION' and usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+
+        // BITACORA Actualziar CLABE interbancaria
+        bitacora( 13, $socio->id, [ 
+            "wallet"  => $wallet,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "perfil" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó la dirección de WALLET DIGITAL" ] );        
     }
 
 
