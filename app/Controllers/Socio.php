@@ -344,7 +344,7 @@ class Socio extends BaseController
         
         $db = db_connect();
 
-        if( $db->query( "select count(*) as existe from t_usuarios where json_unquote( json_extract( data, '$.wallet' ) ) = '{$wallet}' ")->getRow()->existe ){
+        if( $db->query( "select count(*) as existe from t_usuarios where json_unquote( json_extract( data, '$.wallet' ) ) = '{$wallet}' and id != {$this->data[ "usuario" ]->id} ")->getRow()->existe ){
             // BITACORA Error al agregar WALLET
             bitacora( 38, $socio->id, [ 
                 "wallet"   => $wallet,

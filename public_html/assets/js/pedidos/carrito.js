@@ -233,8 +233,6 @@ function update_pedido( flag = null ){
                     total_promo += ( cantidad * unitario );
                     total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
                     $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
-
-                    console.log( cantidad, unitario, total_promo );
                 }
                 else{
                     $( this ).remove();
@@ -301,10 +299,9 @@ function update_pedido( flag = null ){
     var bultos = bultos2 > bultos1 ? bultos2 : bultos1;
     pluses = 0;
     packs  = 0;
-
     if( pedido.data.peso == 0 ){
         metodoentrega_activo    = null;
-        pedido.data.costoxbulto = 0;
+        // pedido.data.costoxbulto = 0;
 
         if( modelo == '40-GASOLINAS' ){
             pedido.metodoentrega_codigo = null;
@@ -326,6 +323,7 @@ function update_pedido( flag = null ){
                 bultos = 0;
             }
         }  
+
         if( pedido.PTS["316-SIM-CARD"] > 0 ){
             bultos = 1;
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() ?? null;
@@ -339,7 +337,7 @@ function update_pedido( flag = null ){
             // packs  = 5;
         }
     }
-    
+
     if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' ){
         $( '.metodosentrega, .me_respuesta' ).hide();
 
@@ -510,6 +508,8 @@ function update_pedido( flag = null ){
             // console.log( 'log' );
         }
     });
+
+    console.log( flag );
 }
 
 
@@ -737,7 +737,7 @@ $(document).ready(function()
             $( '.me_formulario, .me_costo' ).hide();
             $( '.me_respuesta' ).show();
 
-            if( metodoentrega_activo.substring(0,2) == '00'){
+            if( metodoentrega_activo.substring( 0, 2 ) == '00' ){
                 $( '.me_formulario[mp=almacen]' ).show();
                 entrega = $( '[name=select_almacen]' ).val();
                 load_inventario( entrega );
@@ -768,8 +768,6 @@ $(document).ready(function()
                 pedido.data.domicilio = $( 'div[domicilio_id]' ).attr( 'domicilio_id' ); // domicilios[ entrega ];
                 entrega = pedido.data.domicilio;
             }
-
-            console.log(metodoentrega_activo, pedido.data.costoxbulto);
         }
         else{
             metodoentrega_activo = null;
@@ -783,10 +781,7 @@ $(document).ready(function()
             }
         }
 
-        // console.log( 'metodo activo: ' + metodoentrega_activo, ' ( entrega = ' + entrega + ')' );
-
         pedido.data.entrega = entrega;
-        console.log( 'Entrega: ' + entrega );
         pedido.metodoentrega_codigo = metodoentrega_activo;
 
         update_pedido( "metodo entrega" ); 
