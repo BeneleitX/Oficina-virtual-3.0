@@ -734,7 +734,7 @@ class Dashboard extends BaseController
         ";
 
         foreach( $db->query( $sql )->getResult() as $r ){
-            $db->query( "call p_update_padre( {$r->id} )" );
+            $db->query( "call p_update_padre( {$r->id}, 0 )" );
         }
     }
 }
