@@ -723,7 +723,7 @@ class Dashboard extends BaseController
         return $html;
     }
 
-    public function temp_update(){
+    public function temp_update(){ 
         $db = db_connect();
 
         $sql = "
