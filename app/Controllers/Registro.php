@@ -155,6 +155,7 @@ class Registro extends BaseController
 
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
                     "padre" => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ],
+                    "patrocinador" => $data[ "patrocinador" ],
                     "hijos" => [],
                     "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
                     "profundidad" => [

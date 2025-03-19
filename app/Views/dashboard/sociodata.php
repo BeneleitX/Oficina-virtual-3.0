@@ -37,7 +37,6 @@
 
 if( $socio ){
     $patro = model( "UsuarioModel" )->find( $socio->redes->patrocinador );
-
     
     ?>
 

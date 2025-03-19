@@ -139,24 +139,25 @@ class Dashboard extends BaseController
         }
 
         $html = "";
-        $pat  = model( "UsuarioModel" )->find( $this->request->getPost( "patrocinador" ) );
+        $pats = $this->request->getPost( "patrocinador" );
+        
+        foreach( MODELOS as $m ){
+            $pat  = model( "UsuarioModel" )->find( $pats[ $m[ "codigo" ] ] );
 
-        if($pat){
-
-            $pat->valida_modelo();
-
-            foreach( MODELOS as $m ){
+            if( $pat ){
                 $pat2 = $pat;
+                $pat2->valida_modelo();
 
-                while( substr( $pat2->data->estatus->modelos->{$m["codigo"]}, 0, 3 ) < 200 ){
+                while( substr( $pat2->data->estatus->modelos->{$m[ "codigo" ]}, 0, 3 ) < 200 ){
                     $pat2 = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
                 }
 
                 $html .= "<td class=\"text-center\" width=\"20%\"><div class=\"py-3\">".$pat2->avatar(80)."</div><h5 class=\"mb-1\">".$pat2->id( $m[ "codigo" ], null, false )."</h5><span class=\"small text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td>";
-            } 
-        }
-        else{
-            $html .= "<td class=\"text-center\"><h3 class=\"text-red\">El socio no existe</h3></td>";
+                
+            }
+            else{
+                $html .= "<td class=\"text-center\"><h3 class=\"text-red\">El socio no existe</h3></td>";
+            }
         }
         
         echo $html;
@@ -176,7 +177,7 @@ class Dashboard extends BaseController
             foreach( MODELOS as $m ){
                 $patrocinador = $patrocinadores[ $m[ "codigo" ] ];
 
-/*                 if( $socio->patrocinador( $m[ "codigo" ] ) != $patrocinador ){
+                if( $socio->patrocinador( $m[ "codigo" ] ) != $patrocinador ){
                     $redes = $socio->redes;
                     $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
                     $socio->redes = $redes;
@@ -191,11 +192,10 @@ class Dashboard extends BaseController
                     ] );
 
                     $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
-                } */
+                } 
             }
             $ruta = urlencode( base64_encode( $socio->password_original() ) );
             return redirect()->to( "sociodata/{$ruta}" );
-    
         }
 
         return redirect()->to( "usuarios" );

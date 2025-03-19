@@ -14,7 +14,7 @@ function load_padres( extra = null){
     $( 'input.pat' ).each( function(){
         patrocinadores[ $( this ).attr( 'modelo' ) ] = $( this ).val();
     });
-console.log( patrocinadores );
+
     $.ajax({
         url: base_url + 'load_padres',
         type: 'POST',
