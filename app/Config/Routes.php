@@ -42,6 +42,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     
     $routes->get( "",                                   "Dashboard::inicio" );
     $routes->get( "inicio",                             "Dashboard::inicio" );
+    $routes->get( "temp_update",                        "Dashboard::temp_update" );
+
+
     $routes->post( "splash",                            "Dashboard::splash" );
     $routes->get( "sociodata",                          "Dashboard::sociodata" );
     $routes->get( "update_estatus/(:any)",              "Dashboard::update_estatus/$1" );

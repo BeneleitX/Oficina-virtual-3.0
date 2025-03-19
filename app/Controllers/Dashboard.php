@@ -722,4 +722,19 @@ class Dashboard extends BaseController
 
         return $html;
     }
+
+    public function temp_update(){
+        $db = db_connect();
+
+        $sql = "
+            select * 
+            from t_usuarios 
+            where redes->>'$.modelos.\"10-NUTRICION\".padre' = 'null'
+            and estatus_codigo = '201-ACTIVO'
+        ";
+
+        foreach( $db->query( $sql )->getResult() as $r ){
+            $db->query( "call p_update_padre( {$r->id} )" );
+        }
+    }
 }
