@@ -598,7 +598,15 @@
                             <td valign="middle" class="text-white" style="background:var(--bs-marine) !important">Total de pedido</td>
                             
                             <td valign="middle" class="text-end" style="background:var(--bs-marine) !important">
-                                <h5 class="text-white my-0" gran_total="<?php echo $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo; ?>">
+                                <h5 class="text-white my-0" gran_total="<?php 
+                                    $tt = $pedido[ "data" ][ "total" ] + $comisionbanco + $pedido[ "data" ][ "comisionentrega" ] - $saldo;
+                                    
+                                    if( $tt < 0){
+                                        $tt = 0;
+                                    }
+
+                                    echo $tt;
+                                ?>">
                                     $<?php echo number_format( $tt, 2 ); ?>
                                 </h5>
                             </td>
@@ -930,19 +938,19 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                 <select class="form-select mb-3" name="metodopago" id="calcula_pago">
                                     <?php
 
-$pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
-echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\" selected>{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
+                echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\" selected>{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
-                                if( $modelo!= "50-INVERSION" ){
-                                 
-                                    $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
-                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
-                                    
-                                    $pago = METODOSPAGO[ "1".substr( $modelo, 0, 1 )."-REFERENCIA" ];
-                                    echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
-                                }
-                                        ?>
-                                </select>
+                        if( $modelo!= "50-INVERSION" ){
+                            
+                            $pago = METODOSPAGO[ "9".substr( $modelo, 0, 1 )."-TERMINAL" ];
+                            echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                            
+                            $pago = METODOSPAGO[ "1".substr( $modelo, 0, 1 )."-REFERENCIA" ];
+                            echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\">{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
+                        }
+                                ?>
+                        </select>
 
 
                         <div class="alert alert-warning mb-0">
@@ -1216,31 +1224,42 @@ echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pa
                 </div>
                 <div class="modal-body">
                     <?php   
-                        $cc = 0;
+                        $cc  = 0;
                         $mpp = array_reverse( METODOSPAGO );
+                        $mps = [];
+
                         foreach( $mpp as $mp ){
-                            $imagen = "";
                             if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
                                 $mp[ "settings" ][ "tipocomision" ] = "";
                             }
 
-                            if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
-                                if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
-
-                                    $file   = "assets/img/metodospago/{$mp[ "codigo" ]}.png";
-                                    $imagen =  "<img xstyle=\"height:63px; width:240px\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" class=\"w-100 img-fluid\">";
-
-                                    echo "\n
-                                    <button class=\"col-12\" type=\"submit\" style=\"margin:0; padding:0; border:none\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\"><div class=\"alert alert-info mb-0 ".($cc++ ? "mt-3" : "" )." p-0 tipo_pago accordion-button collapsed\" style=\"cursor:pointer\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse_{$mp[ "codigo" ]}\" aria-expanded=\"false\" aria-controls=\"collapse_{$mp[ "codigo" ]}\">
-                                        <div class=\"row g-0 metodopago w-100\" style=\"display:none\" metodopago=\"{$mp[ "codigo" ]}\">
-                                            <div class=\"col-lg-4 col-12\">{$imagen}</div>
-                                            <div class=\"col-lg-5 col-8 p-2 \"><h5 class=\"my-2\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}</h5><p style=\"line-height: 0.8rem;\" class=\"costo_extra text-marine m-0\">$".number_format( $comisionbanco, 2 )."</p></div>
-                                            <div class=\"col-lg-3 col-4 text-end p-3\"><h4 class=\"cantidad m-0\">$".number_format( $tt, 2 )."</h4></div>
-                                        </div>
-                                    </div>".( substr( $mp[ "codigo" ], 3 ) == "CONEKTA" ? "<p style=\"line-height: 1rem;\" class=\"text-orange mt-2 mb-0\"><i class=\"fa fa-warning\"></i> En pagos en modalidad CONEKTA EFECTIVO, el establecimiento cobrará una comisión adicional de aproximadamente $10.00 al momento de pagar en caja</p>" : "" )."
-                                    </button>";
+                            if( $pedido[ "data" ][ "total" ] > 0 ){ 
+                                if( $mp[ "settings" ][ "tipocomision" ] == "saldo" && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
+                                    $mps[] = $mp;
                                 }
-                            } 
+                                elseif( $tt > ( $socio->data->saldo->{$modelo}->cantidad ?? 0 ) ){
+                                    $mps[] = $mp;
+                                }
+                            }
+                        }
+
+                        foreach( $mps as $mp ){
+                            $imagen = "";
+                            if( ( !$bloqueado || $mp[ "codigo" ] == $pedido[ "metodopago_codigo" ] ) && $mp[ "estatus_codigo" ] == "201-ACTIVO" ){
+
+                                $file   = "assets/img/metodospago/{$mp[ "codigo" ]}.png";
+                                $imagen =  "<img xstyle=\"height:63px; width:240px\" src=\"".base_url()."{$file}\" metodopago=\"{$mp[ "codigo" ]}\" class=\"w-100 img-fluid\">";
+
+                                echo "\n
+                                <button class=\"col-12\" type=\"submit\" style=\"margin:0; padding:0; border:none\" name=\"metodopago\" value=\"{$mp[ "codigo" ]}\"><div class=\"alert alert-info mb-0 ".($cc++ ? "mt-3" : "" )." p-0 tipo_pago accordion-button collapsed\" style=\"cursor:pointer\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse_{$mp[ "codigo" ]}\" aria-expanded=\"false\" aria-controls=\"collapse_{$mp[ "codigo" ]}\">
+                                    <div class=\"row g-0 metodopago w-100\" style=\"display:none\" metodopago=\"{$mp[ "codigo" ]}\">
+                                        <div class=\"col-lg-4 col-12\">{$imagen}</div>
+                                        <div class=\"col-lg-5 col-8 p-2 \"><h5 class=\"my-2\" style=\"line-height: 0.9;\">{$mp[ "nombre" ]}</h5><p style=\"line-height: 0.8rem;\" class=\"costo_extra text-marine m-0\">$".number_format( $comisionbanco, 2 )."</p></div>
+                                        <div class=\"col-lg-3 col-4 text-end p-3\"><h4 class=\"cantidad m-0\">$".number_format( $tt, 2 )."</h4></div>
+                                    </div>
+                                </div>".( substr( $mp[ "codigo" ], 3 ) == "CONEKTA" ? "<p style=\"line-height: 1rem;\" class=\"text-orange mt-2 mb-0\"><i class=\"fa fa-warning\"></i> En pagos en modalidad CONEKTA EFECTIVO, el establecimiento cobrará una comisión adicional de aproximadamente $10.00 al momento de pagar en caja</p>" : "" )."
+                                </button>";
+                            }
                         }
                     ?>
                 </div>
