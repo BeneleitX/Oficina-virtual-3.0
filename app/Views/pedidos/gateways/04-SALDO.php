@@ -18,12 +18,22 @@ if( $s >= $tt ){
     $p[ "fechas" ][ "califica" ] = $fecha; 
     $p[ "fechas" ][ "reparte" ]  = $fecha; 
     
+    $p[ "data" ][ "saldo" ]      = $s >= $tt ? $tt : $s;
+
     // Guardamos cambios de estatus del pedido
     model( "PedidoModel" )->save( $p );
 
     // Ahora vamos con el socio
     $data      = $u->data;                                    
     $historial = $u->historial; 
+
+    if( $s > $tt ){
+        $data->saldo->{$m}->cantidad = $s - $tt;
+    }
+    else{
+        $data->saldo->{$m}->cantidad = 0;
+        $data->saldo->{$m}->estatus  = 0;
+    }
 
     foreach( $p[ "PTS" ] as $promo => $pts ){
         // Protección adicional para evitar huecos en la estructura JSON de puntajes de usuario
