@@ -725,21 +725,20 @@ class Dashboard extends BaseController
     public function temp_update(){ 
         $db = db_connect();
 
-        $sql = "
-            select * 
-            from t_usuarios 
-            where redes->>'$.modelos.\"10-NUTRICION\".padre' = 'null'
-            and estatus_codigo = '201-ACTIVO'
-        ";
+        foreach( MODELOS as $m ){
+            $sql = "
+                select * 
+                from t_usuarios 
+                where redes->>'$.modelos.\"{$m[ "codigo" ]}\".padre' = 'null'
+                and estatus_codigo = '201-ACTIVO'
+            ";   
 
-        foreach( $db->query( $sql )->getResult() as $r ){
-            echo " {$r->id} - ";
+            echo "\n<br>{$m[ "codigo" ]}\n<br>";
 
-            foreach( MODELOS as $m )
+            foreach( $db->query( $sql )->getResult() as $r ){
+                echo "{$r->id} - ";
+    
                 $db->query( "call p_update_padre( {$r->id}, '{$m[ "codigo" ]}' )" );
-
-            if( $r->id == 163549 ){
-                echo '<pre>'.json_encode($r->redes, 1).'</pre>';
             }
         }
     }
