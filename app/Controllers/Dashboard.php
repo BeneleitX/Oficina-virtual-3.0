@@ -658,7 +658,6 @@ class Dashboard extends BaseController
     }
 
 
-
     public function datos_moviles(){
         $token = $this->request->getPost( "token" );
         $html = "<span class=\"badge bg-red\">{$token}</span>";
@@ -734,7 +733,14 @@ class Dashboard extends BaseController
         ";
 
         foreach( $db->query( $sql )->getResult() as $r ){
-            $db->query( "call p_update_padre( {$r->id}, 0 )" );
+            echo " {$r->id} - ";
+
+            foreach( MODELOS as $m )
+                $db->query( "call p_update_padre( {$r->id}, '{$m[ "codigo" ]}' )" );
+
+            if( $r->id == 163549 ){
+                echo '<pre>'.json_encode($r->redes, 1).'</pre>';
+            }
         }
     }
 }
