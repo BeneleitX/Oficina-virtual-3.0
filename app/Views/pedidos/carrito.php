@@ -1228,18 +1228,22 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                         $mpp = array_reverse( METODOSPAGO );
                         $mps = [];
 
+                        $ss = $tt <= ( $socio->data->saldo->{$modelo}->cantidad ?? -1 ) && $socio->data->saldo->{$modelo}->estatus;
+
                         foreach( $mpp as $mp ){
                             if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){
                                 $mp[ "settings" ][ "tipocomision" ] = "";
                             }
 
-                            if( $pedido[ "data" ][ "total" ] > 0 ){ 
-                                if( $mp[ "settings" ][ "tipocomision" ] == "saldo" && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
+                            if( $ss && $mp[ "settings" ][ "tipocomision" ] == "saldo" || !$ss && $mp[ "settings" ][ "tipocomision" ] != "saldo" ){ 
+                                $mps[] = $mp;
+
+/*                                 if(  && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
                                     $mps[] = $mp;
                                 }
                                 elseif( $tt > ( $socio->data->saldo->{$modelo}->cantidad ?? 0 ) ){
                                     $mps[] = $mp;
-                                }
+                                } */
                             }
                         }
 

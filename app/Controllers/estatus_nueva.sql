@@ -1,12 +1,76 @@
 BEGIN
+
+/*
+
+
+888888b.                              888          d8b 888    
+888  "88b                             888          Y8P 888    
+888  .88P                             888              888    
+8888888K.   .d88b.  88888b.   .d88b.  888  .d88b.  888 888888 
+888  "Y88b d8P  Y8b 888 "88b d8P  Y8b 888 d8P  Y8b 888 888    
+888    888 88888888 888  888 88888888 888 88888888 888 888    
+888   d88P Y8b.     888  888 Y8b.     888 Y8b.     888 Y88b.  
+8888888P"   "Y8888  888  888  "Y8888  888  "Y8888  888  "Y888 
+_____     _        _                                                                           
+| ____|___| |_ __ _| |_ _   _ ___    _ __   ___  _ __    ___ _ __ ___  _ __  _ __ ___  ___  __ _ 
+|  _| / __| __/ _` | __| | | / __|  | '_ \ / _ \| '__|  / _ \ '_ ` _ \| '_ \| '__/ _ \/ __|/ _` |
+| |___\__ \ || (_| | |_| |_| \__ \  | |_) | (_) | |    |  __/ | | | | | |_) | | |  __/\__ \ (_| |
+|_____|___/\__\__,_|\__|\__,_|___/  | .__/ \___/|_|     \___|_| |_| |_| .__/|_|  \___||___/\__,_|
+                                    |_|                               |_|                        
+
+Primera versión: 
+scabbia@gmail.com Abril 2014
+
+Ultima actualización: 
+scabbia@gmail.com Marzo 2025
+
+
+*/
     -- variables globales
 
-    DECLARE _historial, _promociones, _actuales, _roles, _estatuses, _modelos, _califiaciones JSON;
-    DECLARE _baja, _k, _i  INT default 0;
-    DECLARE _modelo, _estatus, _validacion, _updated, _promocion varchar( 25 );
-    declare _verificacion, _diasinicio mediumint;
-    DECLARE _registro, _primera date;
-    DECLARE _pts0, _pts1, _pts2 DECIMAL(8,2);
+    DECLARE 
+        _historial,     -- volcado de campo historial de la tabla t_usuarios
+        _promociones,   -- lista de promociones base del modelo de negocio
+        _actuales,      -- clon de estatuses actuales en base de datos para comparativa final
+        _roles,         -- Roles asociados al usuario
+        _estatuses,     -- array con concentrado de estatus de todas las empresas para respuesta de función
+        _modelos,       -- Catálogo de modelos con su ingormación basica (Promo base, días de gracia, fecha de arranque)
+        _calificaciones -- puntos del socio listados por compras en el mes
+        JSON;
+
+    DECLARE 
+        _baja,          -- baja de sistema (activa solo cuando hay baja en todas las empresas)
+        _inversion,     -- inversiones activas
+        _k,             -- variable para ciclos while
+        _i              -- variable para ciclos while
+        INT default 0;
+
+    DECLARE 
+        _modelo,        -- modelo en turno (dentro de ciclo while)
+        _estatus,       -- estatus del socio en el modelo actual
+        _promocion,     -- revisar promociones base de una por una en promos para calificar en esa empresa
+        _mes0,
+        _mes1,
+        _mes2			-- Variables para almacenar nomenclatura (YYYYMM) de mes actual y anteriores
+        VARCHAR( 25 );
+
+    declare 
+        _verificacion,  -- estatus de verificación de cuenta del usuario (datos completos)
+        _activos        -- modelos en los que el socio está activo
+        MEDIUMINT;
+
+    DECLARE 
+        _registro,      -- fecha de registro del socio
+        _primera,       -- fecha de primer compra de promoción para PTS de empresa en loop
+        _ultima,        -- fecha de activación más reciente (en caso de existir)
+        _fechabaja      -- fecha límite para dar de baja empresas sin activación
+        DATE;
+
+    DECLARE 
+        _pts0, 
+        _pts1, 
+        _pts2 
+        DECIMAL(8,2);
 
     /*
     función que devuelve el estatus de un socio en el modelo de negocio especificada
@@ -16,30 +80,10 @@ BEGIN
     */
 
 	-- array para retornar el resultado final
-	
 	SET _estatuses = JSON_OBJECT();
 	
     -- si hay al menos una empresa activa, se cancela la baja
-    
     SET _baja = 1;
-
-	-- obtener modelos activos
-	SELECT CONCAT( 
-        '[', 
-        GROUP_CONCAT(
-            JSON_OBJECT(
-                'codigo', 		  codigo, 
-                'promocion_base', settings->>'$.promocion_base', 
-                'dias_inicio', 	  settings->>'$.dias_inicio',
-                'arranque', 	  settings->>'$.fecha_arranque'
-            )
-        ),
-        ']' 
-    ) 
-    INTO _modelos 
-	FROM t_modelos 
-	WHERE estatus_codigo = '201-ACTIVO' 
-    AND settings->>'$.efectivo' = 'true';
 
     /* 
     Genera un JSON array de objetos con la siguiente estructura:
@@ -51,120 +95,719 @@ BEGIN
     }
     */
 
+	-- obtener modelos activos
+
+	SELECT CONCAT( 
+        '[', 
+        GROUP_CONCAT(
+            JSON_OBJECT(
+                'codigo', 		  codigo, 
+                'promocion_base', settings->>'$.promocion_base', 
+                'arranque', 	  settings->>'$.fecha_arranque',
+                'primer_compra',  f_fecha_primercompra( _usuario, codigo )
+            )
+        ),
+        ']' 
+    ) 
+    INTO _modelos 
+	FROM t_modelos 
+	WHERE estatus_codigo = '201-ACTIVO' 
+    AND settings->>'$.efectivo' = 'true';
+
+    -- Almacenamos en variable la cantidad de empresas donde el socio esta o ha estado activo
+
+    select 
+        cast( sum( length( json_unquote( fecha ) ) ) / 10 as unsigned ),
+        max( json_unquote( fecha ) ) as ultima  
+    into 
+        _activos,
+        _ultima
+    from json_table( _modelos, '$[*]' COLUMNS ( 
+        fecha JSON PATH '$.primer_compra') 
+    ) _json; 
+   
+    -- Obtiene los datos esenciales del socio para calcular los estatus en cada unidad de negocio
+
 	SELECT 
 		u.rol_codigos, 
 		u.historial,
 		IFNULL( u.redes->>'$.verificado', 0 ),
 		u.data->>'$.estatus.modelos',
-		CAST( SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( u.historial, '$.registro' ) ), 1, 10 ) AS DATE),
-		JSON_EXTRACT( u.historial, '$.validacion' ),
-		u.data->>'$.updated'
- 	INTO _roles, _historial, _verificacion, _actuales, _registro, _validacion, _updated
+		CAST( SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( u.historial, '$.registro' ) ), 1, 10 ) AS DATE)
+ 	INTO _roles, _historial, _verificacion, _actuales, _registro
  	FROM t_usuarios u
  	WHERE u.id = _usuario;
 
-    SET _validacion = IF( validacion is null or validacion = 'null', NULL, SUBSTRING( validacion, 1, 10 ) );
+    -- dias de gracia para socios nuevos
+    -- Si es socio nuevo, tiene 30 días para activarse en cualquier empresa
+    -- Si ya está activo en alguna, tiene 6 meses para activarse en alguna otra
+    -- Y reiniciar el contador a 60 días
+    -- de lo contrario será dado de baja en las empresas donde no esté activo
+    -- Podrá darse de alta en el futuro pero iniciando su red desde CERO
+
+    -- Si ya está activo en alguna empresa, la fecha de inicio de conteo de días de gracia
+    -- se reinicia a la fecha de activación
+
+    IF _activos > 0 THEN
+        SET _fechabaja   = DATE_FORMAT( _ultima   + INTERVAL 180 DAY, '%Y-%m-%d' );
+    ELSE
+        SET _fechabaja   = DATE_FORMAT( _registro + INTERVAL 30 DAY, '%Y-%m-%d' );
+    END IF;
 
     -- Ciclo de modelos de negocio
 
 	WHILE _k < JSON_LENGTH( _modelos ) DO
 
-		-- inicializamos
-		
-        /*******************************/
-        SET _estatus = '000-DESCONOCIDO'; 
-        /*******************************/
+		-- este loop nunca va a iterar, es solo para hacer el jump al resto de IFs
+		final: LOOP
 
-        SET _primera = f_fecha_primercompra( _usuario, _modelo );	
+    		-- inicializamos
+	
+            -- obtener parametros de modelo
 
-		-- obtener parametros de modelo
+            SET _modelo      = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+            SET _promociones = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].promocion_base' ) ) );
 
-        SET _modelo      = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
-		SET _promociones = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', k, '].promocion_base' ) ) );
-		SET _diasinicio  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', k, '].dias_inicio' ) ) );
+			-- Protegemos socios sin compras
+			
+			if JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].primer_compra' ) ) ) = 'null' then
+				SET _primera = NULL; 
+			ELSE
+		    	SET _primera = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].primer_compra' ) ) );
+			end if;
 
-		set _pts0 = 0;
-		set _pts1 = 0;
-		set _pts2 = 0;
-		SET _i    = 0;
+            CASE
+            WHEN JSON_CONTAINS( _roles, '"00-BLOQUEADO"', '$') THEN 
+                
+                -- manualmente con rol de bloqueado 
+                /*******************************/
+                SET _estatus = '120-BAJA';
+                /*******************************/
+                LEAVE final;    
 
+            WHEN JSON_CONTAINS( _roles, '"42-PERMANENTE"', '$') THEN 
+                        
+                -- rol de staff
+                /*******************************/
+                SET _estatus = '612-STAFF-PERMANENTE';
+                /*******************************/
+                LEAVE final;
 
-        case  
-        when _modelo = '10-NUTRICION' then      
+            WHEN _verificacion = 2024 AND _modelo = '10-NUTRICION' THEN 
+                
+                -- estatus para que verificación sea procesada y evitar consultas en corte parcial a socios inactivos
+                /*******************************/
+                SET _estatus = '410-CALIFICADO';
+                /*******************************/
+                LEAVE final;
+                
+			ELSE
+			
+				-- Socio normal, inicializamos estatus y continuamos con reglas de negocio
+                /*******************************/
+                SET _estatus = '000-DESCONOCIDO'; 
+                /*******************************/
 
-            /**************************************************************************************/
+            END CASE;
 
-            -- denominación de meses anteriores para recibir calificaciones
+            -- denominación de meses anteriores para recibir calificaciones (YYYYMM)
             
-            SET _mes0 = DATE_FORMAT( NOW(), "%Y%m" );
+            SET _mes0 = DATE_FORMAT( NOW(), '%Y%m' );
             SET _mes1 = DATE_FORMAT( CONCAT( YEAR( NOW() ), '-', MONTH( NOW() ), '-01') - INTERVAL 1 MONTH, '%Y%m');
             SET _mes2 = DATE_FORMAT( CONCAT( YEAR( NOW() ), '-', MONTH( NOW() ), '-01') - INTERVAL 2 MONTH, '%Y%m');
 
             -- Obtenemos calificaciones
 
             SET _calificaciones = JSON_ARRAY( 
-                JSON_EXTRACT( historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes0, '"') ),
-                JSON_EXTRACT( historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes1, '"') ),
-                JSON_EXTRACT( historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes2, '"') )
+                JSON_EXTRACT( _historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes0, '"') ),
+                JSON_EXTRACT( _historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes1, '"') ),
+                JSON_EXTRACT( _historial, CONCAT( '$.modelos."', _modelo, '".calificaciones."', _mes2, '"') )
             );
+            
+            case
+            /*
+            **************************************************************************************
+             _   _ _   _ _____ ____  ___ ____ ___ ___  _   _ 
+            | \ | | | | |_   _|  _ \|_ _/ ___|_ _/ _ \| \ | |
+            |  \| | | | | | | | |_) || | |    | | | | |  \| |
+            | |\  | |_| | | | |  _ < | | |___ | | |_| | |\  |
+            |_| \_|\___/  |_| |_| \_\___\____|___\___/|_| \_|
+                                
+            **************************************************************************************
+            */
 
-            -- Sumamos los puntos de la promoción base
-            -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
+            when _modelo = '10-NUTRICION' then      
+               
+                SET _i = 0;
 
-            WHILE _i < JSON_LENGTH( _promociones ) DO
-                SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+                    IF JSON_UNQUOTE( JSON_EXTRACT( _calificaciones, CONCAT( '$[', _i ,']' ) ) ) = 'null' THEN
+                        SET _calificaciones = JSON_SET( _calificaciones, CONCAT( '$[', _i ,']' ), JSON_OBJECT() );
+                    END IF;
 
-                SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$.[0]', _promocion ), 0 );
-                SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$.[1]', _promocion ), 0 );
-                SET _pts2 = _pts2 + IFNULL( JSON_EXTRACT( _calificaciones->>'$.[2]', _promocion ), 0 );
+                    SET _i = _i + 1;
+                END WHILE;
+
+                -- Sumamos los puntos de la promoción base
+                -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
+
+                set _pts0 = 0;
+                set _pts1 = 0;
+                set _pts2 = 0;
+                SET _i    = 0;
+
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+         
+                    SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
+
+                    SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[0]', _promocion ), 0 );
+                    SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[1]', _promocion ), 0 );
+                    SET _pts2 = _pts2 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[2]', _promocion ), 0 );
+                  
+                    SET _i    = _i + 1;
+                END WHILE;
+
+                -- Si tiene compras
+                IF _primera IS NOT NULL THEN
+
+                    -- Si tiene compras en mes actual
+                    IF _pts0 >= 1 THEN
+
+                        -- Si es su primer compra/mes
+                        IF DATE_FORMAT( _primera, '%Y%m' ) = _mes0 THEN
+                        
+                            -- nuevo registrado en los ultimos 30 días, con compras	
+                            /*******************************/
+                            SET _estatus = '510-NUEVO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
+
+                        ELSE
+                            IF _pts1 >= 1 THEN
+
+                                -- con compras en mes anterior y actual 
+                                /*******************************/
+                                SET _estatus = '520-CALIFICADO-ACTUAL';
+                                /*******************************/
+                                LEAVE final;
+
+                            ELSE
+
+                                -- con compras en mes actual sin compra en mes anterior
+                                /*******************************/
+                                SET _estatus = '320-NO-CALIFICADO-COMPRA';
+                                /*******************************/
+                                LEAVE final;
+
+                            END IF;
+                        END IF;	
+
+                    -- Si no tiene compras en mes actual
+                    ELSE
+                        IF _pts1 >= 1 THEN
+
+							-- con compras en el mes anterior, pero sin compras en mes actual
+                            /*******************************/
+							SET _estatus = '410-CALIFICADO';
+                            /*******************************/
+							LEAVE final;
+
+                        -- Si no tiene compras en mes actual ni en mes anterior
+                        ELSE
+
+                            -- Si tiene compras en mes anterior al anterior
+                            IF _pts2 >= 1 THEN
+                                -- sin compras en los ultimos 2 meses
+                                /*******************************/
+                                SET _estatus = '310-NO-CALIFICADO';
+                                /*******************************/
+            
+                                -- cancelar bono aniversario
+                                UPDATE t_comisiones 
+                                SET estatus_codigo = '118-BOLSA-POR-BAJA' 
+                                WHERE usuario_id   = _usuario 
+                                AND estatus_codigo = '255-PENDIENTE' 
+                                AND esquema_codigo = '116-ANIVERSARIO';
+                                
+                                LEAVE final;
+                            
+                            -- Si tampoco tiene compras en el mes anterior del anterior (3 meses sin comprar)
+                            ELSE
+                            	-- no tiene compras en los ultimos 3 meses
+                                /*******************************/
+                                SET _estatus = '140-SUSPENDIDO';
+                                /*******************************/
+                                LEAVE final;
+
+                            END IF;	
+                        END IF;
+                    END IF;
                 
-                SET _i    = _i + 1;
-            END WHILE;
+                -- Si nunca ha comprado
+                ELSE
+                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                                
+                        -- registrado dentro de tiempo de gracia, aun sin compras
+                        /*******************************/
+                        SET _estatus = '210-NUEVO';
+                        /*******************************/
+                        LEAVE final;	
 
+                    -- tiempo de gracia vencido
+                    ELSE
 
+                        -- nunca hizo compras y venció su periodo de nuevo socio en esa empresa
+                        /*******************************/
+                        SET _estatus = '130-NUEVO-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    END IF;
+                END IF;
 
+                LEAVE final;  
+                
+            /*
+            **************************************************************************************
+             _____ _____ _     _____ _____ ___  _   _ ___    _    
+            |_   _| ____| |   | ____|  ___/ _ \| \ | |_ _|  / \   
+              | | |  _| | |   |  _| | |_ | | | |  \| || |  / _ \  
+              | | | |___| |___| |___|  _|| |_| | |\  || | / ___ \ 
+              |_| |_____|_____|_____|_|   \___/|_| \_|___/_/   \_\
+                                                        
+            **************************************************************************************
+            */
 
+            when _modelo = '20-TELEFONIA' then      
 
+                SET _i = 0;
 
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+                    IF JSON_UNQUOTE( JSON_EXTRACT( _calificaciones, CONCAT( '$[', _i ,']' ) ) ) = 'null' THEN
+                        SET _calificaciones = JSON_SET( _calificaciones, CONCAT( '$[', _i ,']' ), JSON_OBJECT() );
+                    END IF;
 
-            /**************************************************************************************/
+                    SET _i = _i + 1;
+                END WHILE;
 
-        when _modelo = '20-TELEFONIA' then      
+                -- Sumamos los puntos de la promoción base
+                -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
 
+                set _pts0 = 0;
+                set _pts1 = 0;
+                SET _i    = 0;
 
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+         
+                    SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
 
-        when _modelo = '30-ALIMENTOS' then      
+                    SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[0]', _promocion ), 0 );
+                    SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[1]', _promocion ), 0 );
+                  
+                    SET _i    = _i + 1;
+                END WHILE;
 
+                -- Si tiene compras
+                IF _primera IS NOT NULL THEN
 
+                    -- Si tiene compras en mes actual
+                    IF _pts0 >= 1 THEN
 
-        when _modelo = '40-GASOLINAS' then      
+                        -- Si es su primer compra/mes
+                        IF DATE_FORMAT( _primera, '%Y%m' ) = _mes0 THEN
+                        
+                            -- nuevo registrado en los ultimos 30 días, con compras	
+                            /*******************************/
+                            SET _estatus = '510-NUEVO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
 
+                        ELSE
+                            -- con compras en mes anterior y actual 
+                            /*******************************/
+                            SET _estatus = '520-CALIFICADO-ACTUAL';
+                            /*******************************/
+                            LEAVE final;
+                        END IF;	
 
+                    -- Si no tiene compras en mes actual
+                    ELSE
+                        IF _pts1 >= 1 THEN
 
-        when _modelo = '50-INVERSION' then      
+							-- con compras en el mes anterior, pero sin compras en mes actual
+                            /*******************************/
+                            SET _estatus = '310-NO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
+                            
+                        -- Si tampoco tiene compras en el mes anterior (2 meses sin comprar)
+                        ELSE
+                            -- no tiene compras en los ultimos 3 meses
+                            /*******************************/
+                            SET _estatus = '140-SUSPENDIDO';
+                            /*******************************/
+                            LEAVE final;
 
+                        END IF;	
+                    END IF;
+                
+                -- Si nunca ha comprado
+                ELSE
+                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                                
+                        -- registrado dentro de tiempo de gracia, aun sin compras
+                        /*******************************/
+                        SET _estatus = '210-NUEVO';
+                        /*******************************/
+                        LEAVE final;	
 
+                    -- tiempo de gracia vencido
+                    ELSE
 
-        else 
-            /*******************************/
-            SET _estatus = '000-DESCONOCIDO'; 
-            /*******************************/
+                        -- nunca hizo compras y venció su periodo de nuevo socio en esa empresa
+                        /*******************************/
+                        SET _estatus = '130-NUEVO-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    END IF;
+                END IF;
 
-        end case; 
+                LEAVE final;                
 
+            /*
+            **************************************************************************************
+                _    _     ___ __  __ _____ _   _ _____ ___  ____  
+               / \  | |   |_ _|  \/  | ____| \ | |_   _/ _ \/ ___| 
+              / _ \ | |    | || |\/| |  _| |  \| | | || | | \___ \ 
+             / ___ \| |___ | || |  | | |___| |\  | | || |_| |___) |
+            /_/   \_\_____|___|_|  |_|_____|_| \_| |_| \___/|____/ 
+                                                                                                    
+            **************************************************************************************
+            */
 
+            when _modelo = '30-ALIMENTOS' then      
+
+                SET _i = 0;
+
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+                    IF JSON_UNQUOTE( JSON_EXTRACT( _calificaciones, CONCAT( '$[', _i ,']' ) ) ) = 'null' THEN
+                        SET _calificaciones = JSON_SET( _calificaciones, CONCAT( '$[', _i ,']' ), JSON_OBJECT() );
+                    END IF;
+
+                    SET _i = _i + 1;
+                END WHILE;
+
+                -- Sumamos los puntos de la promoción base
+                -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
+
+                set _pts0 = 0;
+                set _pts1 = 0;
+                set _pts2 = 0;
+                SET _i    = 0;
+
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+         
+                    SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
+
+                    SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[0]', _promocion ), 0 );
+                    SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[1]', _promocion ), 0 );
+                    SET _pts2 = _pts2 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[2]', _promocion ), 0 );
+                  
+                    SET _i    = _i + 1;
+                END WHILE;
+
+                -- Si tiene compras
+                IF _primera IS NOT NULL THEN
+
+                    -- Si tiene compras en mes actual
+                    IF _pts0 >= 1 THEN
+
+                        -- Si es su primer compra/mes
+                        IF DATE_FORMAT( _primera, '%Y%m' ) = _mes0 THEN
+                        
+                            -- nuevo registrado en los ultimos 30 días, con compras	
+                            /*******************************/
+                            SET _estatus = '510-NUEVO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
+
+                        ELSE
+                            IF _pts1 >= 1 THEN
+
+                                -- con compras en mes anterior y actual 
+                                /*******************************/
+                                SET _estatus = '520-CALIFICADO-ACTUAL';
+                                /*******************************/
+                                LEAVE final;
+
+                            ELSE
+
+                                -- con compras en mes actual sin compra en mes anterior
+                                /*******************************/
+                                SET _estatus = '320-NO-CALIFICADO-COMPRA';
+                                /*******************************/
+                                LEAVE final;
+
+                            END IF;
+                        END IF;	
+
+                    -- Si no tiene compras en mes actual
+                    ELSE
+                        IF _pts1 >= 1 THEN
+
+							-- con compras en el mes anterior, pero sin compras en mes actual
+                            /*******************************/
+							SET _estatus = '410-CALIFICADO';
+                            /*******************************/
+							LEAVE final;
+
+                        -- Si no tiene compras en mes actual ni en mes anterior
+                        ELSE
+
+                            -- Si tiene compras en mes anterior al anterior
+                            IF _pts2 >= 1 THEN
+                                -- sin compras en los ultimos 2 meses
+                                /*******************************/
+                                SET _estatus = '310-NO-CALIFICADO';
+                                /*******************************/
+            
+                                -- cancelar bono aniversario
+                                UPDATE t_comisiones 
+                                SET estatus_codigo = '118-BOLSA-POR-BAJA' 
+                                WHERE usuario_id   = _usuario 
+                                AND estatus_codigo = '255-PENDIENTE' 
+                                AND esquema_codigo = '116-ANIVERSARIO';
+                                
+                                LEAVE final;
+                            
+                            -- Si tampoco tiene compras en el mes anterior del anterior (3 meses sin comprar)
+                            ELSE
+                            	-- no tiene compras en los ultimos 3 meses
+                                /*******************************/
+                                SET _estatus = '140-SUSPENDIDO';
+                                /*******************************/
+                                LEAVE final;
+
+                            END IF;	
+                        END IF;
+                    END IF;
+                
+                -- Si nunca ha comprado
+                ELSE
+                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                                
+                        -- registrado dentro de tiempo de gracia, aun sin compras
+                        /*******************************/
+                        SET _estatus = '210-NUEVO';
+                        /*******************************/
+                        LEAVE final;	
+
+                    -- tiempo de gracia vencido
+                    ELSE
+
+                        -- nunca hizo compras y venció su periodo de nuevo socio en esa empresa
+                        /*******************************/
+                        SET _estatus = '130-NUEVO-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    END IF;
+                END IF;
+
+                LEAVE final;                
+
+            /*
+            **************************************************************************************
+              ____    _    ____   ___  _     ___ _   _    _    ____  
+             / ___|  / \  / ___| / _ \| |   |_ _| \ | |  / \  / ___| 
+            | |  _  / _ \ \___ \| | | | |    | ||  \| | / _ \ \___ \ 
+            | |_| |/ ___ \ ___) | |_| | |___ | || |\  |/ ___ \ ___) |
+             \____/_/   \_\____/ \___/|_____|___|_| \_/_/   \_\____/ 
+                                                                                                    
+            **************************************************************************************
+            */
+
+            when _modelo = '40-GASOLINAS' then      
+
+                SET _i = 0;
+
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+                    IF JSON_UNQUOTE( JSON_EXTRACT( _calificaciones, CONCAT( '$[', _i ,']' ) ) ) = 'null' THEN
+                        SET _calificaciones = JSON_SET( _calificaciones, CONCAT( '$[', _i ,']' ), JSON_OBJECT() );
+                    END IF;
+
+                    SET _i = _i + 1;
+                END WHILE;
+
+                -- Sumamos los puntos de la promoción base
+                -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
+
+                set _pts0 = 0;
+                set _pts1 = 0;
+                SET _i    = 0;
+
+                WHILE _i < JSON_LENGTH( _promociones ) DO
+         
+                    SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
+
+                    SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[0]', _promocion ), 0 );
+                    SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[1]', _promocion ), 0 );
+                  
+                    SET _i    = _i + 1;
+                END WHILE;
+
+                -- Si tiene compras
+                IF _primera IS NOT NULL THEN
+
+                    -- Si tiene compras en mes actual
+                    IF _pts0 >= 1 THEN
+
+                        -- Si es su primer compra/mes
+                        IF DATE_FORMAT( _primera, '%Y%m' ) = _mes0 THEN
+                        
+                            -- nuevo registrado en los ultimos 30 días, con compras	
+                            /*******************************/
+                            SET _estatus = '510-NUEVO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
+
+                        ELSE
+                            -- con compras en mes anterior y actual 
+                            /*******************************/
+                            SET _estatus = '520-CALIFICADO-ACTUAL';
+                            /*******************************/
+                            LEAVE final;
+                        END IF;	
+
+                    -- Si no tiene compras en mes actual
+                    ELSE
+                        IF _pts1 >= 1 THEN
+
+							-- con compras en el mes anterior, pero sin compras en mes actual
+                            /*******************************/
+                            SET _estatus = '310-NO-CALIFICADO';
+                            /*******************************/
+                            LEAVE final;
+                            
+                        -- Si tampoco tiene compras en el mes anterior (2 meses sin comprar)
+                        ELSE
+                            -- no tiene compras en los ultimos 3 meses
+                            /*******************************/
+                            SET _estatus = '140-SUSPENDIDO';
+                            /*******************************/
+                            LEAVE final;
+
+                        END IF;	
+                    END IF;
+                
+                -- Si nunca ha comprado
+                ELSE
+                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                                
+                        -- registrado dentro de tiempo de gracia, aun sin compras
+                        /*******************************/
+                        SET _estatus = '210-NUEVO';
+                        /*******************************/
+                        LEAVE final;	
+
+                    -- tiempo de gracia vencido
+                    ELSE
+
+                        -- nunca hizo compras y venció su periodo de nuevo socio en esa empresa
+                        /*******************************/
+                        SET _estatus = '130-NUEVO-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    END IF;
+                END IF;
+
+                LEAVE final;                
+
+            /*
+            **************************************************************************************
+             ___ _   ___     _______ ____  ____ ___ ___  _   _ 
+            |_ _| \ | \ \   / / ____|  _ \/ ___|_ _/ _ \| \ | |
+             | ||  \| |\ \ / /|  _| | |_) \___ \| | | | |  \| |
+             | || |\  | \ V / | |___|  _ < ___) | | |_| | |\  |
+            |___|_| \_|  \_/  |_____|_| \_\____/___\___/|_| \_|
+                                                    
+            **************************************************************************************
+            */
+
+            when _modelo = '50-INVERSION' then      
+
+                -- extraer info para saber si tiene inversiones activas
+                SELECT count(*) into _inversion 
+                from t_inversiones
+                where estatus_codigo = '625-ACTIVA'
+                and usuario_id = _usuario
+                and curdate() < fechas->>'$.cierre';
+
+                -- Si tiene compras
+                IF _primera IS NOT NULL THEN
+                    IF _inversion THEN
+                        -- con compras en mes anterior y actual 
+                        /*******************************/
+                        SET _estatus = '520-CALIFICADO-ACTUAL';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    -- Si no tiene inversiones activas
+                    ELSE
+                        -- no tiene compras activas
+                        /*******************************/
+                        SET _estatus = '140-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+
+                    END IF;	
+                
+                -- Si nunca ha comprado
+                ELSE
+                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                                
+                        -- registrado dentro de tiempo de gracia, aun sin compras
+                        /*******************************/
+                        SET _estatus = '210-NUEVO';
+                        /*******************************/
+                        LEAVE final;	
+
+                    -- tiempo de gracia vencido
+                    ELSE
+
+                        -- nunca hizo compras y venció su periodo de nuevo socio en esa empresa
+                        /*******************************/
+                        SET _estatus = '130-NUEVO-SUSPENDIDO';
+                        /*******************************/
+                        LEAVE final;
+                        
+                    END IF;
+                END IF;
+
+                LEAVE final;                
+
+            else 
+
+                LEAVE final;
+
+            end case; 
+
+        END LOOP; 
 
 		-- Agregamos estatus de modelo a JSON de respuesta
 
 		SET _estatuses = JSON_SET( _estatuses, CONCAT( '$."', _modelo,'"' ), _estatus );
 		
-		-- En caso de encontrar algun estatus activo, cancelamos la baja
+		-- Acciones de estatus inactivo
 
 		IF SUBSTRING( _estatus, 1, 3 ) < 200 THEN
 			
-            -- compresión de red
-			
-            DO f_compresion_de_red( _usuario, _modelo );
+            -- Comprimir red de manera permanente
+            -- Función f_compresion_de_red está pendiente de revisión
+
+            -- DO f_compresion_de_red( _usuario, _modelo );
 			
 			-- Aplicar un reset local a modelo de negocios
 
@@ -183,9 +826,9 @@ BEGIN
       		END if;	
 
         else
-            -- se cancela la baja de cuenta
+            -- Si está activo en alguna empresa, se cancela la baja de cuenta
 
-			SET baja = 0;		 	
+			SET _baja = 0;		 	
 		END IF;
                 
         SET _k = _k + 1;
@@ -199,7 +842,7 @@ BEGIN
         -- actualizar estatus en base de datos
         
         UPDATE t_usuarios u
-        SET u.data = JSON_SET( u.data, '$.estatus.modelos', _estatuses, '$.updated', date_format( '%Y%m' ) ) 
+        SET u.data = JSON_SET( u.data, '$.estatus.modelos', _estatuses, '$.updated', date_format( NOW(), '%Y%m' ) ) 
         WHERE u.id = _usuario;
     END IF;
 
@@ -210,7 +853,7 @@ BEGIN
 
     UPDATE t_usuarios 
     SET estatus_codigo = IF( 
-        baja = 1 AND _usuario > 60, 
+        _baja = 1 AND _usuario > 60, 
         '120-BAJA', 
         '201-ACTIVO'  
     )
@@ -218,6 +861,6 @@ BEGIN
 
 	-- Enviamos respuesta
 	
-    RETURN estatuses;
+    RETURN _estatuses;
 
 END

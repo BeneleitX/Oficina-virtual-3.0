@@ -409,12 +409,12 @@ function update_pedido( flag = null ){
             costo_extra = $( this ).find( '.costo_extra' ),
             comision    = 0;
         
-/*     $( 'button[name=metodopago]' ).each( function( a, b){
-        var metodopago  = $( this ).attr( 'value' ),
-            cantidad    = $( this ).find( '.cantidad' ),
-            costo_extra = $( this ).find( '.costo_extra' ),
-            comision    = 0;
- */
+        /*     $( 'button[name=metodopago]' ).each( function( a, b){
+                var metodopago  = $( this ).attr( 'value' ),
+                    cantidad    = $( this ).find( '.cantidad' ),
+                    costo_extra = $( this ).find( '.costo_extra' ),
+                    comision    = 0;
+        */
         switch( metodospago[ metodopago ].settings.tipocomision ){
             case 'porcentaje':
                 comision = Math.ceil( subtotal * parseFloat( metodospago[ metodopago ].settings.comision ) / 100 );
@@ -441,14 +441,14 @@ function update_pedido( flag = null ){
         
             $errores = '';
         
-/* console.log(
-    ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
-    !pendientes,
-    !pedido.no_stock,
-    total_productos_pedido > 0,
-    ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
-    ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
-); */
+        console.log(
+            ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
+            !pendientes,
+            !pedido.no_stock,
+            total_productos_pedido > 0,
+            ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
+            ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
+        ); 
 
         if( !permitepagos ){
             $( this ).prop( 'disabled', true );
