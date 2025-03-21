@@ -10,8 +10,10 @@ $ambiente = VARIABLES[ "conekta" ][ "valor" ];
 $conekta  = $ambiente[ "ambientes" ][ $ambiente[ "ambiente" ] ];
 $client   = new \GuzzleHttp\Client();
 
+$metodopago = model( "PetodopagoModel" )->find( $pedido[ "metodopago_codigo" ] );
+
 $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
-$comisionbanco = ceil( $subtotal * 2 / 100 );
+$comisionbanco = ceil( $subtotal * $metodopago[ "settings" ][ "comision" ] / 100 );
 $total    = $subtotal + $comisionbanco;
 
 $json     = [
