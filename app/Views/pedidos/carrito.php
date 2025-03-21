@@ -918,7 +918,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
             </div>
         </div>
     </div>
-
+ 
     <div class="modal" tabindex="-1" id="marca_pagado">
         <div class="modal-dialog">
             <div class="modal-content" style="position:relative; xoverflow:hidden">
