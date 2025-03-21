@@ -866,7 +866,7 @@ $(document).ready(function()
     $( '#calcula_pago' ).on( 'change', function(){
         var o = $( this ).val(),
             t = $( '#calcula_pago > option[value=' + o + ']' ).attr( 'tipo' ),
-            c = parseInt( $( '#calcula_pago > option[value=' + o + ']' ).attr( 'cantidad' ) ),
+            c = parseFloat( $( '#calcula_pago > option[value=' + o + ']' ).attr( 'cantidad' ) ),
             v = 0;
 
         if( t == 'efectivo' ){
