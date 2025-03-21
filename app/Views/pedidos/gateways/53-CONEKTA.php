@@ -20,7 +20,7 @@ $json     = [
     "body" => json_encode( [
         "customer_info" => [
             "name"  => limpia_acentos( $socio->nombre( 2, false, true ) ),
-            "email" => $socio->correo,
+            "email" => trim( $socio->correo ),
             "phone" => $socio->telefono
         ],
         "line_items" => [

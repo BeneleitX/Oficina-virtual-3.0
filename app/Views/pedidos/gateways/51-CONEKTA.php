@@ -16,11 +16,12 @@ $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" 
 $comisionbanco = ceil( $subtotal * $metodopago[ "settings" ][ "comision" ] / 100 );
 $total    = $subtotal + $comisionbanco;
 
+echo $comisionbanco." = ceil( {$subtotal} * {$metodopago[ "settings" ][ "comision" ]} / 100 )";
 $json     = [
     "body" => json_encode( [
         "customer_info" => [
             "name"  => limpia_acentos( $socio->nombre( 2, false, true ) ),
-            "email" => $socio->correo,
+            "email" => trim( $socio->correo ),
             "phone" => $socio->telefono
         ],
         "line_items" => [
