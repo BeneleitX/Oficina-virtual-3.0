@@ -18,11 +18,14 @@ function AESdesencriptar($encodedInitialData, $key128){
 function getCadenaXML( $pedido, $socio ){
 
     // Elegir ambiente
+
+    $metodopago = model( "MetodopagoModel" )->find( $pedido[ "metodopago_codigo" ] );
+
     $getnet   = VARIABLES[ "getnet" ][ "valor" ];
     $AES      = $getnet[ "ambientes" ][ $getnet[ "ambiente" ] ];
     $usuario  = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
     $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
-    $comisionbanco = ceil( $subtotal * 2 / 100 );
+    $comisionbanco = ceil( $subtotal * $metodopago[ "settings" ][ "comision" ] / 100 );
     $total    = $subtotal + $comisionbanco;
 
     $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><P><business><id_company>{$AES[ "empresa" ]}</id_company><id_branch>{$AES[ "sucursal" ]}</id_branch><user>{$AES[ "usuario" ]}</user><pwd>{$AES[ "password" ]}</pwd></business><url><reference>{$pedido[ "referencia" ]}</reference><amount>{$total}</amount><moneda>MXN</moneda><canal>W</canal><omitir_notif_default>0</omitir_notif_default><st_correo>0</st_correo><mail_cliente>".trim( $socio->correo )."</mail_cliente><version>IntegraWPP</version></url></P>";

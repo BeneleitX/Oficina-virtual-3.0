@@ -15,8 +15,6 @@ $metodopago = model( "MetodopagoModel" )->find( $pedido[ "metodopago_codigo" ] )
 $subtotal = $pedido[ "data" ][ "total" ] + $pedido[ "data" ][ "comisionentrega" ] - $usuario->saldo( $pedido[ "modelo_codigo" ] );
 $comisionbanco = ceil( $subtotal * $metodopago[ "settings" ][ "comision" ] / 100 );
 $total    = $subtotal + $comisionbanco;
-
-echo $comisionbanco." = ceil( {$subtotal} * {$metodopago[ "settings" ][ "comision" ]} / 100 )";
 $json     = [
     "body" => json_encode( [
         "customer_info" => [
