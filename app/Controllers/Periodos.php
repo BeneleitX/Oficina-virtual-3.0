@@ -83,13 +83,20 @@ class Periodos extends BaseController
 
                 $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
 
+                if( $modelo[ "codigo" ] == "50-INVERSION" ){
+                    $target = isset( $p[ "s" ]->data->wallet ) ? strlen( $p[ "s" ]->data->wallet ) == 34 : false;
+                }
+                else{
+                    $target = isset( $p[ "s" ]->data->clabe ) ? strlen( $p[ "s" ]->data->clabe ) == 18 : false;
+                }
+                
                 // previos
-                if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus ){
+                if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus && $target ){
                     $this->data[ "t" ][ "previos" ][] = $p;
                 }
 
                 // actual
-                elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && (  ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && $p[ "s" ]->verificado->estatus ) OR ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 &&  $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ) ) ){
+                elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && (  ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && $p[ "s" ]->verificado->estatus && $target ) OR ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 &&  $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ) ) ){
                     $this->data[ "t" ][ "actual" ][] = $p;
                 }
 
@@ -98,7 +105,7 @@ class Periodos extends BaseController
                     $this->data[ "t" ][ "siguiente" ][] = $p;
                 }
                 else{
-                    if( $p[ "s" ]->verificado->estatus ){
+                    if( $p[ "s" ]->verificado->estatus && $target ){
                         $this->data[ "t" ][ "extras" ][] = $p;
                     }
                 }            
