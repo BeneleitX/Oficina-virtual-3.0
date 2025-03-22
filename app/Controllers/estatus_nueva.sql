@@ -151,7 +151,7 @@ scabbia@gmail.com Marzo 2025
     IF _activos > 0 THEN
         SET _fechabaja   = DATE_FORMAT( _ultima   + INTERVAL 180 DAY, '%Y-%m-%d' );
     ELSE
-        SET _fechabaja   = DATE_FORMAT( _registro + INTERVAL 30 DAY, '%Y-%m-%d' );
+        SET _fechabaja   = DATE_FORMAT( _registro + INTERVAL 90 DAY, '%Y-%m-%d' );
     END IF;
 
     -- Ciclo de modelos de negocio
@@ -834,6 +834,41 @@ scabbia@gmail.com Marzo 2025
         SET _k = _k + 1;
     END WHILE;
 
+    -- Buscamos estatus activos
+
+	SET _k = 0;
+    SET _estatus = true;
+
+	WHILE _k < JSON_LENGTH( _modelos ) DO
+
+            -- obtener parametros de modelo
+            SET _modelo  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+
+            IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$["', _modelo, '"]' ) ) ), 1, 3 ) > 300 THEN
+                SET _estatus = false;
+            END IF;
+
+        SET _k = _k + 1;
+    END WHILE;
+
+    -- Eliminamos estatus nuevos cuando no hay empresas activas
+
+    IF _estatus THEN
+        SET _k = 0;
+
+        WHILE _k < JSON_LENGTH( _modelos ) DO
+
+                -- obtener parametros de modelo
+                SET _modelo  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+
+                IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$["', _modelo, '"]' ) ) ), 1, 3 ) between 200 AND 300 THEN
+                    SET _estatuses = JSON_SET( _estatuses, CONCAT( '$."', _modelo,'"' ), '140-SUSPENDIDO' );
+                END IF;
+
+            SET _k = _k + 1;
+        END WHILE;
+    END IF;
+
     -- Antes había un ciclo de modelos para saber si hubo cambios en algun estatus
     -- ahora se compara el objeto completo
 
@@ -852,7 +887,9 @@ scabbia@gmail.com Marzo 2025
     -- Actualizamos estatus general del usuario
 
     UPDATE t_usuarios 
-    SET estatus_codigo = IF( 
+    SET 
+		data = json_set( data, '$.estatus.migrated', true ),
+		estatus_codigo = IF( 
         _baja = 1 AND _usuario > 60, 
         '120-BAJA', 
         '201-ACTIVO'  

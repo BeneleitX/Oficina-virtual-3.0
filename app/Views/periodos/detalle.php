@@ -81,7 +81,7 @@ function pago( $g ){
             <th width="8%" class="text-start">Pagado</th>
             <th width="12%">Estatus</th>
             <th width="28%">Socio</th>
-            <th width="14%">CLABE Interbancaria</th>
+            <th width="14%"><?php echo $periodo[ "modelo_codigo" ] == "50-INVERSION" ? "Wallet digital (USDT - TRON)" : "CLABE Interbancaria"; ?></th>
             <th width="10%">Sub total</th>
             <th width="10%">I.S.R.</th>
             <th width="10%">Total</th>
