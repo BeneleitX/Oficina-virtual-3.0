@@ -176,6 +176,7 @@ function update_pedido( flag = null ){
             'estatus' : tag.attr( 'estatus' ) ?? 'false',
             'activo' : 'false'
         };
+        
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
 
@@ -324,7 +325,11 @@ function update_pedido( flag = null ){
             }
         }  
 
-        if( pedido.PTS["316-SIM-CARD"] > 0 ){
+        /*
+
+        // promo de 5+envio, ya a la chingada, este bloque se puede borrar
+        
+         if( pedido.PTS["316-SIM-CARD"] > 0 ){
             bultos = 1;
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() ?? null;
 
@@ -335,7 +340,7 @@ function update_pedido( flag = null ){
                 pedido.data.costoxbulto = metodosentrega[ metodoentrega_activo ].settings.costo;
             }
             // packs  = 5;
-        }
+        } */
     }
 
     if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' ){
@@ -441,6 +446,7 @@ function update_pedido( flag = null ){
         
             $errores = '';
         
+            /*
         console.log(
             ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
             !pendientes,
@@ -448,7 +454,7 @@ function update_pedido( flag = null ){
             total_productos_pedido > 0,
             ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
             ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
-        ); 
+        );  */
 
         if( !permitepagos ){
             $( this ).prop( 'disabled', true );
@@ -747,6 +753,7 @@ $(document).ready(function()
                 if( entrega ){
                     pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
                 }
+                
             }  
 
             else if( metodoentrega_activo.substring(3) == 'CELULAR'){
@@ -797,6 +804,7 @@ $(document).ready(function()
         pedido.data.entrega = entrega;
         pedido.metodoentrega_codigo = metodoentrega_activo;
         pedido.data.domicilio = null;
+
         update_pedido( "cambio almacen" );
     } );
 
