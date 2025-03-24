@@ -251,7 +251,7 @@ if( sizeof( $inversiones ) ){
                         </div>
                     </div>
 
-                    <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 32 ) ) { ?>
+                    <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
                         <div class="alert alert-warning mb-0">
                             <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
                             
