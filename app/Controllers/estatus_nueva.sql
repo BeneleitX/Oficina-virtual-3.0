@@ -64,6 +64,9 @@ scabbia@gmail.com Marzo 2025
         _primera,       -- fecha de primer compra de promoción para PTS de empresa en loop
         _ultima,        -- fecha de activación más reciente (en caso de existir)
         _fechabaja      -- fecha límite para dar de baja empresas sin activación
+        _tcompra,       -- fecha de compra de recarga telefonia
+        _tvigencia,     -- fecha de vigencia de recarga
+        _tbaja          -- fecha de baja telefonia
         DATE;
 
     DECLARE 
@@ -379,78 +382,59 @@ scabbia@gmail.com Marzo 2025
             */
 
             when _modelo = '20-TELEFONIA' then      
+                IF primera IS NOT NULL THEN	
 
-                SET _i = 0;
+                    -- hacemos el escaneo de sus recargas beneleit movil
 
-                WHILE _i < JSON_LENGTH( _promociones ) DO
-                    IF JSON_UNQUOTE( JSON_EXTRACT( _calificaciones, CONCAT( '$[', _i ,']' ) ) ) = 'null' THEN
-                        SET _calificaciones = JSON_SET( _calificaciones, CONCAT( '$[', _i ,']' ), JSON_OBJECT() );
-                    END IF;
+                    SELECT 
+						CAST( pe.fechas->>'$.pagado' AS DATE ),
+						CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ),
+						CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
+					INTO _tcompra, _tvigencia, _tbaja
+					FROM t_pedidos pe
+						left JOIN t_productos pr ON pr.codigo = JSON_UNQUOTE( JSON_EXTRACT( JSON_KEYS( pe.promociones->>'$.\"310-TELEFONIA\".productos' ) , '$[0]' ) )
+					WHERE substring(pe.estatus_codigo,1,3) > 400 AND pe.modelo_codigo = '20-TELEFONIA' AND pe.usuario_id = _usuario
+					ORDER BY CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ) DESC LIMIT 1;			
 
-                    SET _i = _i + 1;
-                END WHILE;
+					-- activo
+					IF DATE_FORMAT(f_vigencia, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
 
-                -- Sumamos los puntos de la promoción base
-                -- o promociones, en caso de ser más de una como con reto120 o frijoles o gasolina (comodines)
-
-                set _pts0 = 0;
-                set _pts1 = 0;
-                SET _i    = 0;
-
-                WHILE _i < JSON_LENGTH( _promociones ) DO
-         
-                    SET _promocion = CONCAT( '$.', JSON_EXTRACT( _promociones, CONCAT( '$[', _i ,']' ) ) );
-
-                    SET _pts0 = _pts0 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[0]', _promocion ), 0 );
-                    SET _pts1 = _pts1 + IFNULL( JSON_EXTRACT( _calificaciones->>'$[1]', _promocion ), 0 );
-                  
-                    SET _i    = _i + 1;
-                END WHILE;
-
-                -- Si tiene compras
-                IF _primera IS NOT NULL THEN
-
-                    -- Si tiene compras en mes actual
-                    IF _pts0 >= 1 THEN
-
-                        -- Si es su primer compra/mes
-                        IF DATE_FORMAT( _primera, '%Y%m' ) = _mes0 THEN
-                        
+						-- si es primer compra
+						IF DATE_FORMAT(primera, '%Y%m%d') = DATE_FORMAT(f_compra, '%Y%m%d') then
                             -- nuevo registrado en los ultimos 30 días, con compras	
                             /*******************************/
                             SET _estatus = '510-NUEVO-CALIFICADO';
                             /*******************************/
                             LEAVE final;
 
-                        ELSE
+						else
                             -- con compras en mes anterior y actual 
                             /*******************************/
                             SET _estatus = '520-CALIFICADO-ACTUAL';
                             /*******************************/
                             LEAVE final;
-                        END IF;	
-
-                    -- Si no tiene compras en mes actual
-                    ELSE
-                        IF _pts1 >= 1 THEN
-
+						END if;
+					else
+						-- si esta en periodo de gracia
+						IF DATE_FORMAT(f_baja, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
 							-- con compras en el mes anterior, pero sin compras en mes actual
                             /*******************************/
                             SET _estatus = '310-NO-CALIFICADO';
                             /*******************************/
                             LEAVE final;
-                            
+
                         -- Si tampoco tiene compras en el mes anterior (2 meses sin comprar)
-                        ELSE
+						else
                             -- no tiene compras en los ultimos 3 meses
                             /*******************************/
                             SET _estatus = '140-SUSPENDIDO';
                             /*******************************/
                             LEAVE final;
+							
+							-- probablemente aqui vaya el reset a su red
+						END if;
+					END if;
 
-                        END IF;	
-                    END IF;
-                
                 -- Si nunca ha comprado
                 ELSE
                     IF _fechabaja > CAST( NOW() AS DATE ) THEN
@@ -834,39 +818,44 @@ scabbia@gmail.com Marzo 2025
         SET _k = _k + 1;
     END WHILE;
 
-    -- Buscamos estatus activos
-
-	SET _k = 0;
-    SET _estatus = true;
-
-	WHILE _k < JSON_LENGTH( _modelos ) DO
-
-            -- obtener parametros de modelo
-            SET _modelo  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
-
-            IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$["', _modelo, '"]' ) ) ), 1, 3 ) > 300 THEN
-                SET _estatus = false;
-            END IF;
-
-        SET _k = _k + 1;
-    END WHILE;
-
-    -- Eliminamos estatus nuevos cuando no hay empresas activas
-
-    IF _estatus THEN
-        SET _k = 0;
-
-        WHILE _k < JSON_LENGTH( _modelos ) DO
-
-                -- obtener parametros de modelo
-                SET _modelo  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
-
-                IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$["', _modelo, '"]' ) ) ), 1, 3 ) between 200 AND 300 THEN
-                    SET _estatuses = JSON_SET( _estatuses, CONCAT( '$."', _modelo,'"' ), '140-SUSPENDIDO' );
-                END IF;
-
-            SET _k = _k + 1;
-        END WHILE;
+	-- Chequeo para eliminar cuentas que no tengan empresas activas
+	-- sin iomprotar cuanto tiempo de gracia lleven
+	
+	IF curdate() > DATE_FORMAT( _registro + INTERVAL 90 DAY, '%Y-%m-%d' ) THEN
+	    -- Buscamos estatus activos
+	
+		SET _k = 0;
+	    SET _estatus = true;
+	
+		WHILE _k < JSON_LENGTH( _modelos ) DO
+	
+	            -- obtener parametros de modelo
+	            SET _modelo  = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+	
+	            IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$."', _modelo, '"' ) ) ), 1, 3 ) > 300 THEN
+	                SET _estatus = false;
+	            END IF;
+	
+	        SET _k = _k + 1;
+	    END WHILE;
+	
+	    -- Eliminamos estatus nuevos cuando no hay empresas activas
+	
+	    IF _estatus = true THEN
+	        SET _k = 0;
+	
+	        WHILE _k < JSON_LENGTH( _modelos ) DO
+	
+	                -- obtener parametros de modelo
+	                SET _modelo = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+	
+	                IF SUBSTRING( JSON_UNQUOTE( JSON_EXTRACT( _estatuses, CONCAT( '$."', _modelo, '"' ) ) ), 1, 3 ) between 200 AND 300 THEN
+	                    SET _estatuses = JSON_SET( _estatuses, CONCAT( '$."', _modelo,'"' ), '140-SUSPENDIDO' );
+	                END IF;
+	
+	            SET _k = _k + 1;
+	        END WHILE;
+	    END IF;
     END IF;
 
     -- Antes había un ciclo de modelos para saber si hubo cambios en algun estatus
@@ -888,7 +877,7 @@ scabbia@gmail.com Marzo 2025
 
     UPDATE t_usuarios 
     SET 
-		data = json_set( data, '$.estatus.migrated', true ),
+		data = json_set( data, '$.estatus.migrated', curdate() ),
 		estatus_codigo = IF( 
         _baja = 1 AND _usuario > 60, 
         '120-BAJA', 

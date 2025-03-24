@@ -55,14 +55,14 @@ if( sizeof( $inversiones ) ){
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
                 $r = $m[ "rendimiento_mes" ];
-                $h += $m[ "rendimiento_mes" ];
+                $h += $m[ "rendimiento_mes" ] - $m[ "retiros" ];
                 $compuesto[] = $m[ "compuesto" ];
             }
             elseif( $m[ "Ym" ] == date( "Ym" ) ){
                 $mes_actual = $a;
                 $semilla[] = $m[ "semilla" ];
                 $compuesto[] = $m[ "compuesto" ];
-                $h += $m[ "rendimiento_mes" ];
+                $h += $m[ "rendimiento_mes" ] - $m[ "retiros" ];
                 $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
 
                 if( $dias < 0 ){
@@ -173,7 +173,7 @@ if( sizeof( $inversiones ) ){
 
                             <div class=\"row mb-3 mt-lg-0 \">
                                 <div class=\"col-lg-6\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" class=\"btn btn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</a></div>
-                                ".( $retiros_pendientes ? "" : "
+                                ".( $retiros_pendientes && $p->data->porcentaje != 9 ? "" : "
                                 <div class=\"col-lg-6\"><button class=\"btn btn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>" ) ."             
                             </div>
                             

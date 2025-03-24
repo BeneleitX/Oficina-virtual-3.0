@@ -653,6 +653,10 @@ $(document).ready(function()
             res = Math.ceil( value / 100 ) * 100;
             $( this ).val( res < min ? min : res );
         }
+
+        if( value < min ){
+            $( this ).val( min );
+        }
     });
     
 	function delay(fn, ms) {

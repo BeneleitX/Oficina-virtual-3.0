@@ -623,7 +623,7 @@
                         ?>
                         <div class="card mb-3" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
-                            <tr>
+                                <tr>
                                     <td valign="middle" class="">Fecha de pago</td>
                                     
                                     <td valign="middle" class="text-end">
