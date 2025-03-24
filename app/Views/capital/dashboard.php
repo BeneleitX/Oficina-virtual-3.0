@@ -278,7 +278,7 @@ if( sizeof( $inversiones ) ){
 
                 </div>
 
-                <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 32 ) ) { ?>
+                <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
                     <div class="modal-footer">
                         <button type="submit" name="submit_socio" value="1" class="btn btn-danger my-2" disabled id="confirma_agregar">Programar retiro</button>
                     </div>
