@@ -143,6 +143,10 @@ echo "\n
                 <div class=\"col-lg-6\">
                     <table class=\"table table-sm m-0\">
                         <tr>
+                            <td>Fecha de compra</td>
+                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "pagado" ] )."</td>
+                        </tr>
+                        <tr>
                             <td>Inicio de inversión</td>
                             <td class=\"text-end\">".fecha( $f_i )."</td>
                         </tr>
@@ -172,7 +176,10 @@ echo "\n
                             <td>Retiros</td>
                             <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
                         </tr>
-                                                        
+                        <tr>
+                            <td>Balance actual</td>
+                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ] -  $bt[ "retiros" ], 2 )."</td>
+                        </tr>                             
                     </table>  
                     
                 </div>

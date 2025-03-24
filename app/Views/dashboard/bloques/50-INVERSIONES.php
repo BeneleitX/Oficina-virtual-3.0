@@ -18,8 +18,17 @@
     $inversiones = $usuario->get_inversiones();
 
     if( sizeof( $inversiones ) ){
+        $inv = [];
+
         foreach( $inversiones as $i ){
             $p  = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+
+            if( !isset( $inv[ $i[ "producto_codigo" ] ] ) ){
+                $inv[ $i[ "producto_codigo" ] ] = [ 
+                    "total" => 0.00,
+                    "inversiones" => 0
+                ];
+            }
 
             if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
@@ -30,16 +39,32 @@
 
             $bt = balance_inversion( $i );
 
-            echo "\n<a href=\"".base_url()."capital\" class=\"btn btn-outline-light border border-{$p->data->color} p-0\"><div class=\"row m-0\">
-                    <div class=\"col-2 py-2\">
-                        <img src=\"".base_url()."assets/img/productos/{$i[ "producto_codigo" ]}.png\" style=\"width:60px\">
+            $inv[ $i[ "producto_codigo" ] ][ "total" ] += $bt[ "total" ];
+            $inv[ $i[ "producto_codigo" ] ][ "inversiones" ] ++;
+        }
+
+        $ps = model( "ProductoModel" )->where( "modelo_codigo = '50-INVERSION' AND estatus_codigo = '201-ACTIVO'" )->findAll();
+
+        foreach( $ps as $p ){
+            if( !isset( $inv[ $p->codigo ] ) ){
+                $inv[ $p->codigo ] = [ 
+                    "total" => 0.00,
+                    "inversiones" => 0
+                ];
+            }
+
+            $k = $inv[ $p->codigo ];
+
+            echo "\n<a href=\"".base_url()."capital\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
+                    <div class=\"col-7 py-2 text-start\">
+                        <h5 class=\"m-0 text-".( $k[ "total" ] ? $p->data->color : "gray-400" )."\">{$p->data->nombre}".( $k[ "total" ] ? " <span class=\"badge bg-{$p->data->color}\">{$k[ "inversiones" ]}</span>" : "")."</h5>
+                        
                     </div>
-                    <div class=\"col-5 pt-3 text-start\">
-                        <strong class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</strong>
-                        <span class=\"small\">".estatus( $i[ "estatus_codigo" ] )."</span>
-                    </div>
-                    <div class=\"col-5 pt-3 text-end\">
-                        <h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $bt[ "total" ], 2 )."</h5>
+                    <div class=\"col-5 py-2 text-end\">
+                        ".( $k[ "total" ] ? 
+                        "<h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $k[ "total" ], 2 )."</h5>"
+                        : 
+                        "<h5 class=\"m-0 text-gray-400\">$0.00</h5>" )."
                     </div></div></a>";
         }
     }else{

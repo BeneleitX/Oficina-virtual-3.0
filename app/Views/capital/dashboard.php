@@ -101,7 +101,7 @@ if( sizeof( $inversiones ) ){
         }
         
         echo "\n
-            <div class=\"card mb-4\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$h}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
+            <div class=\"card mb-5\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$h}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
                 <div class=\"card-header\">
                     <div class=\"row\">
                         <div class=\"col-2 col-lg-1\">
@@ -134,6 +134,10 @@ if( sizeof( $inversiones ) ){
                             <div class=\"row\">
                                 <div class=\"col-lg-6\">
                                     <table class=\"table table-sm m-0\">
+                        <tr>
+                            <td>Fecha de compra</td>
+                            <td class=\"text-end\">".fecha( $i[ "fechas" ][ "pagado" ] )."</td>
+                        </tr>                                    
                                         <tr>
                                             <td>Inicio de inversión</td>
                                             <td class=\"text-end\">".fecha( $f_i )."</td>
@@ -164,7 +168,10 @@ if( sizeof( $inversiones ) ){
                                             <td>Retiros</td>
                                             <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
                                         </tr>
-                                                                        
+                                                                  <tr>
+                            <td>Balance actual</td>
+                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ] -  $bt[ "retiros" ], 2 )."</td>
+                        </tr>                                
                                     </table>  
                                     
                                 </div>
@@ -172,9 +179,9 @@ if( sizeof( $inversiones ) ){
                             {$retiros_pendientes}
 
                             <div class=\"row mb-3 mt-lg-0 \">
-                                <div class=\"col-lg-6\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" class=\"btn btn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</a></div>
+                                <div class=\"col-lg-6\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" class=\"btn xbtn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</a></div>
                                 ".( $retiros_pendientes && $p->data->porcentaje != 9 ? "" : "
-                                <div class=\"col-lg-6\"><button class=\"btn btn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>" ) ."             
+                                <div class=\"col-lg-6\"><button class=\"btn xbtn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Programar retiro</button></div>" ) ."             
                             </div>
                             
                             
