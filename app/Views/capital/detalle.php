@@ -155,9 +155,13 @@ echo "\n
                             <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
                         </tr>
                         <tr>
+                            <td>Periodo de inversión</td>
+                            <td class=\"text-end\">24 meses</td>
+                        </tr>
+                        <tr>
                             <td>Rendimiento mensual</td>
                             <td class=\"text-end\">{$i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] }%</td>
-                        </tr>
+                        </tr>                        
                     </table>
                     
                 </div>
@@ -169,7 +173,7 @@ echo "\n
                             <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                         </tr>
                         <tr>
-                            <td>Rendimiento</td>
+                            <td>Rendimiento total</td>
                             <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
                         </tr>
                         <tr>
@@ -177,9 +181,13 @@ echo "\n
                             <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
                         </tr>
                         <tr>
-                            <td>Balance actual</td>
+                            <td>Rendimiento actual</td>
                             <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ] -  $bt[ "retiros" ], 2 )."</td>
-                        </tr>                             
+                        </tr>  
+                        <tr>
+                            <td>Balance de cuenta</td>
+                            <td class=\"text-end\">$".number_format( $bt[ "total" ], 2 )."</td>
+                        </tr>                                                     
                     </table>  
                     
                 </div>
