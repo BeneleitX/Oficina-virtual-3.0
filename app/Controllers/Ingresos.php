@@ -54,12 +54,12 @@ class Ingresos extends BaseController
         $this->data[ "socio"  ]     = $this->data[ "usuario" ];       
 
         $sql = "select max(fecha) as fecha 
-        from t_comisiones 
-        where usuario_id = {$this->data[ "usuario" ]->id}
-        and esquema_codigo = '510-INVERSION'
-        and estatus_codigo = '255-PENDIENTE'";
+                from t_comisiones 
+                where usuario_id = {$this->data[ "usuario" ]->id}
+                and esquema_codigo = '510-INVERSION'
+                and estatus_codigo = '255-PENDIENTE'";
 
-        $this->data[ "fecha_max" ] = $db->query( $sql )->getRow()->fecha;
+        $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha : $termina ;
 
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
