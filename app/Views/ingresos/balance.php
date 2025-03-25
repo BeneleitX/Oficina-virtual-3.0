@@ -36,7 +36,7 @@
 
         $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
 
-        while( $inicia <= date( "Y-m-d") ){
+        while( $inicia <= $fecha_max ){
             $fecha = $inicia;
             $mes = substr( $fecha, 5, 2 );
             $semana = date("W",  strtotime( $fecha ) );

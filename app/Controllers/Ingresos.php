@@ -53,6 +53,14 @@ class Ingresos extends BaseController
         $this->data[ "titulo" ]     = "Ingresos por periodo <span class=\"badge bg-marine\">".substr($periodo, 7, 2)."-".substr($periodo, 3, 4)."</span> <span style=\"font-size:16px\">".estatus( $this->data[ "periodo" ][ "estatus_codigo" ] )."</span>";
         $this->data[ "socio"  ]     = $this->data[ "usuario" ];       
 
+        $sql = "select max(fecha) as fecha 
+        from t_comisiones 
+        where usuario_id = {$this->data[ "usuario" ]->id}
+        and esquema_codigo = '510-INVERSION'
+        and estatus_codigo = '255-PENDIENTE'";
+
+        $this->data[ "fecha_max" ] = $db->query( $sql )->getRow()->fecha;
+
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
         WHERE esquema.modelo_codigo = '{$modelo[ "codigo" ]}' 
