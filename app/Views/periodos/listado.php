@@ -5,7 +5,8 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
 
-<?php echo pills( "periodos", $modelo ); ?>
+<?php echo pills( "periodos", $modelo ); 
+?>
 
 <table class="table table-striped bg-white" id="tabla_cortes">
     <thead>
@@ -35,7 +36,7 @@
                 <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "comisiones" ] ?? 0 , 2 )."</td>
                 <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "isr" ] ?? 0 , 2 )."</td>
                 <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "total" ] ?? 0 , 2 )."</td>
-                <td>".estatus( $periodo[ "estatus_codigo" ] )."</td>
+                <td>".estatus( substr( codigo_periodo( $modelo ), 3 ) >= substr( $periodo[ "codigo" ], 3 ) ? $periodo[ "estatus_codigo" ] : "152-FUTURO" )."</td>
                 <td class=\"text-end\"><a href=\"".base_url( "periodo/".$periodo[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
             </tr>";
         }
