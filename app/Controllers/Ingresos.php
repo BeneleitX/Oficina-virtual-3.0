@@ -59,7 +59,7 @@ class Ingresos extends BaseController
                 and esquema_codigo = '510-INVERSION'
                 and estatus_codigo = '255-PENDIENTE'";
 
-        $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha : $termina ;
+        $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha : $termina;
 
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
