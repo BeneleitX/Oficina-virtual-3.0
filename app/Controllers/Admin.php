@@ -264,9 +264,18 @@ class Admin extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Socios con saldo a favor";
 
-        $db = db_connect();
+        $db  = db_connect();
+        $sql = "SELECT json_arrayagg( id ) as socios from(
+                    select u.id as id, sum(t.saldos) as have
+                    from t_usuarios u, JSON_TABLE( 
+                        u.data, '$.saldo**.cantidad' columns( saldos decimal(8,2) path '$')
+                    ) t 
+                    group by u.id having have > 0
+                ) x ;";
 
-        $this->data[ "saldos" ] = model( "UsuarioModel" )->where( "data->>'$.saldo.\"10-NUTRICION\".cantidad' > 0 or data->>'$.saldo.\"20-TELEFONIA\".cantidad' > 0 or data->>'$.saldo.\"30-ALIMENTOS\".cantidad' > 0" )->findAll(); 
+        $socios = json_decode( $db->query( $sql )->getRow()->socios );
+
+        $this->data[ "saldos" ] = model( "UsuarioModel" )->find( $socios ); 
 
         echo template( "admin/saldos", $this->data );
     } 
@@ -348,6 +357,14 @@ class Admin extends BaseController
 
         if( $socio ){
             foreach( $saldo as $m => $s ){
+
+                if( !isset( $data->saldo->{$m} ) ){
+                    $data->saldo->{$m} = (object)[
+                        "cantidad" => 0,
+                        "estatus"  => 0
+                    ];
+                }
+
                 if( $data->saldo->{$m}->cantidad != $s ){
 
                     // BITACORA Edita saldo a favor

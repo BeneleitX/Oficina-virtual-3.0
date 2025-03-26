@@ -317,7 +317,7 @@ function get_hash( $pedido ){
 function check_biex(){
     $sql = null;
     $dia_limite = 25;
-    $mes = date( "d" );
+    $mes = date( "m" );
 
     $db = db_connect();
 

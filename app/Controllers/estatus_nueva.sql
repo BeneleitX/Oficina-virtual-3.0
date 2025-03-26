@@ -63,10 +63,11 @@ scabbia@gmail.com Marzo 2025
         _registro,      -- fecha de registro del socio
         _primera,       -- fecha de primer compra de promoción para PTS de empresa en loop
         _ultima,        -- fecha de activación más reciente (en caso de existir)
-        _fechabaja      -- fecha límite para dar de baja empresas sin activación
+        _fechabaja,     -- fecha límite para dar de baja empresas sin activación
         _tcompra,       -- fecha de compra de recarga telefonia
         _tvigencia,     -- fecha de vigencia de recarga
-        _tbaja          -- fecha de baja telefonia
+        _tbaja,         -- fecha de baja telefonia
+        _arranque
         DATE;
 
     DECLARE 
@@ -140,36 +141,51 @@ scabbia@gmail.com Marzo 2025
  	INTO _roles, _historial, _verificacion, _actuales, _registro
  	FROM t_usuarios u
  	WHERE u.id = _usuario;
-
-    -- dias de gracia para socios nuevos
-    -- Si es socio nuevo, tiene 30 días para activarse en cualquier empresa
-    -- Si ya está activo en alguna, tiene 6 meses para activarse en alguna otra
-    -- Y reiniciar el contador a 60 días
-    -- de lo contrario será dado de baja en las empresas donde no esté activo
-    -- Podrá darse de alta en el futuro pero iniciando su red desde CERO
-
-    -- Si ya está activo en alguna empresa, la fecha de inicio de conteo de días de gracia
-    -- se reinicia a la fecha de activación
-
-    IF _activos > 0 THEN
-        SET _fechabaja   = DATE_FORMAT( _ultima   + INTERVAL 180 DAY, '%Y-%m-%d' );
-    ELSE
-        SET _fechabaja   = DATE_FORMAT( _registro + INTERVAL 90 DAY, '%Y-%m-%d' );
-    END IF;
-
+    
     -- Ciclo de modelos de negocio
 
 	WHILE _k < JSON_LENGTH( _modelos ) DO
 
+		-- inicializamos
+	
+        -- obtener parametros de modelo
+
+        SET _modelo      = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
+        SET _promociones = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].promocion_base' ) ) );
+        SET _arranque    = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].arranque' ) ) );
+
+	    -- dias de gracia para socios nuevos
+	    -- Si es socio nuevo, tiene 30 días para activarse en cualquier empresa
+	    -- Si ya está activo en alguna, tiene 6 meses para activarse en alguna otra
+	    -- Y reiniciar el contador a 60 días
+	    -- de lo contrario será dado de baja en las empresas donde no esté activo
+	    -- Podrá darse de alta en el futuro pero iniciando su red desde CERO
+	
+	    -- Si ya está activo en alguna empresa, la fecha de inicio de conteo de días de gracia
+	    -- se reinicia a la fecha de activación
+	    
+	    IF _activos > 0 THEN
+
+		    -- Si la fecha de fecha de arranque de una empresa es mayor a la ultima activación
+		    -- La fecha de arranque pasa a ser la fecha de activación
+	
+	    	IF _ultima < _arranque THEN
+	    		set _ultima = _arranque; 
+	    	END IF;
+	    	
+	    	-- Calculamos fecha de compresión definitiva en empresas donde se termina tiempo de gracia
+	    
+	        SET _fechabaja   = DATE_FORMAT( _ultima   + INTERVAL 180 DAY, '%Y-%m-%d' );
+	    ELSE
+	        SET _fechabaja   = DATE_FORMAT( _registro + INTERVAL 90 DAY, '%Y-%m-%d' );
+	    END IF;
+
+		-- if _modelo = '50-INVERSION' THEN	    
+		-- return json_array(_ultima, _arranque, _fechabaja, _activos );
+		-- end if;
+
 		-- este loop nunca va a iterar, es solo para hacer el jump al resto de IFs
 		final: LOOP
-
-    		-- inicializamos
-	
-            -- obtener parametros de modelo
-
-            SET _modelo      = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].codigo' ) ) );
-            SET _promociones = JSON_UNQUOTE( JSON_EXTRACT( _modelos, CONCAT( '$[', _k, '].promocion_base' ) ) );
 
 			-- Protegemos socios sin compras
 			
@@ -382,25 +398,26 @@ scabbia@gmail.com Marzo 2025
             */
 
             when _modelo = '20-TELEFONIA' then      
-                IF primera IS NOT NULL THEN	
 
-                    -- hacemos el escaneo de sus recargas beneleit movil
+                -- hacemos el escaneo de sus recargas beneleit movil
 
-                    SELECT 
-						CAST( pe.fechas->>'$.pagado' AS DATE ),
-						CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ),
-						CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
-					INTO _tcompra, _tvigencia, _tbaja
-					FROM t_pedidos pe
-						left JOIN t_productos pr ON pr.codigo = JSON_UNQUOTE( JSON_EXTRACT( JSON_KEYS( pe.promociones->>'$.\"310-TELEFONIA\".productos' ) , '$[0]' ) )
-					WHERE substring(pe.estatus_codigo,1,3) > 400 AND pe.modelo_codigo = '20-TELEFONIA' AND pe.usuario_id = _usuario
-					ORDER BY CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ) DESC LIMIT 1;			
+                SELECT 
+					CAST( pe.fechas->>'$.pagado' AS DATE ),
+					CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ),
+					CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
+				INTO _tcompra, _tvigencia, _tbaja
+				FROM t_pedidos pe
+					left JOIN t_productos pr ON pr.codigo = JSON_UNQUOTE( JSON_EXTRACT( JSON_KEYS( pe.promociones->>'$.\"310-TELEFONIA\".productos' ) , '$[0]' ) )
+				WHERE substring(pe.estatus_codigo,1,3) > 400 AND pe.modelo_codigo = '20-TELEFONIA' AND pe.usuario_id = _usuario
+				ORDER BY CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL 31 + pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE ) DESC LIMIT 1;			
+
+                IF _primera IS NOT NULL THEN	
 
 					-- activo
-					IF DATE_FORMAT(f_vigencia, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
+					IF DATE_FORMAT(_tvigencia, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
 
 						-- si es primer compra
-						IF DATE_FORMAT(primera, '%Y%m%d') = DATE_FORMAT(f_compra, '%Y%m%d') then
+						IF DATE_FORMAT( _primera, '%Y%m%d') = DATE_FORMAT(_tcompra, '%Y%m%d') then
                             -- nuevo registrado en los ultimos 30 días, con compras	
                             /*******************************/
                             SET _estatus = '510-NUEVO-CALIFICADO';
@@ -416,7 +433,7 @@ scabbia@gmail.com Marzo 2025
 						END if;
 					else
 						-- si esta en periodo de gracia
-						IF DATE_FORMAT(f_baja, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
+						IF DATE_FORMAT(_tbaja, '%Y%m%d') >= DATE_FORMAT( NOW(), '%Y%m%d') then
 							-- con compras en el mes anterior, pero sin compras en mes actual
                             /*******************************/
                             SET _estatus = '310-NO-CALIFICADO';
@@ -437,7 +454,7 @@ scabbia@gmail.com Marzo 2025
 
                 -- Si nunca ha comprado
                 ELSE
-                    IF _fechabaja > CAST( NOW() AS DATE ) THEN
+                    IF _tbaja > CAST( NOW() AS DATE ) THEN
                                 
                         -- registrado dentro de tiempo de gracia, aun sin compras
                         /*******************************/
@@ -843,6 +860,7 @@ scabbia@gmail.com Marzo 2025
 	
 	    IF _estatus = true THEN
 	        SET _k = 0;
+	        SET _baja = 1;	
 	
 	        WHILE _k < JSON_LENGTH( _modelos ) DO
 	
