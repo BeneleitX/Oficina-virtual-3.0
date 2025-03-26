@@ -986,9 +986,19 @@ class E_usuario extends Entity
 
 
     public function getPrimerCompra( $modelo ){
-        $db = db_connect();
-        $sql = "select f_fecha_primercompra( {$this->id}, '{$modelo}' ) as r";
-        return $db->query( $sql )->getRow()->r;  
+        if( !isset( $this->historial->modelos->{$modelo}->arranque ) ){
+
+            $db  = db_connect();
+            $sql = "select f_fecha_primercompra( {$this->id}, '{$modelo}' ) as r";
+
+            $historial = $this->historial;
+            $historial->modelos->{$modelo}->arranque = $db->query( $sql )->getRow()->r;
+            $this->historial = $historial;
+            
+            model( "UsuarioModel" )->save( $this );
+        }
+
+        return $this->historial->modelos->{$modelo}->arranque;
     }
 
 

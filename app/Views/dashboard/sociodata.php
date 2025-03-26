@@ -151,7 +151,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
 
                 <div class="card" style="overflow:hidden">
                     <table class="table table-striped m-0">
-                        <tr><th>Red</th><th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project"></i></a></th><th>Estatus</th><th>Ultima compra</th><th>Fecha de pago</th><th>Entrega</th></tr>
+                        <tr><th>Red</th><th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project"></i></a></th><th>Estatus</th><th>Primer compra</th><th>Ultima compra</th><th>Pedido</th><th>Entrega</th></tr>
                     <?php 
                     $pats = [];
                     foreach( MODELOS as $m ){
@@ -172,7 +172,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         
                         if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
                             $p = $pedidos[ $m[ "codigo" ] ];
-
+                            
                             switch( substr( $p[2], 3 ) ){
                                 case "ALMACEN":
                                     $entrega = "<span class=\"badge bg-lime\">ALMACEN</span> ".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "-- sin datos --" );
@@ -193,10 +193,10 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                     break;                                                                
                             }
 
-                            echo "<td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td>{$entrega}</td>";
+                            echo "<td>".$socio->getPrimerCompra( $m[ "codigo" ] )."</td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>{$entrega}</td>";
                         }
                         else{
-                            echo "<td></td><td></td><td></td>";
+                            echo "<td></td><td></td><td></td><td></td>";
                         }
                         
                         echo "</tr>";
