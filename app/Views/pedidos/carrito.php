@@ -1228,7 +1228,8 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                         $mpp = array_reverse( METODOSPAGO );
                         $mps = [];
 
-                        $ss = $tt <= ( $socio->data->saldo->{$modelo}->cantidad ?? -1 ) && $socio->data->saldo->{$modelo}->estatus;
+                        // Si hay saldo y está activo y además el saldo alcanza a cubrir el total de la compra
+                        $ss  = ( $tt2 + $saldo ) <= ( $socio->data->saldo->{$modelo}->cantidad ?? -1 ) && $socio->data->saldo->{$modelo}->estatus;
 
                         foreach( $mpp as $mp ){
                             if( !isset( $mp[ "settings" ][ "tipocomision" ] ) ){

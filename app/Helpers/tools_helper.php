@@ -315,30 +315,27 @@ function get_hash( $pedido ){
 
 
 function check_biex(){
-    $sql = null;
+    
     $dia_limite = 25;
-    $mes = date( "m" );
+    $fecha = date( "Y-m-d" );
+    $sql  = null;
+    $mes  = date( "m" );
+    $year = date( "Y" );
+    $db   = db_connect(); 
 
-    $db = db_connect();
+    if( VARIABLES[ "check_biex" ][ "valor" ] != $fecha && date( "d") > $dia_limite ){
+        $sql = "UPDATE t_pedidos p
+                join t_usuarios u on u.id = p.usuario_id and u.historial->>'$.registro' <= '{$year}-{$mes}-25'
+                set p.data = json_set( p.data, '$.productos', p.data->'$.productos' - p.PTS->'$.\"230-REGALOBIEX\"' ),
+                p.PTS = json_set( p.PTS, '$.\"230-REGALOBIEX\"', 0 ),
+                p.promociones = json_set( p.promociones, '$.\"230-REGALOBIEX\".productos', json_object() )
+                where p.PTS->>'$.\"230-REGALOBIEX\"' > 0 
+                and cast( p.fechas->>'$.creado' as date ) between '{$year}-{$mes}-01' and '{$year}-{$mes}-25'
+                and substring( p.estatus_codigo,1 ,3 ) > 200
+                and ( substring( p.estatus_codigo,1 ,3 ) < 400 or cast( p.fechas->>'$.pagado' as date ) > '{$year}-{$mes}-25' );";
 
-    if( VARIABLES[ "check_biex" ][ "valor" ] == "0" && date( "d") > $dia_limite ){
-        $sql = "UPDATE t_pedidos
-                set PTS = json_set( PTS, '$.\"230-REGALOBIEX\"', 0),
-                data = json_set( data, '$.productos', data->'$.productos' - 1),
-                promociones = json_set( promociones, '$.\"230-REGALOBIEX\".productos', json_object() )
-                where PTS->>'$.\"230-REGALOBIEX\"' > 0 
-                and cast( fechas->>'$.creado' as date ) between '2025-{$mes}-01' and '2025-{$mes}-25'
-                and substring( estatus_codigo,1 ,3 ) > 200
-                and (substring( estatus_codigo,1 ,3 ) < 400 or cast( fechas->>'$.pagado' as date ) > '2025-{$mes}-25' );";
-
-        $db->query("update t_variables set valor = '1' where codigo = 'check_biex'");
-    }
-    elseif( VARIABLES[ "check_biex" ][ "valor" ] == "1" && date( "d") < $dia_limite ){
-        $db->query("update t_variables set valor = '0' where codigo = 'check_biex'");
-    }
-
-    if( $sql ){
         $db->query( $sql );
+        $db->query("update t_variables set valor = '{$fecha}' where codigo = 'check_biex'");
     }
 }
 
