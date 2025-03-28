@@ -327,7 +327,6 @@ function beneleit( data ){
 
 
 
-
         nodeEnter.append("rect")
             .attr("x", -26)
             .attr("y", 55)

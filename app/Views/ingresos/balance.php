@@ -130,7 +130,7 @@ while( $hoy <= $periodo[ "termina" ] ){
                                 echo "\n<tr\">
                                     <td width=\"10%\" class=\"text-center\">".( $usuario->es_admin() ? "<a href=\"".base_url()."/pedido/{$c->referencia}\"><span class=\"badge bg-marine\">{$c->referencia}</span></a>" : "<span class=\"badge bg-marine\">{$c->referencia}</span>" )."</td>
 
-                                    <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c->cantidad, 2 )."</strong></td>
+                                    <td width=\"10%\" class=\"text-end\"><strong>".( $c->esquema_codigo == "118-PROMOS-50" ? "" : "$" ).number_format( $c->cantidad, $c->esquema_codigo == "118-PROMOS-50" ? 0 : 2 )."</strong>".( $c->esquema_codigo == "118-PROMOS-50" ? " <i class=\"fa fa-tag text-pink\"></i> Promo".( $c->cantidad > 1 ? "s" : "" ) : "" )."</td>
 
                                     <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
 

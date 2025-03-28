@@ -319,23 +319,20 @@ function beneleit( data ){
             .style( 'fill', 'white' )
             .text( function( d ){ return d.avatar == null ? d.iniciales : ''; } );
 
-
-        nodeEnter.append('path')
-            .attr("d", roundedRect(-26, -5, 26, 20, 5, 1, 0, 1, 0))
-            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) >= 10 ? 'si' : 'no' ); } );
-
-        nodeEnter.append('path')
-            .attr("d", roundedRect(0, -5, 26, 20, 5, 0, 1, 0, 1))
-            .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')' } );
-
+          
             
+            nodeEnter.append('path')
+            .attr("d", roundedRect(-26, -5, 52, 20, 5, 1, 1, 1, 1))
+            .attr( 'class', function( d ){ return 'compra_' + ( parseInt( d.calificaciones[ 0 ].substring( 0, 2 ) ) >= 10 ? 'si' : 'no' ); } );
+            // .style( 'fill', function( d ){ return 'var(--bs-' + estatus[ d.estatus ].color + ')' } );
+
 
 
         nodeEnter.append("rect")
             .attr("x", -26)
             .attr("y", 55)
             .attr("rx", 5)
-            .attr("height", 21)
+            .attr("height", 32)
             .attr("width", 52)
             .style("fill", function( d ){ return 'var(--bs-'+ ( rangos[ d.rango ].color ?? 'black' ) + ')'; } );
 
@@ -352,25 +349,25 @@ function beneleit( data ){
 
           
 
-        // Texto calificación mes anterior
-        nodeEnter.append('text')
-            .attr( 'dx', -17 )
-            .attr( 'dy', 8 )
-            .attr( 'text-anchor', 'start' )
-            .style( 'fill', 'white' )
-            .style( 'font-size', '9px' )
-            .style( 'font-weight', 'bold' )
-            .text(function( d ){ return d.calificaciones[ 0 ].substring( 4, 5 ); } );
-
         // Texto calificación mes actual
         nodeEnter.append( 'text' )
-            .attr( 'dx', 17 )
+            .attr( 'dx', -17 )
             .attr( 'dy', 8 )
-            .attr( 'text-anchor', 'end' )
+            .attr( 'text-anchor', 'center' )
             .style( 'fill', 'white' )
             .style( 'font-size','9px' )
             .style( 'font-weight','bold' )
-            .text( function( d ){ return d.calificaciones[ 1 ].substring( 4, 5 ); } );
+            .text( function( d ){ return d.calificaciones[ 1 ].substring( 3 ) == '--' ? '--' : 'ACTIVO'; } );
+
+                    // Texto rango
+        nodeEnter.append( 'text' )
+        .attr( 'dy', 83 )
+        .attr( 'text-anchor', 'middle')
+        .style( 'font-size', '7px' )
+        .style( 'font-weight', 'bold' )
+        .style( 'fill', 'white' )
+        .text( function( d ){ return d.rango.substring( 4 ); });        
+
 
 
 
