@@ -215,91 +215,100 @@ function mes($mesnum, $ext = 0)
     return $mespal;
 }
 
-function aplicaImpuestos( $cantidad, $tipo, $fecha = null ){
+function aplicaImpuestos( $cantidad, $tipo, $fecha = null, $modelo = null ){
     if( !$fecha ){
         $fecha = date( "Y-m-d" );
     }
 
-    switch( $tipo ){
-        case 2: // DESCUENTO BONIFICACION ESPECIAL
-            $importe = $cantidad / 1.16;
-            $promo = $importe * .1;
-            $sub = $importe - $promo;
-            $iva = $sub * .16;
-            $ret = $sub * 0.0125;
-            $total = $cantidad - $promo + $iva - $ret;
-
-            $desglose = [
-                [
-                    "descripcion" => "DESC. BONIF. P-P BENELEIT",
-                    "cantidad" => ($cantidad / 1.16) * .1
-                ],
-                [
-                    "descripcion" => "NETO",
-                    "cantidad" => $cantidad
-                ],
-                [
-                    "descripcion" => "IMPORTE",
-                    "cantidad" => $cantidad / 1.16
-                ],
-                [
-                    "descripcion" => "SUBTOTAL",
-                    "cantidad" => $importe - $promo
-                ],
-                [
-                    "descripcion" => "I.V.A.",
-                    "cantidad" => $sub * .16
-                ],
-                [
-                    "descripcion" => "RET 1.5%",
-                    "cantidad" => $sub * 0.0125
-                ],                
-                [
-                    "descripcion" => "TOTAL",
-                    "cantidad" => $cantidad - $promo + $iva - $ret
-                ]
-            ];
-            break;
-        
-        case 1: // NO RETENCION 
-            $desglose = [
-                [
-                    "descripcion" => "SUBTOTAL",
-                    "cantidad" => $cantidad / 1.16
-                ],
-                [
-                    "descripcion" => "IMPORTE",
-                    "cantidad" => $cantidad
-                ],
-                [
-                    "descripcion" => "RET. DE I.V.A. (10.66%)",
-                    "cantidad" => ( $cantidad / 1.16 ) * 0.1066
-                ],
-                [
-                    "descripcion" => "I.V.A.",
-                    "cantidad" => ( $cantidad / 1.16 ) * 0.16
-                ],
-                [
-                    "descripcion" => "TOTAL",
-                    "cantidad" => ( $cantidad / 1.16 ) - ( ( $cantidad / 1.16 ) * 0.1066 ) + ( ( $cantidad / 1.16 ) * 0.16 )
-                ]
-            ];
-        break;
-
-        default: // RETENCION ISR
-            $desglose = [
-                [
-                    "descripcion" => "I.S.R.",
-                    "cantidad" => getISR( $cantidad, date( "Y", strtotime($fecha) ) )
-                ],
-                [
-                    "descripcion" => "TOTAL",
-                    "cantidad" => $cantidad - getISR( $cantidad, date( "Y", strtotime($fecha) ) )
-                ]
-            ];
-            break;
+    if( $modelo == "50-INVERSION" ){
+        $desglose = [
+            [
+                "descripcion" => "TOTAL",
+                "cantidad" => $cantidad 
+            ]
+        ];
     }
+    else{
+        switch( $tipo ){
+            case 2: // DESCUENTO BONIFICACION ESPECIAL
+                $importe = $cantidad / 1.16;
+                $promo = $importe * .1;
+                $sub = $importe - $promo;
+                $iva = $sub * .16;
+                $ret = $sub * 0.0125;
+                $total = $cantidad - $promo + $iva - $ret;
 
+                $desglose = [
+                    [
+                        "descripcion" => "DESC. BONIF. P-P BENELEIT",
+                        "cantidad" => ($cantidad / 1.16) * .1
+                    ],
+                    [
+                        "descripcion" => "NETO",
+                        "cantidad" => $cantidad
+                    ],
+                    [
+                        "descripcion" => "IMPORTE",
+                        "cantidad" => $cantidad / 1.16
+                    ],
+                    [
+                        "descripcion" => "SUBTOTAL",
+                        "cantidad" => $importe - $promo
+                    ],
+                    [
+                        "descripcion" => "I.V.A.",
+                        "cantidad" => $sub * .16
+                    ],
+                    [
+                        "descripcion" => "RET 1.5%",
+                        "cantidad" => $sub * 0.0125
+                    ],                
+                    [
+                        "descripcion" => "TOTAL",
+                        "cantidad" => $cantidad - $promo + $iva - $ret
+                    ]
+                ];
+                break;
+            
+            case 1: // NO RETENCION 
+                $desglose = [
+                    [
+                        "descripcion" => "SUBTOTAL",
+                        "cantidad" => $cantidad / 1.16
+                    ],
+                    [
+                        "descripcion" => "IMPORTE",
+                        "cantidad" => $cantidad
+                    ],
+                    [
+                        "descripcion" => "RET. DE I.V.A. (10.66%)",
+                        "cantidad" => ( $cantidad / 1.16 ) * 0.1066
+                    ],
+                    [
+                        "descripcion" => "I.V.A.",
+                        "cantidad" => ( $cantidad / 1.16 ) * 0.16
+                    ],
+                    [
+                        "descripcion" => "TOTAL",
+                        "cantidad" => ( $cantidad / 1.16 ) - ( ( $cantidad / 1.16 ) * 0.1066 ) + ( ( $cantidad / 1.16 ) * 0.16 )
+                    ]
+                ];
+            break;
+
+            default: // RETENCION ISR
+                $desglose = [
+                    [
+                        "descripcion" => "I.S.R.",
+                        "cantidad" => getISR( $cantidad, date( "Y", strtotime($fecha) ) )
+                    ],
+                    [
+                        "descripcion" => "TOTAL",
+                        "cantidad" => $cantidad - getISR( $cantidad, date( "Y", strtotime($fecha) ) )
+                    ]
+                ];
+                break;
+        }
+    }
 
     return $desglose; 
 }

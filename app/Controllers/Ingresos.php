@@ -59,7 +59,8 @@ class Ingresos extends BaseController
                 and esquema_codigo = '510-INVERSION'
                 and estatus_codigo = '255-PENDIENTE'";
 
-        $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha : $this->data[ "periodo" ][ "termina" ];
+        $ft = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( date( "Y-m-d" )." + 1 day" ) )." last Monday" ) );
+        $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha ?? $ft : $ft;
 
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
@@ -207,7 +208,7 @@ class Ingresos extends BaseController
 
         $html .= "</table><table class=\"table w-100 table-striped\">";;
 
-        $desglose = aplicaImpuestos( $pago[ "data" ][ "cantidades" ][ "subtotal" ], $pago[ "data" ][ "retencion" ], $periodo[ "inicia" ] );
+        $desglose = aplicaImpuestos( $pago[ "data" ][ "cantidades" ][ "subtotal" ], $pago[ "data" ][ "retencion" ], $periodo[ "inicia" ], $pago[ "modelo_codigo" ] );
 
         foreach( $desglose as $d ){
             if( $d[ "descripcion" ] == "TOTAL" ){
@@ -229,7 +230,7 @@ class Ingresos extends BaseController
 
         $html .= "</table>";
 
-        $html .= "<div class=\"alert alert-success text-center mb-0\">Transferencia a cuenta CLABE {$pago[ "clabe" ]}<h1>$".number_format( $total, 2)."</h1></div>";
+        $html .= "<div class=\"alert alert-success text-center mb-0\">Transferencia a ".( $pago[ "modelo_codigo" ] == "50-INVERSION" ? "Wallet Digital" : "cuenta CLABE" )."<br><strong>{$pago[ "clabe" ]}</strong><h1>$".number_format( $total, 2)."</h1></div>";
 
 
         return $html;        

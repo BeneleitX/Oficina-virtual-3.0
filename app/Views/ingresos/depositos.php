@@ -51,8 +51,7 @@
         <?php 
             $socios = [];
             foreach( $pagos as $pago ){
-                $desglose = aplicaImpuestos( $pago[ "total" ], $pago[ "impuestos" ], $pago[ "fecha" ] );
-
+                $desglose = aplicaImpuestos( $pago[ "total" ], $pago[ "impuestos" ], $pago[ "fecha" ], $modelo );
 
                 foreach( $desglose as $d ){
                     if( $d[ "descripcion" ] == "TOTAL" ){

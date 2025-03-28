@@ -34,7 +34,8 @@
     <?php 
         $ingresosxdia = $socio->getIngresosPorDia( $modelo, $esq );
 
-        $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
+        $inicia = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( MODELOS[ $modelo ][ "settings" ][ "fecha_arranque" ]." + 1 day" ) )." last Monday" ) );
+        ; // "2024-08-12"; //
 
         while( $inicia <= $fecha_max ){
             $fecha = $inicia;
