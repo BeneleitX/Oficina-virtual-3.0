@@ -52,7 +52,7 @@ if( $socio ){
                         <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
                         <?php
 if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
-    echo "<a class=\"btn btn-sm btn-outline-danger\" href=\"javascript:modal_cambia_patrocinador()\"><i class=\"fa fa-warning\"></i> Cambiar patrocinador</a>";
+    echo "<a class=\"btn btn-sm btn-outline-danger mb-3\" href=\"javascript:modal_cambia_patrocinador()\"><i class=\"fa fa-warning\"></i> Cambiar patrocinador</a>";
 }                      
                         ?>
                         <p><?php echo $socio->avatar( 120 ); ?></p>
@@ -154,7 +154,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         <tr>
                             <th>Red</th>
                             <th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project text-mustard"></i></a></th>
-                            <th>Estatus<?php echo " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>"; ?></th>
+                            <th>Estatus<?php if( $this->data[ "usuario" ]->permiso( "41-RED" ) ) echo " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>"; ?></th>
                             <th>Primer compra</th>
                             <th>Ultima compra</th>
                             <th>Pedido</th>
@@ -271,7 +271,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                     </div>
                     <div class="modal-body text-red text-center"><div class="small">
                             <p class=""><i class="fa fa-warning"></i> ATENCION:</p>
-                            <p class="mb">Al apagar una red, el estatus del socio <?php echo $socio->id(); ?> cambiará a BAJA MANUAL (gris) cancelando cualquier calificación o estatus activo en las redes seleccionadas y generando una compresión definitiva por lo que nunca podrá cobrar comisiones en esa red y perdiendo toda su estructura de socios en línea descendente. Si se apagan todas las redes, la cuenta se inactiva y el socio ya no podrá utilizar la oficina virtual.</p><p>El bloqueo podrá ser revertido para que se active y califique pero no recupera los socios que por compresión ahora pertenecen a su patrocinador.</p>
+                            <p class="mb">Al apagar una red, el estatus del socio <?php echo $socio->id(); ?> cambiará a BAJA MANUAL (gris) cancelando cualquier calificación o estatus activo en esa red y generando una compresión definitiva por lo que nunca podrá cobrar comisiones en esa red y perdiendo toda su estructura de socios en línea descendente. Si se apagan todas las redes, la cuenta se inactiva y el socio ya no podrá utilizar la oficina virtual.</p><p>El bloqueo podrá ser revertido para que se active y califique pero no recupera los socios que por compresión ahora pertenecen a su patrocinador.</p>
                         </div>
                         <h5 class="mt-2 mb-3">Permisos de uso de redes para el socio <?php echo $socio->id(); ?></h5>
 
@@ -302,7 +302,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
     </div>
 
 
-
+<?php if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){ ?>
     <div class="modal" tabindex="-1" id="modal_cambia_patrocinador">
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="position_relative; overflow:hidden">
@@ -344,5 +344,5 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
     </div>
 
 
-<?php } ?>
+<?php } } ?>
     
