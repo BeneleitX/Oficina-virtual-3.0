@@ -40,6 +40,8 @@ function load_padres( extra = null){
     });
 }
 
+
+
 $(document).ready(function(){
 
     $( '#activa_editar' ).on( 'click', function(e){

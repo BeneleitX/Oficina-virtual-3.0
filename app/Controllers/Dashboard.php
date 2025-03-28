@@ -202,6 +202,70 @@ class Dashboard extends BaseController
     }
 
 
+    public function update_lock(){
+        if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $bloqueos  = $this->request->getPost( "modelos" );
+
+        if( $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) ) ){
+            $db    = db_connect();
+
+            foreach( MODELOS as $m ){
+
+                // Aplica bloqueo
+                if( !isset( $bloqueos[ $m[ "codigo" ] ] ) && $socio->data->estatus->modelos->{$m[ "codigo" ]} != "110-ELIMINADO" ){
+                    
+                    $data = $socio->data;
+                    $data->estatus->modelos->{$m[ "codigo" ]} = "110-ELIMINADO";
+                    $socio->data = $data;
+                    
+                    model( "UsuarioModel" )->save( $socio );
+
+                    // BITACORA Bloquear 
+                    bitacora( 88, $this->data[ "usuario" ]->id, [ 
+                        "socio"        => $socio->id,
+                        "modelo"       => $m[ "codigo" ]
+                    ] );
+
+                    // si hay bloqueo, comprimir red
+
+                    // $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                } 
+
+                // Quita bloqueo
+                elseif( isset( $bloqueos[ $m[ "codigo" ] ] ) && $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ){
+                    
+                    $data = $socio->data;
+                    $data->estatus->modelos->{$m[ "codigo" ]} = "";
+                    $socio->data = $data;
+                    
+                    model( "UsuarioModel" )->save( $socio );
+
+                    // BITACORA Bloquear 
+                    bitacora( 89, $this->data[ "usuario" ]->id, [ 
+                        "socio"        => $socio->id,
+                        "modelo"       => $m[ "codigo" ]
+                    ] );
+
+                    $up = true;
+                } 
+            }
+
+            // actualizar estatus
+
+            $db->query( "do f_get_estatus( {$socio->id}, 0 )" );
+
+            $ruta = urlencode( base64_encode( $socio->password_original() ) );
+            return redirect()->to( "sociodata/{$ruta}" );
+        }
+
+        return redirect()->to( "usuarios" );
+    }
+
+
+
     public function update_sociodata(){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){

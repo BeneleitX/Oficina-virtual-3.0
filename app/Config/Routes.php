@@ -51,6 +51,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "sociodata/(:any)",                   "Dashboard::sociodata/$1" );
     $routes->post( "sociodata",                         "Dashboard::sociodata" );
     $routes->post( "load_padres",                       "Dashboard::load_padres" );
+    $routes->post( "update_lock",                       "Dashboard::update_lock" );
     $routes->post( "update_sociodata",                  "Dashboard::update_sociodata" );
     $routes->post( "save_layout",                       "Dashboard::save_layout" );
     $routes->post( "reset_password",                    "Dashboard::reset_password" );

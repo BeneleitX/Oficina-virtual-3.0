@@ -154,7 +154,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         <tr>
                             <th>Red</th>
                             <th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project text-mustard"></i></a></th>
-                            <th>Estatus<?php echo " <button class=\"btn btn-link btn-sm\" id=\"modal_lock\"><i class=\"fa fa-lock text-mustard\"></i></button>"; ?></th>
+                            <th>Estatus<?php echo " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>"; ?></th>
                             <th>Primer compra</th>
                             <th>Ultima compra</th>
                             <th>Pedido</th>
@@ -255,6 +255,52 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
             </div>
         </div>
     </div>
+
+
+    
+    <div class="modal" tabindex="-1" id="modal_lock">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+                <form method="post" action="<?php echo base_url( "update_lock" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+
+                    <div class="modal-header bg-red">
+                        <h5 class="modal-title text-white m-0"><i class="fa fa-lock"></i> Bloqueo de usuarios</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-red text-center"><div class="small">
+                            <p class=""><i class="fa fa-warning"></i> ATENCION:</p>
+                            <p class="mb">Al apagar una red, el estatus del socio <?php echo $socio->id(); ?> cambiará a BAJA MANUAL (gris) cancelando cualquier calificación o estatus activo en las redes seleccionadas y generando una compresión definitiva por lo que nunca podrá cobrar comisiones en esa red y perdiendo toda su estructura de socios en línea descendente. Si se apagan todas las redes, la cuenta se inactiva y el socio ya no podrá utilizar la oficina virtual.</p><p>El bloqueo podrá ser revertido para que se active y califique pero no recupera los socios que por compresión ahora pertenecen a su patrocinador.</p>
+                        </div>
+                        <h5 class="mt-2 mb-3">Permisos de uso de redes para el socio <?php echo $socio->id(); ?></h5>
+
+                        <table class="w-100"><tr>
+                            <?php 
+                            foreach( MODELOS as $m ){
+                                echo "\n
+                                    <td width=\"20%\" class=\"text-center px-1\">
+                                        <div class=\"card\"><div class=\"card-body text-center\">
+                                            <div class=\"form-check form-switch text-center\" style=\"padding-left: 0; zoom: 1.5\">
+                                            <input name=\"modelos[{$m[ "codigo" ]}]\" value=\"1\" class=\"form-check-input bg-red\" type=\"checkbox\" role=\"switch\" id=\"switch_{$m[ "codigo" ]}\" style=\"clear: both; margin-left: auto; float:none\" ".( $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ? "" : "checked" ).">
+                                            <label class=\"form-check-label\" for=\"switch_{$m[ "codigo" ]}\"></label></div>
+                                            <span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span>
+                                        </div></div>                                        
+                                    </td>
+                                ";
+                            }
+                        ?></tr>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-lock"></i> Aplicar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 
     <div class="modal" tabindex="-1" id="modal_cambia_patrocinador">
