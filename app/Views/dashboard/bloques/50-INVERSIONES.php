@@ -1,3 +1,13 @@
+<?php
+
+$saldo = $usuario->saldo( "50-INVERSION" );
+
+if( $saldo ){
+    echo "<div class=\"mt-3 px-3\"><a href=\"".base_url()."tienda/50-INVERSION\" class=\"btn w-100 mb-0 btn-success text-center\"><h1 class=\"text-white m-0\">$".number_format( $saldo, 2 )."</h1><p class=\"small m-0\">Tienes un saldo disponible para invertir en Capital24<br>Utilizalo ahora mismo haciendo click aquí</p></a></div>";
+}
+
+?>
+
 <div class="pt-3 px-3 mb-3">
 <?php
     echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
