@@ -1236,7 +1236,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                 $mp[ "settings" ][ "tipocomision" ] = "";
                             }
 
-                            if( $ss && $mp[ "settings" ][ "tipocomision" ] == "saldo" || !$ss && $mp[ "settings" ][ "tipocomision" ] != "saldo" ){ 
+                            if( $ss && ( $mp[ "settings" ][ "tipocomision" ] == "saldo" || $modelo == "50-INVERSION" ) || !$ss && $mp[ "settings" ][ "tipocomision" ] != "saldo" ){ 
                                 $mps[] = $mp;
 
 /*                                 if(  && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
