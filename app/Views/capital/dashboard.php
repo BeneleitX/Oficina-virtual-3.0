@@ -91,9 +91,9 @@ if( sizeof( $inversiones ) ){
 
             foreach( $retiros as $retiro ){
                 $retiros_pendientes .= "\n<tr class=\"\">
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\">Solicitud de retiro <span class=\"badge bg-red\">".strtoupper( substr( md5( $retiro[ "id" ] ), 10, 4 ) )."</span></td>
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"mb-0 mt-2\"><button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar solicitud</button></td>
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\">".estatus( $retiro[ "estatus_codigo" ] )."</td>
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">Solicitud de retiro</td>
+             
+                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">".estatus( $retiro[ "estatus_codigo" ] )."<br><button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar solicitud</button></td>
                     <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
             }
 
@@ -239,7 +239,7 @@ if( sizeof( $inversiones ) ){
                     <div class="row mb-4">
                         <div class="col-lg-4">
                             <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
-                            <label class="btn btn-outline-info text-start" for="type_1">
+                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
                                 <p class="fs-4">Retiro mensual</p>                                   
                                 <p>Retirar el rendimiento del mes actual</p>
                                 <input readonly value="" id="cantidad_1" name="mes" class="cantidades form-control text-center mb-1"></i>
@@ -248,7 +248,7 @@ if( sizeof( $inversiones ) ){
 
                         <div class="col-lg-4">
                             <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
-                            <label class="btn btn-outline-info text-start" for="type_2">
+                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_2">
                                 <p class="fs-4">Retiro total</p>                                   
                                 <p>Retirar el total de rendimiento acumulado</p>
                                 <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
@@ -258,7 +258,7 @@ if( sizeof( $inversiones ) ){
                         <div class="col-lg-4">
                             </label>
                             <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
-                            <label class="btn btn-outline-info text-start" for="type_3">
+                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_3">
                                 <p class="fs-4">Retiro parcial</p>                                   
                                 <p>Retirar una cantidad específicada pro el socio</p>
                                 <input type="number" step="0.01" class="cantidades form-control text-center mb-1" id="cantidad_3" name="custom"></i>
@@ -271,7 +271,7 @@ if( sizeof( $inversiones ) ){
                             <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
                             
 
-                            <select name="mes_apply" class="form-select w-25">
+                            <select name="mes_apply" class="form-select w-50">
                                 <?php
                                     $date = new DateTime( date( "Y-m-d" ) );
                                     $date->modify( "first day of this month" );

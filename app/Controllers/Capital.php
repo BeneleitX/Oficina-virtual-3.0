@@ -274,8 +274,10 @@ class Capital extends BaseController
     public function estadodecuenta( $hash ){
         $hash = base64_decode( urldecode( $hash ) );
 
-        $i = model( "InversionModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( extras, '$.TxHash' ) ) = '{$hash}' " )->findAll();
+        $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}' AND substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
+        $i = model( "InversionModel" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
 
+        
         if( !sizeof( $i ) ){
             return redirect()->to( "capital" );
         }
