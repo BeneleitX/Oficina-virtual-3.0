@@ -54,7 +54,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
     $rts = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}" )->findAll();
-
+dd($rts);
     $date = new \DateTime( intval( date( "d", strtotime( $f_i ) ) ) == 1 ? $pedido[ "fechas" ][ "pagado" ] : $f_i );
 
     for( $a = 0; $a <= 24; $a++ ){
