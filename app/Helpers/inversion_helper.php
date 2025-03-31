@@ -195,7 +195,7 @@ function balance_inversion( $i ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
         $respuesta[ "semilla" ] = $j[ "semilla" ];
-        
+
         if( $j[ "Ym" ] < date( "Ym" ) ){
             if( $j[ "dias_en_mes" ] ){
                 
@@ -206,7 +206,7 @@ function balance_inversion( $i ){
 
                 $respuesta[ "rendimiento" ] += $j[ "rendimiento_mes" ];
                 $respuesta[ "retiros" ] += $j[ "retiros" ];
-                $respuesta[ "full" ] += $j[ "rendimiento_mes" ];
+                $respuesta[ "full" ] += $j[ "rendimiento_mes" ] - $j[ "retiros" ];
             }
         }
         elseif( $j[ "Ym" ] == date( "Ym" ) ){

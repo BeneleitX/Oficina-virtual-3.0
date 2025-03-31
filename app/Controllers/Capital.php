@@ -174,7 +174,9 @@ class Capital extends BaseController
 
 
     public function crea_retiro(){
-        $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
+        $sql  = "pedido_id =".$this->request->getPost( "inversion_id" );
+        $i    = model( "InversionModel" )->where( $sql )->findAll()[ 0 ];
+
         $p    = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
         $tipo = intval( $this->request->getPost( "opciones_retiro" ) );
         $bt   = balance_inversion( $i );
@@ -184,6 +186,7 @@ class Capital extends BaseController
             $bt[ "full" ], 
             floatval( $this->request->getPost( "custom" ) )
         ];
+
 
         if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
             // BITACORA Solicita retiro
@@ -215,6 +218,8 @@ class Capital extends BaseController
                     "deposito"       => null
                 ]
             ];
+
+            dd( $this->request->getPost(), $retiro, $retiro_add);
 
             model( "RetiroModel" )->save( $retiro_add );
 
