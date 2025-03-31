@@ -194,6 +194,8 @@ function balance_inversion( $i ){
     for( $a = 0; $a < 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
+        $respuesta[ "semilla" ] = $j[ "semilla" ];
+        
         if( $j[ "Ym" ] < date( "Ym" ) ){
             if( $j[ "dias_en_mes" ] ){
                 
@@ -208,7 +210,7 @@ function balance_inversion( $i ){
             }
         }
         elseif( $j[ "Ym" ] == date( "Ym" ) ){
-            $respuesta[ "semilla" ] = $j[ "semilla" ];
+            
             $dias = date( "d" ) - ( $j[ "dias_en_mes" ] - $j[ "dias_parcial" ] );
 
             if( $dias < 0 ){
