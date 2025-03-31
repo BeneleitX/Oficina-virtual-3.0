@@ -219,8 +219,6 @@ class Capital extends BaseController
                 ]
             ];
 
-            dd( $this->request->getPost(), $retiro, $retiro_add);
-
             model( "RetiroModel" )->save( $retiro_add );
 
             // actualizar meses de inversión
