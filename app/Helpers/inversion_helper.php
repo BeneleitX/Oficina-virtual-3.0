@@ -191,6 +191,11 @@ function balance_inversion( $i ){
         "full" => 0
     ];
 
+    if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 ){
+        $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+        model( "InversionModel" )->save( $i );
+    }
+
     for( $a = 0; $a < 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
