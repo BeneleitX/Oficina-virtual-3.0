@@ -5,7 +5,7 @@ var options = {
     series: null,
     chart: {
         type: 'bar',
-        height: 450,
+        height: 500,
         stacked: true,
         toolbar: {
             show: true
