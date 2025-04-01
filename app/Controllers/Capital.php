@@ -174,8 +174,8 @@ class Capital extends BaseController
 
 
     public function crea_retiro(){
-        $sql  = "pedido_id =".$this->request->getPost( "inversion_id" );
-        $i    = model( "InversionModel" )->where( $sql )->findAll()[ 0 ];
+        
+        $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
 
         $p    = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
         $tipo = intval( $this->request->getPost( "opciones_retiro" ) );
@@ -278,7 +278,7 @@ class Capital extends BaseController
         $hash = base64_decode( urldecode( $hash ) );
 
         $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}' AND substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
-        $i = model( "InversionModel" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
+        $i = model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
 
         
         if( !sizeof( $i ) ){

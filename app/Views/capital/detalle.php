@@ -86,14 +86,44 @@ for( $a = 0; $a < 25; $a++ ){
     }
 
     $rendimiento[] = $r;
-    $meses[]       = mes( substr( $m[ "Ym" ], 4, 2 ), 3 )." ".substr( $m[ "Ym" ], 2, 2 );
+    $meses[]       = substr( $m[ "Ym" ], 0, 4 )." ".mes( substr( $m[ "Ym" ], 4, 2 ), 3 );
 
     // cierre de tabla desglose de mes
 
     if( $m[ "Ym" ] <= date( "Ym" ) ){
-        $tablas[ $a ]  = "\n<tr>
+
+
+        if( $m[ "Ym" ] == date( "Ym" ) && $m[ "rendimiento_mes" ] != $r ){
+
+            $tablas[ $a ]  = "\n<tr>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$a}</td>
-            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">".strtoupper( $meses[ $a ] )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-start\">".strtoupper( $meses[ $a ] )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ], 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $compuesto[ $a ], 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$m[ "Porcentaje" ]}%</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $m[ "rendimiento_dia" ], 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">{$dias}</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r, 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r + $compuesto[ $a ], 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">".( $retiros[ $a ] ? "<i class=\"fa fa-arrow-down text-red\"></i>" : "$0.00" )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r, 2 )."</td>
+            </tr>";
+            
+            $tablas[ $a+1 ]  = "\n<tr>
+            <td></td>
+            <td class=\"\" colspan=\"5\" style=\"color:var(--bs-gray-500) !important\">Cantidades proyectadas al cierre de mes:</td>
+            <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">{$m[ "dias_en_mes" ]}</td>
+            <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $m[ "rendimiento_mes" ], 2 )."</td>
+            <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $m[ "rendimiento_mes" ] + $compuesto[ $a ], 2 )."</td>
+            <td class=\"text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</td>
+            <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $m[ "rendimiento_mes" ] - $retiros[ $a ], 2 )."</td>
+            </tr>";
+    
+        }
+        else{
+            $tablas[ $a ]  = "\n<tr>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$a}</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-start\">".strtoupper( $meses[ $a ] )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ], 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $compuesto[ $a ], 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$m[ "Porcentaje" ]}%</td>
@@ -104,18 +134,6 @@ for( $a = 0; $a < 25; $a++ ){
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</span></td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r - $retiros[ $a ], 2 )."</td>
             </tr>";
-
-        if( $m[ "Ym" ] == date( "Ym" ) && $m[ "rendimiento_mes" ] != $r ){
-
-            $tablas[ $a+1 ]  = "\n<tr>
-            <td class=\"\" colspan=\"6\" style=\"color:var(--bs-red) !important\">Cantidades proyectadas al cierre de mes</td>
-            <td class=\"text-end\" style=\"color:var(--bs-red) !important\">{$m[ "dias_en_mes" ]}</td>
-            <td class=\"text-end\" style=\"color:var(--bs-red) !important\">$".number_format( $m[ "rendimiento_mes" ], 2 )."</td>
-            <td class=\"text-end\" style=\"color:var(--bs-red) !important\">$".number_format( $m[ "rendimiento_mes" ] + $compuesto[ $a ], 2 )."</td>
-            <td class=\"text-end\"></td>
-            <td class=\"text-end\" style=\"color:var(--bs-red) !important\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $m[ "rendimiento_mes" ] - $retiros[ $a ], 2 )."</td>
-            </tr>";
-    
         }
     }
 }
@@ -227,7 +245,7 @@ echo "\n
     echo "<div class=\"card mb-4\"><div class=\"card-header bg-marine\"><h5 class=\"m-0 text-white\">Estado de cuenta</h5></div><table class=\"table table-striped m-0\"><thead>
         <tr>
             <th class=\"text-center\">No.</th>
-            <th class=\"text-center\">Mes</th>
+            <th class=\"text-start\">Mes</th>
             <th class=\"text-end\">Cap. Semilla</th>
             <th class=\"text-end\">Int. Compuesto</th>
             <th class=\"text-center\">Porcentaje</th>

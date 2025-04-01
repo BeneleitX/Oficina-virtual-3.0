@@ -53,7 +53,8 @@ function genera_meses( $pedido, $i, $producto = null ){
     }
 
     $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
-    $rts = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}" )->findAll();
+    $sql = "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}";
+    $rts = model( "RetiroModel" )->where( $sql )->findAll();
 
     $date = new \DateTime( intval( date( "d", strtotime( $f_i ) ) ) == 1 ? $pedido[ "fechas" ][ "pagado" ] : $f_i );
 
@@ -82,18 +83,26 @@ function genera_meses( $pedido, $i, $producto = null ){
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
 
         
-        $rendimiento_mes = floor( $cantidad * $producto->data->porcentaje ) / 100;
-        $rendimiento_dia = floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100; 
+        $rendimiento_mes = floatval( floor( $cantidad * $producto->data->porcentaje ) / 100 );
+        $rendimiento_dia = floatval( floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100 ); 
 
         if( $dias_parcial < $dias_en_mes ){
-            $rendimiento_mes = floor( $dias_parcial * $rendimiento_dia * 100 ) / 100;
+            $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
         }
+
+        $compuesto = $a ? (
+            floor( 
+                intval( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
+                intval( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 
+                intval( $meses[ $a - 1 ][ "retiros" ] * 100 )
+            ) / 100
+        ) : 0;
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
             "Porcentaje"      => $producto->data->porcentaje,
             "semilla"         => $pedido[ "data" ][ "total" ],
-            "compuesto"       => ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 ),
+            "compuesto"       => $compuesto,
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
             "retiros"         => $retiros_mes,
