@@ -509,7 +509,7 @@
         <?php 
         $pc = $socio->getPrimerCompra( $modelo );
 
-        if( date( "d" ) < VARIABLES[ "dias_mes_anterior" ][ "valor" ] && $modelo == '10-NUTRICION' &&  !( $pagado || $bloqueado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ 
+        if( intval( date( "d" ) ) < VARIABLES[ "dias_mes_anterior" ][ "valor" ] && in_array( $modelo, [ "10-NUTRICION", "30-ALIMENTOS" ] ) &&  !( $pagado || $bloqueado || $cancelado ) && $pc && date( "Ym" ) > date( "Ym", strtotime( $pc ) ) ){ 
             ?>
             <div id="alert_anterior" class="alert alert-<?php echo intval( $pedido[ "data" ][ "mesanterior" ] ) ? "danger" : "info"; ?>">
                 <i class="fa fa-circle-info"></i> Los puntos de este pedido aplican para el mes de 
