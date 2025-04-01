@@ -25,9 +25,14 @@ $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
 $interval = $date1->diff( $date2 );
 $total_dias = $interval->days + 1;
 
-$date2 = new DateTime( date( "Y-m-d" ) );
-$interval = $date1->diff( $date2 );
-$transcurridos = $interval->days > $total_dias ? $total_dias : $interval->days;
+if( date( "Y-m-d" ) < $f_i ){
+    $transcurridos = 0;
+}
+else{
+    $date3 = new DateTime( date( "Y-m-d" ) );
+    $interval = $date1->diff( $date3 );
+    $transcurridos = $interval->days > $total_dias ? $total_dias : $interval->days;
+}
 
 $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
