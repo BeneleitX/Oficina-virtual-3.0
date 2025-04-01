@@ -65,12 +65,13 @@ function carga_hash( inversion ){
 function ask_retiro( inversion ){
     var i   = $( '[inversion=' + inversion + ']' ),
         rendimiento = i.attr( 'rendimiento' ),
+        semilla     = i.attr( 'semilla' ),
         mes         = i.attr( 'mes' );
 
     $( '#cantidad_3' ).val( '' );
     $( '[name=inversion_id]' ).val( inversion );
     $( '#cantidad_1' ).val( mes );
-    $( '#cantidad_2' ).val( rendimiento );
+    $( '#cantidad_2' ).val( parseFloat( rendimiento ) );
     $( '[name=opciones_retiro]' ).prop( 'checked', false );
     $( '#confirma_agregar' ).prop( 'disabled', true );
     $( '#stock_modal' ).modal( 'show' );

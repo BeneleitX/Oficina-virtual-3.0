@@ -13,7 +13,7 @@ $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
+if(!isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
     $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
 
@@ -27,7 +27,7 @@ $total_dias = $interval->days + 1;
 
 $date2 = new DateTime( date( "Y-m-d" ) );
 $interval = $date1->diff( $date2 );
-$transcurridos = $interval->days;
+$transcurridos = $interval->days > $total_dias ? $total_dias : $interval->days;
 
 $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
@@ -93,7 +93,8 @@ for( $a = 0; $a < 25; $a++ ){
     if( $m[ "Ym" ] <= date( "Ym" ) ){
 
 
-        if( $m[ "Ym" ] == date( "Ym" ) && $m[ "rendimiento_mes" ] != $r ){
+//        if( $m[ "Ym" ] == date( "Ym" ) && $m[ "rendimiento_mes" ] != $r ){
+        if( $m[ "Ym" ] == date( "Ym" ) || ( $m[ "Ym" ] > date( "Ym" ) && $a == 24 ) ){
 
             $tablas[ $a ]  = "\n<tr>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$a}</td>
@@ -164,7 +165,7 @@ echo "\n
                 <div class=\"col-lg-5\">
                     <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual)." de 24</p>
                     <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
-                        <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
+                        <div class=\"progress-bar bg-".( $porc_bono == 100 ? "gray-500" : "teal" )."\" style=\"width: {$porc_bono}%\">".( $porc_bono == 100 ? "INVERSIÓN FINALIZADA" : $porc_bono."%" )."</div>
                     </div>                                  
                 </div>
 
@@ -209,15 +210,15 @@ echo "\n
                         </tr>
                         <tr>
                             <td>Rendimiento total</td>
-                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
+                            <td class=\"text-end\">$".number_format( $bt[ "suma" ], 2 )."</td>
                         </tr>
                         <tr>
                             <td>Retiros</td>
-                            <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
+                            <td class=\"text-end\"><span class=\"text-red \">$".number_format( $bt[ "retiros" ], 2 )."</span></td>
                         </tr>
                         <tr>
                             <td>Rendimiento actual</td>
-                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ] -  $bt[ "retiros" ], 2 )."</td>
+                            <td class=\"text-end\">$".number_format( $bt[ "full" ], 2 )."</td>
                         </tr>  
                         <tr>
                             <td>Balance de cuenta</td>

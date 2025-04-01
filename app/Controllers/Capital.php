@@ -174,7 +174,7 @@ class Capital extends BaseController
 
 
     public function crea_retiro(){
-        
+
         $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
 
         $p    = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
@@ -183,10 +183,9 @@ class Capital extends BaseController
 
         $retiro = [
             $bt[ "rendimiento_mes" ], 
-            $bt[ "full" ], 
+            $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] < date( "Ym" ) ? $bt[ "total" ] : $bt[ "finmes" ], 
             floatval( $this->request->getPost( "custom" ) )
         ];
-
 
         if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
             // BITACORA Solicita retiro
@@ -220,8 +219,6 @@ class Capital extends BaseController
             ];
 
             model( "RetiroModel" )->save( $retiro_add );
-
-            // actualizar meses de inversión
 
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
             $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
@@ -279,7 +276,6 @@ class Capital extends BaseController
 
         $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}' AND substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
         $i = model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
-
         
         if( !sizeof( $i ) ){
             return redirect()->to( "capital" );

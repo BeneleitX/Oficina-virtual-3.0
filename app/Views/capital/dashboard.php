@@ -12,25 +12,40 @@ if( sizeof( $inversiones ) ){
     foreach( $inversiones as $i ){
 
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
-        
-
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
+        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+            $i[ "extras" ][ "meses" ]   = genera_meses( $pedido, $i[ "id" ], $p );
+            $i[ "extras" ][ "refresh" ] = date( "Y-m-d" );
 
             model( "InversionModel" )->save( $i );
         }
-        
+
         $date1 = new DateTime( $f_i );
         $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
         $interval = $date1->diff( $date2 );
         $total_dias = $interval->days + 1;
 
-        $date2 = new DateTime( date( "Y-m-d" ) );
-        $interval = $date1->diff( $date2 );
-        $transcurridos = $interval->days;
+        if( $i[ "estatus_codigo" ] != "140-SUSPENDIDO" && $date2->format( "Y-m-d" ) < date( "Y-m-d" ) ){
+            $i[ "estatus_codigo" ] = "140-SUSPENDIDO";
+
+            model( "InversionModel" )->save( $i );
+        }
+
+        $sql = "SUBSTRING( estatus_codigo, 1, 3 ) > 200 
+                AND inversion_id = {$i[ "id" ]} 
+                AND json_unquote( json_extract( fechas, '$.mes' ) ) = '{$i[ "extras" ][ "meses" ][ 24 ][ "Ym" ]}' ";
+
+        $rts = model( "RetiroModel" )->where( $sql )->findAll();
+
+        if( !sizeof( $rts ) && $i[ "extras" ][ "meses" ][ 24 ][ "inicia" ] <= date( "Y-m-d" ) ){
+            $i = crea_retiro_final( $i);
+        }
+
+        $date3 = new DateTime( date( "Y-m-d" ) );
+        $interval = $date1->diff( $date3 );
+        $transcurridos = $interval->days > $total_dias ? $total_dias : $interval->days;
 
         $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
@@ -54,13 +69,14 @@ if( sizeof( $inversiones ) ){
 
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
-                $r = $m[ "rendimiento_mes" ];
+                $r  = $m[ "rendimiento_mes" ];
                 $h += $m[ "rendimiento_mes" ] - $m[ "retiros" ];
                 $compuesto[] = $m[ "compuesto" ];
             }
+
             elseif( $m[ "Ym" ] == date( "Ym" ) ){
-                $mes_actual = $a;
-                $semilla[] = $m[ "semilla" ];
+                $mes_actual  = $a;
+                $semilla[]   = $m[ "semilla" ];
                 $compuesto[] = $m[ "compuesto" ];
                 $h += $m[ "rendimiento_mes" ] - $m[ "retiros" ];
                 $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
@@ -70,6 +86,7 @@ if( sizeof( $inversiones ) ){
                 }                
                 $r = $m[ "rendimiento_dia" ] * $dias;
             }
+
             else{
                 $semilla[] = 0;
                 $compuesto[] = 0;
@@ -77,7 +94,6 @@ if( sizeof( $inversiones ) ){
             }
 
             $rendimiento[] = $r;
-            
             $meses[] = mes( substr( $m[ "Ym" ], 4, 2 ), 3 )." ".substr( $m[ "Ym" ], 2, 2 );
         }
 
@@ -99,9 +115,11 @@ if( sizeof( $inversiones ) ){
 
             $retiros_pendientes .= "</table>";
         }
+
+        $nueve_finalizada = $p->data->porcentaje == 9 && $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] <= date( "Ym" );
         
         echo "\n
-            <div class=\"card mb-5\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$h}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
+            <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
                 <div class=\"card-header\">
                     <div class=\"row\">
                         <div class=\"col-2 col-lg-1\">
@@ -119,7 +137,7 @@ if( sizeof( $inversiones ) ){
                         <div class=\"col-lg-5\">
                             <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual )." de 24</p>
                             <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
-                                <div class=\"progress-bar bg-teal\" style=\"width: {$porc_bono}%\">{$porc_bono}%</div>
+                                <div class=\"progress-bar bg-".( $porc_bono == 100 ? "gray-500" : "teal" )."\" style=\"width: {$porc_bono}%\">".( $porc_bono == 100 ? "INVERSIÓN FINALIZADA" : $porc_bono."%" )."</div>
                             </div>                                  
                         </div>
 
@@ -166,15 +184,15 @@ if( sizeof( $inversiones ) ){
                                         </tr>
                                         <tr>
                                             <td>Rendimiento total</td>
-                                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ], 2 )."</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "suma" ], 2 )."</td>
                                         </tr>
                                         <tr>
                                             <td>Retiros</td>
-                                            <td class=\"text-end\">$".number_format( $bt[ "retiros" ], 2 )."</td>
+                                            <td class=\"text-end\"><span class=\"text-red \">$".number_format( $bt[ "retiros" ], 2 )."</span></td>
                                         </tr>
                                         <tr>
                                             <td>Rendimiento actual</td>
-                                            <td class=\"text-end\">$".number_format( $bt[ "rendimiento" ] -  $bt[ "retiros" ], 2 )."</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "full" ], 2 )."</td>
                                         </tr>
                                         <tr>
                                             <td>Balance de cuenta</td>
@@ -217,6 +235,7 @@ if( sizeof( $inversiones ) ){
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
 
+if( $p->data->porcentaje != 9 ){
 ?>  
 
 <div class="modal" tabindex="-1" id="stock_modal">
@@ -237,7 +256,7 @@ if( sizeof( $inversiones ) ){
                     
 
                     <div class="row mb-4">
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
                             <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
                             <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
                                 <p class="fs-4">Retiro mensual</p>                                   
@@ -255,12 +274,12 @@ if( sizeof( $inversiones ) ){
                                 </label>
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
                             </label>
                             <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
                             <label class="btn btn-outline-info text-start w-100 mb-2" for="type_3">
                                 <p class="fs-4">Retiro parcial</p>                                   
-                                <p>Retirar una cantidad específicada pro el socio</p>
+                                <p>Retirar una cantidad específica menor al total</p>
                                 <input type="number" step="0.01" class="cantidades form-control text-center mb-1" id="cantidad_3" name="custom"></i>
                             </label>
                         </div>
@@ -302,6 +321,8 @@ if( sizeof( $inversiones ) ){
 		</div>
 	</div>
 </div>
+
+<?php } ?>
 
 <div class="modal" tabindex="-1" id="carga_hash">
 	<div class="modal-dialog modal-lg">

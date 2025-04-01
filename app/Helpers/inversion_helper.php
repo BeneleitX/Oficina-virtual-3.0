@@ -67,6 +67,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         $retiros_mes = 0;
         foreach( $rts as $rt ){
             if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){
+                
                 $retiros_mes += $rt[ "cantidad" ];
             }
         }
@@ -76,25 +77,33 @@ function genera_meses( $pedido, $i, $producto = null ){
 
         $date->modify( "last day of this month" );
         
-        $cantidad = $pedido[ "data" ][ "total" ] + ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
+        $cantidad = ( $a ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
+        ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
 
         $dias_en_mes     = intval( $date->format( "d" ) );
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
 
-        
-        $rendimiento_mes = floatval( floor( $cantidad * $producto->data->porcentaje ) / 100 );
-        $rendimiento_dia = floatval( floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100 ); 
+        $temp = $cantidad * $producto->data->porcentaje / 100;
+        $rendimiento_mes = floor( $temp * 100 ) / 100;
 
+        $correccion_flotante = explode(".", $rendimiento_mes);
+
+        if( isset( $correccion_flotante[ 1 ] ) && $correccion_flotante[1] == 99 ){
+            $rendimiento_mes = ceil( $rendimiento_mes );
+        }
+
+        $rendimiento_dia = floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100; 
+ 
         if( $dias_parcial < $dias_en_mes ){
             $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
         }
 
         $compuesto = $a ? (
-            floor( 
-                intval( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
-                intval( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 
-                intval( $meses[ $a - 1 ][ "retiros" ] * 100 )
+            ( 
+                ( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
+                ( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 
+                ( $meses[ $a - 1 ][ "retiros" ] * 100 )
             ) / 100
         ) : 0;
 
@@ -190,14 +199,20 @@ function rendimiento_diario( $cantidad, $porcentaje, $mes ){
 }
 
 
-function balance_inversion( $i ){
+function balance_inversion( $i, $fecha = null ){
     
+    if( !$fecha ){
+        $fecha = date( "Ym" );
+    }
+
     $respuesta = [
-        "semilla" => 0,
-        "retiros" => 0,
-        "rendimiento" => 0,
-        "total" => 0,
-        "full" => 0
+        "semilla"     => 0.00,
+        "retiros"     => 0.00,
+        "rendimiento" => 0.00,
+        "suma"        => 0.00,
+        "compuesto"   => 0.00,
+        "total"       => 0.00,
+        "full"        => 0.00
     ];
 
     if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 ){
@@ -206,12 +221,14 @@ function balance_inversion( $i ){
         model( "InversionModel" )->save( $i );
     }
 
-    for( $a = 0; $a < 24; $a++ ){
+    for( $a = 0; $a <= 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
         $respuesta[ "semilla" ] = $j[ "semilla" ];
 
-        if( $j[ "Ym" ] < date( "Ym" ) ){
+        // meses cerrados 
+
+        if( $j[ "Ym" ] < $fecha ){
             if( $j[ "dias_en_mes" ] ){
                 
                 if( !isset( $j[ "check" ] ) ){
@@ -219,12 +236,19 @@ function balance_inversion( $i ){
                     model( "InversionModel" )->save( $i );
                 }
 
-                $respuesta[ "rendimiento" ] += $j[ "rendimiento_mes" ];
-                $respuesta[ "retiros" ] += $j[ "retiros" ];
-                $respuesta[ "full" ] += $j[ "rendimiento_mes" ] - $j[ "retiros" ];
+                $respuesta[ "rendimiento_mes" ] = $j[ "rendimiento_mes" ];
+                $respuesta[ "suma" ] += $j[ "rendimiento_mes" ];
+                $respuesta[ "rendimiento" ]     = $j[ "compuesto" ] + $respuesta[ "rendimiento_mes" ];
+                $respuesta[ "retiros" ]        += $j[ "retiros" ];
+                $respuesta[ "compuesto" ] = $j[ "compuesto" ];
+                $respuesta[ "full" ]            = $respuesta[ "rendimiento" ] - $respuesta[ "retiros" ];
+                $respuesta[ "finmes" ]          = $respuesta[ "rendimiento" ] - $respuesta[ "retiros" ];
             }
         }
-        elseif( $j[ "Ym" ] == date( "Ym" ) ){
+
+        // mes en curso
+
+        elseif( $j[ "Ym" ] == $fecha ){
             
             $dias = date( "d" ) - ( $j[ "dias_en_mes" ] - $j[ "dias_parcial" ] );
 
@@ -232,13 +256,26 @@ function balance_inversion( $i ){
                 $dias = 0;
             }
 
-            $respuesta[ "rendimiento_mes" ] = $j[ "rendimiento_mes" ];
-            $respuesta[ "rendimiento" ] += ( $j[ "rendimiento_dia" ] * $dias );
-            $respuesta[ "full" ] += $j[ "rendimiento_mes" ];
+            $respuesta[ "rendimiento_mes" ] = ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "retiros" ]        += $j[ "retiros" ];
+            $respuesta[ "suma" ] += ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "compuesto" ] = $j[ "compuesto" ];
+            $respuesta[ "rendimiento" ] = $j[ "compuesto" ] + ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "full" ] = $respuesta[ "rendimiento" ] - $j[ "retiros" ];
+            $respuesta[ "finmes" ]      = $j[ "compuesto" ] + $j[ "rendimiento_mes" ];
         }
+
     }
 
-    $respuesta[ "total" ] = $respuesta[ "semilla" ] + $respuesta[ "rendimiento" ] - $respuesta[ "retiros" ];
+    if($j[ "Ym" ] < $fecha){
+        $respuesta[ "finmes" ] += $j[ "semilla" ];
+    }
+
+    $respuesta[ "total" ] = $respuesta[ "semilla" ] + $respuesta[ "suma" ] - $respuesta[ "retiros" ];
+
+    if( !$respuesta[ "total" ] ){
+         $respuesta[ "full" ] = 0;
+    }
 
     return $respuesta;
 }
@@ -252,4 +289,40 @@ function check_inversion( $i, $a ){
     }
 
     return $mes;
+}
+
+
+function crea_retiro_final( $i ){
+
+    $p      = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+    $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+    model( "InversionModel" )->save( $i );
+
+    $bt   = balance_inversion( $i, date( "Ym", strtotime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ]." + 1 day" ) ) );
+    $date = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
+
+    $retiro_add = [
+        "id" => NULL,
+        "estatus_codigo" => "255-PENDIENTE",
+        "usuario_id"     => $i[ "usuario_id" ], 
+        "inversion_id"   => $i[ "id" ],
+        "cantidad"       => $bt[ "total" ],
+        "tipo"           => 2,
+        "fechas"         => [
+            "creacion"       => $date->format( "Y-m-d" ),
+            "mes"            => $date->format( "Ym" ),
+            "deposito"       => null
+        ]
+    ];
+
+    model( "RetiroModel" )->save( $retiro_add );
+
+    // actualizar meses de inversión
+
+    $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+    model( "InversionModel" )->save( $i );
+
+    return $i;
 }
