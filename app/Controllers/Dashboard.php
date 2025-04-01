@@ -109,7 +109,7 @@ class Dashboard extends BaseController
         $request = base64_decode( urldecode( $request ) );
         $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
-
+        $db = db_connect();
         foreach( MODELOS as $m ){
 
             $socio->getPrimerCompra( $m[ "codigo" ] );
