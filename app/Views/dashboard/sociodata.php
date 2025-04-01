@@ -201,7 +201,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                     break;                                                                
                             }
 
-                            echo "<td>".$socio->getPrimerCompra( $m[ "codigo" ] )."</td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>{$entrega}</td>";
+                            echo "<td>".date( "d-m-Y", strtotime( $socio->getPrimerCompra( $m[ "codigo" ] ) ) )."</td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>{$entrega}</td>";
                         }
                         else{
                             echo "<td></td><td></td><td></td><td></td>";
