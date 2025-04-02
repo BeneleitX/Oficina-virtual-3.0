@@ -24,7 +24,7 @@ function getStatus(total) {
 
     setTimeout(function() {
 
-        fetch( base_url + 'assets/corte_check.php?p=' + periodo, {
+        fetch( base_url + 'assets/corte_check.php?t=' + ( Math.floor( Date.now() / 1000 ) ) + '&p=' + periodo, {
             Method: 'POST',
             headers: {
                 "Content-Type": "application/json",
