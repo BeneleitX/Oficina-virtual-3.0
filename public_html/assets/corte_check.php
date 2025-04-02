@@ -40,7 +40,7 @@ function parse()
 
     return $vars;
 }
-
+echo parse();
 
 if( $_SERVER[ "HTTP_HOST" ] == "v4.app" )
     $link   = new mysqli("localhost", "root", "B3n3l31t**", parse() );
