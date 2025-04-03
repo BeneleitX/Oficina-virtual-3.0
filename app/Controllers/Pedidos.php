@@ -1016,14 +1016,33 @@ class Pedidos extends BaseController
                 $pedido[ "fechas" ][ "pagado" ]   = $fecha;
                 $pedido[ "fechas" ][ "califica" ] = date( "Y-m-d H:i:s" );
                 $pedido[ "fechas" ][ "reparte" ]  = date( "Y-m-d H:i:s" );
-                $pedido[ "data" ][ "saldo" ]      = session( "admin" ) ? 0 : $saldo;
+                $pedido[ "data" ][ "saldo" ]      = session( "admin" ) ? 0 : ( $saldo >= $total ? $total : $saldo );
+
+                $s = $data->saldo->{$pedido[ "modelo_codigo" ]};
+
+                // si la cantidad es mayor a la total
 
                 if( $cantidad > $total ){
-                    $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = $cantidad - $total;
+
+                    // si hay saldo en USDT
+                    if( $s->USDT > 0 ){
+                        if( $s->USDT > $total ){
+                            $s->USDT -= $total;
+                        }
+                        else{
+                            $s->USDT = 0;
+                        }
+                    }
+
+                    // Si hay saldo normal
+                    else{
+                        $s->cantidad = $cantidad - $total;
+                    }
                 }
                 else{
-                    $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad = 0;
-                    $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus  = 0;
+                    $s->USDT     = 0;
+                    $s->cantidad = 0;
+                    $s->estatus  = 0;
                 }
 
                 foreach( $pedido[ "PTS" ] as $promo => $pts ){
@@ -1094,10 +1113,11 @@ class Pedidos extends BaseController
 
                 // agregamos saldo a favor al socio
 
-                $data->saldo->{$pedido[ "modelo_codigo" ]}->cantidad += $cantidad;
-                $data->saldo->{$pedido[ "modelo_codigo" ]}->estatus = 1;
+                $s->cantidad += $cantidad;
+                $s->estatus = 1;
             }
 
+            $data->saldo->{$pedido[ "modelo_codigo" ]} = $s;
             $u->data      = $data;
             $u->historial = $historial;
 

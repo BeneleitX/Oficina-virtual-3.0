@@ -739,50 +739,67 @@ class E_usuario extends Entity
     }
 
     
-    public function saldo( $modelo ){
-        $bolsa = 0;
+    public function saldo( $modelo, $checasaldo = false ){
+        
+        $cantidad = $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad ?? 0 : 0;
 
         if( $modelo == "50-INVERSION" ){
-            if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) == "2" ){
-                $db = db_connect();
 
-                $sql = "SELECT c.id, c.cantidad
-                        FROM t_comisiones c
-                        JOIN t_periodos p 
-                            ON c.fecha between p.inicia and p.termina 
-                            AND p.modelo_codigo = '50-INVERSION' 
-                            AND p.estatus_codigo = '422-PERIODO-PAGADO'
-                        WHERE c.usuario_id = {$this->id}
-                        AND c.esquema_codigo IN ('510-INVERSION')
-                        AND c.estatus_codigo = '112-BOLSA'";
+            if( !isset( $this->data->saldo->{$modelo}->USDT ) ){
+                $data = $this->data;
+                $data->saldo->{$modelo}->USDT = 0;
+                $this->data = $data;
 
-                $comisiones = $db->query( $sql )->getResult();
+                model( "UsuarioModel" )->save( $this );
+            }
 
-                if( sizeof( $comisiones ) ){
-                    
-                    foreach( $comisiones as $c ){
-                        $bolsa += $c->cantidad;
+            if( $checasaldo ){
+                // si está en morado
+                // buscamos comisiones y las pasamos a saldo USDT
 
-                        $sql = "UPDATE t_comisiones
-                        SET estatus_codigo = '421-APLICADO'
-                        WHERE id = {$c->id}";
+                if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) == "2" ){
+                    $bolsa = 0;
+                    $db    = db_connect();
 
-                        $db->query( $sql );
-                    }                  
-                }
+                    $sql   = "SELECT c.id, c.cantidad
+                            FROM t_comisiones c
+                            JOIN t_periodos p 
+                                ON c.fecha between p.inicia and p.termina 
+                                AND p.modelo_codigo = '50-INVERSION' 
+                                AND p.estatus_codigo = '422-PERIODO-PAGADO'
+                            WHERE c.usuario_id = {$this->id}
+                            AND c.esquema_codigo IN ('510-INVERSION')
+                            AND c.estatus_codigo = '112-BOLSA'";
 
-                if( $bolsa ){
-                    $data = $this->data;
-                    $data->saldo->{$modelo}->cantidad += $bolsa;
-                    $data->saldo->{$modelo}->estatus = 1;
-                    $this->data = $data;
+                    $comisiones = $db->query( $sql )->getResult();
 
-                    model( "UsuarioModel" )->save( $this );
+                    if( sizeof( $comisiones ) ){
+                        
+                        foreach( $comisiones as $c ){
+                            $bolsa += $c->cantidad;
+
+                            $sql = "UPDATE t_comisiones
+                            SET estatus_codigo = '421-APLICADO'
+                            WHERE id = {$c->id}";
+
+                            $db->query( $sql );
+                        }                  
+                    }
+
+                    if( $bolsa ){
+                        $data = $this->data;
+                        $data->saldo->{$modelo}->USDT += $bolsa;
+                        $this->data = $data;
+
+                        model( "UsuarioModel" )->save( $this );
+                    }
                 }
             }
+
+            $cantidad += $this->data->saldo->{$modelo}->USDT ?? 0;
         }
 
-        return $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad : 0;
+        return $cantidad;
     }
 
 

@@ -293,6 +293,13 @@ class Periodos extends BaseController
             $db->query( $sql );
 
             $sql = "UPDATE t_comisiones c
+                    join t_pedidos p on p.id = c.pedido_id
+                    join t_usuarios u on u.id = c.usuario_id
+                    set u.data = json_set( u.data, '$.saldo.\"50-INVERSION\".USDT', 0 )
+                    where c.esquema_codigo = '520-SALDO'";
+            $db->query( $sql );            
+
+            $sql = "UPDATE t_comisiones c
                     SET c.estatus_codigo  = '420-PAGADO'
                     WHERE c.periodo_codigo = '{$periodo[ "codigo" ]}'";
             $db->query( $sql );            
