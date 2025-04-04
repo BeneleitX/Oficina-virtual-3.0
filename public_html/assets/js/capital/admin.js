@@ -54,7 +54,7 @@ $(document).ready(function(){
         window.location.href = base_url + "capital24/" + $( '#mes_retiros' ).val();
     });
 
-    if( g_todas == 0 || g_todas == g_pagadas ){
+    if( g_todas == 0 || g_todas == g_pagadas ) || !es_admin ){
         $( '#entregar_retiros' ).prop( 'disabled', true ).addClass( 'disabled' );
     }
 

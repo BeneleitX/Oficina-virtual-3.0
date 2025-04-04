@@ -122,5 +122,6 @@
 <script>
     var g_todas      = <?php echo intval( sizeof( $solicitudes ) ); ?>,
         g_pendientes = <?php echo intval( sizeof( $solicitudes )  - $transferidas ); ?>,
-        g_pagadas    = <?php echo intval( $transferidas ); ?>;
+        g_pagadas    = <?php echo intval( $transferidas ); ?>,
+        es_admin     = <?php echo $usuario->permiso( "40-ADMIN" ) ? "true" : "false"; ?>;
 </script>
