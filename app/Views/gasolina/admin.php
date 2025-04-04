@@ -37,7 +37,7 @@
         <div class="col-lg-4">
             <h5>1. Listado de socios</h5> 
             <p>Este listado incluye a socios que han adquirido su tarjeta para recargas de <strong>GASOLINA</strong>.</p>
-            <p>Se puede hacer una nueva vinculaciuón de tarjeta con el socio ingresando su número de 16 dígitos, utilizando el botón <span class="badge bg-mustard text-white">VINCULAR TARJETA</span></p>
+            <p>Se puede hacer una nueva vinculación de tarjeta con el socio ingresando su número de 16 dígitos, utilizando el botón <span class="badge bg-mustard text-white">VINCULAR TARJETA</span></p>
         </div>
 
         <div class="col-lg-4">

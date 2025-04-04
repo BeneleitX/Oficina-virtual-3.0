@@ -379,7 +379,7 @@ class Capital extends BaseController
                         <td class=\"text-end\"><span class=\"d-none\">{$r->cantidad}</span><strong>$".number_format( $r->cantidad,2 )."</strong> <button type=\"button\" class=\"btn btn-light btn-sm px-1 py-0\" onclick=\"navigator.clipboard.writeText( '{$r->cantidad}' )\"><i class=\"fa fa-copy\"></i></button></td>
                         <td nowrap><span class=\"d-none\">{$r->mes}</span>".strtoupper( mes( substr( $r->mes, 4, 2 ), 3 ) )." ".substr( $r->mes , 0, 4 )."</td>
                         <td>".estatus( $r->estatus )."</td>
-            <td class=\"text-end\">".( $r->mes < date( "Ym" ) && substr( $r->estatus, 0, 3 ) < 300 && $this->data[ "usuario" ]->permiso( "40-ADMIN") ? "<a href=\"".base_url()."entrega_retiro/{$url}\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-check\"></i> Marcar tranferido</a>" : "" )."</td>
+            <td class=\"text-end\">".( $r->mes < date( "Ym" ) && substr( $r->estatus, 0, 3 ) < 300 && $this->data[ "usuario" ]->permiso( "40-ADMIN") ? "<a href=\"".base_url()."entrega_retiro/{$url}\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-check\"></i> Marcar como tranferida</a>" : "" )."</td>
                     </tr>";
         }
 
@@ -401,8 +401,6 @@ class Capital extends BaseController
         $r     = model( "RetiroModel" )->find( base64_decode( urldecode( $retiro ) ) );
         $socio = model( "UsuarioModel" )->find( $r[ "usuario_id" ] );
 
-        $nueva = date( "Y-m-d", strtotime( substr( $r[ "fechas" ][ "mes" ], 0, 4 )."-".substr( $r[ "fechas" ][ "mes" ], 5, 2 )."-01 + 1 month - 1 day" ) );
-                
         $r[ "fechas" ][ "deposito" ] = date( "Y-m-d" );
         $r[ "estatus_codigo" ] = "421-APLICADO";
         model( "RetiroModel" )->save( $r );
@@ -420,4 +418,140 @@ class Capital extends BaseController
             "icono" => "check", 
             "texto" => "El retiro se ha marcado como transferido" ] );   
     }
+
+
+    /**
+     * Marca como entregados todos los retiros del mes. 
+     * @param string $mes Mes en formato "YYYYMM".
+     * @return redirect a capital24/$mes
+     */
+    public function entrega_retiros( $mes ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $retiros = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) between 200 AND 300 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
+
+        $db = db_connect();
+
+        foreach( $retiros as $r ){
+            $socio = model( "UsuarioModel" )->find( $r[ "usuario_id" ] );
+
+            $r[ "fechas" ][ "deposito" ] = date( "Y-m-d" );
+            $r[ "estatus_codigo" ] = "421-APLICADO";
+
+            model( "RetiroModel" )->save( $r );
+    
+            // BITACORA Marca recompensa entregada
+            bitacora( 90, $this->data[ "usuario" ]->id, [ 
+                "socio"    => $socio->id,
+                "retiro"   => $r[ "id" ],
+                "wallet"   => $socio->data->wallet,
+                "cantidad" => $r[ "cantidad" ]
+            ] );   
+        }
+
+        return redirect()->to( "capital24/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Todos los retiros del mes han sido marcados como entregados" ] );   
+    }    
+
+
+    /**
+     * Descarga un Excel con los retiros de un mes.
+     * @param string $mes Mes en formato "YYYYMM".
+     * @return void
+     */
+    public function excel_retiros()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $mes = $this->request->getPost( "mes" );
+        $db  = db_connect();
+
+        $sql = "SELECT 
+                u.id as socio, 
+                r.estatus_codigo as estatus,
+                CONCAT( i.pedido_id, '-', i.id) as inversion,
+                u.data->>'$.wallet' as wallet,
+                r.cantidad 
+            from t_retiros r
+            join t_usuarios u on u.id = r.usuario_id
+            join t_inversiones i on i.id = r.inversion_id
+            where r.fechas->>'$.mes' = '{$mes}'
+            and substring( r.estatus_codigo, 1, 3) > 200
+            order by u.id asc";
+
+        $retiros  = $db->query( $sql );
+        $db       = db_connect();
+        $data     = [];
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "INGRESO MENSUAL");
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $col = 0;
+        $e = [];
+        $worksheet->setCellValue( chr(65 + $col++)."1", "SOCIO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "NOMBRE" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TELEFONO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "INVERSION" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "CANTIDAD" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "ESTATUS" );
+
+        $row = 1;
+
+        foreach( $retiros->getResult() as $r ){
+            $u = model( "UsuarioModel" )->find( $r->socio );
+
+            $row++;
+            $col  = 0;
+            
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->id );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->nombre( 2, false, true ) );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->telefono );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->inversion );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->cantidad );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->estatus );
+                
+            $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+        }
+
+        $col--;
+
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "F2:F".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+
+        $col--;
+        $worksheet->getStyle( chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( chr(65 + $col)."2:".chr(65 + $col).$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        // BITACORA descarga excel de retiros
+        bitacora( 91, $this->data[ "usuario" ]->id, [
+            "mes" => $mes
+        ] );
+
+        $path = "data/excel/retiros";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/Retiros_".strtoupper( mes( substr( $mes, 4, 2 ) ) )."-".substr( $mes, 0, 4 )."_".time().".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }    
 }

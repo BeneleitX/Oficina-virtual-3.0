@@ -37,13 +37,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                             "Sesion::logout" );
     $routes->get( "logout/(:num)/(:any)",               "Sesion::logout/$1/$2" );
     $routes->get( "procesa_registro/(:num)/(:any)",     "Registro::procesa_registro/$1/$2" );
-
-    $routes->get( "dashboard",                          "Panel::inicio" );    
-    
+   
     $routes->get( "",                                   "Dashboard::inicio" );
     $routes->get( "inicio",                             "Dashboard::inicio" );
     $routes->get( "temp_update",                        "Dashboard::temp_update" );
-
 
     $routes->post( "splash",                            "Dashboard::splash" );
     $routes->get( "sociodata",                          "Dashboard::sociodata" );
@@ -62,18 +59,6 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "usuarios",                           "Usuarios::busqueda" );
     $routes->get( "usuarios/(:any)",                    "Usuarios::busqueda/$1" );
     $routes->post( "usuarios",                          "Usuarios::busqueda" );
-
-    $routes->get( "eventos",                            "Eventos::listado" );
-    $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
-
-    $routes->get( "bitacora/(:num)",                    "Bitacora::listado/$1" );
-
-    $routes->get( "reportes",                           "Reportes::menu" );
-    $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
-    $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
-
-    $routes->get( "soporte",                            "Soporte::inicio" );    
-    $routes->get( "tickets",                            "Soporte::tickets" );    
 
     $routes->get( "layout_bancos",                      "Bancos::layout" );    
     $routes->get( "pagos_pendientes",                   "Bancos::pendientes" );    
@@ -103,6 +88,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "carga_csf_pedido",                  "Pedidos::carga_csf" );
     $routes->post( "txhash",                            "Pedidos::txhash" );
 
+    $routes->get( "eventos",                            "Eventos::listado" );
+    $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
+
+    $routes->get( "bitacora/(:num)",                    "Bitacora::listado/$1" );
+
     $routes->get( "balance",                            "Ingresos::balance" ); 
     $routes->get( "balance/(:any)/(:any)",              "Ingresos::balance/$1/$2" ); 
     $routes->get( "depositos/(:any)",                   "Ingresos::depositos/$1" ); 
@@ -122,6 +112,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "marca_pagado",                      "Periodos::marca_pagado" ); 
     $routes->post( "abre_periodo",                      "Periodos::abre_periodo" ); 
 
+    $routes->get( "reportes",                           "Reportes::menu" );
+    $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
+    $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
+
     $routes->get( "recompensas",                        "Recompensas::detalle" );     
     $routes->get( "admin_recompensas",                  "Recompensas::admin_recompensas" );     
     $routes->get( "switch_recompensa/(:any)",           "Recompensas::switch/$1" );     
@@ -129,6 +123,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "guarda_recompensas",                "Recompensas::guarda_recompensas" );     
     $routes->post( "entregar_recompensa",               "Recompensas::entregar_recompensa" );     
     $routes->post( "excel_premios",                     "Recompensas::excel_premios" ); 
+
+    $routes->get( "soporte",                            "Soporte::inicio" );    
+    $routes->get( "tickets",                            "Soporte::tickets" );    
 
     $routes->get( "admin_gasolina",                     "Gasolina::admin" );     
     $routes->get( "admin_gasolina/(:any)",              "Gasolina::admin/$1" );
@@ -167,6 +164,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "create_numero",                     "Socio::create_numero" );
     $routes->post( "check_csf",                         "Socio::check_csf" );
     $routes->post( "carga_csf",                         "Socio::carga_csf" );
+
+    $routes->get( "dashboard",                          "Panel::inicio" );    
 
     $routes->get( "facturacion",                        "Facturacion::listado" ); 
     $routes->get( "facturas",                           "Facturacion::facturas" ); 
@@ -227,6 +226,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
     $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );
+    $routes->get( "entrega_retiros/(:num)",             "Capital::entrega_retiros/$1" );
+    $routes->post( "excel_retiros",                     "Capital::excel_retiros" );
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
     $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
     $routes->post( "get_retiros",                       "Capital::get_retiros" );

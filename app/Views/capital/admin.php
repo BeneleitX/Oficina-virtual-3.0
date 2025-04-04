@@ -24,7 +24,7 @@
 
                     $fecha = date( "Y-m-d", strtotime( $fecha." -1 month" ) );
                     $mes_x   = date( "Ym", strtotime( $fecha ) );
-                }
+                } 
                 ?>
             </select>
         </h5>
@@ -36,16 +36,21 @@
 <div class="alert alert-info">
     <div class="row">
         <div class="col-lg-4">
-
+            <h5>Listado de socios</h5> 
+            <p>Este listado incluye a socios que han solicitado retiro de rendimientos durante el mes de <?php echo strtoupper( mes( substr( $mes, 4,2) ) )." ".substr( $mes, 0,4); ?>.</p>
+            <p>Para ver las transferencias solicitadas y enviadas, hacer click en el botón <span class="badge bg-teal text-white">TRANSFERENCIAS</span>. Ahí se podrán marcar como procesadas con el botón <span class="badge bg-mustard text-white">MARCAR COMO TRANSFERIDA</span></p>
         </div>
 
         <div class="col-lg-4">
-
+            <h5>Marcar todos como entregados</h5> 
+            <p class="text-red"><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Se puede utilizar este botón para evitar el marcado solicitud por solicitud. Esta acción no puede revertirse. Asegúrate de que todas las transferencias del listado han sido ejecutadas antes de continuar.</p>
+            <a href="<?php echo base_url()."entrega_retiros/".$mes; ?>" id="entregar_retiros" class="btn <?php echo date( "Ym" )  <= $mes ? "disabled" : ""; ?> btn-danger"><i class="fa fa-shuffle"></i> Entregar todos</a>
         </div>
-
         <div class="col-lg-4">
-
+            <h5>Descargar documento con retiros solicitados en el mes</h5> 
+            <button class="btn btn-primary" onclick="excel_retiros( <?php echo $mes; ?> )"><i class="fa fa-file-excel"></i> Descargar excel</button>
         </div>
+
     </div>
 </div>
 
@@ -63,7 +68,7 @@
         </tr>
     </thead>
     <tbody>
-        <?php
+        <?php 
       //  $mes = date( "Ym" );
         
         $transferidas = 0;
@@ -87,7 +92,7 @@
                 <td class=\"text-end\"><span class=\"text-teal fw-bold\">$".number_format( $s[ "cantidad" ], 2 )."</span></td>
                 <td><span class=\"badge bg-marine\">{$s[ "tipo" ]}</span></td>
                 <td>".estatus( $s[ "estatus_codigo" ] )."</td>
-                <td class=\"text-end\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" target=\"_blank\" class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Ver detalles</a>".( date( "Ym" )  > $s[ "fechas" ][ "mes" ]  ? " <button class=\"btn btn-sm btn-".( $s[ "estatus_codigo" ] == "421-APLICADO" ? "light" : "success" )."\" onclick=\"transferir_fondos( {$u->id}, {$s[ "inversion_id" ]} )\"><i class=\"fa fa-shuffle\"></i> Transferir</button>" : "" )."</td>
+                <td class=\"text-end\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" target=\"_blank\" class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Ver detalles</a>".( date( "Ym" )  > $s[ "fechas" ][ "mes" ]  ? " <button class=\"btn btn-sm btn-".( $s[ "estatus_codigo" ] == "421-APLICADO" ? "light" : "success" )."\" onclick=\"transferir_fondos( {$u->id}, {$s[ "inversion_id" ]} )\"><i class=\"fa fa-shuffle\"></i> Transferencias</button>" : "" )."</td>
             </tr>";
         }
         ?>
@@ -116,6 +121,6 @@
 
 <script>
     var g_todas      = <?php echo intval( sizeof( $solicitudes ) ); ?>,
-        g_pendientes = <?php echo intval( sizeof( $solicitudes )  - $transferidas ); ?>;
+        g_pendientes = <?php echo intval( sizeof( $solicitudes )  - $transferidas ); ?>,
         g_pagadas    = <?php echo intval( $transferidas ); ?>;
 </script>
