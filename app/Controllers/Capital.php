@@ -174,15 +174,6 @@ class Capital extends BaseController
     }
 
 
-/*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * Genera una solicitud de retiro para una inversión
-     * 
-     * El usuario debe ser el dueño de la inversión y tener una cuenta verificada
-     * 
-     * @return redirect a capital con mensaje de éxito
-     */
-/******  7c2b5693-9c1b-4cd8-81cf-931b153bd6c0  *******/
     public function crea_retiro(){
 
         $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
@@ -478,7 +469,8 @@ class Capital extends BaseController
     public function excel_retiros()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+            $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -533,8 +525,6 @@ class Capital extends BaseController
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->cantidad );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->estatus );
-                
-            $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
         }
 
         $col--;
