@@ -54,6 +54,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "reset_password",                    "Dashboard::reset_password" );
     $routes->post( "datos_moviles",                     "Dashboard::datos_moviles" );
     $routes->post( "niveles_gas",                       "Dashboard::niveles_gas" );
+    $routes->post( "bolsa_inversiones",                 "Dashboard::bolsa_inversiones" );
     $routes->post( "cambia_patrocinador",               "Dashboard::cambia_patrocinador" );
 
     $routes->get( "usuarios",                           "Usuarios::busqueda" );

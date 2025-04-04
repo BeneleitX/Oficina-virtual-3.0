@@ -723,6 +723,21 @@ class Dashboard extends BaseController
     }
 
 
+    
+    public function bolsa_inversiones(){
+        $db      = db_connect();
+        $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
+        $ps      = $db->query( $sql )->getResult();
+        $semilla = 0;
+
+        foreach( $ps as $socio ){
+            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 )
+            $semilla += $socio->semilla;
+        }
+
+        echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
+    }
+
     public function datos_moviles(){
         $token = $this->request->getPost( "token" );
         $html = "<span class=\"badge bg-red\">{$token}</span>";

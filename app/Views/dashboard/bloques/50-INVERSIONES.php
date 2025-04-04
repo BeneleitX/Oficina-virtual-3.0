@@ -132,58 +132,31 @@ if( $saldo ){
 </div>
 
 
-<div class="p-3 small">
-    <table class="table table-striped table-bordered w-100 m-0 table-sm text-center">
-        <thead>
-            <tr>
-                <th width="16%">Nivel</th>
-                <th width="28%">Socios</th>
-                <th width="28%">Bolsa</th>
-            </tr>
-        </thead>
-        <tbody>
-        <tr>
-                <td>1</td>
-                <td class="py-0"></td>
-                <td class="py-0"></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td class="py-0"></td>
-                <td class="py-0"></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td class="py-0"></td>
-                <td class="py-0"></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td class="py-0"></td>
-                <td class="py-0"></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="card m-3">
+    <div class="card-body text-center">
+        Volumen grupal de capital semilla en tu red
+        <h1 id="volumen_semilla" class="text-teal m-0"></h1>
+    </div>
 </div>
 
 
-<?php
 
-/*   if( $usuario->id == 55 ){
-    $inversiones = model( "InversionModel" )->findAll();
 
-    foreach( $inversiones as $i ){
-    
-        $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+<script>
 
-    //    $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
-    //    $i[ "fechas" ][ "inversion" ] = $f_i;
-    //    $i[ "fechas" ][ "cierre" ] = get_fecha_cierre( $f_i );
-        $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+$(document).ready(function(){
 
-      //    if( !$i[ "extras" ][ "TxHash" ] || $i[ "extras" ][ "TxHash" ] == 'null' ){
-      //       $i[ "extras" ][ "TxHash" ] = time()."_".md5( $i[ "pedido_id" ] );
-            model( "InversionModel" )->save( $i );
-      //   } 
-    } 
-  } */
+    $( '#volumen_semilla' ).html( loader );
+
+    $.ajax({
+        url: base_url + 'bolsa_inversiones',
+        method:'POST',
+        data:{ [csrf_token] : csrf_hash, token: get_token_beneleit( <?php echo $usuario->id; ?>)  }
+    }).done( function( datax ) {
+        $( '#volumen_semilla' ).html( datax );
+    });
+
+});
+
+
+</script>
