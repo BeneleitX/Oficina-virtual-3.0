@@ -177,10 +177,17 @@ function estatus( $codigo, $bn = false ){
 }
 
 
-function fecha( $fecha ){
+function fecha( $fecha, $tipo = "normal" ){
     $f = explode( "-", $fecha );
 
-    return substr( $f[2], 0, 2 )." de ".mes( $f[ 1 ] ).", ".$f[ 0 ];
+    switch( $tipo ){
+        case "normal":
+            return substr( $f[2], 0, 2 )." de ".mes( $f[ 1 ] ).", ".$f[ 0 ];
+            break;
+        case "cumple":
+            return substr( $f[2], 0, 2 )." de ".mes( $f[ 1 ] );
+            break;
+    }
 }
 
 

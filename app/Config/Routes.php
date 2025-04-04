@@ -226,8 +226,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "capital24",                          "Capital::admin" );
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
     $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
+    $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
     $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
+    $routes->post( "get_retiros",                       "Capital::get_retiros" );
     $routes->post( "cancela_retiro",                    "Capital::cancela_retiro" ); 
     
 });

@@ -17,7 +17,7 @@ class Capital extends BaseController
         }
         
         if( !$mes ){
-            $mes = date( "Ym" );
+            $mes = date( "Ym", strtotime( date("Y-m-d")." - 1 month" ) );
         }
 
         /**********************************/
@@ -26,7 +26,7 @@ class Capital extends BaseController
         $this->data[ "titulo" ] = "Capital24";
         $this->data[ "mes" ]    = $mes;
 
-        $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "estatus_codigo = '255-PENDIENTE' AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
+        $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
 
         echo template( "capital/admin", $this->data );
     }     
@@ -296,5 +296,125 @@ class Capital extends BaseController
         $this->data[ "titulo" ] = "Detalle de inversión Capital24";
 
         echo template( "capital/detalle", $this->data );
+    }
+
+
+
+    public function get_retiros(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+         
+        extract( $this->request->getPost() );
+
+        $html = "";
+        $socio = model( "UsuarioModel" )->find( $socio );
+
+        $db = db_connect();
+
+        $sql = "SELECT 
+                    r.id as folio,
+                    u.id as socio,
+                    p.referencia,
+                    u.data->>'$.wallet' as wallet,
+                    r.estatus_codigo as estatus,
+                    r.cantidad,
+                    r.fechas->>'$.deposito' as pagado,
+                    r.fechas->>'$.mes' as mes,
+                    e.data->>'$.nombre' as producto,
+                    e.data->>'$.color' as color
+                    FROM t_retiros r
+                LEFT JOIN t_inversiones i on r.inversion_id = i.id
+                left join t_pedidos p ON i.pedido_id = p.id 
+                left join t_usuarios u on u.id = r.usuario_id
+                left join t_productos e on e.codigo = i.producto_codigo
+                WHERE p.usuario_id = {$socio->id}
+                    AND p.modelo_codigo = '50-INVERSION'
+                    AND SUBSTRING( p.estatus_codigo, 1, 3) > 400
+                    AND SUBSTRING( r.estatus_codigo, 1, 3) > 200    
+                    AND p.PTS->>'$.\"510-SEMILLA\"' > 0
+                    AND r.inversion_id = {$inversion}";
+
+        $retiros = $db->query( $sql )->getResult();
+
+        $html .= "\n<table class=\"w-100 m-0 table table-striped\" id=\"tabla_retiros\">
+                    <thead><tr>
+                        <th>Folio</th>
+                        <th class=\"text-start\">Tipo</th>
+                        <th>Wallet</th>
+                        <th>Cantidad</th>
+                        <th>Retiro</th>
+                        <th>Estatus</th>
+                        <th>&nbsp;</th>
+                    </tr></thead><tbody>";
+
+        foreach( $retiros as $k => $r ){
+
+            // Si no hay fecha de retiro, extraerla del mes
+
+            if( substr( $r->estatus, 0, 3 ) > 300 && strlen( $r->pagado) != 10 ){
+                $ret = model( "RetiroModel" )->find( $r->folio );
+
+                $nueva = date( "Y-m-d", strtotime( substr( $r->mes, 0, 4 )."-".substr( $r->mes, 5, 2 )."-01 + 1 month" ) );
+                
+                $ret[ "fechas" ][ "deposito" ] = $nueva;
+                model( "RetiroModel" )->save( $ret );
+
+                $r->pagado = $nueva;
+            }
+
+            if( $r->mes > $mes ){
+                $r->estatus = "152-FUTURO";
+            }
+            $url = urlencode( base64_encode( $r->folio ) );
+            $html .= "\n<tr>
+                        <td><span class=\"badge bg-gray-600\">{$inversion}-{$r->folio}</span></td>
+                        <td class=\"text-start\"><span class=\"badge bg-{$r->color}\">{$r->producto}</span></td>
+                        <td><a href=\"javascript:navigator.clipboard.writeText( '{$r->wallet}' );\"><i class=\"fa fa-wallet text-teal\"></i></a> {$r->wallet}</td>
+                        <td class=\"text-end\"><span class=\"d-none\">{$r->cantidad}</span><strong>$".number_format( $r->cantidad,2 )."</strong> <button type=\"button\" class=\"btn btn-light btn-sm px-1 py-0\" onclick=\"navigator.clipboard.writeText( '{$r->cantidad}' )\"><i class=\"fa fa-copy\"></i></button></td>
+                        <td nowrap><span class=\"d-none\">{$r->mes}</span>".strtoupper( mes( substr( $r->mes, 4, 2 ), 3 ) )." ".substr( $r->mes , 0, 4 )."</td>
+                        <td>".estatus( $r->estatus )."</td>
+            <td class=\"text-end\">".( $r->mes < date( "Ym" ) && substr( $r->estatus, 0, 3 ) < 300 && $this->data[ "usuario" ]->permiso( "40-ADMIN") ? "<a href=\"".base_url()."entrega_retiro/{$url}\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-check\"></i> Marcar tranferido</a>" : "" )."</td>
+                    </tr>";
+        }
+
+        $html .= "</tbody></table></form></div>"; 
+
+        echo $html;        
+    }
+
+
+    public function entrega_retiro( $retiro ){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "inicio" ); 
+        }
+
+        $db = db_connect();
+
+        $r     = model( "RetiroModel" )->find( base64_decode( urldecode( $retiro ) ) );
+        $socio = model( "UsuarioModel" )->find( $r[ "usuario_id" ] );
+
+        $nueva = date( "Y-m-d", strtotime( substr( $r[ "fechas" ][ "mes" ], 0, 4 )."-".substr( $r[ "fechas" ][ "mes" ], 5, 2 )."-01 + 1 month - 1 day" ) );
+                
+        $r[ "fechas" ][ "deposito" ] = date( "Y-m-d" );
+        $r[ "estatus_codigo" ] = "421-APLICADO";
+        model( "RetiroModel" )->save( $r );
+
+        // BITACORA Marca recompensa entregada
+        bitacora( 90, $this->data[ "usuario" ]->id, [ 
+            "socio"    => $socio->id,
+            "retiro"   => $r[ "id" ],
+            "wallet"   => $socio->data->wallet,
+            "cantidad" => $r[ "cantidad" ]
+        ] );
+
+        return redirect()->to( "capital24/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "El retiro se ha marcado como transferido" ] );   
     }
 }

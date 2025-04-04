@@ -88,11 +88,11 @@ class Redes extends BaseController
     <div class=\"col-6\">
 
                     <table class=\"table small w-100\">
-                <tr><td>Nacimiento</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->fechanac ) )."</td></tr>
+                <tr><td>Cumpleaños</td><td class=\"text-end\">".fecha( $d->fechanac, "cumple" )."</td></tr>
                 <tr><td>Registro</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->historial->registro ) )."</td></tr>
                 
                 <tr><td>Primer compra</td><td class=\"text-end\">".( $d->getPrimerCompra( $modelo ) ? date( "d-m-Y", strtotime( $d->getPrimerCompra( $modelo ) ) ) : "" )."</td></tr>
-                <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
+
                 </table>
 
 
@@ -103,8 +103,7 @@ class Redes extends BaseController
         $html .= "\n<table class=\"table small w-100\">
                     <tr><td>Telefono</td><td class=\"text-end\">".$d->telefono."</td></tr>
                     <tr><td>Correo</td><td class=\"text-end\">".$d->correo."</td></tr>
-                    <tr><td>CURP</td><td class=\"text-end\">".$d->curp."</td></tr>
-                    <tr><td>Verificación</td><td class=\"text-end\">".( $d->historial->validacion ? date( "d-m-Y", strtotime( $d->historial->validacion ) ) : "no" )."</td></tr>
+                <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
                     </table>";
     }
 
