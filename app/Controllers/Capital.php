@@ -188,19 +188,6 @@ class Capital extends BaseController
         ];
 
         if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
-            // BITACORA Solicita retiro
-
-            bitacora( 86, $this->data[ "usuario" ]->id, [ 
-                "inversion" => $i[ "id" ],
-                "tipo"      => $tipo,
-                "cantidad"  => $retiro[ $tipo -1 ],
-                "opciones"  => $retiro,
-                "requested" => [
-                    $this->request->getPost( "mes" ),
-                    $this->request->getPost( "total" ),
-                    $this->request->getPost( "custom" )
-                ]
-            ] );
 
             // generar retiro
 
@@ -218,7 +205,9 @@ class Capital extends BaseController
                 ]
             ];
 
+
             model( "RetiroModel" )->save( $retiro_add );
+            $id = model( "RetiroModel" )->insertID();
 
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
             $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
@@ -226,6 +215,20 @@ class Capital extends BaseController
 
             // redirect para refresh
 
+            // BITACORA Crea solicitud de retiro
+            bitacora( 86, $this->data[ "usuario" ]->id, [ 
+                "socio"     => $i[ "usuario_id" ],
+                "inversion" => $i[ "id" ],
+                "retiro"    => $id,
+                "mes"       => $this->request->getPost( "mes_apply" ),
+                "cantidad"  => $retiro[ $tipo -1 ],
+                "requested" => [
+                    $this->request->getPost( "mes" ),
+                    $this->request->getPost( "total" ),
+                    $this->request->getPost( "custom" )
+                ]
+            ] );
+            
             return redirect()->to( "capital" )->with( "msg", [ 
                 "clase" => "success", 
                 "icono" => "check", 
