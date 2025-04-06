@@ -729,10 +729,22 @@ class Dashboard extends BaseController
         $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
         $ps      = $db->query( $sql )->getResult();
         $semilla = 0;
+        $primer  = 0;
 
         foreach( $ps as $socio ){
-            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 and $socio )
-            $semilla += $socio->semilla;
+            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 && $socio ){
+                $semilla += $socio->semilla;
+            }
+
+            if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
+                $primer++;
+            }
+        }
+
+        //$this->revisa_bono_liderazgo( $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
+        
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym" )} ) ){
+            $this->revisa_bono_liderazgo( $ps, date( "Y-m" )."-01" );
         }
 
         echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
@@ -802,6 +814,70 @@ class Dashboard extends BaseController
         return $html;
     }
 
+
+    public function revisa_bono_liderazgo( $ps, $mes ){
+        $directos = 0;
+        $bolsa    = 0;
+        
+        $db  = db_connect();
+
+        foreach( $ps as $socio ){
+            if( 
+                $socio->nivel > 0 &&
+                $socio->semilla > 0 && 
+                substr( $socio->estatus, 0, 3 ) > 300 && 
+                $mes > $socio->activacion
+            ){
+                if( $socio->nivel == 1 ){
+                    $directos++;
+                }
+
+                $bolsa += $socio->semilla;        
+            }
+        }
+
+        if( $directos >= 12 ){
+            $bono = 1;
+        }
+        elseif( $directos >= 8 ){
+            $bono = 0.66;
+        }
+        elseif( $directos >= 4 ){
+            $bono = 0.33;
+        }
+        else{
+            $bono = 0;
+        }
+
+        $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$this->data[ "usuario" ]->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}'";
+
+        $existe = $db->query( $sql )->getRow()->cuenta;
+
+        if( $directos > 0 && $bono > 0 && $existe == 0 ){
+
+            $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
+            $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$this->data[ "usuario" ]->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
+
+            $db->query( $sql );
+        }
+
+        $historial = $this->data[ "usuario" ]->historial;
+
+        if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
+            $historial->modelos->{"50-INVERSION"}->corte_mensual = new \stdClass();
+        }
+
+        $historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym", strtotime($mes) )} = [
+            "directos" => $directos,
+            "bolsa"    => $bolsa,
+            "bono"     => $bono
+        ];
+        
+        $this->data[ "usuario" ]->historial = $historial; 
+        model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+    }
+
+
     public function temp_update(){ 
         $db = db_connect();
 
@@ -815,7 +891,8 @@ class Dashboard extends BaseController
         foreach( $db->query( $sql )->getResult() as $r ){
             echo "{$r->id} - ";
 
-            $db->query( "call p_update_primercompra( {$r->id}, '50-INVERSION' )" );
+            $this->revisa_bono_liderazgo( $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
+            $this->revisa_bono_liderazgo( $ps, date( "Y-m" )."-01" );
         }
     }
 }
