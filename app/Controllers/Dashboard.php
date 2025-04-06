@@ -731,7 +731,7 @@ class Dashboard extends BaseController
         $semilla = 0;
 
         foreach( $ps as $socio ){
-            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 )
+            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 and $socio )
             $semilla += $socio->semilla;
         }
 
@@ -805,21 +805,17 @@ class Dashboard extends BaseController
     public function temp_update(){ 
         $db = db_connect();
 
-        foreach( MODELOS as $m ){
-            $sql = "
-                select * 
-                from t_usuarios 
-                where redes->>'$.modelos.\"{$m[ "codigo" ]}\".padre' = 'null'
-                and estatus_codigo = '201-ACTIVO'
-            ";   
+        $sql = "
+            select usuario_id as id
+            from t_pedidos
+            where modelo_codigo IN ('50-INVERSION')
+            and substr( estatus_codigo,1,3) > 400
+            group by usuario_id
+        ";   
+        foreach( $db->query( $sql )->getResult() as $r ){
+            echo "{$r->id} - ";
 
-            echo "\n<br>{$m[ "codigo" ]}\n<br>";
-
-            foreach( $db->query( $sql )->getResult() as $r ){
-                echo "{$r->id} - ";
-    
-                $db->query( "call p_update_padre( {$r->id}, '{$m[ "codigo" ]}' )" );
-            }
+            $db->query( "call p_update_primercompra( {$r->id}, '50-INVERSION' )" );
         }
     }
 }

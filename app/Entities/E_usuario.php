@@ -65,6 +65,8 @@ class E_usuario extends Entity
         $data      = $this->data;
         $redes     = $this->redes;
 
+        $update = 0;
+
         foreach( MODELOS as $m ){
 
             if( $m[ "settings" ][ "efectivo" ] ){
@@ -106,6 +108,8 @@ class E_usuario extends Entity
                             "calificados" => [0,0,0]
                         ]
                     ];
+
+                    $update = 0;
                 }
             }
         }
@@ -117,12 +121,16 @@ class E_usuario extends Entity
                 "folio"    => 0,
                 "cliente"  => 0
             ];
+
+            $update = 1;
         }
         else{
             if( $data->tarjeta->estatus == "625-ACTIVA" && in_array( $data->tarjeta->cliente ?? 0, [ null, 0, "número no encontrado"] ) ){
                 $db = db_connect();
                 $sql = " select empleado from t_tarjetas where tarjeta = ".substr($data->tarjeta->numero, 11, 3).substr($data->tarjeta->numero, 15, 4)." ";
                 $data->tarjeta->cliente = $db->query( $sql )->getRow()->empleado ?? "número no encontrado";
+
+                $update = 1;
             }
         }
         
@@ -131,7 +139,10 @@ class E_usuario extends Entity
         $this->redes = $redes;
       
         // Actualización de datos de socio al agregar un nuevo modelo de negocio
-        model( "UsuarioModel" )->save( $this );
+
+        if($update){
+            model( "UsuarioModel" )->save( $this );
+        }
     }
 
     
