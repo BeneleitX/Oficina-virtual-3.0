@@ -729,7 +729,6 @@ class Dashboard extends BaseController
         $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
         $ps      = $db->query( $sql )->getResult();
         $semilla = 0;
-        $primer  = 0;
 
         foreach( $ps as $socio ){
             if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 && $socio ){
@@ -737,14 +736,11 @@ class Dashboard extends BaseController
             }
 
             if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
-                $primer++;
             }
         }
 
-        //$this->revisa_bono_liderazgo( $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
-        
         if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym" )} ) ){
-            $this->revisa_bono_liderazgo( $ps, date( "Y-m" )."-01" );
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m" )."-01" );
         }
 
         echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
@@ -815,11 +811,12 @@ class Dashboard extends BaseController
     }
 
 
-    public function revisa_bono_liderazgo( $ps, $mes ){
+    public function revisa_bono_liderazgo( $usuario, $ps, $mes ){
         $directos = 0;
         $bolsa    = 0;
         
         $db  = db_connect();
+        echo "\n<br>{$usuario->id} - {$mes}";
 
         foreach( $ps as $socio ){
             if( 
@@ -849,19 +846,25 @@ class Dashboard extends BaseController
             $bono = 0;
         }
 
-        $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$this->data[ "usuario" ]->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}'";
+        $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
+
+        echo "\n<br>".$sql;
 
         $existe = $db->query( $sql )->getRow()->cuenta;
+
+        echo "\n<br>{$directos} - {$bolsa} - {$bono} - {$existe}";
 
         if( $directos > 0 && $bono > 0 && $existe == 0 ){
 
             $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
-            $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$this->data[ "usuario" ]->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
+            $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
+
+            echo "\n<br>".$sql;
 
             $db->query( $sql );
         }
 
-        $historial = $this->data[ "usuario" ]->historial;
+        $historial = $usuario->historial;
 
         if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
             $historial->modelos->{"50-INVERSION"}->corte_mensual = new \stdClass();
@@ -873,8 +876,8 @@ class Dashboard extends BaseController
             "bono"     => $bono
         ];
         
-        $this->data[ "usuario" ]->historial = $historial; 
-        model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+        $usuario->historial = $historial; 
+        model( "UsuarioModel" )->save( $usuario );
     }
 
 
@@ -886,13 +889,13 @@ class Dashboard extends BaseController
             from t_pedidos
             where modelo_codigo IN ('50-INVERSION')
             and substr( estatus_codigo,1,3) > 400
+     
             group by usuario_id
         ";   
         foreach( $db->query( $sql )->getResult() as $r ){
-            echo "{$r->id} - ";
-
+            $usuario = model( "UsuarioModel" )->find( $r->id );
             $db      = db_connect();
-            $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
+            $sql     = "call p_get_inversiones( {$usuario->id}, ".date( "Ym" )." )";
             $ps      = $db->query( $sql )->getResult();
             $semilla = 0;
             $primer  = 0;
@@ -907,8 +910,9 @@ class Dashboard extends BaseController
                 }
             }   
 
-            $this->revisa_bono_liderazgo( $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
-            $this->revisa_bono_liderazgo( $ps, date( "Y-m" )."-01" );
+
+            $this->revisa_bono_liderazgo( $usuario, $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
+            $this->revisa_bono_liderazgo( $usuario, $ps, date( "Y-m" )."-01" );
         }
     }
 }
