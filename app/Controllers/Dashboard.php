@@ -891,6 +891,22 @@ class Dashboard extends BaseController
         foreach( $db->query( $sql )->getResult() as $r ){
             echo "{$r->id} - ";
 
+            $db      = db_connect();
+            $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
+            $ps      = $db->query( $sql )->getResult();
+            $semilla = 0;
+            $primer  = 0;
+    
+            foreach( $ps as $socio ){
+                if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 && $socio ){
+                    $semilla += $socio->semilla;
+                }
+    
+                if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
+                    $primer++;
+                }
+            }   
+
             $this->revisa_bono_liderazgo( $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
             $this->revisa_bono_liderazgo( $ps, date( "Y-m" )."-01" );
         }
