@@ -957,9 +957,11 @@ class Pedidos extends BaseController
                             // nos aseguramos de que la transacción no haya sido registrada antes
 
                             $db  = db_connect();
-                            $sql = "select count(*) as existe from t_fondeos where operacion = '{$hash}'";
+                            $sql = "select usuario_id, count(*) as existe from t_fondeos where operacion = '{$hash}'";
 
-                            if( !$db->query( $sql )->getrow()->existe ){
+                            $row = $db->query( $sql )->getrow();
+
+                            if( !$row->existe ){
                                 $pagado   = true;
                                 $cantidad = $tx[ "amount_str" ] / pow( 10, $tx[ "decimals" ] );
                                 $total    = $pedido[ "data" ][ "total" ] - $saldo;
@@ -1008,6 +1010,8 @@ class Pedidos extends BaseController
 
             // si el deposito es suficiente
 
+            $s = $data->saldo->{$pedido[ "modelo_codigo" ]};
+
             if( $cantidad >= $total ){
 
                 // cambiar estatus de pedido
@@ -1017,8 +1021,6 @@ class Pedidos extends BaseController
                 $pedido[ "fechas" ][ "califica" ] = date( "Y-m-d H:i:s" );
                 $pedido[ "fechas" ][ "reparte" ]  = date( "Y-m-d H:i:s" );
                 $pedido[ "data" ][ "saldo" ]      = session( "admin" ) ? 0 : ( $saldo >= $total ? $total : $saldo );
-
-                $s = $data->saldo->{$pedido[ "modelo_codigo" ]};
 
                 // si la cantidad es mayor a la total
 
@@ -1114,7 +1116,7 @@ class Pedidos extends BaseController
                 // agregamos saldo a favor al socio
 
                 $s->cantidad += $cantidad;
-                $s->estatus = 1;
+                $s->estatus   = 1;
             }
 
             $data->saldo->{$pedido[ "modelo_codigo" ]} = $s;
