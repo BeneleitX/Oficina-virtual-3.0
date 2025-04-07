@@ -1098,7 +1098,7 @@ class E_usuario extends Entity
                 left join t_bitacoras b on b.variables->>'$.periodo' = a.data->>'$.periodos.deposito' and accion_id = 47
                 WHERE a.usuario_id = {$this->id} 
                 AND a.modelo_codigo = '{$modelo}' 
-                and p.inicia > '2024-08-18'
+                -- and p.inicia > '2024-08-18'
                 ORDER BY a.data->>'$.periodos.creacion' desc";
 
         $db = db_connect();

@@ -95,7 +95,6 @@ class Ingresos extends BaseController
         $this->data[ "modelo" ] = $modelo;
         $this->data[ "titulo" ] = "Ingreso mensual";
         $this->data[ "socio"  ] = $this->data[ "usuario" ];
-        $this->data[ "pagos" ]  = $this->data[ "socio" ]->getPagos( $modelo );
         load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
 
         $ingreso = [];
@@ -109,6 +108,7 @@ class Ingresos extends BaseController
                     LEFT JOIN t_esquemas e ON e.codigo = c.esquema_codigo
                     WHERE SUBSTRING( c.estatus_codigo, 1, 3) > 200 
                     AND e.modelo_codigo = '{$modelo}'
+                    AND e.codigo != '520-SALDO'
                     AND c.usuario_id = {$this->data[ "usuario" ]->id}
                     AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes}'
                     AND e.settings->>'$.periodo' IN ( 'MENSUAL', 'SEMANAL', 'ANUAL')
@@ -296,6 +296,7 @@ class Ingresos extends BaseController
                     LEFT JOIN t_esquemas e ON e.codigo = c.esquema_codigo
                     WHERE SUBSTRING( c.estatus_codigo, 1, 3) > 200 
                     AND e.modelo_codigo = '{$modelo}'
+                    AND e.codigo != '520-SALDO'
                     AND c.usuario_id = {$this->data[ "usuario" ]->id}
                     AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes}'
                     AND e.settings->>'$.periodo' IN ( 'MENSUAL', 'SEMANAL', 'ANUAL')
