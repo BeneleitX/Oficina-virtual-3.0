@@ -816,7 +816,6 @@ class Dashboard extends BaseController
         $bolsa    = 0;
         
         $db  = db_connect();
-        echo "\n<br>{$usuario->id} - {$mes}";
 
         foreach( $ps as $socio ){
             if( 
@@ -848,18 +847,15 @@ class Dashboard extends BaseController
 
         $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
 
-        echo "\n<br>".$sql;
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
-        echo "\n<br>{$directos} - {$bolsa} - {$bono} - {$existe}";
 
         if( $directos > 0 && $bono > 0 && $existe == 0 ){
 
             $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
             $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
 
-            echo "\n<br>".$sql;
 
             $db->query( $sql );
         }
