@@ -84,7 +84,7 @@ class Periodos extends BaseController
                 $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
 
                 if( $modelo[ "codigo" ] == "50-INVERSION" ){
-                    $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "s" ]->data->wallet ) == 34 : false;
+                    $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "clabe" ] ) == 34 : false;
                 }
                 else{
                     $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "clabe" ] ) == 18 : false;
