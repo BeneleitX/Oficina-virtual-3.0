@@ -84,22 +84,38 @@ class Periodos extends BaseController
                 $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
 
                 if( $modelo[ "codigo" ] == "50-INVERSION" ){
-                    $target = isset( $p[ "s" ]->data->wallet ) ? strlen( $p[ "s" ]->data->wallet ) == 34 : false;
+                    $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "s" ]->data->wallet ) == 34 : false;
                 }
                 else{
-                    $target = isset( $p[ "s" ]->data->clabe ) ? strlen( $p[ "s" ]->data->clabe ) == 18 : false;
+                    $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "clabe" ] ) == 18 : false;
                 }
-                
+
                 // previos
                 if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus && $target ){
                     $this->data[ "t" ][ "previos" ][] = $p;
+
+                    
                 }
 
                 // actual
-                elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && (  ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && $p[ "s" ]->verificado->estatus && $target ) OR ( substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 &&  $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] ) ) ){
+                elseif( 
+                    $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && 
+                    ( 
+                        ( 
+                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && 
+                            $p[ "s" ]->verificado->estatus && 
+                            $target 
+                        ) OR 
+                        ( 
+                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 && 
+                            $p[ "data" ][ "periodos" ][ "deposito" ] == 
+                            $this->data[ "periodo" ][ "codigo" ] 
+                        ) 
+                    ) 
+                ){
                     $this->data[ "t" ][ "actual" ][] = $p;
                 }
-
+                
                 // siguiente
                 elseif( $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && $p[ "data" ][ "periodos" ][ "deposito" ] != $this->data[ "periodo" ][ "codigo" ]){
                     $this->data[ "t" ][ "siguiente" ][] = $p;
@@ -252,7 +268,7 @@ class Periodos extends BaseController
                 --  AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) AND IF( '{$periodo[ "modelo_codigo" ]}' = '50-INVERSION', u.data->>'$.wallet' is not null and length( u.data->>'$.wallet' ) = 34, u.data->>'$.clabe' is not null and length( u.data->>'$.clabe' ) = 18 )";
 
-            $db->query( $sql );
+/*             $db->query( $sql );
 
             // BITACORA Cierra semana  
             bitacora( 44, $this->data[ "usuario" ]->id, [
@@ -261,7 +277,7 @@ class Periodos extends BaseController
 
             $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
 
-            model( "PeriodoModel" )->save( $periodo );
+            model( "PeriodoModel" )->save( $periodo ); */
         }
     }   
     
