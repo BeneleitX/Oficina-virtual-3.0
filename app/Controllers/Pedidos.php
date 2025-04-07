@@ -904,7 +904,7 @@ class Pedidos extends BaseController
                 curl_setopt($curl, CURLOPT_URL, str_replace( "%hash%", $hash,  $vars[ "url" ] ) );
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
                 $d = json_decode( curl_exec( $curl ), true );
-                curl_close($curl);
+                curl_close($curl); 
 
                 if( sizeof( $d ) ){
                     $tx  = [
