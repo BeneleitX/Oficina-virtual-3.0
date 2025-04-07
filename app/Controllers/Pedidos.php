@@ -957,7 +957,7 @@ class Pedidos extends BaseController
                             // nos aseguramos de que la transacción no haya sido registrada antes
 
                             $db  = db_connect();
-                            $sql = "select usuario_id, count(*) as existe from t_fondeos where operacion = '{$hash}'";
+                            $sql = "select count(*) as existe from t_fondeos where metodopago_codigo = '35-HASH' AND operacion = '{$hash}'";
 
                             $row = $db->query( $sql )->getrow();
 
