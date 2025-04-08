@@ -1103,7 +1103,7 @@ class Pedidos extends BaseController
                             "to"        => $tx[ "to_address" ]
                         ]
                     ]
-                ];
+                ]; 
 
                 $respuesta[ "success" ] = $inversion;
                 $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $inversion[ "id" ], $producto );
