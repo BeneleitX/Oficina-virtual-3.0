@@ -990,6 +990,9 @@ class Pedidos extends BaseController
             } 
         }
 
+        $cantidad = intval( $cantidad * 100 ) / 100;
+        $total    = intval( $total * 100 ) / 100;
+
         if( $pagado ){
 
             // Al no existir antes, la registramos en la base de datos de fondeos
@@ -1013,7 +1016,6 @@ class Pedidos extends BaseController
             $s = $data->saldo->{$pedido[ "modelo_codigo" ]};
 
             if( $cantidad >= $total ){
-
                 // cambiar estatus de pedido
 
                 $pedido[ "estatus_codigo" ]       = "420-PAGADO";
@@ -1114,7 +1116,6 @@ class Pedidos extends BaseController
                 model( "InversionModel" )->save( $inversion );   
             }
             else{
-
                 $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Cantidad transferida insuficiente</h5>La transferencia por $".number_format( $cantidad, 2 )." ha sido registrada en el sistema, sin embargo<br>no es suficiente para cubrir el monto requerido<br>de la compra por $".number_format( $total, 2 )."<br><strong>Saldo pendiente: $".number_format( $total - $cantidad, 2 )."</strong>";
 
                 // agregamos saldo a favor al socio
