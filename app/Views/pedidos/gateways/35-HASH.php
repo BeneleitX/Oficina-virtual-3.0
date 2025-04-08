@@ -21,14 +21,33 @@ if( $total < 0 ){
                 <img src="<?php echo base_url(); ?>assets/img/loader.gif" style="width:150px; height:150px; opacity:0.4" class="m-5">
             </div>
 
-            <div id="finaliza" class="card-body text-center my-5" style="display: none;">
+            <div id="finaliza" class="card-body text-center mb-5" style="display: none;">
                 <p style="font-size:100px"><i class="fa fa-circle-check text-teal"></i></p>
-                <h5>TxHash correcto, ¡Felicidades!<br>Se ha registrado con éxito la inversión <span class="badge bg-marine"><?php echo $pedido[ "id" ]; ?></span></h5>
-                <p class="m-0">Fecha de registro</p>
-                <h1><?php echo date( "d-m-Y" ); ?></h1>
-                <p class="small">
-                <a href="<?php echo base_url( "pedido/{$pedido[ "referencia" ]}" ); ?>" class="mt-5">Ya puedes regresar al pedido</a>
-                </p>
+                <h1>¡Felicidades!</h1>
+                <h5>Se ha creado con éxito la inversión <span class="badge bg-<?php echo $producto->data->color; ?>"><?php echo $pedido[ "referencia" ]; ?></span></h5>
+
+                <span class="badge bg-gray-300 text-marine" style="font-size:monospace" id="txhash"></span>
+                <div class="row"><div class="col-lg-4 offset-lg-4">
+                    <table class="small my-3 text-center w-100">
+                        <tr><td nowrap class="text-center w-50">Fecha pago: <strong id="fecha_1"></strong>
+                        <td nowrap class="text-center w-50">Fecha inicio: <strong id="fecha_2"></strong></tr>
+                    </table>
+
+                    <div class="card"><div class="card-body">
+                        <table class="">
+                            <tr>
+                                <td class="w-25"><img src="<?php echo base_url()."assets/img/productos/{$producto->codigo}.png"; ?>" class="img-fluid"></td>
+                                <td class="w-75 pt-3 text-start">
+                                    <h5 class="text-<?php echo $producto->data->color; ?>"><?php echo $producto->data->descripcion; ?></h5>
+                                    <h2><img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:22px"> <span id="cantidad_final"></span></h2>
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                    </div></div>
+                </div></div>
+
+                <a href="<?php echo base_url( "capital" ); ?>" class="mt-3 btn btn-primary"><i class="fa fa-magnifying-glass"></i> Ver detalles</a>
             </div>
 
             <div id="principal" style="display: none;">
@@ -141,10 +160,29 @@ if( $total < 0 ){
                         $( '#principal' ).slideDown();
                     }
                     else if( result.success ){
+
+                        $( '#cantidad_final' ).text( Moneda.format( result.success.cantidad ) );
+                        $( '#fecha_1' ).text( result.success.fecha_1 );
+                        $( '#fecha_2' ).text( result.success.fecha_2 );
+                        $( '#txhash' ).text( result.success.extras.TxHash );
                         $( '#loader' ).slideUp();
                         $( '#finaliza' ).slideDown();
+                      
+                        ( function call_confetti() {
+                            confetti({
+                                spread: 360,
+                                ticks: 50,
+                                gravity: 0,
+                                decay: 0.94,
+                                startVelocity: 10,
+                                particleCount: randomInRange(10, 300), 
+                                origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0,0.5)} 
+                            });
+                        
+                            timeout = setTimeout(call_confetti, randomInRange(10, 500));
+                        }() );                         
                     }
-                }, 1000);
+                }, 400);
             }
         });     
     }
@@ -153,10 +191,16 @@ if( $total < 0 ){
     setTimeout(function() {
         $( '#loader' ).slideUp();
         $( '#principal' ).slideDown();
-    }, 2000);
+    }, 1000);
 
     $( '[name=_txhash]' ).on( 'change', function(){
         $( '#error' ).text( '' ).hide();
     });
+
+/*     $( '#loader' ).slideUp();
+    $( '#principal' ).slideUp();
+    $( '#finaliza' ).slideDown(); */
+
+
 </script>
 

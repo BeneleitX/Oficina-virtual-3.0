@@ -1105,7 +1105,11 @@ class Pedidos extends BaseController
                     ]
                 ];
 
+                $respuesta[ "success" ] = $inversion;
                 $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $inversion[ "id" ], $producto );
+
+                $respuesta[ "success" ][ "fecha_1" ] = fecha( $pedido[ "fechas" ][ "pagado" ] );
+                $respuesta[ "success" ][ "fecha_2" ] = fecha( $f_i );
 
                 model( "InversionModel" )->save( $inversion );   
             }

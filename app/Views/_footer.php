@@ -55,9 +55,7 @@
                         });
                     }
 
-                    function randomInRange(min, max) {
-                        return Math.random() * (max - min) + min;
-                    }
+
                 </script>
                 <?php
             }
@@ -65,6 +63,10 @@
         ?>
         <script>
 
+function randomInRange(min, max) {
+                        return Math.random() * (max - min) + min;
+                    }
+                    
             if( <?php echo isset( $print ) ? 0 : 1; ?> ){
                 const osInstance = OverlayScrollbars(document.querySelector('body'), { });
             }
