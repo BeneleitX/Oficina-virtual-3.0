@@ -266,9 +266,11 @@ class Periodos extends BaseController
                     AND p.estatus_codigo  = '250-EN-PROCESO' 
                     AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
                 --  AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
-                    AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) AND IF( '{$periodo[ "modelo_codigo" ]}' = '50-INVERSION', u.data->>'$.wallet' is not null and length( u.data->>'$.wallet' ) = 34, u.data->>'$.clabe' is not null and length( u.data->>'$.clabe' ) = 18 )";
+                    AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
+                    and p.clabe is not null
+                    AND length( p.clabe ) = IF( '40-GASOLINAS' = '50-INVERSION', 34, 18 )";
 
-/*             $db->query( $sql );
+             $db->query( $sql );
 
             // BITACORA Cierra semana  
             bitacora( 44, $this->data[ "usuario" ]->id, [
@@ -277,7 +279,7 @@ class Periodos extends BaseController
 
             $periodo[ "estatus_codigo" ] = "306-PERIODO-CERRADO";
 
-            model( "PeriodoModel" )->save( $periodo ); */
+            model( "PeriodoModel" )->save( $periodo ); 
         }
     }   
     
@@ -385,9 +387,25 @@ class Periodos extends BaseController
         $periodo = model( "PeriodoModel" )->find( $this->request->getPost( "periodo" ) );
 
         $db  = db_connect();
-        $sql = "SELECT p.id AS pago_id, p.usuario_id, p.clabe, p.data as p_data, u.data as u_data, f_es_verificado( u.id) AS verificado, b.nombre as banco
-                FROM t_pagos p LEFT JOIN t_usuarios u ON u.id = p.usuario_id left join t_bancos b on b.codigo = substring( p.clabe, 1, 3 )
-                where ( json_unquote( json_extract( p.data, '$.periodos.creacion' ) ) = '{$periodo[ "codigo" ]}' OR ( json_unquote( json_extract( p.data, '$.periodos.deposito' ) ) = '{$periodo[ "codigo" ]}' ) ) AND modelo_codigo = '{$periodo[ "modelo_codigo" ]}' and substring( p.estatus_codigo, 1, 3 ) > 300 order by p.usuario_id asc";
+        $sql = "SELECT 
+                    p.id AS pago_id, 
+                    p.usuario_id, 
+                    p.clabe, 
+                    p.data as p_data, 
+                    u.data as u_data, 
+                    f_es_verificado( u.id) AS verificado, 
+                    b.nombre as banco
+                FROM t_pagos p 
+                LEFT JOIN t_usuarios u ON u.id = p.usuario_id 
+                left join t_bancos b on b.codigo = substring( p.clabe, 1, 3 )
+                where 
+                    ( 
+                        json_unquote( json_extract( p.data, '$.periodos.creacion' ) ) = '{$periodo[ "codigo" ]}' OR 
+                        json_unquote( json_extract( p.data, '$.periodos.deposito' ) ) = '{$periodo[ "codigo" ]}' 
+                    ) 
+                    AND modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
+                    and substring( p.estatus_codigo, 1, 3 ) > 300 
+                order by p.usuario_id asc";
 
         $pagos = $db->query( $sql )->getResultArray();
 
