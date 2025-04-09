@@ -752,9 +752,15 @@ class E_usuario extends Entity
     
     public function saldo( $modelo, $checasaldo = false ){
         
+        // Obtenemos el saldo solo si está activo
+
         $cantidad = $this->data->saldo->{$modelo}->estatus == 1 ? $this->data->saldo->{$modelo}->cantidad ?? 0 : 0;
 
+        // Para el caso de inversiones, se debe considerar además el saldo en USDT
+
         if( $modelo == "50-INVERSION" ){
+
+            // Si no existe la propiedad USDT en el objeto saldo, la creamos
 
             if( !isset( $this->data->saldo->{$modelo}->USDT ) ){
                 $data = $this->data;
@@ -764,7 +770,10 @@ class E_usuario extends Entity
                 model( "UsuarioModel" )->save( $this );
             }
 
+            // En el caso de los socios en morado, actualizar comisiones ganadas y pasarlas a saldo USDT
+
             if( $checasaldo ){
+
                 // si está en morado
                 // buscamos comisiones y las pasamos a saldo USDT
 
