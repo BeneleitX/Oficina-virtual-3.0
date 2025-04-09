@@ -15,7 +15,8 @@ class Periodos extends BaseController
 
     public function listado( $modelo ){
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -34,7 +35,8 @@ class Periodos extends BaseController
     public function detalle( $periodo )
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -140,7 +142,8 @@ class Periodos extends BaseController
     public function reset_corte()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -196,7 +199,8 @@ class Periodos extends BaseController
     public function corte( $periodo = null, $avance = 0, $step = 0 )
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -243,7 +247,8 @@ class Periodos extends BaseController
     public function cierra_periodo()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -287,7 +292,8 @@ class Periodos extends BaseController
     public function marca_pagado()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -339,7 +345,8 @@ class Periodos extends BaseController
     public function abre_periodo()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
@@ -377,7 +384,8 @@ class Periodos extends BaseController
     public function excel_corte()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "inicio" ); 
         }
