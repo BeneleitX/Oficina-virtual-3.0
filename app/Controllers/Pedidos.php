@@ -856,6 +856,7 @@ class Pedidos extends BaseController
         // validamos que tenga una longitud correcta
 
         $pagado   = false;
+        $cantidad = 0;
         $pedido   = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
         $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
         $u        = model( "UsuarioModel" )->find( $pedido[ "usuario_id" ] );
