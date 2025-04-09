@@ -1014,6 +1014,11 @@ class E_usuario extends Entity
 
 
     public function getPrimerCompra( $modelo ){
+
+        if( !isset( $historial->modelos->{$modelo} ) ){
+            $this->valida_modelo();
+        }
+
         if( !isset( $this->historial->modelos->{$modelo}->arranque ) ){
 
             $db  = db_connect();
