@@ -240,92 +240,92 @@ if( sizeof( $inversiones ) ){
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
 
-if( $p->data->porcentaje != 9 ){
+if( sizeof( $inversiones ) && $p->data->porcentaje != 9 ){
 ?>  
 
-<div class="modal" tabindex="-1" id="stock_modal">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header bg-red">
-				<div class="modal-title me-3">
-                    <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro</h5>
-				</div>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
+    <div class="modal" tabindex="-1" id="stock_modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-red">
+                    <div class="modal-title me-3">
+                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <form action="<?php echo base_url( "crea_retiro" ); ?>" method="post">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="inversion_id" value="">
-                <div class="modal-body">
-                    
-                    
+                <form action="<?php echo base_url( "crea_retiro" ); ?>" method="post">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="inversion_id" value="">
+                    <div class="modal-body">
+                        
+                        
 
-                    <div class="row mb-4">
-                        <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
-                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
-                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
-                                <p class="fs-4">Retiro mensual</p>                                   
-                                <p>Retirar el rendimiento del mes actual</p>
-                                <input readonly value="" id="cantidad_1" name="mes" class="cantidades form-control text-center mb-1"></i>
-                            </label>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
-                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_2">
-                                <p class="fs-4">Retiro total</p>                                   
-                                <p>Retirar el total de rendimiento acumulado</p>
-                                <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
+                        <div class="row mb-4">
+                            <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
+                                <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
+                                <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
+                                    <p class="fs-4">Retiro mensual</p>                                   
+                                    <p>Retirar el rendimiento del mes actual</p>
+                                    <input readonly value="" id="cantidad_1" name="mes" class="cantidades form-control text-center mb-1"></i>
                                 </label>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
+                                <label class="btn btn-outline-info text-start w-100 mb-2" for="type_2">
+                                    <p class="fs-4">Retiro total</p>                                   
+                                    <p>Retirar el total de rendimiento acumulado</p>
+                                    <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
+                                    </label>
+                            </div>
+
+                            <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
+                                </label>
+                                <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
+                                <label class="btn btn-outline-info text-start w-100 mb-2" for="type_3">
+                                    <p class="fs-4">Retiro parcial</p>                                   
+                                    <p>Retirar una cantidad específica menor al total</p>
+                                    <input type="number" step="0.01" class="cantidades form-control text-center mb-1" id="cantidad_3" name="custom"></i>
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
-                            </label>
-                            <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
-                            <label class="btn btn-outline-info text-start w-100 mb-2" for="type_3">
-                                <p class="fs-4">Retiro parcial</p>                                   
-                                <p>Retirar una cantidad específica menor al total</p>
-                                <input type="number" step="0.01" class="cantidades form-control text-center mb-1" id="cantidad_3" name="custom"></i>
-                            </label>
-                        </div>
+                        <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
+                            <div class="alert alert-warning mb-0">
+                                <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
+                                
+
+                                <select name="mes_apply" class="form-select w-50">
+                                    <?php
+                                        $date = new DateTime( date( "Y-m-d" ) );
+                                        $date->modify( "first day of this month" );
+                                                                        
+                                        do{
+                                            echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
+                                            $date->modify( "- 1 month" );
+                                        }
+                                        while( intval( $date->format( "Ym" ) ) >= ( session( "admin" ) ? 202408 : date( "Ym" ) ) );
+                                    ?>
+                                </select>
+                            </div>
+
+                        <?php } else { ?>
+                            <div class="alert alert-danger mb-0">
+                            No puedes programar retiros en este momento. No existe una dirección (wallet) para recepción de transferencias. Registrala en tu <a href="<?php echo base_url(); ?>perfil">perfil de usuario</a>.
+                            </div>
+                        <?php }?>
+
                     </div>
 
                     <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
-                        <div class="alert alert-warning mb-0">
-                            <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
-                            
-
-                            <select name="mes_apply" class="form-select w-50">
-                                <?php
-                                    $date = new DateTime( date( "Y-m-d" ) );
-                                    $date->modify( "first day of this month" );
-                                                                    
-                                    do{
-                                        echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
-                                        $date->modify( "- 1 month" );
-                                    }
-                                    while( intval( $date->format( "Ym" ) ) >= ( session( "admin" ) ? 202408 : date( "Ym" ) ) );
-                                ?>
-                            </select>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit_socio" value="1" class="btn btn-danger my-2" disabled id="confirma_agregar">Programar retiro</button>
                         </div>
-
-                    <?php } else { ?>
-                        <div class="alert alert-danger mb-0">
-                        No puedes programar retiros en este momento. No existe una dirección (wallet) para recepción de transferencias. Registrala en tu <a href="<?php echo base_url(); ?>perfil">perfil de usuario</a>.
-                        </div>
-                    <?php }?>
-
-                </div>
-
-                <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
-                    <div class="modal-footer">
-                        <button type="submit" name="submit_socio" value="1" class="btn btn-danger my-2" disabled id="confirma_agregar">Programar retiro</button>
-                    </div>
-                <?php } ?>
-            </form>
-		</div>
-	</div>
-</div>
+                    <?php } ?>
+                </form>
+            </div>
+        </div>
+    </div>
 
 <?php } ?>
 
