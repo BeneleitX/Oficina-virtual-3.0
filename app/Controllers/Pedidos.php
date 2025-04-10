@@ -1014,7 +1014,8 @@ class Pedidos extends BaseController
 
             // si el deposito es suficiente
 
-            $s = $data->saldo->{$pedido[ "modelo_codigo" ]};
+            $s  = $data->saldo->{$pedido[ "modelo_codigo" ]};
+            $db = db_connect();
 
             if( $cantidad >= $total ){
                 // cambiar estatus de pedido
@@ -1032,11 +1033,16 @@ class Pedidos extends BaseController
                     // si hay saldo en USDT
                     if( $s->USDT > 0 ){
                         if( $s->USDT > $total ){
-                            $s->USDT -= $total;
+    
+                            // no puede quedar saldo en USDT a favor después de una compra
+                            // se va en automático a depósito como '520-SALDO'
+    
+                            $sql = "INSERT INTO t_comisiones 
+                                    VALUES ( NULL, '255-PENDIENTE', {$pedido[ "id" ]}, {$pedido[ "usuario_id" ]}, '520-SALDO', 0, 0, ".( $s->USDT - $total ).", '{$pedido[ "fechas" ][ "reparte" ]}', NULL )";
+
+                            $db->query( $sql );
                         }
-                        else{
-                            $s->USDT = 0;
-                        }
+                        $s->USDT = 0;
                     }
 
                     // Si hay saldo normal
@@ -1064,7 +1070,7 @@ class Pedidos extends BaseController
 
                 model( "PedidoModel" )->save( $pedido );
 
-                $db  = db_connect();
+                
                 $respuesta[ "PTS" ] = $db->query( "select f_update_PTS( {$u->id}, '{$pedido[ "modelo_codigo" ]}', '".date( "Ym" )."' ) as kok" )->getRow()->kok;  
                 
                 

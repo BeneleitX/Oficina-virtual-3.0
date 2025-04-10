@@ -95,8 +95,6 @@ class Periodos extends BaseController
                 // previos
                 if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus && $target ){
                     $this->data[ "t" ][ "previos" ][] = $p;
-
-                    
                 }
 
                 // actual
@@ -270,10 +268,9 @@ class Periodos extends BaseController
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
                     AND p.estatus_codigo  = '250-EN-PROCESO' 
                     AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
-                --  AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
                     AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
                     and p.clabe is not null
-                    AND length( p.clabe ) = IF( '40-GASOLINAS' = '50-INVERSION', 34, 18 )";
+                    AND length( p.clabe ) = IF( '{$periodo[ "modelo_codigo" ]}' = '50-INVERSION', 34, 18 )";
 
              $db->query( $sql );
 
