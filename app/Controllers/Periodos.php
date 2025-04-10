@@ -447,7 +447,7 @@ class Periodos extends BaseController
                     //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
                     strval( $pago[ "clabe" ] ),
                     30,
-                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "creacion" ] ),
+                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] ),
                     $promo = $importe * .1, // promo
                     $neto, // neto
                     $importe, // importe
@@ -466,7 +466,7 @@ class Periodos extends BaseController
                     //$pago[ "u_data" ][ "sat" ][ "rfc" ] ?? "",
                     strval( $pago[ "clabe" ] ),
                     30,
-                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "creacion" ] ),
+                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] ),
                     $subt = $pago[ "p_data" ][ "cantidades" ][ "subtotal" ] / 1.16, // subtotal
                     $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], // importe
                     $rete = $subt * 0.1066, // retencion
@@ -483,7 +483,7 @@ class Periodos extends BaseController
                     $pago[ "u_data" ][ "nombre" ]." ".implode( " ", $pago[ "u_data" ][ "apellidos" ] ),
                     strval( $pago[ "clabe" ] ),
                     30,
-                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "creacion" ] ),
+                    "PAGO SEMANA ".periodo( $pago[ "data" ][ "periodos" ][ "creacion" ] ),
                     $pago[ "banco" ],
                     $pago[ "p_data" ][ "cantidades" ][ "subtotal" ], 
                     $pago[ "p_data" ][ "cantidades" ][ "isr" ],
