@@ -13,7 +13,7 @@ class Bancos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -29,7 +29,7 @@ class Bancos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -51,7 +51,7 @@ class Bancos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         $archivo   = $_FILES[ "archivo" ][ "name" ];

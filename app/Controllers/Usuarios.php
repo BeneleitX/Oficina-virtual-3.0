@@ -14,7 +14,7 @@ class Usuarios extends BaseController
     
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "saved" ]  = false;
@@ -86,7 +86,7 @@ class Usuarios extends BaseController
         
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -110,7 +110,7 @@ class Usuarios extends BaseController
     public function update_estatus( $request ){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         $request = base64_decode( urldecode( $request ) );
@@ -142,7 +142,7 @@ class Usuarios extends BaseController
     public function update_sociodata(){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         $r   = $this->request->getPost();

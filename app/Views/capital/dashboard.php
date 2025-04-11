@@ -260,7 +260,7 @@ if( sizeof( $inversiones ) && $p->data->porcentaje != 9 ){
                         
                         
 
-                        <div class="row mb-4">
+                        <div class="row mb-3">
                             <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
@@ -291,22 +291,29 @@ if( sizeof( $inversiones ) && $p->data->porcentaje != 9 ){
                         </div>
 
                         <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
-                            <div class="alert alert-warning mb-0">
-                                <p>La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará durante los primeros 3 días hábiles del mes siguiente.</p>
-                                
 
-                                <select name="mes_apply" class="form-select w-50">
-                                    <?php
-                                        $date = new DateTime( date( "Y-m-d" ) );
-                                        $date->modify( "first day of this month" );
-                                                                        
-                                        do{
-                                            echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
-                                            $date->modify( "- 1 month" );
-                                        }
-                                        while( intval( $date->format( "Ym" ) ) >= ( session( "admin" ) ? 202408 : date( "Ym" ) ) );
-                                    ?>
-                                </select>
+                            <div class="row mb-3">
+                                <div class="col-lg-8 small">
+                                    <strong> La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará en los primeros 3 días hábiles del mes siguiente. </strong>
+                                </div>
+                                <div class="col-lg-4">
+                                    <select name="mes_apply" class="form-select">
+                                        <?php
+                                            $date = new DateTime( date( "Y-m-d" ) );
+                                            $date->modify( "first day of this month" );
+                                                                            
+                                            do{
+                                                echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
+                                                $date->modify( "- 1 month" );
+                                            }
+                                            while( intval( $date->format( "Ym" ) ) >= ( session( "admin" ) ? 202408 : date( "Ym" ) ) );
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-danger mb-0 py-2">
+                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
                             </div>
 
                         <?php } else { ?>

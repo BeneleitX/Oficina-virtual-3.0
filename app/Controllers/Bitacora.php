@@ -7,7 +7,7 @@ class Bitacora extends BaseController
     public function listado(){
 
         if( !session( "admin" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;

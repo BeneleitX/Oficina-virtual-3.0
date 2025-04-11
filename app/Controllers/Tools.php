@@ -8,7 +8,7 @@ class Tools extends BaseController
     {
         $db = db_connect();
 
-        $db->query( "CALL p_mass( '{$modelo}', {$offset}, {$limit}); " );
+        // $db->query( "CALL p_mass( '{$modelo}', {$offset}, {$limit}); " );
 
         if( $limit < 1500 ){
             echo "<h1>{$offset}</h1><meta http-equiv=\"refresh\" content=\"0; url=".base_url()."compresion/{$modelo}/{$limit}/".( $limit + $offset )."\" />";
@@ -22,6 +22,10 @@ class Tools extends BaseController
         echo "no internet";
     }
 
+    public function no_permiso(){
+        echo template( "errors/no_permiso", $this->data );
+    }
+    
     public function kkk(){
 
         $db = db_connect();
@@ -64,7 +68,8 @@ class Tools extends BaseController
                         )
                     ) 
                     WHERE y.id = {$u->id}";
-            $db->query( $sql );
+
+            // $db->query( $sql );
         }
     }
 

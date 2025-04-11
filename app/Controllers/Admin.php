@@ -15,7 +15,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->es_admin() 
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -71,7 +71,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -93,7 +93,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -136,7 +136,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -157,7 +157,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -179,7 +179,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -194,7 +194,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -217,7 +217,7 @@ class Admin extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -238,7 +238,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -256,7 +256,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -286,7 +286,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -307,7 +307,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -322,7 +322,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -345,7 +345,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -392,7 +392,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -443,7 +443,7 @@ class Admin extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/

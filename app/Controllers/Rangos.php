@@ -14,7 +14,7 @@ class Rangos extends BaseController
             $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -56,7 +56,7 @@ class Rangos extends BaseController
             $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/

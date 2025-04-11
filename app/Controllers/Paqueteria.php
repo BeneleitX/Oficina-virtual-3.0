@@ -14,7 +14,7 @@ class Paqueteria extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -42,7 +42,7 @@ class Paqueteria extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -75,7 +75,7 @@ class Paqueteria extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -122,7 +122,7 @@ class Paqueteria extends BaseController
             $this->data[ "usuario" ]->permiso( "25-PAQUETERIA") || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/

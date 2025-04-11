@@ -13,7 +13,7 @@ class Reportes extends BaseController
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -28,7 +28,7 @@ class Reportes extends BaseController
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $temp = [
@@ -85,7 +85,7 @@ class Reportes extends BaseController
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
                 
         $db       = db_connect();

@@ -11,7 +11,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
  
         $this->data[ "navbar" ] = true;
@@ -41,7 +41,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
 
@@ -50,7 +50,7 @@ class Almacenes extends BaseController
         $this->data[ "almacen" ] = model( "AlmacenModel" )->find( $almacen );
 
         if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
 
@@ -75,7 +75,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
  
         $productos = [];
@@ -88,7 +88,7 @@ class Almacenes extends BaseController
         $this->data[ "cliente" ] = model( "UsuarioModel" )->find( $this->data[ "pedido"  ][ "usuario_id" ] );
 
         if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $this->data[ "almacen" ][ "settings" ][ "staff" ] ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "pedido" ][ "productos" ] = [];
@@ -119,7 +119,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         // aqui se marca como entregado el pedido
@@ -130,7 +130,7 @@ class Almacenes extends BaseController
         $almacen  = model( "AlmacenModel" )->find( $pedido[ "data" ][ "entrega" ] );
 
         if( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) && !in_array( $this->data[ "usuario" ]->id, $almacen[ "settings" ][ "staff" ] ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $path     = "assets/img/evidencias/";
@@ -194,7 +194,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         extract( $this->request->getPost() );
@@ -259,7 +259,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         // agregar productos a stock de almacenes
@@ -290,7 +290,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         $this->data[ "navbar"  ] = true;
@@ -311,7 +311,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $transfer = model( "TransferenciaModel" )->find( $this->request->getPost( "recibe" ) );
@@ -336,7 +336,7 @@ class Almacenes extends BaseController
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" );  
+            return redirect()->to( "no_permiso" );  
         }
           
         $db = db_connect();

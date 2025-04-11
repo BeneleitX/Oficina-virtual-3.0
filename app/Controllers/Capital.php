@@ -14,7 +14,7 @@ class Capital extends BaseController
             $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         if( !$mes ){
@@ -308,7 +308,7 @@ class Capital extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         extract( $this->request->getPost() );
@@ -394,7 +394,7 @@ class Capital extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();
@@ -430,7 +430,7 @@ class Capital extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $retiros = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) between 200 AND 300 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
@@ -472,7 +472,7 @@ class Capital extends BaseController
             $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $mes = $this->request->getPost( "mes" );

@@ -18,7 +18,7 @@ class Gasolina extends BaseController
             $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         if( !$mes ){
@@ -67,7 +67,7 @@ class Gasolina extends BaseController
             $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();
@@ -136,7 +136,7 @@ class Gasolina extends BaseController
             $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
          
         extract( $this->request->getPost() );
@@ -218,7 +218,7 @@ class Gasolina extends BaseController
             $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();

@@ -10,7 +10,7 @@
 
   <style id="INLINE_PEN_STYLESHEET_ID">
 body {
-  background: #ff0d4e;
+  background: #ff9800 !important;
   color: white;
 }
 body h1 {
@@ -465,7 +465,7 @@ dtttt91222233Xbbbbfddtttt9122+3L2z8CDAAGA9CHeMiJOgAAAABJRU5ErkJggg==" transform=
 
 <div class="container" style="text-align:center">
 
-  <h3>Estas intentando ingresar a una<br>sección que no existe</h3>
+  <h3>Estas intentando ingresar a una<br>sección no autorizada</h3>
   <a href="/">Regresar al inicio</a>
 </div>
 

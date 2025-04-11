@@ -27,7 +27,7 @@ class Dashboard extends BaseController
         
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -62,7 +62,7 @@ class Dashboard extends BaseController
 
         if( !$request || ( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ) ) {
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -103,7 +103,7 @@ class Dashboard extends BaseController
     public function update_estatus( $request ){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         $request = base64_decode( urldecode( $request ) );
@@ -136,7 +136,7 @@ class Dashboard extends BaseController
 
     public function load_padres(){
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $html = "";
@@ -167,7 +167,7 @@ class Dashboard extends BaseController
 
     public function cambia_patrocinador(){
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         if( $socio = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) ) ){
@@ -205,7 +205,7 @@ class Dashboard extends BaseController
 
     public function update_lock(){
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $bloqueos  = $this->request->getPost( "modelos" );
@@ -270,7 +270,7 @@ class Dashboard extends BaseController
     public function update_sociodata(){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         $r   = $this->request->getPost();

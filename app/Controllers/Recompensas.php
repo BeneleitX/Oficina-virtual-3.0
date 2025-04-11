@@ -96,7 +96,7 @@ class Recompensas extends BaseController
             $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -116,7 +116,7 @@ class Recompensas extends BaseController
             $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();
@@ -148,7 +148,7 @@ class Recompensas extends BaseController
             $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
                 
         $db       = db_connect();

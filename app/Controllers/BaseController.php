@@ -101,4 +101,5 @@ abstract class BaseController extends Controller
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
     }
+    
 }

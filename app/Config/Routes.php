@@ -30,12 +30,14 @@ $routes->get( "CoingateFinish",                     "Coingate::Finish" );
 $routes->post( "CoingateCallback",                  "Coingate::Callback" );
 
 $routes->get( "no_internet",                        "Tools::no_internet" );
+$routes->get( "no_permiso",                         "Tools::no_permiso" );
 $routes->get( "compresion/(:any)/(:num)/(:num)",    "Tools::compresion/$1/$2/$3" );
 
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                             "Sesion::logout" );
     $routes->get( "logout/(:num)/(:any)",               "Sesion::logout/$1/$2" );
+
     $routes->get( "procesa_registro/(:num)/(:any)",     "Registro::procesa_registro/$1/$2" );
    
     $routes->get( "",                                   "Dashboard::inicio" );
@@ -224,6 +226,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "capital",                            "Capital::dashboard" );
     $routes->get( "capital24",                          "Capital::admin" );
+    $routes->get( "inversiones",                        "Capital::inversiones" );
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
     $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );

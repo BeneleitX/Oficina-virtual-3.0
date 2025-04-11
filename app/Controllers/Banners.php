@@ -13,7 +13,7 @@ class Banners extends BaseController
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ]  = true;
@@ -32,7 +32,7 @@ class Banners extends BaseController
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db  = db_connect();
@@ -60,7 +60,7 @@ class Banners extends BaseController
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         extract( $this->request->getPost() );

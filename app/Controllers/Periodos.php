@@ -13,12 +13,20 @@ class Periodos extends BaseController
         $this->data[ "menu" ] = "admin";
     }
 
+    /**
+     * Muestra el listado de periodos de un modelo
+     * 
+     * @param string $modelo Codigo del modelo
+     * 
+     * @return void
+     */
     public function listado( $modelo ){
+        
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -32,13 +40,20 @@ class Periodos extends BaseController
     }
 
 
+    /**
+     * Muestra el detalle de un periodo
+     * 
+     * @param string $periodo Codigo del periodo
+     * 
+     * @return void
+     */
     public function detalle( $periodo )
     {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -143,7 +158,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -200,7 +215,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         /**********************************/
 
@@ -248,7 +263,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -292,7 +307,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -345,7 +360,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/
@@ -384,7 +399,7 @@ class Periodos extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) || 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
         
         /**********************************/

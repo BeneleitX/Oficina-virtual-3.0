@@ -13,7 +13,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -37,7 +37,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
@@ -61,7 +61,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -80,7 +80,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -101,7 +101,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
@@ -126,7 +126,7 @@ class Facturacion extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $folio    = $this->request->getPost( "r_folio" );

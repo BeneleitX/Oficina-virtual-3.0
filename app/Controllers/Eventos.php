@@ -13,7 +13,7 @@ class Eventos extends BaseController
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();
@@ -32,7 +32,7 @@ class Eventos extends BaseController
             $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return redirect()->to( "inicio" ); 
+            return redirect()->to( "no_permiso" ); 
         }
 
         $db = db_connect();
