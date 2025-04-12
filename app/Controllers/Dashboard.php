@@ -884,7 +884,12 @@ class Dashboard extends BaseController
 
 
     public function temp_update(){ 
-        
+        if( 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) 
+        ){
+             return redirect()->to( "no_permiso" ); 
+        }
+
         $inversiones = model( "InversionModel" )->findAll();
 
         foreach( $inversiones as $i ){
