@@ -63,7 +63,7 @@ $interval = $date1->diff( $date2 );
 
 $transcurridos = ( $interval->d * 24 * 60 ) + ( $interval->h * 60 ) + $interval->i;
 $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
-
+// dd($data);
 ?>
 
 </div>

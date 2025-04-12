@@ -8,6 +8,8 @@ use CodeIgniter\I18n\Time;
 
 class E_usuario extends Entity
 {
+    // campos visibles y formatos establecidos
+
     protected $casts = [
         "id"             => "integer",
         "estatus_codigo" => "string",
@@ -35,24 +37,36 @@ class E_usuario extends Entity
     }
 
 
-    public function getDatos(){
+    /**
+     * Obtiene los datos de la entidad E_usuario en un array asociativo
+     * 
+     * @return array con los datos de la entidad
+     */
+    public function getDatos()
+    {
         return [
-            "id" => $this->id,
+            "id"             => $this->id,
             "estatus_codigo" => $this->estatus_codigo,
-            "rol_codigos" => $this->rol_codigos,
-            "data" => $this->data,
-            "correo" => $this->correo,
-            "telefono" => $this->telefono,
-            "fechanac" => $this->fechanac,
-            "curp" => $this->curp,
-            "redes" => $this->redes,
-            "historial" => $this->historial,
-            "verificado" => $this->verificado,
-            "PTS" => $this->PTS
+            "rol_codigos"    => $this->rol_codigos,
+            "data"           => $this->data,
+            "correo"         => $this->correo,
+            "telefono"       => $this->telefono,
+            "fechanac"       => $this->fechanac,
+            "curp"           => $this->curp,
+            "redes"          => $this->redes,
+            "historial"      => $this->historial,
+            "verificado"     => $this->verificado,
+            "PTS"            => $this->PTS
         ];
     }
 
 
+    /**
+     * Setea el password encriptado para el usuario.
+     * El password se encripta con la key del id del usuario.
+     * @param string $password El password a encriptar.
+     * @return string El password encriptado.
+     */
     protected function setPassword( string $password ): string
     {
         $encrypter = service( "encrypter" );
@@ -60,7 +74,14 @@ class E_usuario extends Entity
     }
 
 
-    public function valida_modelo(){
+    /**
+     * Valida que el usuario tenga configurado el historial de cada modelo de negocio y que existan los datos necesarios para operar en cada modelo.
+     * Si no existe alguno de los datos, se crean con los valores predeterminados.
+     * 
+     * @return void
+     */
+    public function valida_modelo()
+    {
         $historial = $this->historial;
         $data      = $this->data;
         $redes     = $this->redes;
@@ -80,9 +101,9 @@ class E_usuario extends Entity
                     $historial->modelos->{$m[ "codigo" ]} = [
                         "primercompra"   => json_decode( "{}" ),
                         "ultimacompra"   => null,
-                        "fondeos" => [],
-                        "reset" => $historial->reset,
-                        "ingresos" => [
+                        "fondeos"        => [],
+                        "reset"          => $historial->reset,
+                        "ingresos"       => [
                             date( "Ym" ) => []
                         ],
                         "calificaciones" => [
@@ -99,12 +120,12 @@ class E_usuario extends Entity
                     $data->estatus->modelos->{$m[ "codigo"]} = ( $this->verificado->estatus ?? null ) ? "220-NUEVO-VERIFICADO" : "210-NUEVO"; 
                     
                     $redes->modelos->{$m[ "codigo" ]} = [
-                        "padre" => $redes->patrocinador,
-                        "patrocinador" => $redes->patrocinador,
-                        "hijos" => [],
-                        "rango" =>  $m[ "settings" ][ "rango_base" ] ?? null,
-                        "profundidad" => [
-                            "activos" => [0,0,0],
+                        "padre"           => $redes->patrocinador,
+                        "patrocinador"    => $redes->patrocinador,
+                        "hijos"           => [],
+                        "rango"           =>  $m[ "settings" ][ "rango_base" ] ?? null,
+                        "profundidad"     => [
+                            "activos"     => [0,0,0],
                             "calificados" => [0,0,0]
                         ]
                     ];
@@ -127,7 +148,11 @@ class E_usuario extends Entity
         else{
             if( $data->tarjeta->estatus == "625-ACTIVA" && in_array( $data->tarjeta->cliente ?? 0, [ null, 0, "número no encontrado"] ) ){
                 $db = db_connect();
-                $sql = " select empleado from t_tarjetas where tarjeta = ".substr($data->tarjeta->numero, 11, 3).substr($data->tarjeta->numero, 15, 4)." ";
+                
+                $sql = "SELECT empleado 
+                        from t_tarjetas 
+                        where tarjeta = ".substr($data->tarjeta->numero, 11, 3).substr($data->tarjeta->numero, 15, 4)." ";
+
                 $data->tarjeta->cliente = $db->query( $sql )->getRow()->empleado ?? "número no encontrado";
 
                 $update = 1;
@@ -135,8 +160,8 @@ class E_usuario extends Entity
         }
         
         $this->historial = $historial;
-        $this->data = $data;
-        $this->redes = $redes;
+        $this->data      = $data;
+        $this->redes     = $redes;
       
         // Actualización de datos de socio al agregar un nuevo modelo de negocio
 
@@ -145,6 +170,14 @@ class E_usuario extends Entity
         }
     }
 
+    
+    /**
+     * Reset password for user.
+     * 
+     * Generates a new random password and encrypts it using the Encrypter service.
+     * Sets the new password on the user object and logs the action in the bitácora.
+     * Also sets the password verification flag to false.
+     */
     
     public function resetPassword()
     {
@@ -167,7 +200,16 @@ class E_usuario extends Entity
         $this->historial = $historial;
     }
 
-    public function patrocinador( $modelo ){
+
+    /**
+     * Retorna el patrocinador del socio para el modelo de negocio indicado,
+     * si no existe lo crea tomando el patrocinador general.
+     * 
+     * @param string $modelo Código del modelo de negocio
+     * @return int ID del patrocinador
+     */
+    public function patrocinador( $modelo )
+    {
         // validar que existe
         // si no existe, tomamos el general y creamso el registro
 
@@ -182,6 +224,12 @@ class E_usuario extends Entity
         return $this->redes->modelos->{$modelo}->patrocinador;
     }
 
+
+    /**
+     * Regresa el password del usuario sin encriptar.
+     * 
+     * @return string El password del usuario sin encriptar.
+     */
     public function getPassword(): string 
     {
         $encrypter = service( "encrypter" );
@@ -190,12 +238,37 @@ class E_usuario extends Entity
     }
 
 
-    public function updateCalificaciones( $modelo ){
+    /**
+     * Actualiza las calificaciones actuales del usuario en el modelo especificado.
+     *
+     * Esta función no hace nada actualmente, ya que la lógica de actualización de
+     * calificaciones se encuentra en una función almacenada en MySQL.
+     *
+     * @param string $modelo Codigo del modelo a actualizar
+     */
+    public function updateCalificaciones( $modelo )
+    {
         // transferido a stored function en MySQL
     }
 
 
-    public function getCalificaciones( $modelo, $m = false ){
+    /**
+     * Regresa un arreglo con las calificaciones actuales del usuario en el modelo
+     * especificado. Si se especifica un mes, regresa solo las calificaciones
+     * correspondientes a ese mes, de lo contrario, regresa las calificaciones
+     * actuales en todos los meses.
+     *
+     * @param string $modelo Codigo del modelo
+     * @param string $m      Mes a consultar, si se omite, se regresan todas las
+     *                      calificaciones actuales en todos los meses
+     *
+     * @return array Un arreglo con las calificaciones actuales del usuario,
+     *               cada una de sus promociones tiene una clave "meses" con las
+     *               calificaciones en cada mes y una clave "total" con la suma
+     *               de todas las calificaciones.
+     */
+    public function getCalificaciones( $modelo, $m = false )
+    {
         $PTS = [];
 
         if( !defined( "PROMOCIONES" ) ) {
@@ -211,7 +284,6 @@ class E_usuario extends Entity
             if( $m ){
                 if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]} ) ){
                     $PTS[ $promo[ "codigo" ] ] = $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]};
-
                 }
             }
             else{
@@ -241,7 +313,14 @@ class E_usuario extends Entity
     }
     
 
-    protected function setCurp( string $curp ){
+    /**
+     * Asigna el CURP y extrae la fecha de nacimiento y genero.
+     *
+     * @param string $curp
+     * @return void
+     */
+    protected function setCurp( string $curp )
+    {
         $this->attributes[ "curp" ]     = strtoupper( $curp );
         $yn = substr( $curp, 4, 2) ;
         $this->attributes[ "fechanac" ] = implode("-", [ ( intval( $yn ) >= date("y") ? "19" : "20").$yn, substr( $curp, 6, 2), substr( $curp, 8, 2) ] );
@@ -299,27 +378,43 @@ class E_usuario extends Entity
     }
 
 
-    public function getPremieres( $mes = null ){
+    /**
+     * Consulta los usuarios que tienen al menos 6 biex y 3 plus en el mes indicado, y que su primer compra fue en ese mismo mes
+     * @param string $mes Mes en formato "Ym". Si no se proporciona, se toma el mes actual.
+     * @return array Arreglo con los IDs de los usuarios que cumplen con la condicion.
+     */
+    public function getPremieres( $mes = null )
+    {
+        $db  = db_connect();
+
         if( !$mes ){
             $mes = date( "Ym" );
         }
 
         $sql = "SELECT 
-            DATE_FORMAT( historial->>'$.modelos.\"10-NUTRICION\".primercompra.\"010-DISTRIBUIDOR\"', '%Y%m' ) AS primercompra,
-            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"010-DISTRIBUIDOR\"' AS biex,
-            historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"030-PLUS\"' AS plus,
-            redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
-            id
+                DATE_FORMAT( historial->>'$.modelos.\"10-NUTRICION\".primercompra.\"010-DISTRIBUIDOR\"', '%Y%m' ) AS primercompra,
+                historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"010-DISTRIBUIDOR\"' AS biex,
+                historial->'$.modelos.\"10-NUTRICION\".calificaciones.\"{$mes}\".\"030-PLUS\"' AS plus,
+                redes->>'$.modelos.\"10-NUTRICION\".padre' AS padre,
+                id
             FROM t_usuarios
-            WHERE 
-            redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
+            WHERE redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
             HAVING biex >= 6 AND plus >= 3 and primercompra = '{$mes}'";  
             
-        $db  = db_connect();
         return $db->query($sql)->getResultArray();
     }
 
 
+    /**
+     * Genera un string con la representacion del id del usuario con el siguiente formato:
+     * - Si se proporciona un modelo, se muestra el icono del modelo, el nombre del modelo y el id del usuario, y se agrega un tooltip con informacion adicional.
+     * - Si no se proporciona un modelo, se muestra el id del usuario con un estilo determinado por el parametro $clase.
+     * - Si se proporciona el parametro $verificado, se agrega un indicador de verificacion.
+     * @param string $modelo El codigo del modelo a representar.
+     * @param string $clase La clase CSS a aplicar al elemento.
+     * @param bool $verificado Si se debe mostrar el indicador de verificacion.
+     * @return string El string con la representacion del id del usuario.
+     */
     public function id( $modelo = null, $clase = null, $verificado = true ): string 
     {
         if( $modelo ){
@@ -345,21 +440,13 @@ class E_usuario extends Entity
             
             switch( $modelo[ "codigo" ] ){
                 case "10-NUTRICION" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_1 ] ][ "descripcion" ]." - ".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
-                    break;
-                case "20-TELEFONIA" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
-                    break;
                 case "30-ALIMENTOS" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
+                        $calificacion = CALIFICACIONES[ $calificaciones[ $m_1 ] ][ "descripcion" ]." - ".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
                     break;
-                case "40-GASOLINAS" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
-                    break;
-                case "50-INVERSION" : 
-                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];
-                    break;
-                                    }
+
+                default:
+                    $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
+            }
 
             return "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>".$this->avatar(150, false, true)."</p><p class='m-0'>BENELEIT {$modelo[ "nombre" ]}</p><h3><span class='col-12 w-100 badge bg-{$modelo[ "settings" ][ "color" ]}'><i class='fa fa-{$modelo[ "settings" ][ "icono" ]}'></i> ".id( $this->id, 6 )."</span></h3><p class='m-0'>".$this->nombre( 2 )."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio ".( $this->verificado->estatus ? "" : "no" )." verificado</span><span class='badge w-100 bg-".$estatus[ "color" ]."'>{$estatus[ "descripcion" ]}</span><div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">".( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" ).id( $this->id, 6 )."</span>".( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
         }
@@ -371,17 +458,49 @@ class E_usuario extends Entity
     }
 
 
-    public function get_inversiones(){
+    /**
+     * Gets all the investments made by the user.
+     *
+     * The query looks for all the orders made by the user with an status code greater than 400.
+     * This means that the orders must have been paid and have a status of "inversion" (not just "carrito").
+     *
+     * @return array An array of InversionModel objects representing the investments.
+     */
+    public function get_inversiones()
+    {
         $where = "t_pedidos.usuario_id = {$this->id} and substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
+        
         return model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
     }
 
 
-    public function verified(){
+    /**
+     * Returns an icon representing the verification status of the user.
+     *
+     * The icon is a circle with a check mark if the user is verified, and a circle with an x mark if not.
+     * The color of the icon is teal for verified users and red for unverified users.
+     *
+     * @return string HTML string containing the icon element.
+     */
+
+    public function verified()
+    {
         return "<i class=\"far fa-circle-".( $this->verificado->estatus ? "check text-teal" : "xmark text-red" )."\"></i>";
     }
 
 
+    /**
+     * Muestra el nombre del usuario, con o sin apellidos.
+     * 
+     * Si $apellidos es cero, solo se muestra el nombre.
+     * Si $mask es verdadero, se aplica una m scara de seguridad al nombre y apellidos.
+     * Si $text es verdadero, no se aplica formato HTML a la respuesta.
+     * 
+     * @param int $apellidos N mero de apellidos a mostrar
+     * @param bool $mask Aplicar m scara de seguridad
+     * @param bool $text No aplicar formato HTML
+     * @return string El nombre del usuario
+     */
     public function nombre( $apellidos = 0, $mask = false, $text = false ): string
     {
         $nombre = ( $text ? "" : "<strong>" ).(  $mask ? mask( $this->data->nombre ) : $this->data->nombre ).( $text ? "" : "</strong>" )." ".( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
@@ -390,12 +509,31 @@ class E_usuario extends Entity
     }
 
  
+    /**
+     * Muestra el rango del usuario como una imagen.
+     * 
+     * Se utiliza el c digo del rango para buscar la imagen correspondiente en la carpeta assets/img/rangos/
+     * 
+     * @param int $size Tama o de la imagen
+     * @return string C digo HTML de la imagen
+     */
     public function rango( int $size = 40 ): string 
     {
         return "<img style=\"width:{$size}px; height:{$size}px;\" src=\"".base_url()."assets/img/rangos/{$this->data->rango}.png\">";
     }
 
 
+    /**
+     * Muestra el avatar del usuario.
+     * 
+     * Si el usuario tiene avatar se muestra la imagen correspondiente,
+     * de lo contrario se muestra un emoji con las iniciales del usuario.
+     * 
+     * @param int $size Tama o del avatar
+     * @param string $id Valor para el atributo id del elemento img
+     * @param mixed $commmas (no se utiliza)
+     * @return string C digo HTML del avatar
+     */
     public function avatar( int $size = 40, string $id = null, $commmas = null ): string 
     {
         if( $this->data->avatar->activo !== null ){
@@ -406,12 +544,35 @@ class E_usuario extends Entity
     }
 
 
-    public function permiso( $rol, $forzado = false ){
-        return in_array( $rol, $this->rol_codigos ) OR ( !$forzado && in_array( "50-ROOT", $this->rol_codigos ) ); 
+    /**
+     * Determina si el usuario tiene permiso para un rol en particular.
+     * 
+     * Si el usuario tiene el rol especificado, se devuelve true.
+     * Si el usuario tiene el rol "50-ROOT", se devuelve true si no se especifica el par metro $forzado o este es false.
+     * De lo contrario, se devuelve false.
+     * 
+     * @param string $rol C digo del rol a verificar
+     * @param bool $forzado Si se debe forzar la verificaci n sin considerar el rol "50-ROOT". Por defecto es false.
+     * @return bool true si el usuario tiene permiso, false de lo contrario
+     */
+    public function permiso( $rol, $forzado = false )
+    {
+        $r1 = in_array( $rol,      $this->rol_codigos );
+        $r2 = in_array( "50-ROOT", $this->rol_codigos );
+
+        return  $r1 OR ( !$forzado && $r2 ); 
     }
 
 
-    public function es_admin(){
+    /**
+     * Determina si el usuario tiene permiso de administrador.
+     * 
+     * Se buscan los roles de tipo "ADMIN" en el cat logo de roles y se verifica si el usuario tiene permiso para alguno de ellos.
+     * 
+     * @return bool Verdadero si el usuario es administrador.
+     */
+    public function es_admin()
+    {
         load_catalogo( "roles" );
         $admin = false;
 
@@ -426,12 +587,25 @@ class E_usuario extends Entity
         return $admin;
     }
 
+
+    /**
+     * Obtiene las iniciales del usuario a partir de su nombre y primer apellido.
+     * 
+     * @return string Las iniciales del usuario.
+     */
+
     public function iniciales(){
         return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
     }
 
 
-    public function porcentaje_beneficiarios( $porcentaje = 0 ){
+    /**
+     * Devuelve el porcentaje de beneficiairos que se han asignado a esta cuenta
+     * @param int $porcentaje Porcentaje de beneficiairos que ya se han sumado
+     * @return int Porcentaje total de beneficiairos
+     */
+    public function porcentaje_beneficiarios( $porcentaje = 0 )
+    {
         foreach( $this->data->beneficiarios as $b ){
             $porcentaje += $b->porcentaje;
         }
@@ -440,7 +614,16 @@ class E_usuario extends Entity
     }
 
 
-    public function banco( $url = false ){
+    /**
+     * Regresa el c digo del banco seg n la clabe del usuario
+     * 
+     * Si se pasa $url como true, regresa la URL de la imagen del banco
+     * 
+     * @param bool $url Si se pasa como true regresa la URL de la imagen del banco
+     * @return string C digo del banco o la URL de la imagen del banco
+     */
+    public function banco( $url = false )
+    {
         $banco_codigo = substr( $this->data->clabe, 0, 3);
 
         if( $url ){
@@ -457,7 +640,14 @@ class E_usuario extends Entity
     }
 
 
-    public function pedidopendiente( $modelo ){
+    /**
+     * Busca si el usuario tiene un pedido pendiente (con estatus entre 300 y 400) para el modelo especificado.
+     * Si lo encuentra, regresa el id del pedido, de lo contrario regresa null.
+     * @param string $modelo El c digo del modelo a buscar
+     * @return int|null El id del pedido pendiente o null si no se encontr 
+     */
+    public function pedidopendiente( $modelo )
+    {
         $db  = db_connect();
         $p = $db->query( "select id from t_pedidos where usuario_id = {$this->id} and modelo_codigo = '{$modelo}' and substring( estatus_codigo, 1, 3 ) between 300 and 400 " )->getRow();
 
@@ -469,7 +659,14 @@ class E_usuario extends Entity
     }
 
 
-    public function getDownlineJSON( $modelo, $niveles = null ){
+    /**
+     * Regresa un string en formato JSON con la estructura de la red de downline del usuario, hasta el numero de niveles especificado.
+     * @param string $modelo El codigo del modelo a obtener la red de downline
+     * @param int $niveles El numero de niveles a obtener. Si no se especifica, se utiliza el valor de configuracion del modelo.
+     * @return string Un string en formato JSON con la estructura de la red de downline del usuario
+     */
+    public function getDownlineJSON( $modelo, $niveles = null )
+    {
 
         $db  = db_connect();
         $sql = "select f_get_downline( {$this->id}, '{$modelo}', ".($niveles ?? MODELOS[ $modelo ][ "settings" ][ "niveles" ] )." ) as downline";
@@ -479,7 +676,15 @@ class E_usuario extends Entity
     }
 
 
-    public function getUplineJSON( $modelo ){
+    /**
+     * Gets the upline in a JSON format for the given model.
+     *
+     * @param string $modelo The model code.
+     *
+     * @return string The upline in a JSON format.
+     */
+    public function getUplineJSON( $modelo )
+    {
 
         $db  = db_connect();
         $sql = "select f_get_upline( {$this->id}, '{$modelo}', 1, '".date( "Y-m-d" )."' ) as upline";
@@ -489,7 +694,21 @@ class E_usuario extends Entity
     }
 
 
-    public function getBitacora(){
+    /**
+     * Regresa la bit cora del usuario en forma de arreglo
+     * 
+     * Cada elemento del arreglo es un objeto con las propiedades:
+     * - fecha: fecha y hora de la acci n
+     * - indice: n mero de la acci n en la bit cora
+     * - codigo: c digo de la acci n
+     * - ip: direcci n IP desde la que se realiz  la acci n
+     * - string: descripci n de la acci n con variables reemplazadas
+     * - variables: objeto con las variables que se reemplazaron en la descripci n de la acci n
+     * 
+     * @return array Arreglo con las movimientos del usuario
+     */
+    public function getBitacora()
+    {
         $db = db_connect();
         $respuesta = [];
 
@@ -521,13 +740,37 @@ class E_usuario extends Entity
     }
 
 
-    public function es_menor(){
+/**
+ * Determines if the user is a minor based on their birthdate.
+ *
+ * This function calculates the user's age using their birth date and checks 
+ * if they are under 18 years old.
+ *
+ * @return bool Returns true if the user is under 18, false otherwise.
+ */
+
+    public function es_menor()
+    {
         $fecha = new Time( $this->fechanac );
         return $fecha->getAge() < 18;
     }
 
 
-    public function getRecompensas( $activa = false ){
+/**
+ * Retrieves the user's rewards based on their current cycle and status.
+ *
+ * If the user's rewards data is not initialized, it sets default values and saves the user.
+ * Queries the rewards for the current cycle based on the status code '201-ACTIVO'.
+ *
+ * If the $activa parameter is true, it returns the first active reward that has not been achieved yet,
+ * following the user's reward order if it is set. By default, it looks for "010-CELULAR".
+ *
+ * @param bool $activa Determines whether to return only the active reward or all rewards.
+ * @return array|object Returns an array of all rewards if $activa is false, or the active reward object if true.
+ */
+
+    public function getRecompensas( $activa = false )
+    {
 
         if( !isset( $this->data->recompensas ) ){
             $data = $this->data;
@@ -567,7 +810,15 @@ class E_usuario extends Entity
     }
 
 
-    public function password_original(){
+    /**
+     * Retrieves the original password of the user. If the password is not set,
+     * generates a random password, saves it, and then returns it.
+     *
+     * @return string The user's original password.
+     */
+
+    public function password_original()
+    {
         
       
         if( !$this->attributes[ "password"] ){
@@ -579,7 +830,22 @@ class E_usuario extends Entity
     }
 
     
-    public Function getEstrellas( $r = null ){
+/**
+ * Calculates and updates the user's current star count based on pending commissions.
+ *
+ * This function retrieves the total number of stars (or points) accumulated by the user
+ * from the pending commissions in the database. It compares the retrieved count with
+ * the current stored count in the user's data. If the user has reached or exceeded the
+ * required stars for a reward (if provided), the reward redemption process is triggered.
+ * The function also updates the user's star count and sends a notification if the count
+ * has increased.
+ *
+ * @param array|null $r Optional. The reward array containing the required number of stars for redemption.
+ * @return int The total number of stars accumulated by the user.
+ */
+
+    public Function getEstrellas( $r = null )
+    {
         
         $db  = db_connect();
         $sql = "SELECT SUM(cantidad) as estrellas
@@ -640,7 +906,14 @@ class E_usuario extends Entity
     }
 
 
-    public function recompensas_alcanzadas(){
+    /**
+     * Retrieves a list of reward codes that have been redeemed and have a status code greater than 200 for the current user.
+     *
+     * @return array An array of reward codes.
+     */
+
+    public function recompensas_alcanzadas()
+    {
         $db = db_connect();
         $re = $db->query( "select recompensa_codigo from t_redenciones where substring( estatus_codigo, 1, 3 ) > 200 and usuario_id = '{$this->id}'" );
         $resultado = [];
@@ -653,7 +926,12 @@ class E_usuario extends Entity
     }
 
 
-    public function recompensas_recibidas(){
+    /**
+     * Devuelve un array con los códigos de las recompensas que ha recibido el usuario.
+     * @return array
+     */
+    public function recompensas_recibidas()
+    {
         $db = db_connect();
         $re = $db->query( "select recompensa_codigo from t_redenciones where estatus_codigo = '623-ENTREGA' and usuario_id = '{$this->id}'" );
         $resultado = [];
@@ -666,7 +944,13 @@ class E_usuario extends Entity
     }
 
 
-    public function redime_recompensa( $r ){
+    /**
+     * Registra la redención de una recompensa y coloca la siguiente recompensa para el usuario.
+     * @param array $r Un array con la información de la recompensa a redimir, con al menos los campos "codigo" y "estrellas".
+     * @return string El código de la siguiente recompensa a alcanzar.
+     */
+    public function redime_recompensa( $r )
+    {
         $db = db_connect();
         $db->query( "insert into t_redenciones values( NULL, '330-EN-ESPERA', {$this->id}, '{$r[ "codigo" ]}', '".date( "Y-m-d" )."')" );
         $db->query( "call p_cobra_estrellas( {$this->id}, '{$r[ "estrellas" ]}' )" );
@@ -684,14 +968,29 @@ class E_usuario extends Entity
     }
 
 
-    public function getCelulares(){
+    /**
+     * Devuelve un array con los celulares asociados al usuario, solo se consideran los que tienen un estatus mayor a 200.
+     * @return array Un array con los celulares asociados al usuario.
+     */
+    public function getCelulares()
+    {
         $db  = db_connect();
         $sql = "SELECT * from t_celulares WHERE usuario_id = {$this->id} and substr( estatus_codigo, 1, 3) > 200";
         return $db->query( $sql )->getResultArray();
     }
 
 
-    public function getDomicilios( $con_colonia = false, $todos = false ){
+    /**
+     * Devuelve un array de los domicilios del usuario, si $con_colonia es true, solo devuelve los que tienen colonia asignada.
+     * Si $todos es true, devuelve todos los domicilios, sin importar si est n activos o no.
+     * Si el usuario no tiene un domicilio seleccionado, se selecciona el primero de la lista y se guarda en la base de datos.
+     * 
+     * @param bool $con_colonia
+     * @param bool $todos
+     * @return array
+     */
+    public function getDomicilios( $con_colonia = false, $todos = false )
+    {
         $db = db_connect();
         $respuesta = [];
         $existe = false;
@@ -729,6 +1028,14 @@ class E_usuario extends Entity
     }
 
 
+    /**
+     * Regresa el pedido activo para el modelo dado.
+     * 
+     * @param string $modelo Codigo del modelo a buscar.
+     * @param bool $create Si no hay pedido activo, crea uno nuevo.
+     * 
+     * @return array|false El pedido activo, o false si no se encuentra y no se debe crear.
+     */
     public function getPedido( $modelo, $create = true ){
         $sql    = "modelo_codigo = '{$modelo}' and estatus_codigo = '250-EN-PROCESO' and usuario_id = '{$this->id}'";
         $pedido = model( "PedidoModel" )->where( $sql , null, false )->first();
@@ -750,6 +1057,13 @@ class E_usuario extends Entity
     }
 
     
+    /**
+     * Obtiene el saldo de un usuario en un modelo de negocio determinado.
+     * Si $checasaldo es true, se actualiza el saldo en USDT en caso de que el usuario esté en morado.
+     * @param string $modelo El código del modelo de negocio.
+     * @param bool $checasaldo Si true, se actualiza el saldo en USDT.
+     * @return int El saldo del usuario en el modelo de negocio especificado.
+     */
     public function saldo( $modelo, $checasaldo = false ){
         
         // Obtenemos el saldo solo si está activo
@@ -823,6 +1137,16 @@ class E_usuario extends Entity
     }
 
 
+    /**
+     * Paga un pedido y actualiza los datos del usuario.
+     * 
+     * @param int $pedido Id del pedido a pagar.
+     * @param int $metodo Id del método de pago a usar.
+     * @param float $cantidad Cantidad a depositar.
+     * @param string $mes Mes en que se debe calificar el pedido (si es null se califica en el mes actual).
+     * 
+     * @return string Referencia del pedido pagado.
+     */
     public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
 
         if( $mes && $mes == date( "Ym" ) ) $mes = null;
@@ -1022,7 +1346,16 @@ class E_usuario extends Entity
     }
 
 
-    public function getPrimerCompra( $modelo ){
+    /**
+     * Retorna la fecha de primer compra de un modelo para este usuario.
+     * 
+     * Si no existe el registro, lo crea y lo guarda.
+     * 
+     * @param string $modelo El modelo a buscar
+     * @return string La fecha en formato 'Y-m-d H:i:s'
+     */
+    public function getPrimerCompra( $modelo )
+    {
 
         if( !isset( $historial->modelos->{$modelo} ) ){
             $this->valida_modelo();
@@ -1044,7 +1377,13 @@ class E_usuario extends Entity
     }
 
 
-    public function getPrimerCompraProducto( $producto ){
+    /**
+     * Retrieves the date of the first purchase of a given product.
+     * @param string $producto The code of the product.
+     * @return string The date of the first purchase in the format 'Y-m-d H:i:s' or null if it does not exist.
+     */
+    public function getPrimerCompraProducto( $producto )
+    {
         $db = db_connect();
 
         $sql = "SELECT MIN(fechas->>'$.pagado') as fecha 
@@ -1056,9 +1395,18 @@ class E_usuario extends Entity
         return $result ? $result->fecha : null;
     }
 
-    
 
-    public function getChecks( $modelo ){
+    /**
+     * Retrieves the checks for a given business model for the current user.
+     * If the checks for the current month do not exist in the user's data, 
+     * it queries the database to obtain the checks for the specified model.
+     *
+     * @param string $modelo The code of the business model.
+     * @return array An associative array containing the checks data.
+     */
+
+    public function getChecks( $modelo )
+    {
         $a = json_decode( json_encode( $this->data->checks ?? [] ), 1);
 
         if( !isset( $a[ date("Ym") ] ) ){
@@ -1072,7 +1420,17 @@ class E_usuario extends Entity
     }
 
 
-    public function getBono( $esquema, $y ){
+    /**
+     * Regresa un arreglo con las comisiones del usuario en el esquema y a o especificados,
+     * agrupadas por nivel.
+     * 
+     * @param array  $esquema     Esquema, con su codigo y nombre
+     * @param string $y           a o a obtener las comisiones
+     * 
+     * @return array              Arreglo con las comisiones del usuario, agrupadas por nivel
+     */
+    public function getBono( $esquema, $y )
+    {
         $a   = [
             1 => 0.00,
             2 => 0.00,
@@ -1095,7 +1453,20 @@ class E_usuario extends Entity
     }
 
     
-    public function getPagos( $modelo ){
+    /**
+     * Retrieves the payment records for the current user based on the specified model.
+     *
+     * This function executes a SQL query to fetch payment details such as folio,
+     * status, CLABE, minor status, tax retention status, creation period, total amount,
+     * and payment date for the user identified by the current instance. The results
+     * are ordered by the creation period in descending order.
+     *
+     * @param string $modelo The model code used to filter the payments.
+     * @return array An array of associative arrays containing payment details.
+     */
+
+    public function getPagos( $modelo )
+    {
 
       $sql = "SELECT 
                     a.id AS folio, 
@@ -1120,7 +1491,16 @@ class E_usuario extends Entity
     }
 
 
-    public function getBonoPromos( $mes = null ){
+    /**
+     * Regresa un arreglo con las comisiones del usuario por nivel, de la
+     * promocion de 50, para el mes especificado.
+     * 
+     * @param string $mes       Codigo del mes que se quiere obtener las comisiones
+     * 
+     * @return array            Arreglo con las comisiones del usuario por nivel
+     */
+    public function getBonoPromos( $mes = null )
+    {
         if( !$mes ){
             $mes = date( "Ym" );
         }
@@ -1151,7 +1531,16 @@ class E_usuario extends Entity
     }    
 
 
-    public function getIngresosPorDia( $modelo, $esquemas ){
+    /**
+     * Regresa un arreglo con las comisiones del usuario por dia, dentro del modelo y esquemas especificados.
+     * 
+     * @param string $modelo       Codigo del modelo que se quiere obtener las comisiones
+     * @param array  $esquemas     Codigo de los esquemas que se quiere obtener las comisiones
+     * 
+     * @return array               Arreglo con las comisiones del usuario, agrupadas por dia
+     */
+    public function getIngresosPorDia( $modelo, $esquemas )
+    {
         $resultado = [];
 
         $sql = "SELECT 
@@ -1182,7 +1571,21 @@ class E_usuario extends Entity
     }
 
 
-    public function getDirectosActivos( $modelo ){
+    /**
+     * Retrieves a list of active direct users for the specified model.
+     * 
+     * This function queries the database to get the IDs of users who are directly
+     * linked to the current user (`$this->id`) as their 'padre' within the given model.
+     * It only includes users whose status code for the model is greater than 400, indicating
+     * they are active.
+     * 
+     * @param string $modelo The model code representing the business model to check.
+     * 
+     * @return array An array of associative arrays, each containing the 'id' of an active direct user.
+     */
+
+    public function getDirectosActivos( $modelo )
+    {
         /* $sql = "SELECT id 
                 FROM t_usuarios 
                 WHERE redes->>'$.modelos.\"{$modelo}\".padre' = {$this->id} 
@@ -1198,7 +1601,19 @@ class E_usuario extends Entity
     }
 
 
-    public function getComisiones( $periodo = null, $esquema = null, $estatus = null ){
+    /**
+     * Regresa un arreglo con las comisiones del usuario, agrupadas por esquema, 
+     * con el total de comisiones por esquema, y el total de comisiones en el 
+     * periodo especificado.
+     * 
+     * @param string $periodo       Codigo del periodo que se quiere obtener las comisiones
+     * @param string $esquema       Codigo del esquema que se quiere obtener las comisiones
+     * @param string $estatus       Codigo del estatus de la comision que se quiere obtener
+     * 
+     * @return array                Arreglo con las comisiones del usuario, agrupadas por esquema
+     */
+    public function getComisiones( $periodo = null, $esquema = null, $estatus = null )
+    {
         $resultado = [];
 
         if( $periodo ){
@@ -1236,7 +1651,14 @@ class E_usuario extends Entity
     }
 
 
-    public function getRangoInversion( $directos ){
+    /**
+     * Devuelve el rango de inversiones correspondiente al n mero de directos que se le pasa como par metro.
+     * Si el rango cambia, se guarda el nuevo valor.
+     * @param int $directos N mero de directos
+     * @return array El rango actualizado
+     */
+    public function getRangoInversion( $directos )
+    {
 
         // Identificar rango corresponidente
 

@@ -5,8 +5,7 @@ namespace App\Controllers;
 class Dashboard extends BaseController
 {
     function __construct() {
-        $this->data[ "menu" ] = "inicio";
-        
+        $this->data[ "menu" ] = "inicio";        
     }
 
     public function inicio(){
@@ -60,9 +59,16 @@ class Dashboard extends BaseController
             }
         }
 
-        if( !$request || ( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
-            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ) ) {
-            return redirect()->to( "no_permiso" ); 
+        if( 
+            !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) 
+        ){
+
+             return redirect()->to( "no_permiso" ); 
+        }
+
+        if( !$request ){
+            return redirect()->to( "usuarios" ); 
         }
 
         $this->data[ "navbar" ] = true;
@@ -878,37 +884,14 @@ class Dashboard extends BaseController
 
 
     public function temp_update(){ 
-        $db = db_connect();
+        
+        $inversiones = model( "InversionModel" )->findAll();
 
-        $sql = "
-            select usuario_id as id
-            from t_pedidos
-            where modelo_codigo IN ('50-INVERSION')
-            and substr( estatus_codigo,1,3) > 400
-     
-            group by usuario_id
-        ";   
-        foreach( $db->query( $sql )->getResult() as $r ){
-            $usuario = model( "UsuarioModel" )->find( $r->id );
-            $db      = db_connect();
-            $sql     = "call p_get_inversiones( {$usuario->id}, ".date( "Ym" )." )";
-            $ps      = $db->query( $sql )->getResult();
-            $semilla = 0;
-            $primer  = 0;
-    
-            foreach( $ps as $socio ){
-                if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 && $socio ){
-                    $semilla += $socio->semilla;
-                }
-    
-                if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
-                    $primer++;
-                }
-            }   
+        foreach( $inversiones as $i ){
+            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ]);
 
-
-            $this->revisa_bono_liderazgo( $usuario, $ps, date( "Y-m-d", strtotime( date( "Y-m" )."-01 - 1 month"))  );
-            $this->revisa_bono_liderazgo( $usuario, $ps, date( "Y-m" )."-01" );
+            model( "InversionModel" )->save( $i );
         }
     }
 }

@@ -56,10 +56,35 @@ function genera_meses( $pedido, $i, $producto = null ){
     $sql = "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}";
     $rts = model( "RetiroModel" )->where( $sql )->findAll();
 
-    $date = new \DateTime( intval( date( "d", strtotime( $f_i ) ) ) == 1 ? $pedido[ "fechas" ][ "pagado" ] : $f_i );
+    $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
+    $prev = intval( date( "m", strtotime( $f_i ) ) ) > intval( date( "m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) ) ? 1 : 0;
 
-    for( $a = 0; $a <= 24; $a++ ){
-        if( $a ){
+    if( $prev ){
+        $date->modify( "last day of this month" );
+        $termina_mes_f   = $date->format( "Y-m-d" );
+        $dias_en_mes     = intval( $date->format( "d" ) );
+        $date->modify( "first day of this month" );
+        $inicia_mes_f    = $date->format( "Y-m-d" );
+      
+        $meses[] = [
+            "Ym"              => $date->format( "Ym" ),
+            "Porcentaje"      => $producto->data->porcentaje,
+            "semilla"         => $pedido[ "data" ][ "total" ],
+            "compuesto"       => 0,
+            "dias_en_mes"     => $dias_en_mes,
+            "dias_parcial"    => 0,
+            "retiros"         => 0,
+            "rendimiento_dia" => 0,
+            "rendimiento_mes" => 0,
+            "inicia"          => $inicia_mes_f,
+            "termina"         => $termina_mes_f
+        ];
+
+        $date = new \DateTime( $f_i );
+    }
+
+    for( $a = 0 + $prev; $a <= 24 + $prev; $a++ ){
+        if( $a > $prev ){
             $date->modify( "first day of this month" );
             $date->modify( "+ 1 month" );
         }
@@ -77,7 +102,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
         $date->modify( "last day of this month" );
         
-        $cantidad = ( $a ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
+        $cantidad = ( $a > $prev ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
         ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
 
         $dias_en_mes     = intval( $date->format( "d" ) );
@@ -94,12 +119,12 @@ function genera_meses( $pedido, $i, $producto = null ){
         }
 
         $rendimiento_dia = floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100; 
- 
+
         if( $dias_parcial < $dias_en_mes ){
             $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
         }
 
-        $compuesto = $a ? (
+        $compuesto = $a > $prev ? (
             ( 
                 ( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
                 ( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 

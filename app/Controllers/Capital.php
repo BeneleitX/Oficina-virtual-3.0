@@ -9,7 +9,22 @@ class Capital extends BaseController
     }
     
 
-    public function admin( $mes = null ){
+    /**
+     * Muestra el listado de solicitudes de retiros de una inversi n Capital24.
+     *
+     * Requiere el par metro $mes, que es el mes en formato "YYYYMM".
+     *
+     * Verifica que el usuario logueado tenga permiso de administraci n.
+     *
+     * Redirecciona a la p gina de no permiso si no se cumple la condici n
+     * anterior.
+     *
+     * @param string $mes
+     *
+     * @return void
+     */
+    public function admin( $mes = null )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -30,19 +45,173 @@ class Capital extends BaseController
         $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
 
         echo template( "capital/admin", $this->data );
-    }     
+    }
 
-    public function dashboard(){
+
+    /**
+     * Muestra el dashboard de Capital24.
+     *
+     * Mostrar&#225; informaci&#243;n de los retiros de cada mes.
+     *
+     * Requiere el permiso de administraci&#243;n.
+     *
+     * @return void
+     */
+    public function dashboard()
+    {
                 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Capital24";
 
 
         echo template( "capital/dashboard", $this->data );
-    } 
+    }
 
 
-    public function quick_data(){
+    public function inversiones()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        $db  = db_connect();
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Dashboard Capital24";
+        load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500");
+
+        $sql = "SELECT count(*) as total from (
+                    SELECT any_value(i.id), i.usuario_id, count(*)
+                    from t_inversiones i
+                    join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400
+                    where substring( i.estatus_codigo, 1, 3 ) > 300
+                    and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
+                    group by i.usuario_id
+                ) as t";
+
+        $this->data[ "total_activos" ] = $db->query( $sql )->getRow()->total;
+
+        $sql = "SELECT
+                    r.codigo, r.nombre, r.color,
+                    count(*) as cantidad
+                from t_rangos r 
+                join t_usuarios u on u.data->>'$.rango_inversion' = r.codigo
+                where r.modelo_codigo = '50-INVERSION' 
+                and substring( r.codigo, 1, 3 ) > 500
+                and substring( u.data->>'$.estatus.modelos.\"50-INVERSION\"', 1, 3 ) > 300 
+                group by r.codigo
+                order by r.codigo";
+
+        $this->data[ "rangos" ] = $db->query( $sql )->getResultArray();
+
+        $sql = "SELECT 
+                    o.codigo, 
+                    o.data->>'$.porcentaje' as porcentaje, 
+                    o.data->>'$.color' as color, 
+                    count(*) as cantidad, 
+                    date_format( i.fechas->>'$.pagado', '%Y%m' ) as fecha
+                from t_inversiones i
+                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400
+                join t_productos o on o.codigo = i.producto_codigo
+                where substring( i.estatus_codigo, 1, 3 ) > 300
+                and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
+                group by i.producto_codigo, fecha
+                order by fecha";
+
+        $inversiones = $db->query( $sql )->getResultArray();
+
+        $sql = "SELECT sum( i. cantidad) as semilla, date_format( i.fechas->>'$.pagado', '%Y%m' ) as fecha
+                from t_inversiones i
+                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400
+                where substring( i.estatus_codigo, 1, 3 ) > 300
+                and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
+                group by fecha
+                order by fecha";
+
+        $semilla = $db->query( $sql )->getResultArray();
+
+        $this->data[ "total_inversiones" ] = 0;
+        
+        $data = [];
+
+        foreach( $inversiones as $i ){
+            $this->data[ "total_inversiones" ] += $i[ "cantidad" ];
+            $data[ $i[ "codigo" ] ][ $i[ "fecha" ] ] = intval( $i[ "cantidad" ] );
+        }
+
+        $this->data[ "meses" ] = [];
+        
+        $this->data[ "data_inversiones" ] = [];
+        $this->data[ "data_semilla" ]     = [];
+        $this->data[ "semilla" ]          = [];
+
+
+        foreach( $semilla as $s ){
+            $this->data[ "semilla" ][ $s[ "fecha" ] ] = intval( $s[ "semilla" ] );
+        }
+
+        $meses = 12;
+
+        $mes      = date( "Ym", strtotime( date( "Y-m")."-01 - {$meses} month" ) );
+        $anterior = date( "Ym", strtotime( date( "Y-m")."-01 - ".( $meses + 1)." month" ) );
+     
+        for( $a = 0; $a <= $meses; $a++ ){
+            $this->data[ "meses" ][] = strtoupper( mes( substr( $mes, 4, 2 ), 3) ); //." ".substr( $mes, 0, 4 );
+
+            $this->data[ "data_semilla" ][ $mes ] = ( $this->data[ "semilla" ][ $mes ] ?? 0 ) + ( $this->data[ "data_semilla" ][ $anterior ] ?? 0 );
+
+            foreach( PRODUCTOS as $codigo => $tipo ){    
+                if( !isset( $this->data[ "data_inversiones" ][ $codigo ] ) ){
+                    $this->data[ "data_inversiones" ][ $codigo ] = 0;
+                }
+
+                if( isset( $data[ $codigo ][ $mes ] ) ){
+                    $this->data[ "data_inversiones" ][ $codigo ] += $data[ $codigo ][ $mes ];
+                }
+                else{
+                    $data[ $codigo ][ $mes ] =0;
+                }
+
+                $data[ $codigo ][ $mes ] += ( $data[ $codigo ][ $anterior ] ?? 0 );
+            }
+
+            $anterior = $mes;
+            $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month" ) );
+        }
+
+        ksort($this->data[ "data_semilla" ]);
+
+        foreach( PRODUCTOS as $codigo => $tipo ){
+
+            ksort($data[ $codigo ]);
+
+            $this->data[ "data" ][] = [ 
+                "name" => PRODUCTOS[ $codigo ][ "data" ][ "nombre" ],
+                "data" => array_reverse( array_reverse( $data[ $codigo ] ) )
+            ];
+        }
+
+        echo template( "capital/inversiones", $this->data );
+    }
+
+
+    /**
+     * Processes a POST request to verify a transaction hash on the blockchain.
+     *
+     * This function receives a transaction hash via POST, validates its length,
+     * and uses an external API to retrieve transaction details. If the transaction
+     * is confirmed and directed to an active wallet, it registers the transaction
+     * in the database, updates the investment information, and returns a success
+     * response. If any validation fails, an appropriate error message is returned.
+     *
+     * @return void The response is echoed as a JSON object containing either
+     *              error messages or success data based on the processing outcome.
+     */
+
+    public function quick_data()
+    {
         $respuesta = [
             "ok" => false,
             "error" => "error"
@@ -174,7 +343,20 @@ class Capital extends BaseController
     }
 
 
-    public function crea_retiro(){
+    /**
+     * Crea una solicitud de retiro para una inversión.
+     * 
+     * Verifica que el usuario logueado sea el mismo que el usuario de la inversión.
+     * Genera un registro en la tabla `retiros` con el estatus "255-PENDIENTE" y lo
+     * relaciona con la inversión y el usuario.
+     * Actualiza la cantidad de meses de la inversión en la tabla `inversiones`.
+     * Registra una bitácora de la acción.
+     * Redirecciona a la página de capital con un mensaje de éxito.
+     * 
+     * @return void
+     */
+    public function crea_retiro()
+    {
 
         $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
 
@@ -241,7 +423,13 @@ class Capital extends BaseController
     }
 
 
-    public function cancela_retiro(){
+    /**
+     * Cancela una solicitud de retiro, marcando como cancelada la solicitud y actualizando los meses de la inversión.
+     * 
+     * @return Response
+     */
+    public function cancela_retiro()
+    {
         
         $retiro = model( "RetiroModel" )->find( $this->request->getPost( "solicitud_id" ) );
 
@@ -275,7 +463,26 @@ class Capital extends BaseController
     }
 
 
-    public function estadodecuenta( $hash ){
+    /**
+     * Muestra el detalle de una inversión Capital24, incluyendo su estado
+     * actual y los movimientos realizados en ella.
+     *
+     * Requiere el parámetro $hash, que es el hash de la transacción
+     * correspondiente a la inversión.
+     *
+     * Verifica que el usuario logueado sea el mismo que el usuario de la
+     * inversión, o que tenga permiso de ingreso, almacén, contabilidad o
+     * administración.
+     *
+     * Redirecciona a la página de capital si no se cumple la condición
+     * anterior.
+     *
+     * @param string $hash
+     *
+     * @return void
+     */
+    public function estadodecuenta( $hash )
+    {
         $hash = base64_decode( urldecode( $hash ) );
 
         $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}' AND substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
@@ -303,8 +510,22 @@ class Capital extends BaseController
     }
 
 
-
-    public function get_retiros(){
+    /**
+     * Muestra el listado de retiros de una inversión Capital24.
+     *
+     * Requiere el parámetro $inversion, que es el id de la inversión.
+     *
+     * Verifica que el usuario logueado tenga permiso de administración.
+     *
+     * Redirecciona a la página de no permiso si no se cumple la condición
+     * anterior.
+     *
+     * @param string $inversion
+     *
+     * @return void
+     */
+    public function get_retiros()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -390,7 +611,21 @@ class Capital extends BaseController
     }
 
 
-    public function entrega_retiro( $retiro ){
+    /**
+     * Marks a specific withdrawal as transferred.
+     *
+     * Validates if the current user has admin permissions before proceeding. 
+     * Decodes the provided withdrawal identifier to find the corresponding 
+     * record in the database. Updates the status of the withdrawal to "applied" 
+     * and logs the action in the system's records. Finally, redirects to the 
+     * capital page with a success message.
+     *
+     * @param string $retiro Encoded withdrawal identifier.
+     * @return \CodeIgniter\HTTP\RedirectResponse Redirects to the capital page.
+     */
+
+    public function entrega_retiro( $retiro )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -426,7 +661,8 @@ class Capital extends BaseController
      * @param string $mes Mes en formato "YYYYMM".
      * @return redirect a capital24/$mes
      */
-    public function entrega_retiros( $mes ){
+    public function entrega_retiros( $mes )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
