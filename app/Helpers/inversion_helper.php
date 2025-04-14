@@ -80,8 +80,10 @@ function genera_meses( $pedido, $i, $producto = null ){
             "termina"         => $termina_mes_f
         ];
 
-        $date = new \DateTime( $f_i );
+        
     }
+
+    $date = new \DateTime( $f_i );    
 
     for( $a = 0 + $prev; $a <= 24 + $prev; $a++ ){
         if( $a > $prev ){
@@ -237,7 +239,8 @@ function balance_inversion( $i, $fecha = null ){
         "suma"        => 0.00,
         "compuesto"   => 0.00,
         "total"       => 0.00,
-        "full"        => 0.00
+        "full"        => 0.00,
+        "fecha"       => $fecha
     ];
 
     if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 ){
@@ -262,10 +265,10 @@ function balance_inversion( $i, $fecha = null ){
                 }
 
                 $respuesta[ "rendimiento_mes" ] = $j[ "rendimiento_mes" ];
-                $respuesta[ "suma" ] += $j[ "rendimiento_mes" ];
+                $respuesta[ "suma" ]           += $j[ "rendimiento_mes" ];
                 $respuesta[ "rendimiento" ]     = $j[ "compuesto" ] + $respuesta[ "rendimiento_mes" ];
                 $respuesta[ "retiros" ]        += $j[ "retiros" ];
-                $respuesta[ "compuesto" ] = $j[ "compuesto" ];
+                $respuesta[ "compuesto" ]       = $j[ "compuesto" ];
                 $respuesta[ "full" ]            = $respuesta[ "rendimiento" ] - $respuesta[ "retiros" ];
                 $respuesta[ "finmes" ]          = $respuesta[ "rendimiento" ] - $respuesta[ "retiros" ];
             }
