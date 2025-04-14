@@ -106,6 +106,16 @@ class Dashboard extends BaseController
     }
 
 
+    /**
+     * Actualiza los estatus de un socio en cada unidad de negocio.
+     * 
+     * Se llama desde el dashboard de un socio, y se encarga de actualizar
+     * los estatus de un socio en cada unidad de negocio.
+     * 
+     * @param string $request El password del socio, en formato base64.
+     * 
+     * @return void
+     */
     public function update_estatus( $request ){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
@@ -126,9 +136,13 @@ class Dashboard extends BaseController
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
 
+        
+        foreach( MODELOS as $m ){
+            $db->query( "do f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+        }
+        
         $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
         $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
-
 
         // BITACORA Forzar update
         bitacora( 62, $this->data[ "usuario" ]->id, [ 
@@ -140,6 +154,11 @@ class Dashboard extends BaseController
     }
 
 
+    /**
+     * Función para cargar la info de los patrocinadores en la pantalla de datos de socio
+     * 
+     * @return string HTML con la info de los patrocinadores
+     */
     public function load_padres(){
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
             return redirect()->to( "no_permiso" ); 
@@ -184,23 +203,24 @@ class Dashboard extends BaseController
             foreach( MODELOS as $m ){
                 $patrocinador = $patrocinadores[ $m[ "codigo" ] ];
 
-                if( $socio->patrocinador( $m[ "codigo" ] ) != $patrocinador ){
-                    $redes = $socio->redes;
-                    $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
-                    $socio->redes = $redes;
-                    
-                    model( "UsuarioModel" )->save( $socio );
+                $redes = $socio->redes;
+                $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
+                $socio->redes = $redes;
+                
+                model( "UsuarioModel" )->save( $socio );
 
-                    // BITACORA Cambio de patrocinador
-                    bitacora( 84, $this->data[ "usuario" ]->id, [ 
-                        "socio"        => $socio->id,
-                        "patrocinador" => $patrocinador,
-                        "modelo"       => $m[ "codigo" ]
-                    ] );
-
-                    $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
-                } 
+                // BITACORA Cambio de patrocinador
+                bitacora( 84, $this->data[ "usuario" ]->id, [ 
+                    "socio"        => $socio->id,
+                    "patrocinador" => $patrocinador,
+                    "modelo"       => $m[ "codigo" ]
+                ] );
             }
+
+            foreach( MODELOS as $m ){
+                $db->query( "do f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+            }
+
             $ruta = urlencode( base64_encode( $socio->password_original() ) );
             return redirect()->to( "sociodata/{$ruta}" );
         }

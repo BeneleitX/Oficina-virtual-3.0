@@ -173,8 +173,8 @@ class Sesion extends BaseController
 
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-
             $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
+            
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
 
             // si es password original revisa si es activo, si no, rechaza login
@@ -199,9 +199,9 @@ class Sesion extends BaseController
 
             // $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
-            $db->query( " CALL p_update_padre( {$usuario->id}, '10-NUTRICION' );" );
-            $db->query( " CALL p_update_padre( {$usuario->id}, '20-TELEFONIA' );" );
-            $db->query( " CALL p_update_padre( {$usuario->id}, '30-ALIMENTOS' );" );
+            foreach( MODELOS as $m ){
+                $db->query( " CALL p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
+            }
 
             // activa modo admin para staff que trenga permiso de ver cuentas de socios
             if( $usuario->es_admin() && !session( "admin" ) ){
