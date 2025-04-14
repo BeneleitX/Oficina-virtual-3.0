@@ -275,6 +275,7 @@ function balance_inversion( $i, $fecha = null ){
 
         elseif( $j[ "Ym" ] == $fecha ){
             
+            $j[ "retiros" ] = 0;
             $dias = date( "d" ) - ( $j[ "dias_en_mes" ] - $j[ "dias_parcial" ] );
 
             if( $dias < 0 ){
