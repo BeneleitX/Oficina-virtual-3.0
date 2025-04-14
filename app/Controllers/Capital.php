@@ -122,34 +122,115 @@ class Capital extends BaseController
 
         $inversiones = $db->query( $sql )->getResultArray();
 
-        $sql = "SELECT sum( i. cantidad) as semilla, date_format( i.fechas->>'$.pagado', '%Y%m' ) as fecha
-                from t_inversiones i
-                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400
-                where substring( i.estatus_codigo, 1, 3 ) > 300
+        $sql = "SELECT e.Ym as fecha, sum( e.semilla ) as semilla
+                FROM t_inversiones i
+                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400,
+                JSON_TABLE( i.extras, '$.meses[*]'
+                    COLUMNS (
+                        Ym VARCHAR(6) PATH '$.Ym',
+                        semilla DECIMAL(10,2) PATH '$.semilla'
+                    )
+                ) AS e
+                Where  substring( i.estatus_codigo, 1, 3 ) > 300
+                and e.Ym <= date_format( now(), '%Y%m')
                 and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
-                group by fecha
-                order by fecha";
+                group by e.Ym
+                order by e.Ym";
 
         $semilla = $db->query( $sql )->getResultArray();
 
-        $this->data[ "total_inversiones" ] = 0;
         
+        $sql = "SELECT e.Ym as fecha, sum( e.rendimiento_mes ) as rendimiento
+                FROM t_inversiones i
+                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400,
+                JSON_TABLE( i.extras, '$.meses[*]'
+                    COLUMNS (
+                        Ym VARCHAR(6) PATH '$.Ym',
+                        rendimiento_mes DECIMAL(10,2) PATH '$.rendimiento_mes'
+                    )
+                ) AS e
+                Where  substring( i.estatus_codigo, 1, 3 ) > 300
+                and e.Ym <= date_format( now(), '%Y%m')
+                and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
+                group by e.Ym
+                order by e.Ym";
+
+        $rendimiento = $db->query( $sql )->getResultArray();
+
+        $sql = "SELECT e.codigo as codigo, sum( p.data->>'$.total' *.2 ) as total, count(*) as pedidos
+                from t_pedidos p
+                join t_periodos e on cast( p.fechas->>'$.reparte' as date ) between e.inicia and e.termina
+                where e.modelo_codigo = '50-INVERSION'
+                and p.modelo_codigo = '50-INVERSION'
+                and substring( p.estatus_codigo, 1, 3) > 400
+                -- and e.estatus_codigo = '422-PERIODO-PAGADO'
+                and e.inicia > '2025-03-01'
+                group by e.codigo";
+
+        $periodos = $db->query( $sql )->getResultArray();
+
+        $sql = "select e.codigo as periodo, o.codigo as tipo, count(*) as total
+                from
+                t_inversiones i 
+                join t_pedidos p on p.id = i.pedido_id
+                join t_productos o on o.codigo = i.producto_codigo
+                join t_periodos e on cast( p.fechas->>'$.reparte' as date ) between e.inicia and e.termina and e.modelo_codigo = '50-INVERSION'
+                where 
+                substring( p.estatus_codigo,1, 3) > 400
+                and p.modelo_codigo = '50-INVERSION'
+                and substring(i.estatus_codigo,1,3) > 200
+                group by e.codigo, i.producto_codigo";
+
+        $compras = $db->query( $sql )->getResultArray();
+        
+        $this->data[ "compras" ]       = [];
+        $this->data[ "total_compras" ] = 0;
+
+        foreach( $compras as $c ){
+            if( !isset( $this->data[ "compras" ][ $c[ "tipo" ] ] ) ){
+                $this->data[ "compras" ][ $c[ "tipo" ] ] = [];
+            }
+
+            $this->data[ "compras" ][ $c[ "tipo" ] ][] = $c[ "total" ];
+            $this->data[ "total_compras" ] += $c[ "total" ];
+        }
+
+        $this->data[ "semanas" ] = [];
+        $this->data[ "total_comisiones" ] = 0;
+        $this->data[ "data_comisiones" ]  = [];
+
+        foreach( $periodos as $p ){
+            $this->data[ "semanas" ][] = periodo( $p[ "codigo" ] );
+            $this->data[ "total_comisiones" ] += $p[ "total" ];
+            $this->data[ "data_comisiones" ][ "pedidos" ][] = intval( $p[ "pedidos" ] );
+            $this->data[ "data_comisiones" ][ "total" ][]   = $p[ "total" ];
+        }
+
+        // dd($this->data[ "semanas" ], $this->data[ "total_comisiones" ], $this->data[ "data_comisiones" ]);   
+
+        $this->data[ "total_inversiones" ] = 0;
+
         $data = [];
 
-        foreach( $inversiones as $i ){
+        foreach( $inversiones as $i ){   
             $this->data[ "total_inversiones" ] += $i[ "cantidad" ];
             $data[ $i[ "codigo" ] ][ $i[ "fecha" ] ] = intval( $i[ "cantidad" ] );
         }
 
         $this->data[ "meses" ] = [];
-        
-        $this->data[ "data_inversiones" ] = [];
-        $this->data[ "data_semilla" ]     = [];
-        $this->data[ "semilla" ]          = [];
-
+        $temp_semilla = [];
+        $temp_rendimiento = [];
+       
+        $this->data[ "data_inversiones" ]  = [];
+        $this->data[ "data_semilla" ]      = [];
+        $this->data[ "data_rendimiento" ]  = [];
 
         foreach( $semilla as $s ){
-            $this->data[ "semilla" ][ $s[ "fecha" ] ] = intval( $s[ "semilla" ] );
+            $temp_semilla[ $s[ "fecha" ] ] = intval( $s[ "semilla" ] );
+        }
+
+        foreach( $rendimiento as $s ){
+            $temp_rendimiento[ $s[ "fecha" ] ] = intval( $s[ "rendimiento" ] );
         }
 
         $meses = 12;
@@ -160,7 +241,8 @@ class Capital extends BaseController
         for( $a = 0; $a <= $meses; $a++ ){
             $this->data[ "meses" ][] = strtoupper( mes( substr( $mes, 4, 2 ), 3) ); //." ".substr( $mes, 0, 4 );
 
-            $this->data[ "data_semilla" ][ $mes ] = ( $this->data[ "semilla" ][ $mes ] ?? 0 ) + ( $this->data[ "data_semilla" ][ $anterior ] ?? 0 );
+            $this->data[ "data_semilla" ][ $mes ] = ( $temp_semilla[ $mes ] ?? 0 );
+            $this->data[ "data_rendimiento" ][ $mes ] = ( $temp_rendimiento[ $mes ] ?? 0 );
 
             foreach( PRODUCTOS as $codigo => $tipo ){    
                 if( !isset( $this->data[ "data_inversiones" ][ $codigo ] ) ){
@@ -183,6 +265,8 @@ class Capital extends BaseController
 
         ksort($this->data[ "data_semilla" ]);
 
+        $this->data[ "data_compras" ] = [];
+
         foreach( PRODUCTOS as $codigo => $tipo ){
 
             ksort($data[ $codigo ]);
@@ -190,6 +274,11 @@ class Capital extends BaseController
             $this->data[ "data" ][] = [ 
                 "name" => PRODUCTOS[ $codigo ][ "data" ][ "nombre" ],
                 "data" => array_reverse( array_reverse( $data[ $codigo ] ) )
+            ];
+
+            $this->data[ "data_compras" ][] = [ 
+                "name" => PRODUCTOS[ $codigo ][ "data" ][ "nombre" ],
+                "data" => array_reverse( array_reverse( $this->data[ "compras" ][ $codigo ] ) )
             ];
         }
 

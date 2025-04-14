@@ -896,7 +896,7 @@ class Dashboard extends BaseController
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
             $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ]);
 
-            model( "InversionModel" )->save( $i );
+          //  model( "InversionModel" )->save( $i );
         }
     }
 }

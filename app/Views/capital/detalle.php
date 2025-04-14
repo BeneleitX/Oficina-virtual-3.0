@@ -10,7 +10,6 @@
 <?php
 
 $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
-
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
 if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
@@ -21,7 +20,7 @@ if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
 }
 
 $date1 = new DateTime( $f_i );
-$date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
+$date2 = new DateTime( $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] )-1 ][ "termina" ] );
 $interval = $date1->diff( $date2 );
 $total_dias = $interval->days + 1;
 
@@ -54,7 +53,11 @@ $tablas = [];
 $r      = 0;
 $h      = 0;
 
-for( $a = 0; $a < 25; $a++ ){
+if( intval( date( "m", strtotime( $i[ "fechas" ][ "inversion" ]) ) ) > intval( date( "m", strtotime( $i[ "fechas" ][ "pagado" ] ) ) ) ){
+    array_shift( $i[ "extras" ][ "meses" ] );
+}   
+
+for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
     // inicializamos tabla desglose de mes
 
     $m = $i[ "extras" ][ "meses" ][ $a ];
