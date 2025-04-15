@@ -52,46 +52,34 @@ function genera_meses( $pedido, $i, $producto = null ){
         $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
     }
 
-    $f_i = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
-    $sql = "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}";
-    $rts = model( "RetiroModel" )->where( $sql )->findAll();
+    // calculamos fecha de inicio de inversion
+    $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
 
-    $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
-    $prev = intval( date( "m", strtotime( $f_i ) ) ) > intval( date( "m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) ) ? 1 : 0;
+    // Buscamos retiros aplicados a rendimiento
+    $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}" )->findAll();
 
-    if( $prev ){
-        $date->modify( "last day of this month" );
-        $termina_mes_f   = $date->format( "Y-m-d" );
-        $dias_en_mes     = intval( $date->format( "d" ) );
-        $date->modify( "first day of this month" );
-        $inicia_mes_f    = $date->format( "Y-m-d" );
-      
-        $meses[] = [
-            "Ym"              => $date->format( "Ym" ),
-            "Porcentaje"      => $producto->data->porcentaje,
-            "semilla"         => $pedido[ "data" ][ "total" ],
-            "compuesto"       => 0,
-            "dias_en_mes"     => $dias_en_mes,
-            "dias_parcial"    => 0,
-            "retiros"         => 0,
-            "rendimiento_dia" => 0,
-            "rendimiento_mes" => 0,
-            "inicia"          => $inicia_mes_f,
-            "termina"         => $termina_mes_f
-        ];
+    // seleccionamos la fecha para el mes CERO (entre fecha pago y fecha inversion)
+    // si caen en el mismo mes:  m_c = mes 0
+    // si caen en diferente mes: m_c = mes -1
+    // si caen en diferente mes pero f_i cae en día 1: m_c = mes 0
 
-        
+    if( date( "d", strtotime( $f_i ) ) == 1 ){
+        $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
+    }
+    else{
+        $date = new \DateTime( $f_i );
     }
 
-    $date = new \DateTime( $f_i );    
+    $meses = [];
 
-    for( $a = 0 + $prev; $a <= 24 + $prev; $a++ ){
-        if( $a > $prev ){
+    for( $a = 0; $a < 25; $a++ ){
+        if( $a ){
             $date->modify( "first day of this month" );
             $date->modify( "+ 1 month" );
         }
-
+ 
         $retiros_mes = 0;
+
         foreach( $rts as $rt ){
             if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){
                 
@@ -99,24 +87,25 @@ function genera_meses( $pedido, $i, $producto = null ){
             }
         }
 
-        $inicia_mes      = $date->format( "d" );
-        $inicia_mes_f    = $date->format( "Y-m-d" );
+        $inicia_mes   = $date->format( "d" );
+        $inicia_mes_f = $date->format( "Y-m-d" );
 
-        $date->modify( "last day of this month" );
+        $date->modify( "last day of this month" );  
         
-        $cantidad = ( $a > $prev ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
-        ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
+        $cantidad = 
+            ( $a ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
+            ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + 
+            ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - 
+            ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
 
-        $dias_en_mes     = intval( $date->format( "d" ) );
+        $dias_en_mes     = intval( $date->format( "d" ));
         $termina_mes_f   = $date->format( "Y-m-d" );
-        $dias_parcial    = intval( date( "d", strtotime( $f_i ) ) ) == 1 ? 0 : $dias_en_mes - $inicia_mes + 1;
-
-        $temp = $cantidad * $producto->data->porcentaje / 100;
+        $dias_parcial    = ( !$a && date( "d", strtotime( $f_i ) ) == 1 ) ? 0 : $dias_en_mes - $inicia_mes + 1;
+        $temp            = $cantidad * $producto->data->porcentaje / 100;
         $rendimiento_mes = floor( $temp * 100 ) / 100;
+        $corrije_float   = explode(".", $rendimiento_mes);
 
-        $correccion_flotante = explode(".", $rendimiento_mes);
-
-        if( isset( $correccion_flotante[ 1 ] ) && $correccion_flotante[1] == 99 ){
+        if( isset( $corrije_float[ 1 ] ) && $corrije_float[1] == 99 ){
             $rendimiento_mes = ceil( $rendimiento_mes );
         }
 
@@ -126,7 +115,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
         }
 
-        $compuesto = $a > $prev ? (
+        $compuesto = $a ? (
             ( 
                 ( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
                 ( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 

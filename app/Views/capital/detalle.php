@@ -53,11 +53,7 @@ $tablas = [];
 $r      = 0;
 $h      = 0;
 
-if( intval( date( "m", strtotime( $i[ "fechas" ][ "inversion" ]) ) ) > intval( date( "m", strtotime( $i[ "fechas" ][ "pagado" ] ) ) ) ){
-    array_shift( $i[ "extras" ][ "meses" ] );
-}   
-
-for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
+for( $a = 0; $a < 25 ; $a++ ){
     // inicializamos tabla desglose de mes
 
     $m = $i[ "extras" ][ "meses" ][ $a ];
@@ -146,11 +142,6 @@ for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
         }
     }
 }
-
-
-
-
-
 
 $bt = balance_inversion( $i );
 
