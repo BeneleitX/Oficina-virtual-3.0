@@ -59,10 +59,10 @@
                     <td class=\"text-center\">";
                     
                     if( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ){
-                        echo "<span class=\"badge bg-light-blue\">".substr( array_keys( $p[ "promociones" ][ "310-TELEFONIA" ][ "productos" ] ?? [""] )[ 0 ] , 4 )."</span>";
+                        echo "<span class=\"badge bg-light-blue\">".substr( array_keys( $p[ "promociones" ][ "310-TELEFONIA" ][ "productos" ] ?? [""] )[ 0 ] ?? "", 4 )."</span>";
                     }
                     elseif( isset( $p[ "promociones" ][ "510-SEMILLA" ] ) ){
-                        echo "<span class=\"badge bg-light-green\">".substr( array_keys( $p[ "promociones" ][ "510-SEMILLA" ][ "productos" ] ?? [""] )[ 0 ] , 4 )."</span>";
+                        echo "<span class=\"badge bg-light-green\">".substr( array_keys( $p[ "promociones" ][ "510-SEMILLA" ][ "productos" ] ?? [""] )[ 0 ] ?? "" , 4 )."</span>";
                     }
                     else{
                         echo $p[ "data" ][ "productos" ];
