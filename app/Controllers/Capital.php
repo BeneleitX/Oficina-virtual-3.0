@@ -57,12 +57,18 @@ class Capital extends BaseController
      *
      * @return void
      */
-    public function dashboard()
+    public function dashboard( $socio = null )
     {
-                
+        if( $socio ){
+            $request = base64_decode( urldecode( $socio ) );
+            $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+        }
+        else{
+            $this->data[ "socio" ] = null;
+        }
+
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Capital24";
-
 
         echo template( "capital/dashboard", $this->data );
     }
@@ -169,7 +175,7 @@ class Capital extends BaseController
 
         $periodos = $db->query( $sql )->getResultArray();
 
-        $sql = "select e.codigo as periodo, o.codigo as tipo, count(*) as total
+        $sql = "SELECT e.codigo as periodo, o.codigo as tipo, count(*) as total
                 from
                 t_inversiones i 
                 join t_pedidos p on p.id = i.pedido_id
@@ -185,6 +191,78 @@ class Capital extends BaseController
         
         $this->data[ "compras" ]       = [];
         $this->data[ "total_compras" ] = 0;
+
+        $sql = "SELECT sum(r.cantidad) as total, r.fechas->>'$.mes' as mes
+                from
+                t_retiros r
+                join t_inversiones i on i.id = r.inversion_id and substring(i.estatus_codigo,1,3) > 200
+                join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo,1, 3) > 400 
+                where substring( r.estatus_codigo,1, 3) > 200
+                group by r.fechas->>'$.mes'
+                order by mes asc";
+
+        $retiros = $db->query( $sql )->getResultArray();
+        
+
+        $sql = "SELECT 
+                    u.id as socio, 
+                    f_get_semilla( u.id, date_format( now(), '%Y%m' ) ) as semilla,
+                    json_unquote( json_extract( u.historial, concat( '$.modelos.\"50-INVERSION\".corte_mensual.\"', date_format( now(), '%Y%m'), '\".bolsa' ) ) ) as bolsa,
+                    json_unquote( json_extract( u.historial, concat( '$.modelos.\"50-INVERSION\".corte_mensual.\"', date_format( now(), '%Y%m'), '\".directos' ) ) ) as directos	
+                from t_usuarios u
+                where u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'
+                having bolsa > 6500";
+
+        $this->data[ "ranking" ] = $ranking = $db->query( $sql )->getResultArray();
+
+        $this->data[ "bono" ]       = [];
+        $this->data[ "total_bono" ] = 0;
+
+        $sql = "SELECT sum(c.cantidad) as total, date_format( c.fecha, '%Y%m') as mes
+                from t_comisiones c
+                join t_usuarios u on u.id = c.usuario_id
+                where c.esquema_codigo = '530-LIDERAZGO'
+                and u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'
+                group by mes
+                order by mes asc";
+
+        $bonos = $db->query( $sql )->getResultArray();
+
+        $rtemp = [];
+        $date = new \DateTime( date( "Y-m"."-01" ) );
+
+        foreach( $bonos as $r ){
+            $rtemp[ $r[ "mes" ] ] = $r[ "total" ];
+            $this->data[ "total_bono" ] += $r[ "total" ];
+        }
+
+        for( $a = 0; $a < 13; $a++){
+            $mes = $date->format( "Ym" );
+            $this->data[ "bono" ][ $mes ] = $rtemp[ $mes ] ?? 0;
+
+            $date->modify( "- 1 month" );
+        }
+
+        
+
+        $this->data[ "retiros" ]       = [];
+        $this->data[ "total_retiros" ] = 0;
+        
+        $rtemp = [];
+        $date = new \DateTime( date( "Y-m"."-01" ) );
+
+        foreach( $retiros as $r ){
+            $rtemp[ $r[ "mes" ] ] = $r[ "total" ];
+            $this->data[ "total_retiros" ] += $r[ "total" ];
+        }
+
+        for( $a = 0; $a < 13; $a++){
+            $mes = $date->format( "Ym" );
+            $this->data[ "retiros" ][ $mes ] = $rtemp[ $mes ] ?? 0;
+
+            $date->modify( "- 1 month" );
+        }
+
 
         foreach( $compras as $c ){
             if( !isset( $this->data[ "compras" ][ $c[ "tipo" ] ] ) ){

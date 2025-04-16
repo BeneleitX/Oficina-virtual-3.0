@@ -2,7 +2,7 @@
 
 <h4 class="my-1"><?php echo $titulo; ?></h4>
 <p>
-    <a class="btn btn-light btn-sm" href="<?php echo base_url( "capital" ); ?>"><i class="fa fa-undo"></i> Regresar a listado de inversiones</a>
+    <a class="btn btn-light btn-sm" href="javascript:history.back();"><i class="fa fa-undo"></i> Regresar a listado de inversiones</a>
 </p>
 
 <div id="chart"></div>

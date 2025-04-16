@@ -225,6 +225,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "excel_pines_pendientes",            "Rangos::excel_pines_pendientes" ); 
 
     $routes->get( "capital",                            "Capital::dashboard" );
+    $routes->get( "capital/(:any)",                     "Capital::dashboard/$1" );
     $routes->get( "capital24",                          "Capital::admin" );
     $routes->get( "inversiones",                        "Capital::inversiones" );
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );

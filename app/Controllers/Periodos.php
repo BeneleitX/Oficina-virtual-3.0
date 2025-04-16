@@ -117,12 +117,12 @@ class Periodos extends BaseController
                     $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && 
                     ( 
                         ( 
-                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 400 && 
+                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 300 && 
                             $p[ "s" ]->verificado->estatus && 
                             $target 
                         ) OR 
                         ( 
-                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 400 && 
+                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 300 && 
                             $p[ "data" ][ "periodos" ][ "deposito" ] == 
                             $this->data[ "periodo" ][ "codigo" ] 
                         ) 
