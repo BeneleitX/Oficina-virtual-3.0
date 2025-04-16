@@ -15,13 +15,29 @@ class Socio extends BaseController
         
         foreach( $this->data["socio"]->data->verificacion as $j => $k){
             $total++;
-
             if( $k == true ){ 
                 $checked++;
             }else{
-                if($j == "csf"){
-                    if( $this->data["socio"]->data->sat->estatus == 0 )
-                    $checked++;
+                if( $j == "csf" ){
+                    if( $this->data["socio"]->data->sat->estatus == 0 ){
+                        $checked++;
+                    }
+                }
+
+                // Solución temporal para cancelar la verificación de CLABE y domicilio a socios extranjeros
+                // Pues solo son aceptados en inversiones
+
+                if( $j == "domicilio" || $j == "clabe" ){
+                    if( $this->data["socio"]->data->ubicacion->origen != "MX" ){
+                        $checked++;
+
+                        $json = $this->data["socio"]->data;
+                        $json->verificacion->domicilio = true;
+                        $json->verificacion->clabe = true;
+                        $this->data["socio"]->data = $json; 
+                
+                        model( "UsuarioModel" )->save( $this->data["socio"] );                        
+                    }
                 }
             }
         }
