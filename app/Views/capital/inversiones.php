@@ -9,7 +9,7 @@
 <div class="row">
 
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
         <div class="row">
                 <?php
@@ -27,7 +27,7 @@
     </div>
 
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_inversiones_tipo"></div>
         </div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="row">
     
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_compras"></div>
         </div>
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_semilla"></div>
         </div>
@@ -70,7 +70,7 @@
     </div>
 
     
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_rendimiento"></div>
         </div>
@@ -82,7 +82,7 @@
     </div>
 
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_comisiones"></div>
         </div>
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_retiros"></div>
         </div>
@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-3">
+    <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
             <div id="chart_bono"></div>
         </div>
@@ -118,11 +118,11 @@
 </div>
 
 
-<div class="card">
+<div class="card mb-4">
     <div class="card-header bg-marine text-white">
     <h5 class="text-white m-0">TOP 10 de socios</h5>
     </div>
-<table id="tabla_socios" class="table table-striped small m-0">
+<table id="tabla_socios" class="table table-striped m-0">
     <thead>
         <tr>
             <th>Socio</th>
