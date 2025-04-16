@@ -33,7 +33,7 @@ class Socio extends BaseController
 
                         $json = $this->data["socio"]->data;
                         $json->verificacion->domicilio = true;
-                        $json->verificacion->clabe = true;
+                        $json->verificacion->clabe =  $json->verificacion->wallet;
                         $this->data["socio"]->data = $json; 
                 
                         model( "UsuarioModel" )->save( $this->data["socio"] );                        
