@@ -63,7 +63,7 @@ class Eventos extends BaseController
         $sql = "SELECT 
                     p.usuario_id as usuario, 
                     any_value( p.fechas->>'$.pagado' ) AS fecha, 
-                    any_value( p.promociones->>'$."101-SEMILLERO-16".precio' ) as pago,
+                    any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                     SUM(t.qt)-1 as productos 
                 FROM t_pedidos p,
                     JSON_TABLE(p.promociones, '$.\"{$codigo}\".productos.*.cantidad' COLUMNS (qt INTEGER PATH '$')) t
@@ -116,7 +116,7 @@ class Eventos extends BaseController
         $sql = "SELECT 
                     p.usuario_id as usuario, 
                     any_value( p.fechas->>'$.pagado' ) AS fecha, 
-                    any_value( p.promociones->>'$."101-SEMILLERO-16".precio' ) as pago,
+                    any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                     SUM(t.qt)-1 as productos 
                 FROM t_pedidos p,
                     JSON_TABLE(p.promociones, '$.\"{$codigo}\".productos.*.cantidad' COLUMNS (qt INTEGER PATH '$')) t
