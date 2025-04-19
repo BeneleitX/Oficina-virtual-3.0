@@ -152,6 +152,11 @@ class Periodos extends BaseController
     }
 
 
+    /**
+     * Resetea los valores de avance de corte para un perido determinado.
+     * 
+     * @return json con el numero de pedidos que se van a repartir.
+     */
     public function reset_corte()
     {
         if( !(
@@ -209,6 +214,19 @@ class Periodos extends BaseController
     }
 
 
+    /**
+     * Función que se encarga de realizar el corte parcial, este proceso se encarga de
+     * recalcular los pagos de los socios que estan en el upline de al menos un socio
+     * que ha comprado algo en el mes anterior, también recalculará los socios que
+     * tengan socios en morado en su upline. El proceso se divide en varios pasos
+     * para no sobrecargar la base de datos, cada paso se encarga de recalcular una
+     * parte de la información.
+     *
+     * @param string $periodo El código del período a procesar
+     * @param int $avance El avance actual del proceso
+     * @param int $step El paso actual del proceso
+     * @return void
+     */
     public function corte( $periodo = null, $avance = 0, $step = 0 )
     {
         if( !(
@@ -257,6 +275,13 @@ class Periodos extends BaseController
     } 
     
     
+    /**
+     * Cierra un período
+     *
+     * @return void
+     * 
+     * @throws \CodeIgniter\Exceptions\FrameworkException
+     */
     public function cierra_periodo()
     {
         if( !(
@@ -301,6 +326,11 @@ class Periodos extends BaseController
     }   
     
     
+    /**
+     * Marca un periodo como pagado
+     *
+     * @throws \CodeIgniter\Exceptions\FrameworkException
+     */
     public function marca_pagado()
     {
         if( !(
@@ -354,6 +384,12 @@ class Periodos extends BaseController
     }   
     
     
+    /**
+     * Abre un período
+     *
+     * @throws \CodeIgniter\Exceptions\FrameworkException
+     */
+
     public function abre_periodo()
     {
         if( !(
@@ -393,6 +429,13 @@ class Periodos extends BaseController
     }
 
 
+    /**
+     * Descarga un archivo Excel de corte de periodos.
+     * 
+     * Requiere permiso de Contabilidad o Administrador.
+     * 
+     * @return void
+     */
     public function excel_corte()
     {
         if( !(

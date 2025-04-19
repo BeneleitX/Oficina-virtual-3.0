@@ -4,7 +4,16 @@ namespace App\Controllers;
 
 class Recompensas extends BaseController
 {
-    public function detalle(){
+    /**
+     * Detalles de recompensas del socio
+     *
+     * Muestra las recompensas que puede obtener el socio, 
+     * y las recompensas que ha obtenido
+     *
+     * @return void
+     */
+    public function detalle()
+    {
 
         $this->data[ "navbar"  ] = true;
         $this->data[ "socio"   ] = $this->data[ "usuario" ];
@@ -16,7 +25,15 @@ class Recompensas extends BaseController
     }
 
 
-    public function switch( $recompensa ){
+    /**
+     * Cambia la recompensa activa del socio
+     *
+     * @param string $recompensa Código de la recompensa a activar
+     *
+     * @return void
+     */
+    public function switch( $recompensa )
+    {
         $socio = $this->data[ "usuario" ];
 
         $data = $socio->data;
@@ -39,7 +56,16 @@ class Recompensas extends BaseController
     }
 
 
-    public function guarda_recompensas(){
+    /**
+     * Guarda el orden de las recompensas del socio
+     *
+     * @param string $ciclo Código del ciclo
+     * @param string $orden Orden de las recompensas, separadas por coma
+     *
+     * @return void
+     */
+    public function guarda_recompensas()
+    {
         extract( $this->request->getPost() );
 
         $data = $this->data[ "usuario" ]->data;
@@ -54,7 +80,18 @@ class Recompensas extends BaseController
     }
 
 
-    public function reclama_recompensa( $recompensa ){
+    /**
+     * Reclama la recompensa para el socio
+     * 
+     * Verifica si el socio tiene las estrellas suficientes para reclamar la recompensa y si es así,
+     * registra la reclamación en la tabla t_redenciones y actualiza el conteo de estrellas del socio.
+     * 
+     * @param string $recompensa Código de la recompensa a reclamar
+     * 
+     * @return void
+     */
+    public function reclama_recompensa( $recompensa )
+    {
         $r = model( "RecompensaModel" )->find( $recompensa );
         $total_estrellas = $this->data[ "usuario" ]->getEstrellas( $r );
         $alcanzadas = $this->data[ "usuario" ]->recompensas_alcanzadas();
@@ -90,7 +127,15 @@ class Recompensas extends BaseController
     }
 
 
-    public function admin_recompensas(){
+    /**
+     * Pagina de administración de recompensas
+     *
+     * @author  Pablo Rotondo <pablorotondo@gmail.com>
+     * @since   2023-02-27
+     * @return  void
+     */
+    public function admin_recompensas()
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
@@ -110,7 +155,15 @@ class Recompensas extends BaseController
     }
 
 
-    public function entregar_recompensa(){
+    /**
+     * Marca una recompensa como entregada
+     *
+     * @author  Pablo Rotondo <pablorotondo@gmail.com>
+     * @since   2023-02-27
+     * @return  void
+     */
+    public function entregar_recompensa()
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "27-RECOMPENSAS") ||
@@ -142,6 +195,13 @@ class Recompensas extends BaseController
     }
 
 
+    /**
+     * Descarga un Excel con las recompensas
+     *
+     * @author  Pablo Rotondo <pablorotondo@gmail.com>
+     * @since   2023-03-02
+     * @return  void
+     */
     public function excel_premios()
     {
         if( !(

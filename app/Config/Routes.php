@@ -93,6 +93,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "eventos",                            "Eventos::listado" );
     $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
+    $routes->post( "excel_semillero",                   "Eventos::excel_semillero" );
 
     $routes->get( "bitacora/(:num)",                    "Bitacora::listado/$1" );
 

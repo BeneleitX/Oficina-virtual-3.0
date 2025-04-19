@@ -9,11 +9,27 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 
 class Gasolina extends BaseController
 {
-    function __construct() {
+    function __construct()
+    {
         $this->data[ "menu" ] = "admin";
     }
 
-    public function admin( $mes = null ){
+    /**
+     * Muestra el listado de socios que han comprado gasolina en el mes actual.
+     *
+     * Requiere el par metro $mes, que es el mes en formato "YYYYMM".
+     *
+     * Verifica que el usuario logueado tenga permiso de administraci n.
+     *
+     * Redirecciona a la p gina de no permiso si no se cumple la condici n
+     * anterior.
+     *
+     * @param string $mes
+     *
+     * @return void
+     */
+    public function admin( $mes = null )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -62,7 +78,17 @@ class Gasolina extends BaseController
     }
 
 
-    public function vincula_tarjeta(){
+    /**
+     * Vincula tarjeta a socio.
+     *
+     * Requiere los par metros $v_socio y $v_tarjeta2.
+     *
+     * Vincula la tarjeta a un socio.
+     *
+     * @return void
+     */
+    public function vincula_tarjeta()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -93,7 +119,17 @@ class Gasolina extends BaseController
     }
 
 
-    public function activa_tarjeta(){
+    /**
+     * Activa la tarjeta de un socio.
+     *
+     * Requiere el par metro $v_tarjeta2.
+     *
+     * Activa la tarjeta de un socio, es decir, la tarjeta pasa de estar en espera de entrega a estar activa.
+     *
+     * @return string true si la tarjeta se activ , false en caso contrario.
+     */
+    public function activa_tarjeta()
+    {
 
         $db = db_connect();
         extract( $this->request->getPost() );
@@ -131,7 +167,19 @@ class Gasolina extends BaseController
     }
 
 
-    public function get_recargas(){
+    /**
+     * Entrega recarga de gasolina.
+     *
+     * Requiere el par metro $v_socio.
+     *
+     * Entrega recarga de gasolina. Muestra una tabla con los pedidos del socio y las recargas
+     * correspondientes. Si el pedido no tiene recarga, entonces se muestra un enlace para
+     * marcar como entregado.
+     *
+     * @return string HTML con la tabla de recargas.
+     */
+    public function get_recargas()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -213,7 +261,20 @@ class Gasolina extends BaseController
     }
 
 
-    public function entrega_recarga( $pedido ){
+    /**
+     * Marca la recarga de gasolina como entregada.
+     *
+     * Requiere el par metro $pedido que es el ID del pedido.
+     *
+     * Si el saldo de gasolina del pedido es mayor que el n mero de recargas
+     * que se han aplicado, marca la recarga como abonada y actualiza el saldo.
+     *
+     * @param string $pedido ID del pedido.
+     *
+     * @return Redirect
+     */
+    public function entrega_recarga( $pedido )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "33-GAS-ABONO") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")

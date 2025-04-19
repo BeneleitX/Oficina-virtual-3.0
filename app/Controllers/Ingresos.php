@@ -8,7 +8,26 @@ class Ingresos extends BaseController
         $this->data[ "menu" ] = "ingresos";
     }
 
-    public function balance( $modelo = null, $periodo = null, $esquemas = null ){
+    /**
+     * Muestra el detalle de comisiones por esquema en el lapso de un perido
+     * 
+     * @param string $modelo Codigo del modelo de comisiones
+     * @param string $periodo Codigo del perido a consultar
+     * @param string $esquemas Cadena de esquemas a mostrar, separados por comas y 
+     *                         codificados en base64 y urldecode
+     *                         Ejemplo: "eyJlcXVhbCI6WyI1MC1JTkZJQ0lUIl0sInN1ZmZpeCI6WzIxNi1QUklPUyIsIjE2LU1FTU1JJTiIsIjIwLVBhcmsgTWFydGgiXX0="
+     *                         Donde:
+     *                             - "eyJlcXVhbCI6WyI1MC1JTkZJQ0lUIl0sInN1ZmZpeCI6WzIxNi1QUklPUyIsIjE2LU1FTU1JJTiIsIjIwLVBhcmsgTWFydGgiXX0="
+     *                                   es el base64 decode de:
+     *                                   '{"igual":["50-INVERSION"],"sufijo":["26-QUINCENA","16-MENSUAL","20-SEMANAL"]}'
+     *                                   que es un JSON con dos propiedades:
+     *                                   - igual: es un array de codigos de esquemas a mostrar exactamente
+     *                                   - sufijo: es un array de codigos de esquemas a mostrar que tengan el sufijo
+     *                                             correspondiente
+     * @return void
+     */
+    public function balance( $modelo = null, $periodo = null, $esquemas = null )
+    {
 
         $db = db_connect();
 
@@ -86,7 +105,14 @@ class Ingresos extends BaseController
     }
 
 
-    public function ingreso_mensual( $modelo = null ){
+    /**
+     * Muestra el ingreso mensual del socio.
+     * Muestra el ingreso para cada esquema activo.
+     * Muestra el ingreso desde el 2024-08 hasta el mes actual.
+     * Si no se especifica el modelo, se toma el modelo por defecto.
+     */
+    public function ingreso_mensual( $modelo = null )
+    {
         if( !$modelo ){
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
         }
@@ -128,6 +154,12 @@ class Ingresos extends BaseController
     }
 
 
+    /**
+     * Muestra una tabla con el total de comisiones por pago en cada esquema.
+     * Muestra también el total de comisiones pendientes de cada esquema.
+     * @param string $modelo El código del modelo que se va a mostrar.
+     * @return string HTML con la tabla de pagos y el total del depósito.
+     */
     public function depositos( $modelo = null )
     {
         if( !$modelo ){
@@ -146,6 +178,12 @@ class Ingresos extends BaseController
     } 
 
     
+    /**
+     * Pagos de comisiones con desglose de comisiones por semana y totales.
+     * Muestra el total de comisiones, el total de impuestos y el total del depósito.
+     * Muestra también el total de comisiones pendientes de cada esquema.
+     * @return string HTML con la tabla de pagos y el total del depósito
+     */
     public function pagodata()
     {
         $pago    = model( "PagoModel" )->find( $this->request->getPost( "folio" ) );
@@ -237,6 +275,22 @@ class Ingresos extends BaseController
     }
 
 
+    /**
+     * Renders a heatmap visualization of daily income for a specific model.
+     * 
+     * This function generates and outputs an HTML structure that represents
+     * a heatmap for daily income data of a socio for a given model. The
+     * heatmap displays the income by week and day, highlighting the selected
+     * period and showing tooltips with detailed information for each day.
+     * 
+     * The function retrieves income data per day and iterates through weeks
+     * starting from a specified date, rendering columns for each week and
+     * boxes for each day within the week. It uses CSS classes to style
+     * the heatmap and selected period indicators.
+     * 
+     * Note: The starting date is hard-coded as "2024-08-12".
+     */
+
     public function heatmap()
     {
         echo "<div id=\"heatmap\" class=\"card-body\">";
@@ -272,6 +326,11 @@ class Ingresos extends BaseController
     }
 
 
+    /**
+     * Genera un excel con el ingreso mensual del socio
+     * 
+     * @return void
+     */
     public function excel_ingreso_mensual()
     {
         $db       = db_connect();
@@ -370,6 +429,12 @@ class Ingresos extends BaseController
         $writer->save( $file );
     }
 
+    
+    /**
+     * Genera un excel con el ingreso mensual del socio
+     * 
+     * @return void
+     */
     public function excel_pago_comisiones()
     {
         $db       = db_connect();

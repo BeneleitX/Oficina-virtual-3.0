@@ -9,7 +9,21 @@ class Rangos extends BaseController
     }
     
 
-    public function catalogo( $modelo ){
+    /**
+     * Displays the catalog of range pins for a given model.
+     * 
+     * Checks user permissions for accessing range details.
+     * Loads navbar and title data for the view.
+     * Retrieves range data from the database based on the model code.
+     * Queries the database for active and pending members for each range.
+     * Prepares data for rendering the "rangos/pines" template.
+     * 
+     * @param string $modelo The model code to filter ranges.
+     * @return void Redirects to "no_permiso" if the user lacks permissions.
+     */
+
+    public function catalogo( $modelo )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -51,7 +65,14 @@ class Rangos extends BaseController
     } 
 
 
-    public function excel_pines_pendientes(){
+    /**
+     * Genera un archivo excel con los socios que 
+     * tienen pendientes de entrega de pines de rango
+     * 
+     * @return void
+     */
+    public function excel_pines_pendientes()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "26-RANGOS") ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
