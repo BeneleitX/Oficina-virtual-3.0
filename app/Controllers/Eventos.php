@@ -20,7 +20,7 @@ class Eventos extends BaseController
     public function listado()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) ||
+            $this->data[ "usuario" ]->permiso( "35-SEMILLERO" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -52,7 +52,7 @@ class Eventos extends BaseController
     public function detalle( $codigo )
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) ||
+            $this->data[ "usuario" ]->permiso( "35-SEMILLERO" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -85,7 +85,7 @@ class Eventos extends BaseController
     public function excel_semillero()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "30-SOPORTE" ) ||
+            $this->data[ "usuario" ]->permiso( "35-SEMILLERO" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
