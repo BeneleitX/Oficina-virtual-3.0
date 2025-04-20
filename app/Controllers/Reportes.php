@@ -59,6 +59,24 @@ class Reportes extends BaseController
             	"410-CALIFICADO",
             	"510-NUEVO-CALIFICADO",
             	"520-CALIFICADO-ACTUAL"
+            ],
+            "40-GASOLINAS" => [
+                // "130-NUEVO-SUSPENDIDO",
+            	// "140-SUSPENDIDO",
+            	"210-NUEVO",
+            	"310-NO-CALIFICADO",
+            	// "410-CALIFICADO"	"3"
+            	"510-NUEVO-CALIFICADO",
+            	"520-CALIFICADO-ACTUAL"
+            ],
+            "50-INVERSION" => [
+                // "130-NUEVO-SUSPENDIDO",
+            	"210-NUEVO",
+            	// "310-NO-CALIFICADO",
+            	// "320-NO-CALIFICADO-COMPRA",
+            	//"410-CALIFICADO",
+            	//"510-NUEVO-CALIFICADO",
+            	"520-CALIFICADO-ACTUAL"
             ]
         ];
 
