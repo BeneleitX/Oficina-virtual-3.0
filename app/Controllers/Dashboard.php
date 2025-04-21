@@ -904,19 +904,19 @@ class Dashboard extends BaseController
 
 
     public function temp_update(){ 
-        if( 
-            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) 
-        ){
-             return redirect()->to( "no_permiso" ); 
-        }
 
-        $inversiones = model( "InversionModel" )->findAll();
+        $db  = db_connect();
+        $sql = "select id, password from t_usuarios where estatus_codigo = '201-ACTIVO' and password is not null";
 
-        foreach( $inversiones as $i ){
-            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ]);
+        $socios = $db->query( $sql )->getResult();
 
-          //  model( "InversionModel" )->save( $i );
+        foreach( $socios as $u ){
+            $encrypter = service( "encrypter" );
+            $cadena = base64_decode( $u->password );
+            $hash = md5( $encrypter->decrypt( $cadena, [ "key" => $u->id ] ) );
+
+            $db->query( "update t_usuarios set data = json_set( data, '$.hash', '{$hash}' ) where id = {$u->id}" );
+            echo "\n<br>{$u->id} : {$hash}";
         }
     }
 }
