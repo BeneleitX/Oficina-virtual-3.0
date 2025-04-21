@@ -915,7 +915,7 @@ class Dashboard extends BaseController
             $cadena = base64_decode( $u->password );
             $hash = md5( $encrypter->decrypt( $cadena, [ "key" => $u->id ] ) );
 
-            $db->query( "update t_usuarios set data = json_set( data, '$.hash', '{$hash}' ) where id = {$u->id}" );
+            //$db->query( "update t_usuarios set data = json_set( data, '$.hash', '{$hash}' ) where id = {$u->id}" );
             echo "\n<br>{$u->id} : {$hash}";
         }
     }
