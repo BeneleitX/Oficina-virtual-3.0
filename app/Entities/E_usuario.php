@@ -69,6 +69,13 @@ class E_usuario extends Entity
      */
     protected function setPassword( string $password ): string
     {
+        $data = $this->data;
+        $data->hash = md5( $password );
+        $this->data = $data;
+
+  //      $db  = db_connect();
+  //      $data = $db->query("update v_moodle set password = '{$this->data->hash}' where id = {$this->id}");
+        
         $encrypter = service( "encrypter" );
         return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
     }
