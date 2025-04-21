@@ -205,6 +205,7 @@ class Dashboard extends BaseController
 
                 $redes = $socio->redes;
                 $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
+                $redes->modelos->{$m[ "codigo" ]}->padre = $patrocinador;
                 $socio->redes = $redes;
                 
                 model( "UsuarioModel" )->save( $socio );
