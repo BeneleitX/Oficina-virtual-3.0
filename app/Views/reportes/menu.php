@@ -9,5 +9,6 @@
 <thead><tr><th>Reportes disponibles:</th></tr></thead>
 
 <tbody>
-    <tr><td><a href="<?php echo base_url( "reportes/socios_por_estatus" ); ?>"><i class="fa fa-file-excel"></i> Listado de socios por estatus</a></td></tr></tbody>
+    <tr><td><a class="d-block" href="<?php echo base_url( "reportes/socios_por_estatus" ); ?>"><i class="fa fa-file-excel"></i> Listado de socios por estatus</a></td></tr></tbody>
+    <tr><td><a class="d-block" href="<?php echo base_url( "reportes/ingresos_por_empresa" ); ?>"><i class="fa fa-file-excel"></i> Ventas por empresa</a></td></tr></tbody>
 </table>

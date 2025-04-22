@@ -121,76 +121,111 @@ class Bancos extends BaseController
         }
 
         // TXT
-        elseif( $extension == "txt" ){
-            $respuesta[ "logo_banco" ] = base_url()."assets/img/bancos/012.png";
-            $respuesta[ "banco" ] = "BBVA";
+        elseif( strtolower( $extension ) == "txt" ){
+            $contenido = file( $path.time()."_".$archivo );
 
-            foreach( file( $path.time()."_".$archivo ) as $line ){
-                $respuesta[ "conteo" ][ "lineas" ]++;
-                if( str_contains( $line, "CE00000000000" ) ){
-                    $respuesta[ "conteo" ][ "pagos" ]++;
-                    $valido = 1;
+            if( str_contains( $contenido[0], "AZTECA" ) ){
 
-                    // Método 1
-                    $l = [
-                        "original" => $line,
-                        "fecha" => date( "Y-m-d", strtotime( substr( $line, 0, 10) ) ),
-                        "pedido" => intval( substr( $line, 13, 19) ),
-                        "referencia" => intval( substr( $line, 13, 20) ),
-                        "folio" => substr( $line, 34, 7),
-                        "resto" => explode( " ", substr( $line, 42) ),
-                        "socio" => null,
-                        "accion" => null,
-                    ];
+                $respuesta[ "logo_banco" ] = base_url()."assets/img/bancos/127.png";
+                $respuesta[ "banco" ] = "AZTECA";
 
-                    $e = explode( "\t\t", end( $l[ "resto" ] ) );
-                    $l[ "cantidad" ] = filter_var( explode( "\t", $e[ 1 ] )[0], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                foreach( $contenido as $line ){
 
-                    unset( $l[ "resto" ] );
-                    $pagos[] = $l;
-                
-                    // Método 2
+                    $respuesta[ "conteo" ][ "lineas" ]++;
+                    if( str_contains( $line, "D00001" ) ){
+                        
+                        $respuesta[ "conteo" ][ "pagos" ]++;
+                        $valido = 1;
 
-                    $e = explode( "\t", $line );
+                        // Método 1
+                        $l = [
+                            "original"   => $line,
+                            "fecha"      => substr($line, 34, 4 )."-".substr($line, 38, 2 )."-".substr($line, 40, 2 ),
+                            "pedido"     => intval(substr($line, 4, 8 ) ),
+                            "referencia" => intval( substr($line, 4, 9 ) ),
+                            "folio"      => substr( $line, 34, 7 ),
+                            "socio"      => null,
+                            "accion"     => null,
+                            "cantidad"   => floatval( substr( $line, 25, 9 ) )
+                        ];
 
-                    if( $l[ "fecha" ] != date( "Y-m-d", strtotime( $e[ 0 ] ) )){
-                        $respuesta[ "errores" ][] = "Inconsistencias en fecha | {$line}";
-                        $valido = 0;
-                    }
-            
-                    $f = explode( " ", $e[ 1 ] );
-                    $g = explode( "/", $f[ 0 ] );
-                    
-                    if( $l[ "folio" ] != $g[ 1 ] ){
-                        $respuesta[ "errores" ][] = "Inconsistencias en operacion | {$line}";
-                        $valido = 0;
-                    }  
-                    
-                    if( $l[ "referencia" ] != intval( substr( $g[ 0 ], 2 ) ) ){
-                        $respuesta[ "errores" ][] = "Inconsistencias en referencia ( {$l[ "referencia" ]} - ".intval( substr( $g[ 0 ], 2, -1 ) ).")  | {$line}";
-                        $valido = 0;
-                    }   
-                    
-                    if( $l[ "cantidad" ] != filter_var( $e[ 3 ], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) ){
-                        $respuesta[ "errores" ][] = "Inconsistencias en cantidad | {$line}";
-                        $valido = 0;
-                    }                       
-
-                    if( $valido ){
+                        $pagos[] = $l;
                         $respuesta[ "pagos" ][ $l[ "referencia" ] ] = $l;
                         $referencias[] = $l[ "pedido" ];
                     }
-                    else{
-                        echo json_encode( $respuesta );
-                        return;
+                }
+            }
+            else{
+                $respuesta[ "logo_banco" ] = base_url()."assets/img/bancos/012.png";
+                $respuesta[ "banco" ] = "BBVA";
+
+                foreach( $contenido as $line ){
+                    $respuesta[ "conteo" ][ "lineas" ]++;
+                    if( str_contains( $line, "CE00000000000" ) ){
+                        $respuesta[ "conteo" ][ "pagos" ]++;
+                        $valido = 1;
+
+                        // Método 1
+                        $l = [
+                            "original" => $line,
+                            "fecha" => date( "Y-m-d", strtotime( substr( $line, 0, 10) ) ),
+                            "pedido" => intval( substr( $line, 13, 19) ),
+                            "referencia" => intval( substr( $line, 13, 20) ),
+                            "folio" => substr( $line, 34, 7),
+                            "resto" => explode( " ", substr( $line, 42) ),
+                            "socio" => null,
+                            "accion" => null,
+                        ];
+
+                        $e = explode( "\t\t", end( $l[ "resto" ] ) );
+                        $l[ "cantidad" ] = filter_var( explode( "\t", $e[ 1 ] )[0], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
+                        unset( $l[ "resto" ] );
+                        $pagos[] = $l;
+                    
+                        // Método 2
+
+                        $e = explode( "\t", $line );
+
+                        if( $l[ "fecha" ] != date( "Y-m-d", strtotime( $e[ 0 ] ) )){
+                            $respuesta[ "errores" ][] = "Inconsistencias en fecha | {$line}";
+                            $valido = 0;
+                        }
+                
+                        $f = explode( " ", $e[ 1 ] );
+                        $g = explode( "/", $f[ 0 ] );
+                        
+                        if( $l[ "folio" ] != $g[ 1 ] ){
+                            $respuesta[ "errores" ][] = "Inconsistencias en operacion | {$line}";
+                            $valido = 0;
+                        }  
+                        
+                        if( $l[ "referencia" ] != intval( substr( $g[ 0 ], 2 ) ) ){
+                            $respuesta[ "errores" ][] = "Inconsistencias en referencia ( {$l[ "referencia" ]} - ".intval( substr( $g[ 0 ], 2, -1 ) ).")  | {$line}";
+                            $valido = 0;
+                        }   
+                        
+                        if( $l[ "cantidad" ] != filter_var( $e[ 3 ], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) ){
+                            $respuesta[ "errores" ][] = "Inconsistencias en cantidad | {$line}";
+                            $valido = 0;
+                        }                       
+
+                        if( $valido ){
+                            $respuesta[ "pagos" ][ $l[ "referencia" ] ] = $l;
+                            $referencias[] = $l[ "pedido" ];
+                        }
+                        else{
+                            echo json_encode( $respuesta );
+                            return;
+                        }
                     }
                 }
             }
         }
  
-            
+                    
         foreach( $respuesta[ "pagos" ] as $refe => $dat ){
-
+      
             $p = $dat[ "pedido" ] ? model( "PedidoModel" )->find( $dat[ "pedido" ] ) : null;
 
             $respuesta[ "pagos" ][ $refe ][ "banco" ]  = $respuesta[ "banco" ];
@@ -198,6 +233,7 @@ class Bancos extends BaseController
             $respuesta[ "pagos" ][ $refe ][ "comision" ]  = $p[ "data" ][ "comisionbanco" ] ?? null;
 
             if( $p ){
+
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "modelo" ] = $p[ "modelo_codigo" ];
 
                 $k = substr( $p[ "modelo_codigo" ], 0, 1 );
@@ -292,7 +328,9 @@ class Bancos extends BaseController
                                 $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date('Ym', strtotime( date('Y-m', strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ].'-01'. ' -1 month' ) ) ) )."' )" ); 
                                 $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "fecha" ] ) )."' )" );  
                                 $db->query( "do f_get_estatus( {$u->id}, 0 )" );
-                                $afectados = $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();                                    
+                                $afectados = $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" )->getRow();        
+                                
+                                $u = model( "UsuarioModel" )->find( $u->id );   
 
                             }
                             else{
@@ -302,7 +340,8 @@ class Bancos extends BaseController
                             $data = $u->data;                                    
                             $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = $data->saldo->{$p[ "modelo_codigo" ]}->cantidad + $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad"];
                             $u->data = $data;
-                            model( "UsuarioModel" )->save( $u );    
+                            model( "UsuarioModel" )->save( $u );  
+                             
 
                             $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-orange\">Insuficiente</span>";
                         }
