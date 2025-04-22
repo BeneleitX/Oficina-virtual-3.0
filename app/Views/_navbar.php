@@ -70,13 +70,13 @@
 	</a>
 
     <a data-bs-toggle="tooltip" 
-		title="Sistema Pro-Mind" class="d-none d-lg-block menu-opcion" 
+		title="Sistema Pro-Mind" class="xd-none xd-lg-block menu-opcion" 
 		href="https://promind.beneleit.mx/" target="_blank">
 		<i class="fa fa-graduation-cap"></i>
 	</a>
 
 	<a data-bs-toggle="tooltip" 
-		title="Ayuda y soporte" class="menu-opcion <?php echo $menu == "soporte" ? "selected" : ""; ?>" 
+		title="Ayuda y soporte" class="d-none d-lg-block menu-opcion <?php echo $menu == "soporte" ? "selected" : ""; ?>" 
 		href="<?php echo base_url( "soporte" ); ?>">
 		<i class="fa fa-circle-question"></i>
 	</a>
