@@ -22,6 +22,21 @@ class Reportes extends BaseController
         echo template( "reportes/menu", $this->data );
     }
 
+    public function ingresos_por_empresa()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) || 
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Reportes: Ingresos por empresa";
+
+        echo template( "reportes/ingresos_por_empresa", $this->data );
+    }
+
 
     public function socios_por_estatus(){
         if( !(
@@ -89,10 +104,8 @@ class Reportes extends BaseController
         }
 
         $this->data[ "estatuses" ] = $estatuses;
-
-
-        $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Reportes: Listado de socios por estatus";
+        $this->data[ "navbar" ]    = true;
+        $this->data[ "titulo" ]    = "Reportes: Listado de socios por estatus";
 
         echo template( "reportes/socios_por_estatus", $this->data );
     }
@@ -163,5 +176,64 @@ class Reportes extends BaseController
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
-    }       
+    }     
+    
+    
+    public function tabla_ingresos_por_empresa()
+    {    
+        $db = db_connect();
+
+        $tabla = "";
+        $sql = "SELECT 
+                p.modelo_codigo as 'EMPRESA',
+
+                count(*) as VENTAS,
+                ifnull( sum( p.DATA->'$.total'), 0 ) AS 'VENTA_PRODUCTO',
+                ifnull( sum( p.data->'$.comisionbanco' ), 0 ) as 'COMISIONES_BANCO',
+                ifnull( sum( p.data->'$.comisionentrega' ), 0 ) as 'PAQUETERIA',
+                ifnull( sum( p.DATA->'$.total' + p.data->'$.comisionbanco' + p.data->'$.comisionentrega'), 0 ) as 'TOTAL'
+
+                FROM t_pedidos p 
+                WHERE SUBSTRING( p.estatus_codigo,1,3) > 400
+                AND p.fechas->>'$.pagado' BETWEEN '".$this->request->getPost( "inicia" )."' AND '".$this->request->getPost( "termina")."' 
+                GROUP BY p.modelo_codigo";
+
+        $datos = $db->query( $sql )->getResultArray();
+        
+        $modelos = [];
+
+        foreach( $datos as $d ){
+            $modelos[ $d[ "EMPRESA" ] ] = $d;
+        }
+        
+        foreach( MODELOS as $m ){        
+            if( isset( $modelos[ $m[ "codigo" ] ] ) ){
+                $modelo = $modelos[ $m[ "codigo" ] ];
+            }
+            else{
+                $modelo = [
+                    "EMPRESA" => $m[ "codigo" ],
+                    "VENTAS" => 0,
+                    "VENTA_PRODUCTO" => 0,
+                    "COMISIONES_BANCO" => 0,
+                    "PAQUETERIA" => 0,
+                    "TOTAL" => 0    
+                ];
+            }
+
+            
+
+            $tabla .= "<tr>";
+            $tabla .= "<td><span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> ".strtoupper( $m[ "nombre" ] )."</span></td>";
+            $tabla .= "<td class=\"small\">".$m[ "settings" ][ "moneda" ]."</td>";
+            $tabla .= "<td class=\"text-center\">".number_format( $modelo[ "VENTAS" ] )."</td>";
+            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "VENTA_PRODUCTO" ], 2 )."</td>";
+            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "COMISIONES_BANCO" ], 2 )."</td>";
+            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "PAQUETERIA" ], 2 )."</td>";
+            $tabla .= "<td class=\"text-end\"><strong>$".number_format( $modelo[ "TOTAL" ], 2 )."</strong></td>";
+            $tabla .= "</tr>";
+        }
+
+        echo $tabla;
+    }
 }

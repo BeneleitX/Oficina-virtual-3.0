@@ -118,7 +118,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "reportes",                           "Reportes::menu" );
     $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
+    $routes->get( "reportes/ingresos_por_empresa",      "Reportes::ingresos_por_empresa" );
     $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
+    $routes->post( "tabla_ingresos_por_empresa",        "Reportes::tabla_ingresos_por_empresa" ); 
 
     $routes->get( "recompensas",                        "Recompensas::detalle" );     
     $routes->get( "admin_recompensas",                  "Recompensas::admin_recompensas" );     
