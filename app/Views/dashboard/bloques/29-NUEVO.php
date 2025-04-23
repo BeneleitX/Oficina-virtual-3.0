@@ -1,0 +1,1 @@
+<img src="<?php echo base_url(); ?>assets/img/nuevo.jpeg" class="img-fluid">
