@@ -21,7 +21,7 @@
             "url" => base_url( "reportes/ingresos_por_empresa" ),
             "icono" => "table-cells",
             "texto" => "Ingresos por empresa",
-            "permisos" => [ "38-CONTABILIDAD", "40-ADMIN" ]
+            "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN" ]
         ]
     ];
 
