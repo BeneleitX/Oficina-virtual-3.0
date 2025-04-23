@@ -6,9 +6,38 @@
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
 
 <table class="table table-striped" id="tabla_reportes">
-<thead><tr><th>Reportes disponibles:</th></tr></thead>
+    <thead><tr><th>Reportes disponibles:</th></tr></thead>
+    <tbody>
 
-<tbody>
-    <tr><td><a class="d-block" href="<?php echo base_url( "reportes/socios_por_estatus" ); ?>"><i class="fa fa-file-excel"></i> Listado de socios por estatus</a></td></tr></tbody>
-    <tr><td><a class="d-block" href="<?php echo base_url( "reportes/ingresos_por_empresa" ); ?>"><i class="fa fa-file-excel"></i> Ingresos por empresa</a></td></tr></tbody>
+    <?php
+    $reportes = [
+        [
+            "url" => base_url( "reportes/socios_por_estatus" ),
+            "icono" => "file-excel",
+            "texto" => "Listado de socios por estatus",
+            "permisos" => [ "36-REPORTES", "40-ADMIN" ]
+        ],
+        [
+            "url" => base_url( "reportes/ingresos_por_empresa" ),
+            "icono" => "table-cells",
+            "texto" => "Ingresos por empresa",
+            "permisos" => [ "38-CONTABILIDAD", "40-ADMIN" ]
+        ]
+    ];
+
+
+    foreach( $reportes as $r ){
+        $permiso = 0;
+
+        foreach( $r[ "permisos" ] as $p ){
+            if( $usuario->permiso( $p ) ){
+                $permiso = 1;
+            }
+        }
+
+        echo "\n<tr><td>".( $permiso ? "<a class=\"d-block\" href=\"{$r[ "url" ]}\">" : "" )."<i class=\"fa fa-".( $permiso ? $r[ "icono" ] : "lock text-red" )."\"></i> {$r[ "texto" ]}".( $permiso ? "</a>" : "" )."</td></tr>";
+    }
+    ?>
+
+</tbody>
 </table>
