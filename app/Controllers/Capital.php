@@ -33,7 +33,7 @@ class Capital extends BaseController
         }
         
         if( !$mes ){
-            $mes = date( "Ym", strtotime( date("Y-m-d")." - 1 month" ) );
+            $mes = date( "Ym", strtotime( date("Y-m-d")." - 0 month" ) );
         }
 
         /**********************************/
@@ -74,10 +74,25 @@ class Capital extends BaseController
     }
 
 
+    /**
+     * Retrieves and processes investment data for Capital24.
+     *
+     * This function checks for administrative permissions before proceeding.
+     * It gathers various investment-related data such as active investments,
+     * ranks, seeds, monthly returns, purchase periods, commissions, and withdrawals.
+     * The processed data is stored in the class's data array for use in rendering
+     * the "capital/inversiones" template.
+     *
+     * The function performs multiple database queries to fetch information
+     * about investments, ranks, purchase periods, and more. It also calculates
+     * totals for various metrics and formats data for display.
+     *
+     * @return void
+     */
     public function inversiones()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+            $this->data[ "usuario" ]->permiso( "45-ADMIN-CAPITAL")
         ) ){
             return redirect()->to( "no_permiso" ); 
         }
@@ -376,7 +391,6 @@ class Capital extends BaseController
      * @return void The response is echoed as a JSON object containing either
      *              error messages or success data based on the processing outcome.
      */
-
     public function quick_data()
     {
         $respuesta = [

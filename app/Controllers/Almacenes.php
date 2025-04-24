@@ -4,7 +4,24 @@ namespace App\Controllers;
 
 class Almacenes extends BaseController 
 {
-    public function listado( $modelo ){
+    /**
+     * Displays the list of warehouses and delivery points for a given model.
+     *
+     * Checks if the user has the necessary permissions to view stock, warehouse, 
+     * or admin information. If not, redirects to a "no permission" page.
+     *
+     * Sets up navbar visibility and title for the page. Queries the database 
+     * to retrieve warehouse information such as code, status, name, settings,
+     * number of orders, and transfer counts. Filters the warehouses based on 
+     * the model code and user permissions. Passes the retrieved data to the 
+     * "almacenes/listado" template for rendering.
+     *
+     * @param string $modelo The code of the warehouse model.
+     *
+     * @return void
+     */
+    public function listado( $modelo )
+    {
  
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
@@ -34,7 +51,22 @@ class Almacenes extends BaseController
     } 
     
 
-    public function detalle( $almacen ){
+    /**
+     * Displays detailed information about a specific warehouse.
+     *
+     * Checks if the user has the necessary permissions (stock, warehouse, or admin)
+     * to view warehouse details. If not, redirects to a "no permission" page.
+     *
+     * Retrieves and prepares data for rendering warehouse details, including
+     * the warehouse information and a list of orders linked to the warehouse.
+     * Sets up navbar visibility and customizes the page title.
+     *
+     * @param string $almacen The code of the warehouse to display details for.
+     *
+     * @return void
+     */
+    public function detalle( $almacen )
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
@@ -68,8 +100,15 @@ class Almacenes extends BaseController
 
         echo template( "almacenes/detalle", $this->data );
     }
+    
 
-    public function entrega(){
+    /**
+     * Muestra el listado de productos de un pedido en el almacen y permite entregarlos
+     *
+     * @return void
+     */
+    public function entrega()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
@@ -112,8 +151,13 @@ class Almacenes extends BaseController
     }
 
 
-
-    public function marca_entregado(){
+    /**
+     * Marca un pedido como entregado
+     *
+     * @return redirect a la vista de almacen con mensaje de confirmacion
+     */
+    public function marca_entregado()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
@@ -180,15 +224,44 @@ class Almacenes extends BaseController
     }
 
 
-
-    public function get_inventario(){
+    /**
+     * Retrieves and outputs the inventory balance for a specified warehouse.
+     *
+     * This function fetches the inventory balance of a warehouse using the 
+     * 'almacen' identifier provided in the POST request. It retrieves the 
+     * warehouse data from the AlmacenModel and outputs the inventory balance 
+     * in JSON format.
+     *
+     * @return void
+     */
+    public function get_inventario()
+    {
         $almacen = model( "AlmacenModel" )->find( $this->request->getPost( "almacen" ) );
         echo json_encode( $almacen[ "inventario" ][ "balance" ] );
     }
 
 
 
-    public function get_data_producto(){
+    /**
+     * Retrieves and displays detailed product data for a specific warehouse.
+     *
+     * This function checks if the current user has the necessary permissions 
+     * to access stock, warehouse, or admin information. If the user lacks 
+     * permissions, they are redirected to a "no permission" page.
+     *
+     * The function extracts posted data, connects to the database, and queries 
+     * transfer information for a specific product in a warehouse. It generates 
+     * an HTML report displaying received, sent, and in-transit transfers, 
+     * as well as product sales and inventory status.
+     *
+     * The HTML report includes sections for received transfers, sent transfers, 
+     * in-transit transfers, products sold, pending deliveries, products available 
+     * for sale, and physical inventory.
+     *
+     * @return void
+     */
+    public function get_data_producto()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" ) ||
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
@@ -254,7 +327,19 @@ class Almacenes extends BaseController
 
 
 
-    public function addstock(){
+    /**
+     * Agrega productos a stock de almacenes
+     *
+     * El usuario debe tener permiso de ALMACEN o ADMIN
+     *
+     * @param string $almacen Codigo del almacen
+     * @param string $producto Codigo del producto
+     * @param int $cantidad Cantidad a agregar
+     *
+     * @return void
+     */
+    public function addstock()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -285,7 +370,15 @@ class Almacenes extends BaseController
     }
 
 
-    public function transferencias( $modelo ){
+    /**
+     * Vista de transferencias entre almacenes
+     *
+     * @param string $modelo Código del modelo de almacén
+     *
+     * @return void
+     */
+    public function transferencias( $modelo )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -304,7 +397,18 @@ class Almacenes extends BaseController
     }
 
 
-    public function recibe_transfer(){
+    /**
+     * Marks a product transfer as received.
+     * 
+     * This function checks if the current user has the necessary permissions 
+     * to mark a transfer as received. If permissions are valid, it updates 
+     * the transfer status to "620-RECIBIDO" and assigns the current user as 
+     * the receiver. It also logs this action in the bitacora.
+     * 
+     * Redirects to the destination warehouse with a success message upon completion.
+     */
+    public function recibe_transfer()
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "18-STOCK" )   ||
@@ -331,7 +435,22 @@ class Almacenes extends BaseController
     } 
 
 
-    public function aplica_transfer(){
+    /**
+     * Handles the transfer of products between warehouses.
+     *
+     * This function first checks if the current user has the necessary permissions 
+     * to perform a transfer. If permissions are valid, it processes the transfer 
+     * by extracting data from the POST request, validates the origin and destination 
+     * warehouses, and iterates over the list of products to be transferred. Each 
+     * product with a quantity greater than zero is inserted into the `t_transferencias` 
+     * table with an 'ENVIADO' status. A log entry is also created in the bitacora 
+     * for tracking the transfer.
+     *
+     * @return \CodeIgniter\HTTP\RedirectResponse Redirects to the warehouse page 
+     * indicating that the products have been marked as sent.
+     */
+    public function aplica_transfer()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -382,6 +501,5 @@ class Almacenes extends BaseController
             "icono" => "check", 
             "texto" => "Los productos se han marcado como enviados"] );  
     }
-
 
 }

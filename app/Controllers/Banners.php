@@ -8,6 +8,13 @@ class Banners extends BaseController
         $this->data[ "menu" ] = "admin";
     }
 
+    /**
+     * Muestra el listado de banners
+     * 
+     * Esta función requiere permiso de administrador o de gestor de banners
+     * 
+     * @return void
+     */
     public function listado(){
         if( !(
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
@@ -27,7 +34,14 @@ class Banners extends BaseController
     }
 
 
-    public function mueve( $direccion, $banner ){
+    /**
+     * Mueve el banner en la lista hacia arriba o abajo
+     * @param string $direccion "arriba" o "abajo"
+     * @param int $banner id del banner a mover
+     * @return redirect a la lista de banners
+     */
+    public function mueve( $direccion, $banner )
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -55,7 +69,19 @@ class Banners extends BaseController
         return redirect()->to( "banners" ); 
     }
 
-    public function save(){
+    
+    /**
+     * Saves a banner, either updating an existing one or creating a new one.
+     * 
+     * Checks if the user has the necessary permissions to perform the operation.
+     * If the banner_id is provided and greater than 0, it updates the existing banner with the provided details.
+     * Otherwise, it creates a new banner with the given information and assigns it a position.
+     * Logs the operation in the bitacora with the corresponding action ID.
+     * Redirects to the banners list upon completion.
+     */
+
+    public function save()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "22-IMAGEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -108,7 +134,13 @@ class Banners extends BaseController
     }
 
 
-    public function upload_banner(){
+    /**
+     * Uploads a banner image via AJAX
+     * 
+     * @return string JSON containing the path and filename of the uploaded image
+     */
+    public function upload_banner()
+    {
         $path        = "assets/img/banners/";
         $filename    = $_FILES[ "image" ][ "name" ];
         $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];

@@ -8,6 +8,11 @@ class Admin extends BaseController
         $this->data[ "menu" ] = "admin";
     }
 
+    /**
+     * Muestra el dashboard de administraci n
+     *
+     * @return void
+     */
     public function dashboard(){
 
         $this->data[ "usuario" ]->valida_modelo();
@@ -65,7 +70,18 @@ class Admin extends BaseController
         echo template( "admin/dashboard", $this->data );
     }
 
-    public function credenciales(){
+    /**
+     * Displays the page for validating INE credentials of socios.
+     *
+     * This function checks if the user has the appropriate permissions
+     * to access the credential validation page. If the user lacks the
+     * required permissions, they are redirected to a "no permission" page.
+     * It sets up the navbar and title for the page, queries the database
+     * to retrieve socios with valid INE credentials that need validation,
+     * and renders the credential validation template with the retrieved data.
+     */
+    public function credenciales()
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
@@ -87,7 +103,17 @@ class Admin extends BaseController
     }    
 
 
-    public function resolucion_ine(){
+    /**
+     * Resuelve la petición de validar o rechazar la credencial INE de un socio.
+     * 
+     * @param string $accion accion a realizar. Puede ser "acepta" o "rechaza".
+     * @param int $socio id del socio a procesar.
+     * @param string $motivo motivo de rechazo, solo se envia si $accion es "rechaza".
+     * 
+     * @return redirect a la vista de validación de credenciales.
+     */
+    public function resolucion_ine()
+    {
 
         if( !(
             $this->data[ "usuario" ]->permiso( "34-VALIDACION") || 
@@ -131,6 +157,11 @@ class Admin extends BaseController
         return redirect()->to( "valida_credenciales" );        
     }
 
+    /**
+     * Muestra la lista de promociones de un modelo
+     * @param string $modelo Código del modelo
+     * @return void
+     */
     public function promociones( $modelo ){
         
         if( !(
@@ -153,6 +184,11 @@ class Admin extends BaseController
     }    
 
 
+    /**
+     * Muestra el detalle de una promoción
+     * @param string $promocion Código de la promoción
+     * @return void
+     */
     public function promo_detalle( $promocion ){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -175,7 +211,13 @@ class Admin extends BaseController
     }
 
 
-    public function save_promo(){
+    /**
+     * Guarda la configuración de una promoción
+     * 
+     * @return void
+     */
+    public function save_promo()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -190,6 +232,14 @@ class Admin extends BaseController
     }
 
 
+    /**
+     * Muestra la lista de métodos de pago para el modelo 
+     * especificado en la url.
+     * 
+     * @param string $modelo Código del modelo.
+     * 
+     * @return void
+     */
     public function pasarelas( $modelo ){
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -211,6 +261,18 @@ class Admin extends BaseController
 
     
     
+    /**
+     * Displays a list of products for a given model.
+     *
+     * This function checks if the user has the necessary permissions
+     * (either "20-ALMACEN" or "40-ADMIN") before proceeding. It retrieves 
+     * a list of products from the database that are associated with the 
+     * provided model code and then renders the "admin/productos" template 
+     * with the retrieved data.
+     *
+     * @param string $modelo The model code used to filter the products.
+     * @return void Redirects to "no_permiso" if the user lacks permissions.
+     */
     public function productos( $modelo ){
 
         if( !(
@@ -234,7 +296,19 @@ class Admin extends BaseController
 
 
 
-    public function estatus(){
+    /**
+     * Displays the list of statuses for a socio.
+     * 
+     * This function checks if the user has the "40-ADMIN" permission.
+     * If the user lacks the required permissions, they are redirected to
+     * a "no permission" page. It sets up the navbar and page title,
+     * retrieves all statuses from the `t_estatus` table, and renders the
+     * "admin/estatus" template with the retrieved data.
+     *
+     * @return void Redirects to "no_permiso" if the user lacks permissions.
+     */
+    public function estatus()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -252,7 +326,19 @@ class Admin extends BaseController
         echo template( "admin/estatus", $this->data );
     } 
 
-    public function saldos(){
+
+    /**
+     * Muestra la lista de socios con saldo a favor.
+     * 
+     * Este m  todo busca en la tabla t_usuarios el saldo de cada socio
+     * y utiliza la funci n JSON_TABLE para obtener la suma de los saldos
+     * de cada socio. Luego, busca en la tabla t_usuarios los socios
+     * que tengan saldo a favor y los muestra en una tabla.
+     * 
+     * @return void
+     */
+    public function saldos()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -282,7 +368,16 @@ class Admin extends BaseController
     
 
 
-    public function isr(){
+    /**
+     * Muestra la lista de tablas de ISR SEMANAL.
+     * 
+     * Este m  todo busca en la tabla t_isr todas las tablas de ISR
+     * y las muestra en una tabla.
+     * 
+     * @return void
+     */ 
+    public function isr()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" )
         ) ){
@@ -302,7 +397,15 @@ class Admin extends BaseController
     
     
 
-    public function variables(){
+    /**
+     * Página de variables de sistema
+     *
+     * Muestra una interfaz para modificar las variables de sistema
+     *
+     * @return void
+     */
+    public function variables()
+    {
         
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
@@ -318,7 +421,19 @@ class Admin extends BaseController
         echo template( "admin/variables", $this->data );
     } 
     
-    public function save_variable(){
+
+    /**
+     * Updates the value of a system variable in the database.
+     *
+     * This function checks if the user has admin permissions before proceeding.
+     * It retrieves the variable code and its new value from the POST request,
+     * updates the corresponding record in the `t_variables` table, and logs the
+     * operation in the system bitacora.
+     *
+     * @return void
+     */
+    public function save_variable()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -340,8 +455,17 @@ class Admin extends BaseController
         ] );        
     }
 
-
-    public function agrega_saldos(){
+    /**
+     * Agrega saldos a favor de un socio
+     *
+     * @author Rafael Gutiérrez Latorre
+     * @since 2022-11-28
+     * @param int $socio_saldo ID del socio
+     * @param array $saldo Arreglo con los saldos a agregar, por modelo
+     * @return void
+     */
+    public function agrega_saldos()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -388,7 +512,18 @@ class Admin extends BaseController
     }
 
 
-    public function edita_saldos(){
+    /**
+     * Edita saldos a favor de un socio
+     *
+     * @author Rafael Gutiérrez Latorre
+     * @since 2022-11-28
+     * @param int $socio_saldo ID del socio
+     * @param array $saldo Arreglo con los saldos a cambiar, por modelo
+     * @param array $estatus Arreglo con los estatus a cambiar, por modelo
+     * @return void
+     */
+    public function edita_saldos()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
@@ -439,7 +574,16 @@ class Admin extends BaseController
     }
 
 
-    public function apikeys(){
+    /**
+     * Displays the API keys management page.
+     *
+     * This function checks if the user has the "40-ADMIN" permission and, if so, 
+     * sets up necessary data for displaying the API keys management interface. 
+     * If the user does not have the required permission, they are redirected 
+     * to a "no permission" page.
+     */
+    public function apikeys()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){

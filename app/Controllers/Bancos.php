@@ -7,6 +7,14 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Bancos extends BaseController
 {
+    /**
+     * Displays the layout for bank-related payments, ensuring the user has appropriate permissions.
+     * 
+     * Checks if the user has either "38-CONTABILIDAD" or "40-ADMIN" permission.
+     * If not, redirects to a "no_permiso" page.
+     * Configures navigation bar visibility and page title, then renders the "bancos/layout" template.
+     */
+
     public function layout()
     {
         if( !(
@@ -23,6 +31,16 @@ class Bancos extends BaseController
     }
 
 
+    /**
+     * Mostrar los pagos ingresados sin destino en la base de datos
+     * 
+     * Este método consulta la base de datos y devuelve los pagos que no han sido asociados a un pedido
+     * en la base de datos. Los pagos se muestran en una tabla con las columnas id, operación, fecha, 
+     * estatus, método de pago, usuario, referencia y cantidad. Los pagos se ordenan por fecha en forma 
+     * descendiente.
+     * 
+     * @return void
+     */
     public function pendientes()
     {
         if( !(
@@ -46,7 +64,12 @@ class Bancos extends BaseController
     }
 
 
-    public function analiza_layout(){
+    /**
+     * Analiza el archivo subido y actualiza o crea los pagos referenciados
+     * @return void
+     */
+    public function analiza_layout()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )

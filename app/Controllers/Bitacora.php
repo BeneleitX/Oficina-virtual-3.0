@@ -4,7 +4,13 @@ namespace App\Controllers;
 
 class Bitacora extends BaseController
 {
-    public function listado(){
+    /**
+     * Muestra la lista de movimientos de un socio
+     *
+     * @return void
+     */
+    public function listado()
+    {
 
         if( !session( "admin" ) ){
             return redirect()->to( "no_permiso" ); 

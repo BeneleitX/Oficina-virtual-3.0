@@ -3,15 +3,15 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-4">
     <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
         <p>
             <a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a>
         </p>
     </div>
 
-    <div class="col-6 text-end pt-3">
-        <h5> Retiros aplicados en el mes: 
+    <div class="col-8 text-end pt-3">
+        <h5><?php echo $usuario->permiso( "45-ADMIN-CAPITAL") ? "<a href=\"".base_url( "inversiones" )."\"class=\"btn btn-secondary me-5\"><i class=\"fa fa-dashboard\"></i> Ir a dashboard</a> " : ""; ?>Retiros aplicados en el mes: 
             <span class="badge bg-gray-500" id="pendientes">0</span>
             de <span class="badge bg-gray-500" id="totales">0</span>
             <select id="mes_retiros" class="ms-4 form-select" style="display: inline-block; width:auto">
