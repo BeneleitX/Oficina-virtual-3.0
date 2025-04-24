@@ -30,12 +30,13 @@
         $permiso = 0;
 
         foreach( $r[ "permisos" ] as $p ){
+
             if( $usuario->permiso( $p ) ){
                 $permiso = 1;
             }
         }
 
-        echo "\n<tr><td>".( $permiso ? "<a class=\"d-block\" href=\"{$r[ "url" ]}\">" : "" )."<i class=\"fa fa-".( $permiso ? $r[ "icono" ] : "lock text-red" )."\"></i> {$r[ "texto" ]}".( $permiso ? "</a>" : "" )."</td></tr>";
+        echo "\n<tr><td>".( $permiso ? "<a class=\"d-block\" href=\"{$r[ "url" ]}\"><i class=\"fa fa-{$r[ "icono" ]}\"></i>" : "<i class=\"fa fa-lock text-red\"></i>" )." {$r[ "texto" ]}".( $permiso ? "</a>" : "" )."</td></tr>";
     }
     ?>
 

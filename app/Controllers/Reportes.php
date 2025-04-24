@@ -11,6 +11,7 @@ class Reportes extends BaseController
     {
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
+            $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -25,7 +26,7 @@ class Reportes extends BaseController
     public function ingresos_por_empresa()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -182,7 +183,7 @@ class Reportes extends BaseController
     public function tabla_ingresos_por_empresa()
     {    
         if( !(
-            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
