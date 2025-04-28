@@ -80,6 +80,27 @@ class E_usuario extends Entity
         return $this->attributes[ "password" ] = base64_encode( $encrypter->encrypt( $password, [ "key" => $this->attributes[ "id" ] ] ) );
     }
 
+    
+    public function get_reset( $modelo )
+    {
+        if( !isset( $historial->modelos->{$modelo} ) ){
+            $this->valida_modelo();
+        }
+
+        if( !isset( $this->historial->modelos->{$modelo}->reset ) ){
+
+            $fecha = MODELOS[ $modelo ][ "settings" ][ "fecha_arranque" ] < $this->historial->registro ? $this->historial->registro : MODELOS[ $modelo ][ "settings" ][ "fecha_arranque" ];
+
+            $historial = $this->historial;
+            $historial->modelos->{$modelo}->reset = $fecha;
+            $this->historial = $historial;
+
+            model( "UsuarioModel" )->save( $this );
+        }
+        
+        return $this->historial->modelos->{$modelo}->reset;
+    }
+
 
     /**
      * Valida que el usuario tenga configurado el historial de cada modelo de negocio y que existan los datos necesarios para operar en cada modelo.
@@ -105,11 +126,13 @@ class E_usuario extends Entity
                     !isset( $this->data->estatus->modelos->{$m[ "codigo" ]} ) 
                 ){
 
+                    $fecha = $m[ "settings" ][ "fecha_arranque" ] < $this->historial->registro ? $this->historial->registro : $m[ "settings" ][ "fecha_arranque" ];
+
                     $historial->modelos->{$m[ "codigo" ]} = [
                         "primercompra"   => json_decode( "{}" ),
                         "ultimacompra"   => null,
                         "fondeos"        => [],
-                        "reset"          => $historial->reset,
+                        "reset"          => $fecha,
                         "ingresos"       => [
                             date( "Ym" ) => []
                         ],
