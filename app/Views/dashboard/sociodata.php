@@ -176,7 +176,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         
                         $pats[ $m[ "codigo" ] ] = $pat;
                         //  $pat->valida_modelo();
-                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5></td><td><h5 class=\"mb-1\">".$socio->id( $m[ "codigo" ] )."</h5></td>";
+                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><span class=\"small\">".fecha( $pat->historial->modelos->{$m[ "codigo" ]}->reset )."</span>".( $socio->historial->modelos->{$m[ "codigo" ]}->reset < $pat->historial->modelos->{$m[ "codigo" ]}->reset ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td><td><h5 class=\"m-0\">".$socio->id( $m[ "codigo" ] )."</h5><span class=\"small\">".fecha( $socio->historial->modelos->{$m[ "codigo" ]}->reset )."</span></td>";
                         
                         if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
                             $p = $pedidos[ $m[ "codigo" ] ];
