@@ -45,8 +45,11 @@
         
         <?php
         $cp = 0; 
-        foreach( $pedido[ "productos" ] as $p => $c )
+        foreach( $pedido[ "productos" ] as $p => $c ){
             $cp+= $c; 
+
+            d($p, $c);
+        }
             ?>
         <h1 class="text-center">
             <button disabled class="btn btn-lg my-5 btn-danger" id="boton_entregado_no"><span id="productos_conteo">0</span> productos de <?php echo $cp; ?></button>
