@@ -181,6 +181,6 @@
 
 <script>
 var cat_productos   = <?php echo json_encode( $productos ); ?>,
-    total_productos = <?php echo $pedido[ "data" ][ "productos" ]; ?>,
+    total_productos = <?php echo $cp; //$pedido[ "data" ][ "productos" ]; ?>,
     problema = false; // <?php echo $pedido[ "data" ][ "productos" ] != $cp ? "true" : "false" ?>;
 </script>
