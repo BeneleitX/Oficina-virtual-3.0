@@ -47,8 +47,7 @@
         $cp = 0; 
         foreach( $pedido[ "productos" ] as $p => $c ){
             $cp+= $c; 
-
-            d($p, $c);
+            
         }
             ?>
         <h1 class="text-center">
