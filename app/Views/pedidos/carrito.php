@@ -582,10 +582,10 @@
                         if( ( $pagado || $bloqueado || $cancelado ) ){ 
                             ?>
                             <tr>
-                                <td valign="middle" class="">Comision bancaria</td>
+                                <td valign="middle" class="">Comisión bancaria</td>
                                 
                                 <td valign="middle" class="text-end">
-                                    <h5 class="m-0 text-teal">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5>
+                                    <h5 class="m-0 text-teal" total_banco="<?php echo $comisionbanco; ?>">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5>
                                 </td>
                             </tr>
                             <?php 
@@ -851,29 +851,33 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
         <div class="card-body">
             <div class="row">
 
-                <div class="col-lg-4 m-0">
+                <div class="col-lg-3 col-6 m-0">
                     <button class="btn btn-danger col-12" onclick="$( '#cancela_pedido' ).modal( 'show' );"><i class="fa fa-trash"></i> Cancelar pedido</button>
                 </div>
 
                 <?php 
                 if( $pagado ){ 
                     ?>
-                    <div class="col-lg-4 m-0">
+                    <div class="col-lg-3 col-6 m-0">
                         <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-calendar"></i> Cambiar fecha de compra</button>
                     </div>
 
-                    <div class="col-lg-4 m-0">
+                    <div class="col-lg-3 col-6 m-0">
                         <form method="post" action="<?php echo base_url( "reparte" ); ?>">
                             <?php echo csrf_field(); ?>
                             <button type="submit" class="btn btn-danger col-12"><i class="fa fa-calculator"></i> Recalcular comisiones</button>
                             <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
                         </form>
                     </div>
+
+                    <div class="col-lg-3 col-6 m-0">
+                        <button class="btn btn-danger col-12" onclick="$( '#modifica_productos' ).modal( 'show' );"><i class="fa fa-spray-can-sparkles"></i> Modificar productos</button>
+                    </div>
                     <?php 
                 } 
                 else{
                     ?>
-                    <div class="col-lg-4 m-0">
+                    <div class="col-lg-3 col-6 m-0">
                         <button class="btn btn-danger col-12" onclick="$( '#marca_pagado' ).modal( 'show' );"><i class="fa fa-cash-register"></i> Marcar como pagado</button>
                     </div>
                     <?php
@@ -1003,7 +1007,6 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                             <li>Cancelar un pedido ya pagado altera la calificación del socio, por lo que se debe hacer un corte parcial para ajustar las comisiones recibidas y generadas por el socio.</li>
                         </ul></div>
 
-                        <?php echo csrf_field(); ?>
                         <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
                     </div>
 
@@ -1014,9 +1017,86 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
             </div>
         </div>
     </div>
+
+    <div class="modal" tabindex="-1" id="modifica_productos">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <form method="post" action="<?php echo base_url( "modifica_productos" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="pedido" value="<?php echo $pedido[ "id" ]; ?>">
+
+                    <div class="modal-header bg-red">
+                        <h5 class="modal-title text-white"><i class="fa fa-spray-can-sparkles"></i> Modifica productos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger m-0"><i class="fa fa-warning"></i> <b>CUIDADO:</b> Modificar esta información afectará los puntajes, calificaciones y bonos del pedido, por lo que todo movimiento es registrado</div>
+
+
+                        <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+                            <?php
+                                foreach( PROMOCIONES as $p ){
+                                    $activo = false;
+
+                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                        echo "\n<li class=\"nav-item small\"><button class=\"px-3 xtext-marine xbg-{$p[ "settings" ][ "clase" ]} nav-link ".( $activo ? "active" : "" )."\" id=\"tab_{$p[ "codigo" ]}\" data-bs-toggle=\"tab\" data-bs-target=\"#panel_{$p[ "codigo" ]}\" type=\"button\" role=\"tab\" aria-controls=\"panel_{$p[ "codigo" ]}\" aria-selected=\"".( $activo ? "true" : "false" )."\"><strong>".substr( $p[ "codigo" ], 4 )."</strong></button></li>";
+                                    }
+                                }
+                            ?>        
+                        </ul>
+
+                        <div class="tab-content" id="myTabContent">
+                        <?php
+                                foreach( PROMOCIONES as $p ){
+                                    $activo = false;
+
+                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                        echo "\n<div class=\"tab-pane fade ".( $activo ? "show active" : "" )."\" id=\"panel_{$p[ "codigo" ]}\" role=\"tabpanel\" aria-labelledby=\"tab_{$p[ "codigo" ]}\" tabindex=\"0\">
+
+                                        <div class=\"card border-{$p[ "settings" ][ "clase" ]} mb-3\">
+                                            <div class=\"card-header bg-{$p[ "settings" ][ "clase" ]}\" style=\"border: none;\">
+                                                <h5 class=\"m-0 text-white\"><i class=\"fa fa-basket-shopping\"></i> {$p[ "settings" ][ "nombre" ]}</h5>
+                                            </div>
+                                        </div> 
+                                                <div class=\"row\">";
+
+                                        $promo =  $pedido[ "promociones" ][ $p[ "codigo" ] ];
+
+                                        foreach( $productos as $producto ){
+                                            if( in_array( $producto->codigo, $p[ "productos" ][ "elegibles" ] ) ){   
+
+                                                $cantidad = $promo[ "productos" ][ $producto->codigo ][ "cantidad" ] ?? 0;
+                                                echo "\n<div class=\"col-md-6 col-lg-4\">
+                                                            <table class=\"w-100\"><tr>
+                                                                <td style=\"width: 35%;\"><input name=\"productos[{$p[ "codigo" ]}][{$producto->codigo}]\" value=\"{$cantidad}\" type=\"number\" class=\"form-control text-center variante_productos\"></td>
+                                                                <td style=\"width: 65%;\" class=\"ps-2\">{$producto->data->nombre}</td>
+                                                            </tr></table>
+                                                        </div>";
+                                            }
+                                        }
+
+                                        echo "</div>
+                                        </div>";
+                                    }
+                                }
+                            ?>    
+                            
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>    
     <?php 
 }
 ?>
+
 
 <div class="modal" tabindex="-1" id="cambia_edicion">
     <div class="modal-dialog">
@@ -1114,7 +1194,6 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
         </div>
     </div>
 </div>
-
 
 
 <div class="modal" tabindex="-1" id="edita_guia">
@@ -1239,7 +1318,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                             if( $ss && ( $mp[ "settings" ][ "tipocomision" ] == "saldo" || $modelo == "50-INVERSION" ) || !$ss && $mp[ "settings" ][ "tipocomision" ] != "saldo" ){ 
                                 $mps[] = $mp;
 
-/*                                 if(  && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
+                            /*     if(  && $tt <= $socio->data->saldo->{$modelo}->cantidad && $socio->data->saldo->{$modelo}->estatus == 1){
                                     $mps[] = $mp;
                                 }
                                 elseif( $tt > ( $socio->data->saldo->{$modelo}->cantidad ?? 0 ) ){
@@ -1307,6 +1386,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 	</div>
 </div>
 
+
 <div class="modal" tabindex="-1" id="modal_productos" promocion="">
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
@@ -1365,6 +1445,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 	</div>
 </div>
 
+
 <div class="modal" tabindex="-1" id="mes_califica" mesanterior="<?php echo $pedido[ "data" ][ "mesanterior" ]; ?>">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -1421,7 +1502,8 @@ foreach( $productos as $p ){
         cancelado 	    = <?php echo $cancelado; ?>,
         mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
         domicilios      = <?php echo json_encode( $domicilios ); ?>,
-        hoy = new Date();
+        hoy = new Date(),
+        update_productos = <?php echo $update_productos; ?>;
 
     if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
 

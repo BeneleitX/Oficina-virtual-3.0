@@ -140,6 +140,99 @@ function cambia_cantidad( promocion, producto ){
 }
 
 
+function update_costos(){
+
+    pedido.data.total     = 0;
+    pedido.data.productos = 0;
+    pedido.data.peso      = 0;
+    pedido.promociones    = {};
+
+    $( '.card[promocion]' ).each( function(){
+
+        var tag = $( this ), 
+            cuenta_productos   = 0,
+            total_promo        = 0,
+            total_comisionable = 0,
+            promocion          = tag.attr( 'promocion' );
+
+        pedido.promociones[ promocion ] = {
+            'productos'    : {},
+            'precio'       : 0,
+            'comisionable' : 0,
+            'evento'  : tag.attr( 'evento' )  ?? 'false',
+            'estatus' : tag.attr( 'estatus' ) ?? 'false',
+            'activo' : 'false'
+        };
+
+        evento   = tag.attr( 'evento' )  ?? 'false';
+        estatus  = tag.attr( 'estatus' ) ?? 'false';
+    
+        if( evento == 'false' || estatus == 'true' ){
+            tag.find( 'table[productos] > tr[producto]' ).each( function(){
+                var campo    = $( this ).find( 'input.cantidad' ),
+                    cantidad = parseInt( campo.val() ),
+                    producto = $( this ).attr( 'producto' ),
+                    unitario = parseFloat( campo.attr( 'unitario' ) ),
+                    orden    = parseInt( $( this ).attr( 'orden' ) );
+
+                cuenta_productos += parseInt( cantidad );
+                console.log( promocion, producto, cantidad)
+                if( cantidad ){
+                    pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
+                        "cantidad"    : cantidad,
+                        "puntos"      : parseFloat( cat_productos[ producto ].data.puntos[ promocion ] ),
+                        "comisionable": parseFloat( cat_productos[ producto ].precio.base ),
+                        "orden"       : orden,
+                        "nombre"      : cat_productos[ producto ].data.nombre.toUpperCase(),
+                        "descripcion" : cat_productos[ producto ].data.descripcion,
+                        "reparte"     : cat_productos[ producto ].precio.reparte ?? null,
+                        "precio"      : unitario
+                    };
+                    
+                    total_promo += ( cantidad * unitario );
+                    total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
+                    $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
+                }
+            });
+        }
+
+        if( cat_promociones[ promocion ].settings.paquete == 'true' ){
+            total_promo = (cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
+        }
+
+        pedido.data.total += total_promo;
+        pedido.promociones[ promocion ][ 'precio' ] = total_promo;
+        pedido.promociones[ promocion ][ 'comisionable' ] = total_comisionable;
+
+        tag.find( '.total_promo' ).html( Moneda.format( total_promo ) );
+    });
+
+    json = JSON.stringify( pedido );
+
+    $( '[total_productos]' ).attr( 'total_productos', pedido.data.total ).html( Moneda.format( pedido.data.total ) );
+
+    total_productos = parseFloat( $( '[total_productos]' ).attr( 'total_productos' ) );
+    total_entrega   = parseFloat( $( '[total_entrega]' ).attr( 'total_entrega' ) );
+    total_saldo     = parseFloat( $( '[total_saldo]' ).attr( 'total_saldo' ) );
+    total_banco     = parseFloat( $( '[total_banco]' ).attr( 'total_banco' ) );
+    gran_total      = total_productos + total_entrega + total_banco- total_saldo ;
+    
+    if( gran_total < 0 ) gran_total = 0;
+
+    $( '[gran_total]' ).attr( 'gran_total', gran_total ).html( Moneda.format( gran_total ) );
+
+    $.ajax({
+        url: base_url + "save_pedido", 
+        type: "POST",
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: { [csrf_token] : csrf_hash, json : json },
+        success: function( result ){
+            console.log( 'UPDATED DATA' );
+        }
+    });
+}
+
+
 function update_pedido( flag = null ){
     if( pedido.estatus_codigo != '250-EN-PROCESO' ){
       // return;
@@ -383,6 +476,7 @@ function update_pedido( flag = null ){
 
     revisa_stock();
     $( '[total_productos]' ).attr( 'total_productos', pedido.data.total ).html( Moneda.format( pedido.data.total ) );
+    $( '[total_entrega]' ).html( Moneda.format( total_entrega ) );    
 
     total_productos = parseFloat( $( '[total_productos]' ).attr( 'total_productos' ) );
     total_entrega   = parseFloat( $( '[total_entrega]' ).attr( 'total_entrega' ) );
@@ -391,7 +485,6 @@ function update_pedido( flag = null ){
 
     if( gran_total < 0 ) gran_total = 0;
 
-    $( '[total_entrega]' ).html( Moneda.format( total_entrega ) );    
     $( '[gran_total]' ).attr( 'gran_total', gran_total ).html( Moneda.format( gran_total ) );
 
     var subtotal = parseFloat( $( '[gran_total]' ).attr( 'gran_total' ) ),
@@ -519,7 +612,6 @@ function update_pedido( flag = null ){
 }
 
 
-
 function show_modal_productos( promocion ){
     $( '#modal_productos div[producto]' ).attr( 'activo', 'false' ).hide();
     $( '#busca_producto' ).val( '' );
@@ -601,7 +693,6 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
 }
 
 
-
 function get_orden_next( promocion ){
     var next = 0;
 
@@ -614,6 +705,7 @@ function get_orden_next( promocion ){
 
     return next + 1;
 }
+
 
 function lightbox( image_href ){
 
@@ -639,12 +731,30 @@ function lightbox( image_href ){
     return false;
 }
 
+
+function update_variantes(){
+    $( '.variante_productos' ).each( function(){
+        var value = parseInt( $( this ).val() );
+
+        if( value > 0){
+            $( this ).addClass( 'is-valid' ).removeClass( 'opacity-50' );
+        }
+        else{
+            $( this ).removeClass( 'is-valid' ).addClass( 'opacity-50' );
+        }
+    })
+}
+
 var pendientes = 0;
-
-
 
 $(document).ready(function()
 { 
+    $( '.variante_productos' ).on( 'change', function(){
+        update_variantes();
+    }).on( 'keyup', function(){
+        update_variantes();
+    });
+
     $( '.limitado' ).on( 'blur', function(){
         var value = parseInt( $( this ).val() ),
             min   = $( this ).attr( 'min' ) ?? 0;
@@ -971,4 +1081,10 @@ $(document).ready(function()
     $( '#open_checkout' ).on( 'click', function(){
         $( '#modal_checkout' ).modal( 'show' );
     });
+
+    update_variantes();
+
+    if( update_productos ){
+        update_costos();
+    }    
 });

@@ -98,9 +98,19 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Ver detalles de un pedido o entrar a la tienda en l  nea
+     * 
+     * @param string $tipo Tipo de entrada (pedido o tienda)
+     * @param string $data Referencia del pedido o c digo del modelo
+     * 
+     * @return void
+     */
     public function carrito( $tipo, $data )
     {
         $this->data[ "navbar" ] = true;
+
+        $this->data[ "update_productos" ] = $this->session->getFlashdata( "update_productos" ) ? 1 : 0;
 
         // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
@@ -309,6 +319,13 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Saves a pedido object to the database.
+     *
+     * This method retrieves a JSON-encoded pedido object from the POST request,
+     * decodes it, and saves it to the database using the PedidoModel. 
+     * It returns a JSON-encoded response indicating success.
+     */
     public function save_pedido()
     {
         model( "PedidoModel" )->save( json_decode( $this->request->getPost( "json" ) ) );
@@ -316,6 +333,14 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Re-calcula comisiones de un pedido.
+     * 
+     * Verifica permisos de administrador o ingreso y actualiza los datos del socio, 
+     * recalcula los puntos de la promoci n y actualiza el estatus del socio.
+     * 
+     * @return void
+     */
     public function reparte()
     {
         if( 
@@ -372,6 +397,13 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Actualiza la fecha de calificaci n de un pedido en la base de datos y recalcula puntos de la promoci n.
+     * 
+     * Verifica permisos de administrador o ingreso y actualiza los datos del socio, recalcula los puntos de la promoci n y actualiza el estatus del socio.
+     *
+     * @return void
+     */
     public function cambia_fecha()
     {
         if( 
@@ -418,6 +450,14 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Changes the status of a pedido to allow editing.
+     *
+     * This method checks if a pedido is in the "255-PENDIENTE" status and if the user
+     * has the necessary permissions to change its status to "250-EN-PROCESO". If the
+     * conditions are met, the status is updated and a record is added to the bitacora.
+     * Finally, it redirects to the pedido's page.
+     */
     public function cambia_edicion()
     {
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
@@ -442,6 +482,15 @@ class Pedidos extends BaseController
 
 
 
+    /**
+     * Cancela un pedido en la base de datos y recalcula los puntos y comisiones de la promoci n.
+     * 
+     * Verifica permisos de administrador, ingreso o ser el due o del pedido para cancelar el pedido.
+     * Si se cumple, actualiza el estatus del pedido a "150-CANCELADO", agrega una fecha de cancelaci n y
+     * recalcula los puntos y comisiones de la promoci n. Finalmente, redirige a la p gina del pedido.
+     * 
+     * @return void
+     */
     public function cancela_pedido()
     {
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
@@ -484,6 +533,14 @@ class Pedidos extends BaseController
     }    
 
 
+    /**
+     * Updates the tracking guide number for a specific pedido.
+     *
+     * This method retrieves the pedido using the provided ID and checks if the user has the necessary 
+     * permissions (either "40-ADMIN" or "25-PAQUETERIA"). If the permissions are valid, it updates the 
+     * tracking guide number with the new value provided in the request. It then saves the updated pedido 
+     * and logs the change in the bitacora. Finally, it redirects to the pedido's page with a success message.
+     */
     public function edita_guia()
     {
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
@@ -513,6 +570,13 @@ class Pedidos extends BaseController
     } 
 
     
+    /**
+     * Updates the delivery point of a pedido.
+     *
+     * This method checks if the current user has the necessary permissions to edit the delivery point 
+     * of a pedido. If authorized, it updates the pedido with the new almacen code and delivery commission.
+     * It logs the change in the bitacora and redirects to the pedido's page with a success message.
+     */
     public function edita_almacen()
     {
         $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
@@ -547,6 +611,13 @@ class Pedidos extends BaseController
     } 
     
 
+    /**
+     * Processes a payment of a pedido.
+     *
+     * This method uses the "fondeo" method of the current user to process the payment of a pedido.
+     * It sends the pedido ID, the payment method code and the amount to pay as parameters.
+     * It then prints out the result of the fondeo method.
+     */
     public function fondeo()
     {
         extract( $this->request->getPost() );
@@ -698,6 +769,12 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Muestra el formulario para realizar el pago de un pedido
+     *
+     * @author Jose Carlos Campos Garcia
+     * @return void
+     */
     public function checkout()
     {
         $this->data[ "metodopago" ] = model( "MetodopagoModel" )->find( $this->request->getPost( "metodopago" ) );
@@ -845,7 +922,19 @@ class Pedidos extends BaseController
     } 
 
     
-    public function txhash(){
+    /**
+     * Processes a transaction hash for a user's order and updates the payment status.
+     *
+     * This function retrieves and validates a transaction hash from the user input.
+     * It verifies the transaction details using an external endpoint, and checks if 
+     * the transaction is confirmed, properly directed, and not previously registered.
+     * If valid, it updates the order and user records accordingly, handles any 
+     * applicable balance updates, and logs the transaction.
+     *
+     * @return void
+     */
+    public function txhash()
+    {
         $hash = $this->request->getPost( "hash" );
 
         $respuesta = [
@@ -1140,6 +1229,115 @@ class Pedidos extends BaseController
         }
 
         echo json_encode( $respuesta, JSON_PRETTY_PRINT );
+    }
+
+
+    /**
+     * Modifies the products in an existing order based on user input.
+     *
+     * This function retrieves the order and product change requests from the POST data,
+     * updates the product quantities in the order, and logs any changes.
+     * It loads relevant product and promotion catalogs, compares the new quantities
+     * with the existing ones, identifies changes, and updates the order accordingly.
+     * If any changes are detected, they are recorded in the system's change log (bitacora).
+     * Finally, it redirects the user to the updated order page.
+     *
+     * @return void
+     */
+    public function modifica_productos()
+    {
+        $pedido  = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
+        $request = $this->request->getPost( "productos" );
+        $modelo  = $pedido[ "modelo_codigo" ];
+
+        load_catalogo( "productos",   "modelo_codigo = '{$modelo}'");
+        load_catalogo( "promociones", "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
+
+        $cambios = [];
+
+        foreach( PROMOCIONES as $promocion => $data_promocion ){
+
+            $cuenta_nuevos = array_sum( $request[ $promocion ] ?? [] );
+            $cuenta_anteriores = 0;
+
+            $pts   = 0;
+            $total = 0;
+
+            $pedido[ "PTS" ][ $promocion ] = 0;
+
+            foreach( PRODUCTOS as $producto => $data_producto ){
+                $cuenta_anteriores += intval( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ][ "cantidad" ] ?? 0 );
+            }
+
+            if( $cuenta_nuevos || $cuenta_anteriores ){
+
+                foreach( PRODUCTOS as $producto => $data_producto ){
+                    $cuenta_anterior = intval( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto][ "cantidad" ] ?? 0 );
+                    $cuenta_nueva    = intval( $request[ $promocion ][ $producto ] ?? 0 );
+                    
+                    if( $cuenta_anterior != $cuenta_nueva ){
+
+                        // Aquí van los cambios
+                        $cambios[] = [
+                            "promocion" => $promocion,
+                            "producto"  => $producto,
+                            "anterior"  => $cuenta_anterior,
+                            "nuevo"     => $cuenta_nueva
+                        ];
+                        
+                        if( !isset( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] )){
+                            $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] = [
+                                "orden" => sizeof( $pedido[ "promociones" ][ $promocion ][ "productos" ] ) + 1,
+                                "nombre" => $data_producto[ "data" ][ "nombre" ],
+                                "precio" => $data_producto[ "data" ][ "nombre" ],
+                                "puntos" => null,
+                                "reparte" => null,
+                                "cantidad" => null,
+                                "descripcion" => $data_producto[ "data" ][ "descripcion" ],
+                                "comisionable" => null
+                            ];
+                        }
+
+                        $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ][ "cantidad" ] = $cuenta_nueva;
+                    }
+
+                    if( isset( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] ) && $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ][ "cantidad" ] == 0 ){
+                        unset( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] );
+                    }
+
+                    // Actualiza puntos
+                    if( $cuenta_nueva > 0 ){
+                        $pt = ( $cuenta_nueva * ( $data_producto[ "data" ][ "puntos" ][ $promocion] ?? 1 ) );
+                        $pts += $pt;
+
+                        $total += $cuenta_nueva;
+                    }
+                }
+
+                $pedido[ "PTS" ][ $promocion ] = $pts;
+            }
+        }
+
+        $pedido[ "data" ][ "productos" ] = $total;
+
+        // Actualizar pedido
+        model( "PedidoModel" )->save( $pedido );
+
+        if( sizeof( $cambios ) ){
+
+            $this->session->setFlashdata( "update_productos", true );
+
+            // BITACORA Modificar productos en pedido
+            bitacora( 92, $this->data[ "usuario" ]->id, [ 
+                "pedido"   => $pedido[ "id" ],
+                "cambios"  => $cambios
+            ] );            
+        }
+
+        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se han actualizado los productos del pedido" ] ); 
     }
 }
 

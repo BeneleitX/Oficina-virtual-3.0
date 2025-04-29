@@ -90,6 +90,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "cambia_edicion",                    "Pedidos::cambia_edicion" ); 
     $routes->post( "carga_csf_pedido",                  "Pedidos::carga_csf" );
     $routes->post( "txhash",                            "Pedidos::txhash" );
+    $routes->post( "modifica_productos",                "Pedidos::modifica_productos" );
 
     $routes->get( "eventos",                            "Eventos::listado" );
     $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
