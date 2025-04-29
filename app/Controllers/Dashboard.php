@@ -159,13 +159,15 @@ class Dashboard extends BaseController
      * 
      * @return string HTML con la info de los patrocinadores
      */
-    public function load_padres(){
+    public function load_padres()
+    {
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
             return redirect()->to( "no_permiso" ); 
         }
 
         $html = "";
         $pats = $this->request->getPost( "patrocinador" );
+        $usr  = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) );
         
         foreach( MODELOS as $m ){
             $pat  = model( "UsuarioModel" )->find( $pats[ $m[ "codigo" ] ] );
@@ -174,8 +176,18 @@ class Dashboard extends BaseController
                 $pat2 = $pat;
                 $pat2->valida_modelo();
 
-                while( substr( $pat2->data->estatus->modelos->{$m[ "codigo" ]}, 0, 3 ) < 200 ){
-                    $pat2 = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
+                $f_pat = $pat2->get_reset( $m[ "codigo" ] );
+                $f_usr = $usr->get_reset( $m[ "codigo" ] );
+
+                while( substr( $pat2->data->estatus->modelos->{$m[ "codigo" ]}, 0, 3 ) < 200 || $f_pat > $f_usr ){
+                    $patx = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
+
+                    if( $patx ){
+                        $pat2 = $patx;
+                        $pat2->valida_modelo();
+
+                        $f_pat = $pat2->get_reset( $m[ "codigo" ] );
+                    }
                 }
 
                 $html .= "<td class=\"text-center\" width=\"20%\"><div class=\"py-3\">".$pat2->avatar(80)."</div><h5 class=\"mb-1\">".$pat2->id( $m[ "codigo" ], null, false )."</h5><span class=\"small text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td>";
@@ -190,7 +202,17 @@ class Dashboard extends BaseController
     }
 
 
-    public function cambia_patrocinador(){
+    /**
+     * Función para cambiar el patrocinador de un socio en cada unidad de negocio.
+     * 
+     * Se llama desde el dashboard de un socio, y se encarga de cambiar el 
+     * patrocinador de un socio en cada unidad de negocio y de actualizar los 
+     * estatus de un socio en cada unidad de negocio.
+     * 
+     * @return void
+     */
+    public function cambia_patrocinador()
+    {
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
             return redirect()->to( "no_permiso" ); 
         }
@@ -230,7 +252,19 @@ class Dashboard extends BaseController
     }
 
 
-    public function update_lock(){
+    /**
+     * Update lock
+     *
+     * - Si el socio no tiene permiso de red, redirige a no_permiso
+     * - Si el socio existe, obtiene los bloqueos por modelo
+     * - itera por todos los modelos y aplica el bloqueo o lo quita segun sea el caso
+     * - si se quita el bloqueo, comprime la red
+     * - actualiza el estatus del socio
+     * - redirige a la ruta del socio
+     * - si el socio no existe, redirige a usuarios
+     */
+    public function update_lock()
+    {
         if( !$this->data[ "usuario" ]->permiso( "41-RED" ) ){
             return redirect()->to( "no_permiso" ); 
         }
@@ -293,8 +327,17 @@ class Dashboard extends BaseController
     }
 
 
-
-    public function update_sociodata(){
+    /**
+     * Actualiza los datos del socio, actualizando tanto el usuario como sus datos.
+     * 
+     * Si el usuario no tiene permiso de edici n, se redirige a "no_permiso".
+     * 
+     * @param int $id El ID del socio a editar
+     * 
+     * @return void
+     */
+    public function update_sociodata()
+    {
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
             return redirect()->to( "no_permiso" ); 
@@ -351,7 +394,13 @@ class Dashboard extends BaseController
     }
 
 
-    public function save_layout(){
+    /**
+     * Guarda la posici n de un bloque de dashboard en el usuario que est  logueado.
+     * 
+     * @return void
+     */
+    public function save_layout()
+    {
         $bloque = $this->request->getPost( "bloque" );
 
         $json = $this->data["usuario"]->data;
@@ -367,7 +416,13 @@ class Dashboard extends BaseController
     }
 
 
-    public function splash(){
+    /**
+     * Splash de bienvenida o celebraci n de un logro del usuario.
+     * 
+     * @return string html para la modal de bienvenida o celebraci n.
+     */
+    public function splash()
+    {
         $html = "";
         extract( $this->request->getPost() );
         $parametros = json_decode( $parametros );
@@ -701,7 +756,13 @@ class Dashboard extends BaseController
     }
 
 
-    public function niveles_gas(){
+    /**
+     * Muestra los paquetes vendidos por el socio en la ultima semana y en la semana actual
+     * 
+     * @return void
+     */
+    public function niveles_gas()
+    {
         $db = db_connect();
 
         $matriz = [
@@ -749,9 +810,20 @@ class Dashboard extends BaseController
         echo json_encode( $matriz );
     }
 
-
     
-    public function bolsa_inversiones(){
+    /**
+     * Calculates and displays the total investment amount for the current user.
+     *
+     * This function connects to the database, retrieves investment data for the
+     * current month using a stored procedure, and sums up the investment amounts
+     * for eligible users based on their status and level. If the current user's 
+     * monthly investment cut-off is not set, it checks for leadership bonuses. 
+     * Finally, it outputs the total investment amount in USD format.
+     *
+     * @return void
+     */
+    public function bolsa_inversiones()
+    {
         $db      = db_connect();
         $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
         $ps      = $db->query( $sql )->getResult();
@@ -773,7 +845,21 @@ class Dashboard extends BaseController
         echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
     }
 
-    public function datos_moviles(){
+
+    /**
+     * Shows the mobile numbers associated with the current user.
+     *
+     * This function sends a GET request to the Beneleit API with the user's token
+     * and retrieves the user's mobile numbers. It then displays the numbers in a
+     * table, with the plan name, number, and expiration date.
+     *
+     * If there are no mobile numbers associated with the user, it displays a message
+     * saying so.
+     *
+     * @return string The HTML code for the table or message.
+     */
+    public function datos_moviles()
+    {
         $token = $this->request->getPost( "token" );
         $html = "<span class=\"badge bg-red\">{$token}</span>";
 
@@ -838,7 +924,23 @@ class Dashboard extends BaseController
     }
 
 
-    public function revisa_bono_liderazgo( $usuario, $ps, $mes ){
+    /**
+     * Calculates the leadership bonus for a user based on their direct partners and the seed values.
+     *
+     * This function iterates over a list of partners, checking if they meet certain criteria
+     * related to their level, seed, status, and activation date. It calculates the number of 
+     * direct partners and the total seed value. Based on the number of direct partners, a 
+     * leadership bonus multiplier is determined. It then checks if a commission record already 
+     * exists for the user for the given month, and if not, it inserts a new commission record 
+     * with the calculated bonus. The user's investment history is updated with the details for 
+     * the month.
+     *
+     * @param object $usuario The user object containing user details and history.
+     * @param array $ps A list of partner objects to evaluate.
+     * @param string $mes The month for which the bonus is being calculated, in the format 'YYYY-MM'.
+     */
+    public function revisa_bono_liderazgo( $usuario, $ps, $mes )
+    {
         $directos = 0;
         $bolsa    = 0;
         
@@ -904,7 +1006,18 @@ class Dashboard extends BaseController
     }
 
 
-    public function temp_update(){ 
+    /**
+     * Funci n temporal para actualizar el campo hash en la tabla de usuarios
+     * 
+     * Lee la tabla de usuarios y para cada usuario activo con password, 
+     * descifra el campo password y calcula el hash md5 de la cadena 
+     * original. Guarda el hash en el campo hash dentro del json de la tabla
+     * de usuarios
+     * 
+     * @return void
+     */
+    public function temp_update()
+    { 
 
         $db  = db_connect();
         $sql = "select id, password from t_usuarios where estatus_codigo = '201-ACTIVO' and password is not null";
