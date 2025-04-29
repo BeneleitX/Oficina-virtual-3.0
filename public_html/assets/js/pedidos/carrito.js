@@ -476,13 +476,14 @@ function update_pedido( flag = null ){
 
     revisa_stock();
     $( '[total_productos]' ).attr( 'total_productos', pedido.data.total ).html( Moneda.format( pedido.data.total ) );
-    $( '[total_entrega]' ).html( Moneda.format( total_entrega ) );    
 
     total_productos = parseFloat( $( '[total_productos]' ).attr( 'total_productos' ) );
     total_entrega   = parseFloat( $( '[total_entrega]' ).attr( 'total_entrega' ) );
     total_saldo     = parseFloat( $( '[total_saldo]' ).attr( 'total_saldo' ) );
     gran_total      = total_productos + total_entrega - total_saldo ;
 
+    $( '[total_entrega]' ).html( Moneda.format( total_entrega ) );    
+    
     if( gran_total < 0 ) gran_total = 0;
 
     $( '[gran_total]' ).attr( 'gran_total', gran_total ).html( Moneda.format( gran_total ) );
