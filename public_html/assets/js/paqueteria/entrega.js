@@ -199,6 +199,6 @@ $(document).ready(function(){
     });
 
     if( problema ){
-        $( '#boton_entregado_no' ).html( 'hay un problema con la configuración de este pedido' );
+      //  $( '#boton_entregado_no' ).html( 'hay un problema con la configuración de este pedido' );
     }      
 });
