@@ -55,8 +55,10 @@
             </div>
         </div>
 
+        <?php $cp = 0; foreach( $pedido[ "productos" ] as $p => $c ) $cp+= $c; ?>
+
         <h1 class="text-center">
-            <button disabled class="btn btn-lg my-5 btn-danger" id="boton_entregado_no"><span id="productos_conteo">0</span> productos de <?php echo $pedido[ "data" ][ "productos" ]; ?></button>
+            <button disabled class="btn btn-lg my-5 btn-danger" id="boton_entregado_no"><span id="productos_conteo">0</span> productos de <?php echo $cp; ?></button>
             
             <div id="boton_entregado_si" style="display:none">
                 
@@ -73,7 +75,7 @@
 
     <div class="col-lg-6">
 
-        <?php $cp = 0; foreach( $pedido[ "productos" ] as $p => $c ){ $cp+= $c; ?>
+        <?php foreach( $pedido[ "productos" ] as $p => $c ){ ?>
         <div class="card mb-3">
             <div class="card-header" producto="<?php echo $p; ?>" cantidad="<?php echo $c; ?>">
                 <div class="row">
