@@ -326,7 +326,7 @@ if( sizeof( $inversiones ) && $p->data->porcentaje != 9 ){
 
                     <?php if( session( "admin" ) || ( isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ) ) { ?>
                         <div class="modal-footer">
-                            <button type="submit" name="submit_socio" value="1" class="btn btn-light my-2" disabled id="confirma_agregar">Programar retiro</button>
+                            <button type="submit" name="submit_socio" value="1" class="btn btn-outline-danger my-2" disabled id="confirma_agregar">Programar retiro</button>
                         </div>
                     <?php } ?>
                 </form>
