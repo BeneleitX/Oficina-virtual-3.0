@@ -73,7 +73,7 @@ function ask_retiro( inversion ){
     $( '#cantidad_1' ).val( mes );
     $( '#cantidad_2' ).val( parseFloat( rendimiento ) );
     $( '[name=opciones_retiro]' ).prop( 'checked', false );
-    $( '#confirma_agregar' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
+    $( '#confirma_agregar' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-light' );
     $( '#stock_modal' ).modal( 'show' );
 }
 
@@ -141,7 +141,7 @@ $(document).ready(function(){
             $( '#cantidad_3' ).keyup();
         }
         else{
-            $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-danger' ).addClass( 'btn-success' );
+            $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-light' ).addClass( 'btn-success' );
         }
 
 
@@ -151,10 +151,10 @@ $(document).ready(function(){
         var total = $( this).val();
 
         if( parseFloat( $( '#cantidad_3' ).val() ) > 0 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
-            $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-danger' ).addClass( 'btn-success' );
+            $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-light' ).addClass( 'btn-success' );
         }
         else{
-            $( '#confirma_agregar' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
+            $( '#confirma_agregar' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-light' );
         }
         
     });
