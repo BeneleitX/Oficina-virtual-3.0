@@ -93,10 +93,10 @@ function randomInRange(min, max) {
             $_controller = explode("\\", $router->controllerName()); 
 
             $mainscript = "assets/js/beneleit.js";
-            if(file_exists( $mainscript )) echo "<script src=\"".base_url().$mainscript."?".filemtime( $mainscript )."\"></script>";
+            if(file_exists( $mainscript )) echo "<script src=\"".base_url().$mainscript."?1".filemtime( $mainscript )."\"></script>";
 
             $includescript = "assets/js/".strtolower( $_controller[3] )."/".strtolower( $_method ).".js";      
-            if(file_exists( $includescript )) echo "<script src=\"".base_url().$includescript."?".filemtime( $includescript )."\"></script>"; 
+            if(file_exists( $includescript )) echo "<script src=\"".base_url().$includescript."?1".filemtime( $includescript )."\"></script>"; 
         ?>
 
     </body>
