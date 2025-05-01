@@ -860,9 +860,10 @@ class Dashboard extends BaseController
      */
     public function datos_moviles()
     {
-        $token = $this->request->getPost( "token" );
         $html = "<span class=\"badge bg-red\">{$token}</span>";
 
+        $token = $this->request->getPost( "token" );
+    
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, "https://core.beneleit.talentonet.com/api/beneleit/resumen_servicios?token=".$token );
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
