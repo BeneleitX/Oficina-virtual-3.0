@@ -546,7 +546,7 @@ class Capital extends BaseController
         $bt   = balance_inversion( $i );
 
         $retiro = [
-            $bt[ "rendimiento_mes" ], 
+            $bt[ "rendimiento_mes_total"], 
             $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] < date( "Ym" ) ? $bt[ "total" ] : $bt[ "finmes" ], 
             floatval( $this->request->getPost( "custom" ) )
         ];
@@ -569,34 +569,45 @@ class Capital extends BaseController
                 ]
             ];
 
+            $where = "inversion_id = {$i[ "id" ]} and substring( estatus_codigo, 1, 3 ) > 200 and json_unquote( json_extract( fechas, '$.mes' ) ) = '{$this->request->getPost( "mes_apply" )}'";
 
-            model( "RetiroModel" )->save( $retiro_add );
-            $id = model( "RetiroModel" )->insertID();
+            $existe = model( "RetiroModel" )->where( $where )->find();
 
-            $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
-            model( "InversionModel" )->save( $i );
+            if( !$existe ){
+                model( "RetiroModel" )->save( $retiro_add );
+                $id = model( "RetiroModel" )->insertID();
 
-            // redirect para refresh
+                $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+                $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+                model( "InversionModel" )->save( $i );
 
-            // BITACORA Crea solicitud de retiro
-            bitacora( 86, $this->data[ "usuario" ]->id, [ 
-                "socio"     => $i[ "usuario_id" ],
-                "inversion" => $i[ "id" ],
-                "retiro"    => $id,
-                "mes"       => $this->request->getPost( "mes_apply" ),
-                "cantidad"  => $retiro[ $tipo -1 ],
-                "requested" => [
-                    $this->request->getPost( "mes" ),
-                    $this->request->getPost( "total" ),
-                    $this->request->getPost( "custom" )
-                ]
-            ] );
-            
-            return redirect()->to( "capital" )->with( "msg", [ 
-                "clase" => "success", 
-                "icono" => "check", 
-                "texto" => "Se generó solicitud de retiro" ] );  
+                // redirect para refresh
+
+                // BITACORA Crea solicitud de retiro
+                bitacora( 86, $this->data[ "usuario" ]->id, [ 
+                    "socio"     => $i[ "usuario_id" ],
+                    "inversion" => $i[ "id" ],
+                    "retiro"    => $id,
+                    "mes"       => $this->request->getPost( "mes_apply" ),
+                    "cantidad"  => $retiro[ $tipo -1 ],
+                    "requested" => [
+                        $this->request->getPost( "mes" ),
+                        $this->request->getPost( "total" ),
+                        $this->request->getPost( "custom" )
+                    ]
+                ] );
+                
+                return redirect()->to( "capital" )->with( "msg", [ 
+                    "clase" => "success", 
+                    "icono" => "check", 
+                    "texto" => "Se generó solicitud de retiro" ] );   
+            }
+            else{
+                return redirect()->to( "capital" )->with( "msg", [ 
+                    "clase" => "warning", 
+                    "icono" => "warning", 
+                    "texto" => "Ya existe un retiro programado, no es posible crear solicitud" ] );   
+            }
         }
         else{
             return redirect()->to( "capital" );

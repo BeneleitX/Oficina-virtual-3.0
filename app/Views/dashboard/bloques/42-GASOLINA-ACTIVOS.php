@@ -3,7 +3,7 @@ $mes = date( "Ym" );
 
 if( !isset( $usuario->data->estatus->modelos->{"40-GASOLINAS"} ) ) $usuario->valida_modelo();
 $estatus = substr( $usuario->data->estatus->modelos->{"40-GASOLINAS"}, 0, 1);
-$calificacion = substr( $cx[ "40-GASOLINAS" ][ "m_0" ], 0, 1 );
+$calificacion = substr( $cx[ "40-GASOLINAS" ][ "m_1" ], 0, 1 );
 
 $tarjeta = [
     "compra"  => strlen( $usuario->historial->modelos->{"40-GASOLINAS"}->primercompra->{"412-TARJETA"} ?? "" ),

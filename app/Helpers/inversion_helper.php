@@ -254,6 +254,7 @@ function balance_inversion( $i, $fecha = null ){
                 }
 
                 $respuesta[ "rendimiento_mes" ] = $j[ "rendimiento_mes" ];
+                $respuesta[ "rendimiento_mes_total" ] = $j[ "rendimiento_mes" ];
                 $respuesta[ "suma" ]           += $j[ "rendimiento_mes" ];
                 $respuesta[ "rendimiento" ]     = $j[ "compuesto" ] + $respuesta[ "rendimiento_mes" ];
                 $respuesta[ "retiros" ]        += $j[ "retiros" ];
@@ -275,6 +276,7 @@ function balance_inversion( $i, $fecha = null ){
             }
 
             $respuesta[ "rendimiento_mes" ] = ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "rendimiento_mes_total" ] = $j[ "rendimiento_mes" ];
             $respuesta[ "retiros" ]        += $j[ "retiros" ];
             $respuesta[ "suma" ] += ( $j[ "rendimiento_dia" ] * $dias );
             $respuesta[ "compuesto" ] = $j[ "compuesto" ];
