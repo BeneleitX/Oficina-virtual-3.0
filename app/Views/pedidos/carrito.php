@@ -1060,7 +1060,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                         </div> 
                                                 <div class=\"row\">";
 
-                                        $promo =  $pedido[ "promociones" ][ $p[ "codigo" ] ];
+                                        $promo =  $pedido[ "promociones" ][ $p[ "codigo" ] ] ?? [];
 
                                         foreach( $productos as $producto ){
                                             if( in_array( $producto->codigo, $p[ "productos" ][ "elegibles" ] ) ){   
