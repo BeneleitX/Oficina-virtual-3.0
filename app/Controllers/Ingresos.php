@@ -81,6 +81,10 @@ class Ingresos extends BaseController
         $ft = date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( date( "Y-m-d" )." + 1 day" ) )." last Monday" ) );
         $this->data[ "fecha_max" ] = $modelo[ "codigo" ] == "50-INVERSION" ? $db->query( $sql )->getRow()->fecha ?? $ft : $ft;
 
+        if( $this->data[ "fecha_max" ] < $ft ){
+            $this->data[ "fecha_max" ] = $ft;
+        }
+
         $sql = "SELECT esquema.codigo as esquema
         FROM t_esquemas esquema 
         WHERE esquema.modelo_codigo = '{$modelo[ "codigo" ]}' 
