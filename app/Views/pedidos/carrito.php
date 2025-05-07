@@ -202,7 +202,7 @@
                 }
             }
 
-            $domicilios = $socio->getDomicilios();
+            
             $celulares  = $socio->getCelulares();
 			?>
 		</div>

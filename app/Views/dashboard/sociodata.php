@@ -189,7 +189,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                 case "PAQUETERIA":
                                     $domicilios = $socio->getDomicilios( false, true );
 
-                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".( intval( $p[3] == 0 ) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
+                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".( intval( $p[3] ?? 0) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
                                     break;
 
                                 case "CELULAR":

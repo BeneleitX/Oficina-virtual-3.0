@@ -171,6 +171,8 @@ class Pedidos extends BaseController
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
 
+            $this->data[ "domicilios" ] = $this->data[ "socio" ]->getDomicilios( false, true);
+
             $sql = "modelo_codigo = '{$modelo}' OR data->'$.universal' = true";
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
@@ -188,6 +190,8 @@ class Pedidos extends BaseController
             $sql    = "{$activo} AND ( modelo_codigo = '{$modelo}' OR data->'$.universal' = true )";
 
             $this->data[ "socio" ]     = $this->data[ "usuario" ];
+            $this->data[ "domicilios" ] = $this->data[ "socio" ]->getDomicilios();
+
             $this->data[ "pagado" ]    = 0;
             $this->data[ "enproceso" ] = 1;
             $this->data[ "bloqueado" ] = 0;
