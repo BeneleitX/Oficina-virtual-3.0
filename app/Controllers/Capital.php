@@ -982,4 +982,13 @@ class Capital extends BaseController
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
     }    
+
+
+    public function rangos_inversion()
+    {
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Rangos de liderazgo en Capital24";
+
+        echo template( "capital/rangos_inversion", $this->data );
+    }
 }

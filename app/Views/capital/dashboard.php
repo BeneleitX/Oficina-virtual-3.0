@@ -1,6 +1,28 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
+<div class="row">
+    <div class="col-4">
+    <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+
+    </div>
+
+    <div class="col-8 text-end pt-2 pb-4">
+
+        <table align="right"><tr><td>
+            <?php
+            $directos = $usuario->getDirectosActivos( "50-INVERSION" );
+            $rango    = $usuario->getRangoInversion( sizeof( $directos ) );
+            ?>
+            <h5 style="line-height:0" class="m-0">
+                <img src="<?php echo base_url()."assets/img/rangos/".$rango[ "codigo" ]; ?>.png" style="width:50px" alt="">
+                <?php echo $rango[ "nombre" ]; ?>
+            </h5>
+        </td><td nowrap>
+            &nbsp; <a class="btn btn-primary" href="<?php echo base_url( "rangos_inversion" ); ?>"><i class="fa fa-magnifying-glass"></i> Detalles de rangos</a>
+        </td></tr></table>
+    </div>
+</div>
+
 
 <script> var chart = []; </script>
 <?php 

@@ -177,7 +177,8 @@ function estatus( $codigo, $bn = false ){
 }
 
 
-function fecha( $fecha, $tipo = "normal" ){
+function fecha( $fecha, $tipo = "normal" )
+{
     $f = explode( "-", $fecha );
 
     switch( $tipo ){
@@ -186,6 +187,9 @@ function fecha( $fecha, $tipo = "normal" ){
             break;
         case "cumple":
             return substr( $f[2], 0, 2 )." de ".mes( $f[ 1 ] );
+            break;
+        case "mes":
+            return mes( $f[ 1 ] )." ".$f[ 0 ];
             break;
     }
 }
@@ -222,7 +226,8 @@ function mes($mesnum, $ext = 0)
     return $mespal;
 }
 
-function aplicaImpuestos( $cantidad, $tipo, $fecha = null, $modelo = null ){
+function aplicaImpuestos( $cantidad, $tipo, $fecha = null, $modelo = null )
+{
     if( !$fecha ){
         $fecha = date( "Y-m-d" );
     }
@@ -382,7 +387,8 @@ function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
 }
 
 
-function random( $tipo ){
+function random( $tipo )
+{
     switch( $tipo ){
         case "nombre" : 
             $datos = [ "EBLING", "SELENE CITLALI", "CHRISTIAN DANIEL", "MONSERRAT ALEJANDRA", "DORIS DE LOS ANGELES", "OLGA ANGELICA", "ANGEL EDUARDO", "EMMANUEL ALEXANDRO", "CARMELO", "FERNANDO ISRAEL", "DULCE BELEN", "LUZ ANDREA", "LOURDES GUADALUPE", "FRANCISCO DANIEL", "JULIA ESTELA", "BLANCA AMALIA", "MA.ANGELICA", "DAMARIS MARIEL", "MARIA VERONICA", "JOSE FAUSTINO VICTOR", "MARIA SANTOS SIRENIA MARGARITA", "ANDRES IVAN", "HUGO JAVIER", "CHRISTIAN JOSUE", "ZURI SADAI", "ALAN JOSE AUGUSTO", "ELIBERTHA", "ALMA REGINA", "FELIX RICARDO", "ERIKA IRENE", "ORQUIDEA MARISU", "LUIS JESUS", "JESUS GUILLERMO", "ELIA BEATRIZ", "JOSELIN XIOMARA", "MARIFER", "CLAUDIA EDITH", "M. IRENE", "WILLIAM MANUEL", "CLAUDIA ELENA", "JOSE MAR", "BRAYAN SAMUEL", "ROSA ESTELA", "MARIA DEL CARMEN YOANCY", "JOSE ROGELIO", "CRISTO ALBERTO", "ANGEL ALEJANDRO", "JOVANNI", "MA. CONCEPCION", "OSCAR EMANUELLE", "MARIO ENRIQUE", "OSCAR JAIR", "ANA YELLY", "YANETH DEL CARMEN", "FERMIN", "GABINA MARGARITA", "MA. TELMA", "MARIA ARACELI", "SAMANTHA", "JEFTE", "CRISTOBAL", "PASCUAL EVELIO", "MARIA APOLONIA", "VIVIANA", "MARIA ROSALVA", "ALBA ALEJANDRA", "DRYSDEL JOSE", "MARIA NOHEMI", "CARLOS PEDRO", "TERESA JOVITA", "OSWALDO DANIEL", "AUSTREBERTO JORGE", "DARYLUZ", "GERTRUDIS", "VERONICA LIZETH", "S. TERESA", "JULIO ALBERTO", "CRISTOPHER", "JOSE JAVIER", "NORA LINDA", "CASTULA", "PATRICIA DE JESUS", "MA DE LA SOLEDAD", "DAGOBERTO", "ANA ISABEL", "DULCE SOLEDAD", "MA.ELENA", "ERNESTO DE JESUS", "ETELVINA LEONOR", "JOSU", "FORTUNATA", "VANESSA IVONNE", "DARWIN", "AURORA EMELIA", "SALVADOR GUADALUPE", "SANDRA KARINA", "CESAR ANTONIO", "MARIA GRICELDA", "EMANUEL GUADALUPE", "KARLA MARIANA" ]; 
@@ -399,7 +405,8 @@ function random( $tipo ){
 }
 
 
-function marca( $queries, $texto, $case = null ){
+function marca( $queries, $texto, $case = null )
+{
     $replaces = [];
     $colores  = [
         "yellow",
@@ -433,12 +440,14 @@ function marca( $queries, $texto, $case = null ){
 }
 
 
-function tarjeta( $tarjeta ){
+function tarjeta( $tarjeta )
+{
     return substr($tarjeta, 0, 4).substr($tarjeta, 5, 4)."0 ".substr($tarjeta, 11, 3).substr($tarjeta, 15, 4);
 }
 
 
-function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
+function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' )
+{
     if( null == $fecha ){
         $fecha = date( "Y-m-d" );
     }
@@ -453,18 +462,21 @@ function codigo_periodo( $modelo, $fecha = null, $tipo = 'SEMANAL' ){
 }
 
 
-function periodo( $periodo ){
+function periodo( $periodo )
+{
     return substr( $periodo, 7, 2 )."-".substr( $periodo, 3, 4 );
 }
 
 
-function get_datos($month, $year, $day, $x = 1){
+function get_datos($month, $year, $day, $x = 1)
+{
     $a = mktime(0,0,0,$month, $day, $year);
     return str_pad((date("W", $a)+$x),2,"0",STR_PAD_LEFT)."-".date("o", $a);
 }
 
 
-function calendario_semanas($month, $year, $comisiones){
+function calendario_semanas($month, $year, $comisiones)
+{
     $headings = ["L","M","M","J","V","S", "D"];
 
     $max  = max($comisiones);
@@ -559,8 +571,8 @@ function dia($dianum, $ext = 0)
 }
 
 
-
-function pills( $ruta, $activo, $callback = null, $extra = null ){
+function pills( $ruta, $activo, $callback = null, $extra = null )
+{
     $html = "\n<ul class=\"nav nav-pills my-4\">";
             
     foreach( MODELOS as $m ){
@@ -575,12 +587,14 @@ function pills( $ruta, $activo, $callback = null, $extra = null ){
 }
 
 
-function base64_png( $file ){
+function base64_png( $file )
+{
     return chunk_split( "data:image/png;base64,".base64_encode( file_get_contents( $file ) ) );
 }
 
 
-function envia_correo( $usuario, $subject, $message, $imagenes = [] ){
+function envia_correo( $usuario, $subject, $message, $imagenes = [] )
+{
     
     $margin = 60;
     $width  = 600;
@@ -683,7 +697,9 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] ){
     return $html;
 }
 
-function getPaqueteMovil( $celular ){
+
+function getPaqueteMovil( $celular )
+{
     $db = db_connect();
     return $db->query( "SELECT 
                 pr.codigo AS paquete,
@@ -701,10 +717,8 @@ function getPaqueteMovil( $celular ){
 }
 
 
-
-
-
-function load_catalogo( $tabla, $where = null, $nombre = null ){
+function load_catalogo( $tabla, $where = null, $nombre = null )
+{
     
     if( defined( strtoupper( $nombre ?? $tabla ) ) ) return;
     $db = db_connect();
@@ -727,8 +741,8 @@ function load_catalogo( $tabla, $where = null, $nombre = null ){
 }
 
 
-
-function nuevo_pedido( $modelo ){
+function nuevo_pedido( $modelo )
+{
     load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND ( modelo_codigo = '{$modelo}' OR settings->'$.universal' = true )", "pp" );
     
     $PTS    = [];

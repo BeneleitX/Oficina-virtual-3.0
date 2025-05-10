@@ -1466,10 +1466,12 @@ class E_usuario extends Entity
             2 => 0.00,
             3 => 0.00
         ];
+    
         $sql = "SELECT nivel, SUM(cantidad) AS cantidad FROM t_comisiones
                 WHERE esquema_codigo = '{$esquema[ "codigo" ]}'   
                 AND usuario_id = {$this->id}
                 AND fecha between '{$y}-09-01' and '".($y+1)."-08-31'
+                AND substring( estatus_codigo, 1, 3 ) > 200
                 GROUP BY nivel";
 
         $db = db_connect();

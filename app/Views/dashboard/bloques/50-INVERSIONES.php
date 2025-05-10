@@ -116,21 +116,22 @@ if( $saldo ){
     </div>
 </div>
 
-<div class="row text-center mx-1 mb-0">
-    <div class="col-4"><div class="card"><div class="card-body">
-        <p class="text-teal">Directos</p>
-        <h4 style="line-height:0.5rem" class=""><?php echo sizeof( $directos ); ?></h4>
-    </div></div></div>
-    <div class="col-4">
-        <img src="<?php echo base_url()."assets/img/rangos/".$rango_inversion[ "codigo" ]; ?>.png" class="img-fluid">
-        <p style="line-height:0" class="m-0"><span class="badge bg-<?php echo $rango_inversion[ "color" ]; ?>"><?php echo $rango_inversion[ "nombre" ]; ?></span></p>
+<a href="<?php echo base_url( "rangos_inversion" ); ?>">
+    <div class="row text-center mx-1 mb-0">
+        <div class="col-4"><div class="card"><div class="card-body">
+            <p class="text-teal">Directos</p>
+            <h4 style="line-height:0.5rem" class=""><?php echo sizeof( $directos ); ?></h4>
+        </div></div></div>
+        <div class="col-4">
+            <img src="<?php echo base_url()."assets/img/rangos/".$rango_inversion[ "codigo" ]; ?>.png" class="img-fluid">
+            <p style="line-height:0" class="m-0"><span class="badge bg-<?php echo $rango_inversion[ "color" ]; ?>"><?php echo $rango_inversion[ "nombre" ]; ?></span></p>
+        </div>
+        <div class="col-4"><div class="card"><div class="card-body">
+            <p class="text-teal">Bono</p>
+            <h4 style="line-height:0.5rem" class=""><?php echo number_format( $rango_inversion[ "cantidades" ][ "porcentaje" ], 2 ); ?>%</h4>
+        </div></div></div>
     </div>
-    <div class="col-4"><div class="card"><div class="card-body">
-        <p class="text-teal">Bono</p>
-        <h4 style="line-height:0.5rem" class=""><?php echo number_format( $rango_inversion[ "cantidades" ][ "porcentaje" ], 2 ); ?>%</h4>
-    </div></div></div>
-</div>
-
+</a>
 
 <div class="card m-3">
     <div class="card-body text-center">
