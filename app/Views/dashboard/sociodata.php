@@ -92,7 +92,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                 <td><input name="correo" disabled class="form-control" value="<?php echo $socio->correo; ?>"></td></tr>
 
                                 <tr><td class="text-end">Tarjeta efectivale</td>
-                                <td><h5 class="m-0"><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->tarjeta->numero ?? ""; ?></span> <button type="button" onclick="$( '#borra_credencial' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button></h5></td></tr>                                
+                                <td><h5 class="m-0"><?php if( $socio->data->tarjeta->numero ?? null ){ ?><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->tarjeta->numero; ?></span> <button type="button" onclick="$( '#borra_credencial' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button><?php  } else echo "&nbsp;"; ?></h5></td></tr>                                
                             </table>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                 </tr></table></td></tr>
 
                                 <tr><td class="text-end"><img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:18px"> Wallet USDT</td>
-                                <td><h5 class="m-0"><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->wallet ?? ""; ?></span> <button type="button" onclick="$( '#borra_wallet' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button></h4></t5></tr>
+                                <td><h5 class="m-0"><?php if( $socio->data->wallet ?? null ){ ?><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->wallet; ?></span> <button type="button" onclick="$( '#borra_wallet' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button></h4><?php } else echo "&nbsp;"; ?></t5></tr>
 
                             </table>
                         </div>
