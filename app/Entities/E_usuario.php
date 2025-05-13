@@ -1471,7 +1471,7 @@ class E_usuario extends Entity
                 WHERE esquema_codigo = '{$esquema[ "codigo" ]}'   
                 AND usuario_id = {$this->id}
                 AND fecha between '{$y}-09-01' and '".($y+1)."-08-31'
-                AND substring( estatus_codigo, 1, 3 ) > 200
+                AND substring( estatus_codigo, 1, 3 ) between 200 and 400
                 GROUP BY nivel";
 
         $db = db_connect();

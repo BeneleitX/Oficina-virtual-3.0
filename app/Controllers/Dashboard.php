@@ -22,31 +22,6 @@ class Dashboard extends BaseController
     }
 
 
-    public function reset_password(){
-        
-        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
-            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
-            return redirect()->to( "no_permiso" ); 
-        }
-
-        $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Password temporal generado";
-        $this->data[ "admin" ]  = true;
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
-
-        $this->data[ "nuevo" ]->resetPassword();
-        model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
-
-        // BITACORANuevo password
-        bitacora( 63, $this->data[ "usuario" ]->id, [ 
-            "socio"   => $this->data[ "nuevo" ]->id,
-            "cambios" => $this->data[ "nuevo" ]->password
-        ] );
-        
-        echo template( "sesion/reset", $this->data );
-    }
-
-
     public function sociodata( $request = null ){
 
         $db = db_connect();
@@ -1034,4 +1009,88 @@ class Dashboard extends BaseController
             echo "\n<br>{$u->id} : {$hash}";
         }
     }
+
+    
+    public function reset_password(){
+        
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Password temporal generado";
+        $this->data[ "admin" ]  = true;
+        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+
+        $this->data[ "nuevo" ]->resetPassword();
+        model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
+
+        // BITACORANuevo password
+        bitacora( 63, $this->data[ "usuario" ]->id, [ 
+            "socio"   => $this->data[ "nuevo" ]->id,
+            "cambios" => $this->data[ "nuevo" ]->password
+        ] );
+        
+        echo template( "sesion/reset", $this->data );
+    }
+
+
+    public function reset_tarjeta(){
+        
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+
+        $data = $socio->data;
+        $anterior = $data->tarjeta->numero;
+        $data->tarjeta = [
+            "numero"  => "",
+            "estatus" => "623-ENTREGA",
+            "cliente" => 0
+        ];
+        $socio->data = $data;
+
+        model( "UsuarioModel" )->save( $socio );
+
+        // BITACORANuevo password
+        bitacora( 93, $this->data[ "usuario" ]->id, [ 
+            "socio"   => $socio->id,
+            "tarjeta" => $anterior
+        ] );
+        
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
+    }
+
+
+    public function reset_wallet(){
+        
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+
+        $data = $socio->data;
+        $anterior = $data->wallet;
+        $data->wallet = "";
+        $socio->data = $data;
+
+        model( "UsuarioModel" )->save( $socio );
+
+        // BITACORANuevo password
+        bitacora( 94, $this->data[ "usuario" ]->id, [ 
+            "socio"  => $socio->id,
+            "wallet" => $anterior
+        ] );
+        
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
+    }
+
 }

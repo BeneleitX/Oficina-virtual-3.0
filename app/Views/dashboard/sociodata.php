@@ -60,6 +60,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         <p><span class="badge bg-<?php echo RANGOS[ $socio->data->rango ][ "color" ]?>"><?php echo RANGOS[ $socio->data->rango ][ "nombre" ]?></span></p>
                         </div>
                 </div>
+
             </div>
 
             <div class="col-lg-10">
@@ -89,6 +90,9 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
 
                                 <tr><td class="text-end">CORREO</td>
                                 <td><input name="correo" disabled class="form-control" value="<?php echo $socio->correo; ?>"></td></tr>
+
+                                <tr><td class="text-end">Tarjeta efectivale</td>
+                                <td><h5 class="m-0"><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->tarjeta->numero; ?></span> <button type="button" onclick="$( '#borra_credencial' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button></h5></td></tr>                                
                             </table>
                         </div>
                     </div>
@@ -124,6 +128,9 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                                     <td style="padding:0; width:90%"><input name="clabe" disabled class="form-control" value="<?php echo $socio->data->clabe; ?>"></tD>
                                     <td><img style="height:30px;margin-left:10px" src="<?php echo base_url()."assets/img/".( strlen( $socio->data->clabe ) == 18 ? "bancos/".substr( $socio->data->clabe, 0, 3) : "blank" ); ?>.png"></td>
                                 </tr></table></td></tr>
+
+                                <tr><td class="text-end"><img src="https://static.tronscan.org/production/logo/usdtlogo.png" style="width:18px"> Wallet USDT</td>
+                                <td><h5 class="m-0"><span class="badge bg-gray-200 border text-marine py-2"><?php echo $socio->data->wallet; ?></span> <button type="button" onclick="$( '#borra_wallet' ).modal( 'show' )" class="btn btn-outline-danger btn-sm border-0"><i class="fa fa-trash"></i></button></h4></t5></tr>
 
                             </table>
                         </div>
@@ -256,6 +263,57 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
         </div>
     </div>
 
+
+    <div class="modal" tabindex="-1" id="borra_credencial">
+        <div class="modal-dialog">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+                <img src="<?php echo base_url(); ?>assets/img/gatos/cat3.png" style="z-index:10; width:200px; position:absolute; bottom:0; left:0px">
+                <form method="post" action="<?php echo base_url( "reset_tarjeta" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+
+                    <div class="modal-header bg-red">
+                        <h5 class="modal-title text-white m-0"><i class="fa fa-trash"></i> Eliminar tarjeta efectivale</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-red text-center pb-5">
+                        <p class="mt-5"><i class="fa fa-warning"></i> ATENCION:</p>
+                        <p class="mb-5">Al continuar, la tarjeta será desvinculada<br>del socio <?php echo $socio->id(); ?></p>
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Continuar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="borra_wallet">
+        <div class="modal-dialog">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+                <img src="<?php echo base_url(); ?>assets/img/gatos/cat3.png" style="z-index:10; width:200px; position:absolute; bottom:0; left:0px">
+                <form method="post" action="<?php echo base_url( "reset_wallet" ); ?>">
+                    <?php echo csrf_field() ?>
+                    <input type="hidden" name="socio"  value="<?php echo $socio->id; ?>">
+
+                    <div class="modal-header bg-red">
+                        <h5 class="modal-title text-white m-0"><i class="fa fa-trash"></i> Eliminar wallet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-red text-center pb-5">
+                        <p class="mt-5"><i class="fa fa-warning"></i> ATENCION:</p>
+                        <p class="mb-5">Al continuar, la dirección de la<br>wallet será eliminada</p>
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Continuar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     
     <div class="modal" tabindex="-1" id="modal_lock">
