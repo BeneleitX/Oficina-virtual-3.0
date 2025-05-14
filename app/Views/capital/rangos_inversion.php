@@ -21,7 +21,7 @@
             foreach( $rangos as $rango ){
                 $r = RANGOS[ $rango ];
                 echo "\n<td width=\"33%\" class=\"text-center\"><div class=\"card text-center\"><div class=\"card-body text-center px-0\">
-                    <img src=\"".base_url()."assets/img/rangos/{$r[ "codigo" ]}.png\" style=\"width:100px\" alt=\"\">
+                    <img src=\"".base_url()."assets/img/rangos/{$r[ "codigo" ]}.png\" style=\"width:80px\" alt=\"\">
                     <h5>{$r[ "nombre" ]}</h5>
                     <p class=\"m-0 small\">
                         Directos: <strong>{$r[ "cantidades" ][ "directos" ][ 0 ]}</strong><br>
@@ -38,7 +38,7 @@
             <h5>Cálculo de bono:</h5>
             <ol class="m-0">
                 <li>El rango se calcula al finalizar el mes, haciendo un corte de socios directos activos y el volumen de capital semilla de la red.</li>
-                <li>Se debe esperara a que transcurra el mes siguiente, para que ese volumen de capital semilla genere rendimientos.</li>
+                <li>Se debe esperar a que transcurra el mes siguiente, para que ese volumen de capital semilla genere rendimientos.</li>
                 <li>El bono se pagará al finalizar el mes siguiente, durante los primeros 3 días hábiles.</li>
             </ol>
         </div>
