@@ -1170,7 +1170,7 @@ class Capital extends BaseController
                     "mes"   => $corte
                 ];
             }
-        }
+        } 
         $data     = [];
 
         $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
