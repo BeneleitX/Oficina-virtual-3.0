@@ -39,7 +39,7 @@ class Capital extends BaseController
         /**********************************/
                 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Capital24";
+        $this->data[ "titulo" ] = "Solicitudes de retiro de rendimientos";
         $this->data[ "mes" ]    = $mes;
 
         $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
@@ -74,6 +74,66 @@ class Capital extends BaseController
     }
 
 
+    public function bono_liderazgo( $mes = null )
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        if( !$mes ){
+            $mes = date( "Ym", strtotime( date("Y-m-d")." - 1 month" ) );
+        }
+
+        /**********************************/
+
+        $this->data[ "mes" ]    = $mes;
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Bono de liderazgo";
+
+        $mesb = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month" ) );
+
+        $sql = "SELECT 
+                    u.id,u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\"' as cortes
+                from t_usuarios u
+                where 
+                    u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'
+                and u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\".directos' > 3";
+
+        $db = db_connect();
+        $historial = $db->query( $sql )->getResultArray();
+
+        $this->data[ "socios" ] = [];
+
+        foreach( $historial as $socio ){
+            $corte = json_decode($socio[ "cortes" ], true );
+            
+            if( $corte[ "directos" ] > 3 ){
+
+                if( $corte[ "directos" ] > 11 ){
+                    $rango = "530-LEYENDA";
+                }
+                elseif( $corte[ "directos" ] > 7 ){
+                    $rango = "520-CONQUISTADOR";
+                }
+                elseif( $corte[ "directos" ] > 3 ){
+                    $rango = "510-PIONERO";
+                }
+
+                $this->data[ "socios" ][] = [ 
+                    "id"    => $socio[ "id" ],
+                    "rango" => $rango,
+                    "mes"   => $corte
+                ];
+            }
+        }
+
+        echo template( "capital/bono_liderazgo", $this->data );
+    }
+
+
     /**
      * Retrieves and processes investment data for Capital24.
      *
@@ -92,7 +152,7 @@ class Capital extends BaseController
     public function inversiones()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "45-ADMIN-CAPITAL")
+            $this->data[ "usuario" ]->permiso( "31-GASOLINA" )
         ) ){
             return redirect()->to( "no_permiso" ); 
         }
@@ -126,6 +186,75 @@ class Capital extends BaseController
                 order by r.codigo";
 
         $this->data[ "rangos" ] = $db->query( $sql )->getResultArray();
+
+        $sql = "SELECT 
+                    u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual' as cortes
+                from t_usuarios u
+                where 
+                    u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'";
+
+        $historial = $db->query( $sql )->getResultArray();
+        $drangos   = [
+            "530-LEYENDA"      => [],
+            "520-CONQUISTADOR" => [],
+            "510-PIONERO"      => []
+        ];
+
+        $date = new \DateTime( date( "Y-m"."-01" ) );
+
+        for( $a = 0; $a < 13; $a++){
+            $mes = $date->format( "Ym" );
+
+            $drangos[ "530-LEYENDA" ][ $mes ] = 0;
+            $drangos[ "520-CONQUISTADOR" ][ $mes ] = 0;
+            $drangos[ "510-PIONERO" ][ $mes ] = 0;
+
+            $date->modify( "- 1 month" );
+        }
+
+        foreach( $historial as $socio ){
+            $cortes = json_decode($socio[ "cortes" ], true );
+
+            foreach( $cortes as $k => $v ){
+
+                $k = date( "Ym", strtotime( substr( $k, 0, 4 )."-".substr( $k, 4, 2 )."-01 - 1 month" ) );
+
+                if( $v[ "directos" ] > 11 ){
+                    $drangos[ "530-LEYENDA" ][ $k ]++;
+                }
+                elseif( $v[ "directos" ] > 7 ){
+                    $drangos[ "520-CONQUISTADOR" ][ $k ]++;
+                }
+                elseif( $v[ "directos" ] > 3 ){
+                    $drangos[ "510-PIONERO" ][ $k ]++;
+                }
+            }
+        }
+
+        $this->data[ "drangos" ] = [];
+
+        $rtemp = [];
+        $date = new \DateTime( date( "Y-m"."-01" ) );
+
+        for( $a = 0; $a < 13; $a++){
+            $mes = $date->format( "Ym" );
+
+            $rtemp[ "530-LEYENDA" ][ $a ] = $drangos[ "530-LEYENDA" ][ $mes ];
+            $rtemp[ "520-CONQUISTADOR" ][ $a ] = $drangos[ "520-CONQUISTADOR" ][ $mes ];
+            $rtemp[ "510-PIONERO" ][ $a ] = $drangos[ "510-PIONERO" ][ $mes ];
+
+            $date->modify( "- 1 month" );
+        }
+
+        $this->data[ "drangos_total" ] = $rtemp;
+        $this->data[ "drangos" ] = [];
+
+        foreach( array_reverse( $rtemp ) as $k => $v ){
+            $this->data[ "drangos" ][] = [
+                "name" => $k, "data" => array_reverse( $v ) 
+            ];
+        }
+
 
         $sql = "SELECT 
                     o.codigo, 
@@ -278,6 +407,8 @@ class Capital extends BaseController
             $date->modify( "- 1 month" );
         }
 
+
+    
 
         foreach( $compras as $c ){
             if( !isset( $this->data[ "compras" ][ $c[ "tipo" ] ] ) ){
@@ -991,4 +1122,113 @@ class Capital extends BaseController
 
         echo template( "capital/rangos_inversion", $this->data );
     }
+
+    public function excel_rangos()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "31-GASOLINA") ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $m1 = $this->request->getPost( "mes" );
+        $m2 = substr( $m1, 0, 4 )."-".substr( $m1, 4, 2 )."-01";
+        $mesa = date( "Ym", strtotime( $m2 ) );
+        $mesb = date( "Ym", strtotime( $m2." + 1 month" ) );
+        $db  = db_connect();
+
+        $sql = "SELECT 
+                    u.id,u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\"' as cortes
+                from t_usuarios u
+                where 
+                    u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'
+                and u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\".directos' > 3";
+
+        $historial = $db->query( $sql )->getResultArray();
+
+        $socios = [];
+        
+        foreach( $historial as $socio ){
+            $corte = json_decode($socio[ "cortes" ], true );
+            
+            if( $corte[ "directos" ] > 3 ){
+
+                if( $corte[ "directos" ] > 11 ){
+                    $rango = "530-LEYENDA";
+                }
+                elseif( $corte[ "directos" ] > 7 ){
+                    $rango = "520-CONQUISTADOR";
+                }
+                elseif( $corte[ "directos" ] > 3 ){
+                    $rango = "510-PIONERO";
+                }
+
+                $socios[] = [ 
+                    "id"    => $socio[ "id" ],
+                    "rango" => $rango,
+                    "mes"   => $corte
+                ];
+            }
+        }
+        $data     = [];
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "BONO LIDERAZGO");
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $col = 0;
+        $e = [];
+        $worksheet->setCellValue( chr(65 + $col++)."1", "SOCIO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "NOMBRE" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TELEFONO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "CANTIDAD" );
+
+
+        $row = 1;
+
+        foreach( $socios as $s ){
+            $u = model( "UsuarioModel" )->find( $s[ "id" ] );
+
+            $row++;
+            $col  = 0;
+            
+            $cantidad = $s[ "mes" ][ "bolsa" ] * $s[ "mes" ][ "bono" ] / 100;
+
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->id );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->nombre( 2, false, true ) );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->telefono );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $cantidad );
+        }
+
+        $col--;
+
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "E2:E".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+
+        
+        $worksheet->getStyle( chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( chr(65 + $col)."2:".chr(65 + $col).$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        // BITACORA descarga excel de retiros
+        bitacora( 91, $this->data[ "usuario" ]->id, [
+            "mes" => $mesa
+        ] );
+
+        $path = "data/excel/liderazgo";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/BonoLiderazgo_".strtoupper( mes( substr( $mesa, 4, 2 ) ) )."-".substr( $mesa, 0, 4 )."_".time().".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }        
 }

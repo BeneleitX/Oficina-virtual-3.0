@@ -43,7 +43,6 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "",                                   "Dashboard::inicio" );
     $routes->get( "inicio",                             "Dashboard::inicio" );
     $routes->get( "temp_update",                        "Dashboard::temp_update" );
-
     $routes->post( "splash",                            "Dashboard::splash" );
     $routes->get( "sociodata",                          "Dashboard::sociodata" );
     $routes->get( "update_estatus/(:any)",              "Dashboard::update_estatus/$1" );
@@ -232,14 +231,17 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "capital",                            "Capital::dashboard" );
     $routes->get( "capital/(:any)",                     "Capital::dashboard/$1" );
-    $routes->get( "capital24",                          "Capital::admin" );
     $routes->get( "inversiones",                        "Capital::inversiones" );
+    $routes->get( "capital24",                          "Capital::admin" );
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
     $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );
     $routes->get( "entrega_retiros/(:num)",             "Capital::entrega_retiros/$1" );
     $routes->get( "rangos_inversion",                   "Capital::rangos_inversion" ); 
+    $routes->get( "bono_liderazgo",                     "Capital::bono_liderazgo" ); 
+    $routes->get( "bono_liderazgo/(:num)",              "Capital::bono_liderazgo/$1" ); 
     $routes->post( "excel_retiros",                     "Capital::excel_retiros" );
+    $routes->post( "excel_rangos",                      "Capital::excel_rangos" );
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
     $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
     $routes->post( "get_retiros",                       "Capital::get_retiros" );

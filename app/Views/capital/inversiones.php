@@ -4,28 +4,63 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<h4 class="mt-1 mb-4"><?php echo $titulo; ?></h4>
+<h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
+<p>
+    <a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a>
+</p>
 
 <div class="row">
 
 
     <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
-        <div class="row">
-                <?php
-                    foreach( $rangos as $rango ){
-                        echo "\n<div class=\"col-4 mb-3\"><table align=\"center\"><tr><td class=\"text-center pt-3\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png\" class=\"p-3\" width=\"140\"></td</tr><tr><td class=\"text-center\"><h1 class=\"m-0\">{$rango[ "cantidad" ]}</h1>{$rango[ "nombre" ]}</td></tr></table></div>";      
-                    }
-                ?>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <a href="<?php echo base_url( "capital24" ); ?>" class="btn btn-lg mb-3 mt-3 btn-outline-info w-100">Retiros</a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?php echo base_url(); ?>periodos/50-INVERSION" class="btn btn-lg mb-3 mt-3 btn-outline-info w-100">Corte</a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?php echo base_url( "bono_liderazgo" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Rangos</a>
+                    </div>
+
+                    <div class="col-6">
+                        <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card text-center bg-marine py-3  text-white">
+        <div class="card text-center bg-mustard py-3  text-white">
         <h1 class="m-0 text-white"><?php echo number_format( $total_activos ); ?></h1>
-            <p class="m-0">Socios activos</p>
+            <p class="m-0">Socios con inversión activa</p>
         </div>
     </div>
 
+    
+    <div class="col-lg-4 col-md-6 mb-5">
+        <div class="card mb-1">
+            <div id="chart_rangos"></div>
+        </div>
+
+        <div class="card text-center py-3">
+        <div class="row">
+                <?php
+                    foreach( $rangos as $rango ){
+                        echo "\n<div class=\"col-4\"><table align=\"center\"><tr><td class=\"pe-1\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png\" class=\"\" width=\"40\"></td><td><h1 class=\"m-0\">{$drangos_total[ $rango[ "codigo" ] ][1]}</h1><span class=\"badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></td></tr></table></div>";      
+                    }
+                ?>
+            </div> 
+        </div>
+    </div>
 
     <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
@@ -44,8 +79,11 @@
         </div>
     </div>
 
-                </div>
-                <div class="row">
+</div>
+
+<?php if( $usuario->permiso( "45-ADMIN-CAPITAL") ){ ?>
+
+<div class="row">
     
     <div class="col-lg-4 col-md-6 mb-5">
         <div class="card mb-1">
@@ -118,45 +156,47 @@
 </div>
 
 
+
 <div class="card mb-4">
     <div class="card-header bg-marine text-white">
     <h5 class="text-white m-0">TOP 10 de socios</h5>
     </div>
-<table id="tabla_socios" class="table table-striped m-0">
-    <thead>
-        <tr>
-            <th>Socio</th>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Wallet</th>
-            <th>Inversiones</th>
-            <th>Bolsa de red</th>
-            <th>Directos</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php 
-        foreach( $ranking as $s ){
-            $socio = model( "UsuarioModel" )->find( $s[ "socio" ] );
+    <table id="tabla_socios" class="table table-striped m-0">
+        <thead>
+            <tr>
+                <th>Socio</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Wallet</th>
+                <th>Inversiones</th>
+                <th>Bolsa de red</th>
+                <th>Directos</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+            foreach( $ranking as $s ){
+                $socio = model( "UsuarioModel" )->find( $s[ "socio" ] );
 
-            echo "<tr>";
-            echo "<td>".$socio->id( "50-INVERSION" )."</td>";
-            echo "<td>".$socio->avatar(24)." ".$socio->nombre( 2 )."</td>";
-            echo "<td>{$socio->telefono}</td>";
-            echo "<td>".( $socio->data->wallet ?? "" )."</td>";
-            echo "<td class=\"text-end\"><strong>$".number_format( $s[ "semilla" ], 2 )."</strong></td>";
-            echo "<td class=\"text-end\"><strong>$".number_format( $s[ "bolsa" ], 2 )."</strong></td>";
-            echo "<td>{$s[ "directos" ]}</td>";
-            echo "<td class=\"text-end\"><a target=\"_blank\" href=\"".base_url()."capital/".urlencode( base64_encode( $socio->password_original() ) )."\" class=\"btn btn-xs btn-secondary\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</a></td>";
-            echo "</tr>";
-        }
-        ?>
-    </tbody>
-</table>
+                echo "<tr>";
+                echo "<td nowrap>".$socio->id( "50-INVERSION" )."</td>";
+                echo "<td>".$socio->avatar(24)." ".$socio->nombre( 2 )."</td>";
+                echo "<td>{$socio->telefono}</td>";
+                echo "<td>".( $socio->data->wallet ?? "" )."</td>";
+                echo "<td class=\"text-end\"><strong>$".number_format( $s[ "semilla" ], 2 )."</strong></td>";
+                echo "<td class=\"text-end\"><strong>$".number_format( $s[ "bolsa" ], 2 )."</strong></td>";
+                echo "<td>{$s[ "directos" ]}</td>";
+                echo "<td class=\"text-end\"><a target=\"_blank\" href=\"".base_url()."capital/".urlencode( base64_encode( $socio->password_original() ) )."\" class=\"btn btn-xs btn-secondary\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</a></td>";
+                echo "</tr>";
+            }
+            ?>
+        </tbody>
+    </table>
 </div>
 
-<a href=\"\">
+<?php } ?>
+
 
 <script>
     var options = {
@@ -358,7 +398,49 @@
     var chart = new ApexCharts(document.querySelector("#chart_comisiones"), options);
     chart.render();    
 
-        
+    var options = {
+        colors: ['var(--bs-blue)', 'var(--bs-indigo)', 'var(--bs-deep-purple)'],
+        series: <?php echo json_encode( $drangos ); ?>,
+        chart: {
+            type: 'bar',
+            height: 230,
+            stacked: false,
+            toolbar: {
+                show: true
+            },
+            zoom: {
+                enabled: true
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },        
+        yaxis: {
+        },      
+        grid: {
+            row: {
+                colors: ['#e5e5e5', 'transparent'],
+                opacity: 0.5
+            }, 
+        },
+        stroke: {
+            width: 2,
+            curve: 'smooth'
+        },
+        xaxis: {
+            categories: <?php echo json_encode( $meses ); ?>,
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart_rangos"), options);
+    chart.render();    
+   
 
     var options = {
         colors: ['var(--bs-green)', 'var(--bs-mustard)', 'var(--bs-red)'],

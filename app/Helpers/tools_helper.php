@@ -155,6 +155,7 @@ function admin( $codigo ){
     return $data->valor;
 }
 
+
 function limpia_acentos($Texto){
     $valor_htm = array('&aacute;','&Aacute;','&eacute;','&Eacute;','&iacute;','&Iacute;','&oacute;','&Oacute;','&uacute;','&Uacute;','&ntilde;','&Ntilde;','&uuml;','&Uuml;',
     '&agrave;','&Agrave;','&egrave;','&Egrave;','&igrave;','&Igrave;','&ograve;','&Ograve;','&ugrave;','&Ugrave;');    // Valores originales   
