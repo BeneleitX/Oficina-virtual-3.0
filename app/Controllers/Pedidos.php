@@ -1098,7 +1098,7 @@ class Pedidos extends BaseController
             model( "FondeoModel" )->ignore( true )->save( [
                 "operacion"         => $hash, 
                 "fecha"             => $fecha,
-                "estatus_codigo"    => "420-PAGADO",
+                "estatus_codigo"    => "420-PAGADO", 
                 "metodopago_codigo" => $pedido[ "metodopago_codigo" ],
                 "usuario_id"        => $u->id,
                 "referencia"        => $pedido[ "referencia" ],
