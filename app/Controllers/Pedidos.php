@@ -1051,7 +1051,11 @@ class Pedidos extends BaseController
                             // nos aseguramos de que la transacción no haya sido registrada antes
 
                             $db  = db_connect();
-                            $sql = "select count(*) as existe from t_fondeos where metodopago_codigo = '35-HASH' AND operacion = '{$hash}'";
+                            $sql = "select count(*) as existe 
+                                    from t_fondeos 
+                                    where metodopago_codigo = '35-HASH' 
+                                    and SUBSTRING( estatus_codigo, 1, 3) > 200 
+                                    AND operacion = '{$hash}'";
 
                             $row = $db->query( $sql )->getrow();
 
@@ -1084,11 +1088,11 @@ class Pedidos extends BaseController
             } 
         }
 
-        $cantidad = intval( $cantidad * 100 ) / 100;
-        $total    = intval( $total * 100 ) / 100;
-
         if( $pagado ){
 
+            $cantidad = intval( $cantidad * 100 ) / 100;
+            $total    = intval( $total * 100 ) / 100;
+    
             // Al no existir antes, la registramos en la base de datos de fondeos
 
             model( "FondeoModel" )->ignore( true )->save( [
@@ -1117,31 +1121,22 @@ class Pedidos extends BaseController
                 $pedido[ "fechas" ][ "pagado" ]   = $fecha;
                 $pedido[ "fechas" ][ "califica" ] = date( "Y-m-d H:i:s" );
                 $pedido[ "fechas" ][ "reparte" ]  = date( "Y-m-d H:i:s" );
-                $pedido[ "data" ][ "saldo" ]      = session( "admin" ) ? 0 : ( $saldo >= $total ? $total : $saldo );
+                $pedido[ "data" ][ "saldo" ]      = $saldo;
 
-                // si la cantidad es mayor a la total
-
+                // Si la cantidad de positada es mayor a la necesaria
                 if( $cantidad > $total ){
 
                     // si hay saldo en USDT
-                    if( $s->USDT > 0 ){
-                        if( $s->USDT > $total ){
-    
-                            // no puede quedar saldo en USDT a favor después de una compra
-                            // se va en automático a depósito como '520-SALDO'
-    
-                            $sql = "INSERT INTO t_comisiones 
-                                    VALUES ( NULL, '255-PENDIENTE', {$pedido[ "id" ]}, {$pedido[ "usuario_id" ]}, '520-SALDO', 0, 0, ".( $s->USDT - $total ).", '{$pedido[ "fechas" ][ "reparte" ]}', NULL )";
+                
+                    // no puede quedar saldo en USDT a favor después de una compra
+                    // se va en automático a depósito como '520-SALDO'
 
-                            $db->query( $sql );
-                        }
-                        $s->USDT = 0;
-                    }
+                    $sql = "INSERT INTO t_comisiones 
+                            VALUES ( NULL, '255-PENDIENTE', {$pedido[ "id" ]}, {$pedido[ "usuario_id" ]}, '520-SALDO', 0, 0, ".( $cantidad - $total ).", '{$pedido[ "fechas" ][ "reparte" ]}', NULL )";
 
-                    // Si hay saldo normal
-                    else{
-                        $s->cantidad = $cantidad - $total;
-                    }
+                    $db->query( $sql );
+                    $s->USDT = 0;
+                    $s->cantidad = $cantidad - $total;
                 }
                 else{
                     $s->USDT     = 0;
