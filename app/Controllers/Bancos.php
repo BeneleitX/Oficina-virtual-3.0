@@ -315,7 +315,10 @@ class Bancos extends BaseController
                                 }
 
                                 model( "PedidoModel" )->save( $p );
-                               
+                                
+                                // Checamos si tiene derecho a regalo biex, si no, entonces se lo quitamos
+                                check_biex( $p, $u );
+
                                 $respuesta[ "conteo" ][ "pagados" ]++;
                                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "accion" ] = "<span class=\"badge bg-teal\">Pagado OK</span>";
 

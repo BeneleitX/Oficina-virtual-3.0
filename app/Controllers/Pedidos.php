@@ -658,6 +658,9 @@ class Pedidos extends BaseController
 
             model( "PedidoModel" )->save( $p );
 
+            // Checamos si tiene derecho a regalo biex, si no, entonces se lo quitamos
+            check_biex( $p, $u );
+
             $data      = $u->data;                                    
             $historial = $u->historial;  
 
@@ -764,6 +767,12 @@ class Pedidos extends BaseController
     }
     
 
+    /**
+     * Muestra la página de inicio de la aplicación movil
+     *
+     * @author Jose Carlos Campos Garcia
+     * @return void
+     */
     public function beneleit_movil()
     {
         $this->data[ "navbar" ] = true;
@@ -836,6 +845,13 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Ticket de pedido
+     * 
+     * @param string $link enlace base64 encoded y urlencoded de la referencia del pedido
+     * 
+     * @return void
+     */
     public function ticket( $link )
     {
         $p = base64_decode( urldecode( str_replace( "___", "%", $link ) ) );
@@ -858,6 +874,20 @@ class Pedidos extends BaseController
     }
 
 
+    /**
+     * Guarda la informaci n de facturaci n del socio:
+     * - RFC
+     * - Uso de CFDI
+     * - M todo de pago
+     * - Correo electr nico
+     * - Archivo de CSF (si se carga)
+     * 
+     * Actualiza el pedido con la informaci n de facturaci n
+     * 
+     * Redirecciona a la tienda del modelo del pedido
+     * 
+     * @return void
+     */
     public function carga_csf(){
         $socio    = $this->data[ "usuario" ];
         $rfc      = $this->request->getPost( "factura_rfc" );
