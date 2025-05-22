@@ -136,7 +136,7 @@ $(document).ready(function(){
         }); 
     });    
 
-    $( '[name=opciones_retiro]' ).on( 'click', function(){
+    $( '[name=opciones_retiro]' ).on( 'change', function(){
         if( $( this ).attr( 'id' ) == 'type_3' ){
             $( '#cantidad_3' ).keyup();
         }

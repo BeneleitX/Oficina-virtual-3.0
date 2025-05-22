@@ -770,15 +770,14 @@ class E_usuario extends Entity
     }
 
 
-/**
- * Determines if the user is a minor based on their birthdate.
- *
- * This function calculates the user's age using their birth date and checks 
- * if they are under 18 years old.
- *
- * @return bool Returns true if the user is under 18, false otherwise.
- */
-
+    /**
+     * Determines if the user is a minor based on their birthdate.
+     *
+     * This function calculates the user's age using their birth date and checks 
+     * if they are under 18 years old.
+     *
+     * @return bool Returns true if the user is under 18, false otherwise.
+     */
     public function es_menor()
     {
         $fecha = new Time( $this->fechanac );
@@ -786,19 +785,18 @@ class E_usuario extends Entity
     }
 
 
-/**
- * Retrieves the user's rewards based on their current cycle and status.
- *
- * If the user's rewards data is not initialized, it sets default values and saves the user.
- * Queries the rewards for the current cycle based on the status code '201-ACTIVO'.
- *
- * If the $activa parameter is true, it returns the first active reward that has not been achieved yet,
- * following the user's reward order if it is set. By default, it looks for "010-CELULAR".
- *
- * @param bool $activa Determines whether to return only the active reward or all rewards.
- * @return array|object Returns an array of all rewards if $activa is false, or the active reward object if true.
- */
-
+    /**
+     * Retrieves the user's rewards based on their current cycle and status.
+     *
+     * If the user's rewards data is not initialized, it sets default values and saves the user.
+     * Queries the rewards for the current cycle based on the status code '201-ACTIVO'.
+     *
+     * If the $activa parameter is true, it returns the first active reward that has not been achieved yet,
+     * following the user's reward order if it is set. By default, it looks for "010-CELULAR".
+     *
+     * @param bool $activa Determines whether to return only the active reward or all rewards.
+     * @return array|object Returns an array of all rewards if $activa is false, or the active reward object if true.
+     */
     public function getRecompensas( $activa = false )
     {
 
@@ -860,20 +858,19 @@ class E_usuario extends Entity
     }
 
     
-/**
- * Calculates and updates the user's current star count based on pending commissions.
- *
- * This function retrieves the total number of stars (or points) accumulated by the user
- * from the pending commissions in the database. It compares the retrieved count with
- * the current stored count in the user's data. If the user has reached or exceeded the
- * required stars for a reward (if provided), the reward redemption process is triggered.
- * The function also updates the user's star count and sends a notification if the count
- * has increased.
- *
- * @param array|null $r Optional. The reward array containing the required number of stars for redemption.
- * @return int The total number of stars accumulated by the user.
- */
-
+    /**
+     * Calculates and updates the user's current star count based on pending commissions.
+     *
+     * This function retrieves the total number of stars (or points) accumulated by the user
+     * from the pending commissions in the database. It compares the retrieved count with
+     * the current stored count in the user's data. If the user has reached or exceeded the
+     * required stars for a reward (if provided), the reward redemption process is triggered.
+     * The function also updates the user's star count and sends a notification if the count
+     * has increased.
+     *
+     * @param array|null $r Optional. The reward array containing the required number of stars for redemption.
+     * @return int The total number of stars accumulated by the user.
+     */
     public Function getEstrellas( $r = null )
     {
         
