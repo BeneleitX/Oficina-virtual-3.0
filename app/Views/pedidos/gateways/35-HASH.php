@@ -168,6 +168,7 @@ if( $total < 0 ){
                         $( '#loader' ).slideUp();
                         $( '#finaliza' ).slideDown();
                       
+                        var xxxxx = 0;
                         ( function call_confetti() {
                             confetti({
                                 spread: 360,
@@ -178,7 +179,7 @@ if( $total < 0 ){
                                 particleCount: randomInRange(10, 300), 
                                 origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0,0.5)} 
                             });
-                        
+                        if( xxxxx++ < 10 )
                             timeout = setTimeout(call_confetti, randomInRange(10, 500));
                         }() );                         
                     }
