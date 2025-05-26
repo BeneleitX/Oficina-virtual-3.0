@@ -151,7 +151,7 @@ class Redes extends BaseController
             $request = base64_decode( urldecode( session( "admin" ) ) );
             $admin = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
-            echo $request." ".$admin->id;
+            echo $request." ***** ".$admin->id;
 
             if( $admin && $admin->id == 55 ){
 
