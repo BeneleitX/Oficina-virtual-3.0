@@ -8,6 +8,11 @@ class Redes extends BaseController
         $this->data[ "menu" ] = "redes";
     }
 
+    /**
+     * Muestra la estructura de downline de un usuario
+     *
+     * @param string $modelo Codigo del modelo a mostrar. Si no se da, se muestra el modelo principal
+     */
     public function downline( $modelo = null ){
         if( !$modelo ){
             $modelo = getModeloPrincipal();
@@ -22,6 +27,13 @@ class Redes extends BaseController
     }
 
 
+    /**
+     * Retrieves and outputs the downline structure in JSON format for a given socio and modelo.
+     *
+     * This function extracts the socio ID and modelo from the POST request data,
+     * fetches the socio using the socio ID, and then retrieves the downline structure
+     * for the specified modelo in JSON format from the socio object.
+     */
     public function downlineJSON(){
         extract( $this->request->getPost() );
 
@@ -29,6 +41,13 @@ class Redes extends BaseController
         echo $socio->getDownlineJSON( $modelo );
     }
 
+    
+    /**
+     * Muestra la estructura de upline de un usuario
+     *
+     * @param string $modelo Codigo del modelo a mostrar
+     * @param int $socio Id del socio a mostrar. Si no se da, se muestra el usuario logueado
+     */
     public function upline( $modelo, $socio = null ){
         
         
@@ -41,6 +60,15 @@ class Redes extends BaseController
     }
 
 
+    /**
+     * Retrieves and outputs the upline structure in JSON format for a given socio and modelo.
+     *
+     * This function extracts the socio ID and modelo from the POST request data,
+     * fetches the socio using the socio ID, and then retrieves the upline structure
+     * for the specified modelo in JSON format from the socio object.
+     *
+     * @return void
+     */
     public function uplineJSON(){
         extract( $this->request->getPost() );
 
@@ -49,6 +77,15 @@ class Redes extends BaseController
     }    
 
 
+    /**
+     * Retrieves and outputs the upline structure in JSON format for a given socio and modelo.
+     *
+     * This function extracts the socio ID and modelo from the POST request data,
+     * fetches the socio using the socio ID, and then retrieves the upline structure
+     * for the specified modelo in JSON format from the socio object.
+     *
+     * @return void
+     */
     public function userdata(){
         extract( $this->request->getPost() );
         $d = model( "UsuarioModel" )->find( $socio );
@@ -84,34 +121,34 @@ class Redes extends BaseController
         $html .= "</h5>
                 </tr></table>
 
-<div class=\"row\">
-    <div class=\"col-6\">
+            <div class=\"row\">
+                <div class=\"col-6\">
 
-                    <table class=\"table small w-100\">
-                <tr><td>Cumpleaños</td><td class=\"text-end\">".fecha( $d->fechanac, "cumple" )."</td></tr>
-                <tr><td>Registro</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->historial->registro ) )."</td></tr>
-                
-                <tr><td>Primer compra</td><td class=\"text-end\">".( $d->getPrimerCompra( $modelo ) ? date( "d-m-Y", strtotime( $d->getPrimerCompra( $modelo ) ) ) : "" )."</td></tr>
+                                <table class=\"table small w-100\">
+                            <tr><td>Cumpleaños</td><td class=\"text-end\">".fecha( $d->fechanac, "cumple" )."</td></tr>
+                            <tr><td>Registro</td><td class=\"text-end\">".date( "d-m-Y", strtotime( $d->historial->registro ) )."</td></tr>
+                            
+                            <tr><td>Primer compra</td><td class=\"text-end\">".( $d->getPrimerCompra( $modelo ) ? date( "d-m-Y", strtotime( $d->getPrimerCompra( $modelo ) ) ) : "" )."</td></tr>
 
-                </table>
+                            </table>
 
 
-    </div>
-    <div class=\"col-6\">";
+        </div>
+        <div class=\"col-6\">";
 
-    if( $d->redes->modelos->{$modelo}->padre == $this->data[ "usuario" ]->id or $d->id == $this->data[ "usuario" ]->id ){
-        $html .= "\n<table class=\"table small w-100\">
-                    <tr><td>Telefono</td><td class=\"text-end\">".$d->telefono."</td></tr>
-                    <tr><td>Correo</td><td class=\"text-end\">".$d->correo."</td></tr>
-                <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
-                    </table>";
-    }
+        if( $d->redes->modelos->{$modelo}->padre == $this->data[ "usuario" ]->id or $d->id == $this->data[ "usuario" ]->id ){
+            $html .= "\n<table class=\"table small w-100\">
+                        <tr><td>Telefono</td><td class=\"text-end\">".$d->telefono."</td></tr>
+                        <tr><td>Correo</td><td class=\"text-end\">".$d->correo."</td></tr>
+                    <tr><td>Ultima compra</td><td class=\"text-end\">".( $d->historial->modelos->{$modelo}->ultimacompra ? date( "d-m-Y", strtotime( $d->historial->modelos->{$modelo}->ultimacompra ) ) : "" )."</td></tr>
+                        </table>";
+        }
 
-    $html .= "</div>
-            </div>
-            ";
+        $html .= "</div>
+                </div>
+                ";
 
-            if( session( "admin" ) && 0 ){
+            if( session( "admin" ) == 55 ){
 
                 $id = urlencode( base64_encode( $d->password_original() ) );
                 $html .= "<br><div class=\"card border-red\"><div class=\"card-header\"><h5 class=\"m-0 text-red\">Admin tools</h5><small>Usar con cuidado</small></div><div class=\"card-body\">
