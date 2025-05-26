@@ -229,6 +229,7 @@ function balance_inversion( $i, $fecha = null ){
         "compuesto"   => 0.00,
         "total"       => 0.00,
         "full"        => 0.00,
+        "finmes"      => 0.00,
         "fecha"       => $fecha
     ];
 

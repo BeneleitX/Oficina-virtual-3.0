@@ -126,6 +126,8 @@ if( sizeof( $inversiones ) ){
 
         $bt = balance_inversion( $i );
 
+  
+
         $retiros_pendientes = "";
         $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]}" )->findAll();
 
@@ -142,9 +144,8 @@ if( sizeof( $inversiones ) ){
 
             $retiros_pendientes .= "</table>";
         }
-
         $nueve_finalizada = $p->data->porcentaje == 9 && $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] <= date( "Ym" );
-        
+
         echo "\n
             <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
                 <div class=\"card-header\">
