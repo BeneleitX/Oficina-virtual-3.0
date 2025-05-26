@@ -22,16 +22,19 @@ class Registro extends BaseController
          if( $demo > 0 ){
             $abc  = str_split("ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
             $data = [
-                "nombre" => random( "nombre" ),
-                "apellido1" => random( "apellido" ),
-                "apellido2" => random( "apellido" ),
-                "correo" => "demo".rand(10000,99999)."@demo.com",
-                "celular" => rand(10000,99999).rand(10000,99999),
-                "curp" => $abc[ array_rand( $abc ) ]."X".$abc[ array_rand( $abc ) ].$abc[ array_rand( $abc ) ].rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
-                "patrocinador" => $demo,
-                "origen" => "MX",
-                "pais"   => "MX"
+                "nombre"        => random( "nombre" ),
+                "apellido1"     => random( "apellido" ),
+                "apellido2"     => random( "apellido" ),
+                "correo"        => "",
+                "celular"       => rand(10000,99999).rand(10000,99999),
+                "curp"          => $abc[ array_rand( $abc ) ]."X".$abc[ array_rand( $abc ) ].$abc[ array_rand( $abc ) ].rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
+                "patrocinador"  => $demo,
+                "origen"        => "MX",
+                "pais"          => "MX"
             ];
+
+            $ms = explode( " ", $data[ "apellido1" ] );
+            $data[ "correo" ] = $ms[ 0 ].rand(10,99999)."@gmail.com";
         }
         else{
 
