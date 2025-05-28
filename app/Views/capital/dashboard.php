@@ -263,7 +263,7 @@ if( sizeof( $inversiones ) ){
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }
 
-if( sizeof( $inversiones ) && $p->data->porcentaje != 9 ){
+if( sizeof( $inversiones ) ){
 ?>  
 
     <div class="modal" tabindex="-1" id="stock_modal">
