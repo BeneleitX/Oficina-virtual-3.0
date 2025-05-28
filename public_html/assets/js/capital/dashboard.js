@@ -68,6 +68,8 @@ function ask_retiro( inversion ){
         semilla     = i.attr( 'semilla' ),
         mes         = i.attr( 'mes' );
 
+    console.log( inversion )
+
     $( '#cantidad_3' ).val( '' );
     $( '[name=inversion_id]' ).val( inversion );
     $( '#cantidad_1' ).val( mes );
