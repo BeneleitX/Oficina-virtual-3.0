@@ -152,7 +152,8 @@ class Capital extends BaseController
     public function inversiones()
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "31-GASOLINA" )
+            $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "no_permiso" ); 
         }
