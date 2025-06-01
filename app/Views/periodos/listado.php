@@ -27,6 +27,9 @@
     <tbody>
     <?php 
         foreach( $periodos as $periodo ){
+
+                    if( $periodo[ "codigo"] == "50S202514" )
+        dd($periodo); 
             echo "<tr>
                 <td><span class=\"badge bg-marine\"><span class=\"d-none\">{$periodo[ "codigo"]}</span>".periodo( $periodo[ "codigo" ] )."</span></td>
                 <td><span class=\"d-none\">{$periodo[ "inicia" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "inicia" ] ) )."</td>
@@ -40,7 +43,8 @@
                 <td class=\"text-end\"><a href=\"".base_url( "periodo/".$periodo[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
             </tr>";
         }
-        
+
+
     ?>
     </tbody>
 </table>
