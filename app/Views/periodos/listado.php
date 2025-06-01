@@ -22,7 +22,7 @@
             <th>Estatus</th>
             <th></th>
         </tr>
-    </thead>
+    </thead> 
 
     <tbody>
     <?php 
