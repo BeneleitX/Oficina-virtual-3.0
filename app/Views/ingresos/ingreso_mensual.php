@@ -56,9 +56,10 @@ while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-0
 
                                 $esquema = ESQUEMAS[ $k ][ "settings" ][ "titulo" ];
                                 $suma += $c;
+                                $mes_bono = strtoupper( mes( date( "m", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 2 month" ) ) ) )." ".date( "Y", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 2 month" ) );
 
                                 echo "\n<tr\">
-                                    <td width=\"20%\" nowrap><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}</td>
+                                    <td width=\"20%\" nowrap><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}".( $k == "530-LIDERAZGO" ? " <span class=\"badge border border-gray-500 text-gray-600  bg-gray-300\"><i class=\"fa fa-warning text-red\"></i> Se paga en {$mes_bono}</span>" : "" )."</td>
                                     <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c, 2 )."</strong></td>
 
                                 </tr>";

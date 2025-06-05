@@ -920,8 +920,6 @@ class Dashboard extends BaseController
         $directos = 0;
         $bolsa    = 0;
         
-        $db  = db_connect();
-
         foreach( $ps as $socio ){
             if( 
                 $socio->nivel > 0 &&
@@ -950,11 +948,11 @@ class Dashboard extends BaseController
             $bono = 0;
         }
 
+        $db  = db_connect();
+
         $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
 
-
         $existe = $db->query( $sql )->getRow()->cuenta;
-
 
         if( $directos > 0 && $bono > 0 && $existe == 0 ){
 

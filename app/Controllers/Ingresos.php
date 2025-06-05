@@ -132,18 +132,33 @@ class Ingresos extends BaseController
         $db      = db_connect();
 
         while( $mes >= '202408' ){
-            $sql = "SELECT c.esquema_codigo as esquema,
-                    SUM( c.cantidad * IF( e.codigo = '118-PROMOS-50', f_get_factor_promos( c.usuario_id, '{$mes}' ), 1 ) ) as cantidad
-                    FROM t_comisiones c
-                    LEFT JOIN t_esquemas e ON e.codigo = c.esquema_codigo
-                    WHERE SUBSTRING( c.estatus_codigo, 1, 3) > 200 
-                    AND e.modelo_codigo = '{$modelo}'
-                    AND e.codigo != '520-SALDO'
-                    AND c.usuario_id = {$this->data[ "usuario" ]->id}
-                    AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes}'
-                    AND e.settings->>'$.periodo' IN ( 'MENSUAL', 'SEMANAL', 'ANUAL')
-                    GROUP BY c.esquema_codigo
+
+            $mes_bono = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month" ) );
+            $sql = "SELECT 
+                        c.esquema_codigo as esquema, 
+                        SUM( c.cantidad * IF( e.codigo = '118-PROMOS-50', f_get_factor_promos( c.usuario_id, '{$mes}' ), 1 ) ) as cantidad 
+                    FROM t_comisiones c 
+                    LEFT JOIN t_esquemas e ON e.codigo = c.esquema_codigo 
+                    WHERE 
+                        SUBSTRING( c.estatus_codigo, 1, 3) > 200 
+                        AND e.modelo_codigo = '{$modelo}' 
+                        AND e.codigo != '520-SALDO' 
+                        AND c.usuario_id = {$this->data[ "usuario" ]->id} 
+                        AND ( 
+                                (
+                                    e.codigo != '530-LIDERAZGO' 
+                                    AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes}' 
+                                )
+                                OR
+                                (
+                                    e.codigo = '530-LIDERAZGO' 
+                                    AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes_bono}' 
+                                )
+                        )
+                        AND e.settings->>'$.periodo' IN ( 'MENSUAL', 'SEMANAL', 'ANUAL') 
+                    GROUP BY c.esquema_codigo 
                     order by c.esquema_codigo";
+            
 
             $result  = $db->query( $sql );
 
