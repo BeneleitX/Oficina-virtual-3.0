@@ -1249,6 +1249,7 @@ class Capital extends BaseController
     {
         $mes   = $this->request->getPost( "mes" );
         $fecha = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+        $cant  = $this->request->getPost( "cantidad" );
 
         $db  = db_connect();
         $sql = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
@@ -1279,22 +1280,27 @@ class Capital extends BaseController
             }
         }
 
-        if( $directos >= 12 ){
-            $bono = 1;
-        }
-        elseif( $directos >= 8 ){
-            $bono = 0.66;
-        }
-        elseif( $directos >= 4 ){
-            $bono = 0.33;
-        }
-        else{
-            $bono = 0;
-        }
-
         $html .= "\n</tbody></table>";
 
         $html = "\n<div class=\"row\"><div class=\"col-lg-6 text-center\"><span class=\"badge fs-1 w-100 bg-mustard py-1\">".strtoupper( mes( substr( $fecha, 5, 2 ) ) )." ".substr( $fecha, 0, 4 )."</span></div><div class=\"col-lg-6 text-center\"><div class=\"card\"><h1 class=\"m-0\">$".number_format( $bolsa, 2 )."</h1></div></div></div>".$html;
+
+        // validar cantidad
+
+        if( $cant != $bolsa ){
+
+            $h = $this->data[ "usuario" ]->historial;
+            $h->modelos->{"50-INVERSION"}->corte_mensual->{$mes}->bolsa = $bolsa;
+            $this->data[ "usuario" ]->historial = $h;
+
+            model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+
+            // BITACORA Ajuste automatico bolsa capital semilla de red
+            bitacora( 95, $this->data[ "usuario" ]->id, [ 
+                "mes"      => $mes,
+                "anterior" => $cant,
+                "nueva"    => $bolsa
+            ] );                
+        }
 
         return $html;
     }

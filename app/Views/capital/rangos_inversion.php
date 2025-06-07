@@ -69,7 +69,7 @@ foreach( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual as $mes =
 
     $fecha = date( "Y-m-d", strtotime( "{$y}-{$m}-01 - 1 month" ) );
 
-    echo "\n<tr>
+    echo "\n<tr mes=\"{$mes}\" cantidad=\"{$data->bolsa}\">
             <td valign=\"middle\"><h5 class=\"mt-2 mb-0\">".strtoupper( fecha( $fecha, "mes" ) )."</h5></td>
             <td valign=\"middle\">{$data->directos}</td>
             <td valign=\"middle\" nowrap class=\"p-0\">
