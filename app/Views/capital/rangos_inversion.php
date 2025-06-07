@@ -55,6 +55,7 @@
         <th>Bolsa</th>
         <th>Porcentaje</th>
         <th>Bono</th>
+        <th></th>
     </tr>
 </thead>
 <tbody>
@@ -69,9 +70,9 @@ foreach( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual as $mes =
     $fecha = date( "Y-m-d", strtotime( "{$y}-{$m}-01 - 1 month" ) );
 
     echo "\n<tr>
-            <td><h5 class=\"mt-2 mb-0\">".strtoupper( fecha( $fecha, "mes" ) )."</h5></td>
-            <td>{$data->directos}</td>
-            <td nowrap class=\"p-0\">
+            <td valign=\"middle\"><h5 class=\"mt-2 mb-0\">".strtoupper( fecha( $fecha, "mes" ) )."</h5></td>
+            <td valign=\"middle\">{$data->directos}</td>
+            <td valign=\"middle\" nowrap class=\"p-0\">
                 <h5 class=\"m-0\"><table class=\"m-0\"><tr>
                     <td valign=\"middle\"><img src=\"".base_url()."assets/img/rangos/".$rango[ "codigo" ].".png\" style=\"width:60px\" alt=\"\"></td>
                     <td valign=\"middle\"><span class=\"badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></td>
@@ -79,13 +80,35 @@ foreach( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual as $mes =
                 </h5>
             </td>
 
-            <td><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa, 2 )."</td>
-            <td><strong>{$data->bono}%</strong></td>
-            <td><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa * $data->bono / 100, 2 )."</td>
-            
+            <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa, 2 )."</td>
+            <td valign=\"middle\"><strong>{$data->bono}%</strong></td>
+            <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa * $data->bono / 100, 2 )."</td>
+        
+            <td valign=\"middle\" class=\"text-end\"><button type=\"button\" class=\"btn btn-secondary btn-sm\" onclick=\"detalle_bono( '{$mes}' )\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
         </tr>";
 }
 
 ?>
 </tbody>
 </table>
+
+
+
+<div class="modal" tabindex="-1" id="detalle_bono">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-marine">
+				<div class="modal-title">
+                    <h5 class="text-white m-0"><i class="fa fa-magnifying-glass"></i> Detalle de bono de liderazgo</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+            <div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+    var usuario = <?php echo json_encode( $usuario ); ?>;
+</script>

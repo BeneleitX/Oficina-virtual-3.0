@@ -1116,6 +1116,13 @@ class Capital extends BaseController
     }    
 
 
+    /**
+     * Muestra una tabla con los rangos de liderazgo en Capital24,
+     * incluyendo el corte de socios directos activos y el volumen
+     * de capital semilla de la red.
+     *
+     * @return void
+     */
     public function rangos_inversion()
     {
         $this->data[ "navbar" ] = true;
@@ -1124,6 +1131,10 @@ class Capital extends BaseController
         echo template( "capital/rangos_inversion", $this->data );
     }
 
+    /**
+     * Descarga un Excel con los rangos de liderazgo en Capital24.
+     * @return void
+     */
     public function excel_rangos()
     {
         if( !(
@@ -1231,5 +1242,60 @@ class Capital extends BaseController
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
-    }        
+    }
+
+
+    public function get_bono_liderazgo()
+    {
+        $mes   = $this->request->getPost( "mes" );
+        $fecha = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+
+        $db  = db_connect();
+        $sql = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
+                // ".date( "Ym", strtotime( $fecha ) )."
+
+        $ps  = $db->query( $sql )->getResult();
+        
+        $directos = 0;
+        $bolsa    = 0;
+
+        $html  = "\n<table class=\"table table-striped w-100\"><thead><tr><th></th><th>Nombre</th><th>Nivel</th><th>Inversión</th></tr></thead><tbody>";
+
+        foreach( $ps as $s ){
+            
+            if( 
+                $s->nivel > 0 &&
+                $s->semilla > 0 && 
+                substr( $s->estatus, 0, 3 ) > 300 && 
+                substr( $fecha, 0, 7 ) >= substr( $s->activacion, 0, 7 )
+            ){
+                if( $s->nivel == 1 ){
+                    $directos++;
+                }
+
+                $data   = model( "UsuarioModel" )->find( $s->id );
+                $bolsa += $s->semilla;
+                $html  .= "\n<tr><td>".$data->id( "50-INVERSION" )."</td><td>".$data->avatar(24)." ".$data->nombre( 2 )."</td><td>{$s->nivel}</td><td class=\"text-end\">$".number_format( $s->semilla, 2 )."</td></tr>";
+            }
+        }
+
+        if( $directos >= 12 ){
+            $bono = 1;
+        }
+        elseif( $directos >= 8 ){
+            $bono = 0.66;
+        }
+        elseif( $directos >= 4 ){
+            $bono = 0.33;
+        }
+        else{
+            $bono = 0;
+        }
+
+        $html .= "\n</tbody></table>";
+
+        $html = "\n<div class=\"row\"><div class=\"col-lg-6 text-center\"><span class=\"badge fs-1 w-100 bg-mustard py-1\">".strtoupper( mes( substr( $fecha, 5, 2 ) ) )." ".substr( $fecha, 0, 4 )."</span></div><div class=\"col-lg-6 text-center\"><div class=\"card\"><h1 class=\"m-0\">$".number_format( $bolsa, 2 )."</h1></div></div></div>".$html;
+
+        return $html;
+    }
 }

@@ -245,6 +245,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
     $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
     $routes->post( "get_retiros",                       "Capital::get_retiros" );
+    $routes->post( "get_bono_liderazgo",                "Capital::get_bono_liderazgo" );
     $routes->post( "cancela_retiro",                    "Capital::cancela_retiro" ); 
     
 });
