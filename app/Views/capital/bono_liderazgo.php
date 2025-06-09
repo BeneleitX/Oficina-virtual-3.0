@@ -101,7 +101,7 @@
                 <td>".$u->id( "50-INVERSION", false, false )."</td>
                 <td nowrap><span class=\"d-none\">".".$u->nombre()."."</span>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
                 <td>{$u->telefono}</td>
-                <td><span class=\"badge bg-gray-200 text-marine\">{$u->data->wallet}</span></td>
+                <td><span class=\"badge bg-gray-200 text-marine\">".( $u->data->wallet ?? "<span class=\"tet-red\">NO-WALLET</span>" )."</span></td>
                 <td class=\"text-center\">{$s[ "mes" ][ "directos" ]}</td>
                 <td class=\"text-end\">$".number_format( $s[ "mes" ][ "bolsa" ], 2)."</td>
                 <td><span class=\"d-none\">{$rango[ "codigo" ]}</span><span class=\"badge bg-{$rango[ "color" ]}\">".strtoupper( $rango[ "nombre" ] )."</span></td>

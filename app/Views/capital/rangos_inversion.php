@@ -95,7 +95,7 @@ foreach( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual as $mes =
 
 
 <div class="modal" tabindex="-1" id="detalle_bono">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header bg-marine">
 				<div class="modal-title">
