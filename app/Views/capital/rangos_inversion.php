@@ -48,7 +48,7 @@
 
 <table class="table table-striped bg-white">
 <thead>
-    <tr>
+    <tr> 
         <th>Mes</th>
         <th>Directos</th>
         <th>Rango</th>
