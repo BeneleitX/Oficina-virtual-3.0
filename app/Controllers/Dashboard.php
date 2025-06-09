@@ -799,8 +799,10 @@ class Dashboard extends BaseController
      */
     public function bolsa_inversiones()
     {
+        $mes = date( "Ym", strtotime( date( "Ym" )."-01 + 1 month" ) );
+
         $db      = db_connect();
-        $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
+        $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
         $ps      = $db->query( $sql )->getResult();
         $semilla = 0;
 
