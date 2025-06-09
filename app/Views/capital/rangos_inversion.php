@@ -52,7 +52,7 @@
         <th>Mes</th>
         <th>Directos</th>
         <th>Rango</th>
-        <th>Bolsa</th>
+        <th>Bolsa</th> 
         <th>Porcentaje</th>
         <th>Bono</th>
         <th></th>
