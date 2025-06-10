@@ -51,7 +51,9 @@ class Sesion extends BaseController
     // validar formulario de login
     public function procesa_login( $socio = null, $modelo = null )
     {
-        // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
+        $db = db_connect();
+
+            // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
         // esto elimina cualquier intento de ataque por briteforce
 
         if( session( "login" ) + 3 > time() ){
@@ -71,7 +73,6 @@ class Sesion extends BaseController
 
             $socio->valida_modelo();
 
-            $db = db_connect();
             foreach( MODELOS as $m ){
                 $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
                 $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
@@ -115,6 +116,8 @@ class Sesion extends BaseController
 
             $datax    = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
+
+            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
 
             $usuario->valida_modelo();
 
@@ -168,7 +171,6 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $db = db_connect();
             $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
             $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  

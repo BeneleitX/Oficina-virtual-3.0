@@ -15,10 +15,10 @@
             <span class="badge bg-teal" id="pendientes"><?php echo sizeof( $socios ); ?></span>
             <select id="mes_retiros" class="ms-4 form-select" style="display: inline-block; width:auto">
                 <?php
-                $fecha = date( "Y-m-d", strtotime( date( "Y-m-d" )." - 1 month") );
+                $fecha = date( "Y-m-d", strtotime( date( "Y-m-d" )."") ); //  - 1 month
                 $mes_x = date( "Ym", strtotime( $fecha ) );
 
-                while( $mes_x >= '202502' ){
+                while( $mes_x >= '202503' ){
                     echo "\n<option ".( $mes_x == $mes ? "selected" : "" )." value=\"{$mes_x}\">".substr( $mes_x, 0, 4)." ".strtoupper( mes( substr( $mes_x, 4, 2) ) )."</option>";
 
                     $fecha = date( "Y-m-d", strtotime( $fecha." -1 month" ) );
@@ -34,12 +34,6 @@
 
 <div class="alert alert-info">
     <div class="row">
-        <div class="col-lg-4">
-            <p><strong>Los rangos son una recompensa por expandir conexiones y dan derecho automático al bono de liderazgo.</strong></p>
-            <p>Según el número de directos activos será el porcentaje de ganancia del volumen grupal semilla invertido.</p>
-            <button class="btn btn-primary" onclick="excel_rangos( <?php echo $mes; ?> )"><i class="fa fa-file-excel"></i> Descargar excel</button>
-        </div>
-
         <div class="col-lg-4">
             <table class="w-100"><tr>
             <?php
@@ -60,13 +54,28 @@
             </tr></table>
         </div>
 
+
         <div class="col-lg-4">
             <h5>Cálculo de bono:</h5>
             <ol class="m-0">
-                <li>El rango se calcula al finalizar el mes, haciendo un corte de socios directos activos y el volumen de capital semilla de la red.</li>
+                <li>El rango se calcula al finalizar el mes, haciendo corte de directos activos y el capital semilla de la red.</li>
                 <li>Se debe esperar a que transcurra el mes siguiente, para que ese volumen de capital semilla genere rendimientos.</li>
                 <li>El bono se pagará al finalizar el mes siguiente, durante los primeros 3 días hábiles.</li>
             </ol>
+        </div>
+
+        <div class="col-lg-4">
+            <p><strong>Descargar archivo de pagos</strong></p>
+            <div class="alert alert-warning m-0">
+                <?php
+                $m1 = strtoupper( mes( date( "m", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-1 - 1 month" ) ) ) );
+                $m2 = strtoupper( mes( date( "m", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-1 + 1 month" ) ) ) );
+                ?>
+                <p><i class="fa fa-warning"></i> Este archivo contiene los bonos de <strong><?php echo $m1; ?></strong><br>Que deben pagarse los primeros días de <strong><?php echo $m2; ?></strong></p>
+                <?php if( $mes < date( "Ym" ) ) { ?>
+                    <button class="btn btn-primary" onclick="excel_rangos( <?php echo $mes; ?> )"><i class="fa fa-file-excel"></i> Descargar excel</button>
+                <?php } ?>
+            </div>
         </div>
     </div>
 </div>

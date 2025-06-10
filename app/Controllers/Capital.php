@@ -93,7 +93,7 @@ class Capital extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Bono de liderazgo";
 
-        $mesb = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month" ) );
+        $mesb = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01" ) ); //  + 1 month
 
         $sql = "SELECT 
                     u.id,u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\"' as cortes
@@ -1147,7 +1147,7 @@ class Capital extends BaseController
         $m1 = $this->request->getPost( "mes" );
         $m2 = substr( $m1, 0, 4 )."-".substr( $m1, 4, 2 )."-01";
         $mesa = date( "Ym", strtotime( $m2 ) );
-        $mesb = date( "Ym", strtotime( $m2." + 1 month" ) );
+        $mesb = date( "Ym", strtotime( $m2."" ) ); //  + 1 month
         $db  = db_connect();
 
         $sql = "SELECT 
