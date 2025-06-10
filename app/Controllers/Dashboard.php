@@ -807,7 +807,7 @@ class Dashboard extends BaseController
         $semilla = 0;
 
         foreach( $ps as $socio ){
-            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 && $socio ){
+            if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 ){
                 $semilla += $socio->semilla;
             }
 
