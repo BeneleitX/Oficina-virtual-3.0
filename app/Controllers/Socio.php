@@ -345,7 +345,7 @@ class Socio extends BaseController
         if( !$validation->withRequest( $this->request )->run() ){
 
             // BITACORA Error al agregar WALLET
-            bitacora( 38, $socio->id, [ 
+            bitacora( 97, $socio->id, [ 
                 "wallet"   => $wallet,
                 "usuario" => $this->data[ "usuario" ]->id
             ] );
@@ -362,7 +362,7 @@ class Socio extends BaseController
 
         if( $db->query( "select count(*) as existe from t_usuarios where json_unquote( json_extract( data, '$.wallet' ) ) = '{$wallet}' and id != {$this->data[ "usuario" ]->id} ")->getRow()->existe ){
             // BITACORA Error al agregar WALLET
-            bitacora( 38, $socio->id, [ 
+            bitacora( 97, $socio->id, [ 
                 "wallet"   => $wallet,
                 "usuario" => $this->data[ "usuario" ]->id
             ] );
@@ -385,7 +385,7 @@ class Socio extends BaseController
         $db->query( "update t_pagos set clabe = '{$wallet}' where modelo_codigo = '50-INVERSION' and usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
 
         // BITACORA Actualziar CLABE interbancaria
-        bitacora( 13, $socio->id, [ 
+        bitacora( 96, $socio->id, [ 
             "wallet"  => $wallet,
             "usuario" => $this->data[ "usuario" ]->id
         ] );

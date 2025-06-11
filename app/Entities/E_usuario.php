@@ -761,8 +761,10 @@ class E_usuario extends Entity
             $m->variables = json_decode( $m->variables ); 
 
             foreach($m->variables as $k => $v){
-                if(!is_object($v))
-                $m->string = str_replace( "#{$k}#", $v, $m->string );
+
+                if(is_string($v)){
+                    $m->string = str_replace( "#{$k}#", $v, $m->string );
+                }
             }
         }
 
