@@ -320,7 +320,7 @@ class Socio extends BaseController
 
         // BITACORA Actualziar CLABE interbancaria
         bitacora( 13, $socio->id, [ 
-            "clabe"   => $clabe,
+            "clabe"   => $clabe, 
             "usuario" => $this->data[ "usuario" ]->id
         ] );
 
