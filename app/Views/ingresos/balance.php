@@ -80,12 +80,16 @@
 <?php
 $hoy = $periodo[ "inicia" ];
 
+
+
+
 // for( $d = 0; $d < 7; $d++ ){ 
 while( $hoy <= $periodo[ "termina" ] ){ 
-    
+   
     $cantidad = $ingresosxdia[ $hoy ] ?? null;
-    
+
     if( $cantidad ){
+         
     ?>
     <div class="card mb-3">
         <div class="card-header bg-marine">
