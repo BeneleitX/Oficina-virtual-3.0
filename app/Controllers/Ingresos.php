@@ -153,6 +153,7 @@ class Ingresos extends BaseController
                                 (
                                     e.codigo = '530-LIDERAZGO' 
                                     AND CONCAT( substring(c.fecha, 1, 4), substring(c.fecha, 6, 2)) = '{$mes_bono}' 
+                                    AND '202503' < '{$mes_bono}'
                                 )
                         )
                         AND e.settings->>'$.periodo' IN ( 'MENSUAL', 'SEMANAL', 'ANUAL') 
