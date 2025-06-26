@@ -77,4 +77,4 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 		</div>
 	</div>
 		
-</div>
+</div> 
