@@ -152,7 +152,7 @@ $(document).ready(function(){
     $( '#cantidad_3' ).on( 'keyup', function(){
         var total = $( this).val();
 
-        if( parseFloat( $( '#cantidad_3' ).val() ) > 0 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
+        if( parseFloat( $( '#cantidad_3' ).val() ) > 7 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
             $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
         }
         else{

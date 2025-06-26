@@ -20,6 +20,7 @@ if( sizeof( $t[ "extras" ] ) ){
 }
 
 function pago( $g ){
+    
     return "<tr>
     <td width=\"8%\"><span class=\"badge bg-marine\">".periodo( $g[ "data" ][ "periodos" ][ "creacion" ] )."</span></td>
     <td width=\"10%\" class=\"text-start\"><span class=\"badge bg-".ESTATUS[ $g[ "estatus_codigo" ] ][ "color" ]."\">".periodo( $g[ "data" ][ "periodos" ][ "deposito" ] )."</span></td>
