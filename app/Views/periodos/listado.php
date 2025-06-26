@@ -18,7 +18,7 @@
             <th>Socios</th>
             <th>Comisiones</th>
             <th>I.S.R.</th>
-            <th>Pagado</th>
+            <th>Pagado</th> 
             <th>Estatus</th>
             <th></th>
         </tr>
