@@ -471,6 +471,7 @@ class E_usuario extends Entity
             switch( $modelo[ "codigo" ] ){
                 case "10-NUTRICION" : 
                 case "30-ALIMENTOS" : 
+                case "40-GASOLINAS" : 
                         $calificacion = CALIFICACIONES[ $calificaciones[ $m_1 ] ][ "descripcion" ]." - ".CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
                     break;
 
