@@ -25,13 +25,14 @@
 
     <tbody>
     <?php 
-        $a = 0;
+        $xa = 0;
         foreach( $periodos as $periodo ){
 
             // Autofill de nuevo dato
 
-            if( $a++ < 5 && !isset( $periodo[ "data" ][ "venta" ] ) ){ 
+            if( $xa < 5 && !isset( $periodo[ "data" ][ "venta" ] ) ){ 
                 calcula_venta_periodo( $periodo );
+                $xa++;
             }
             
             echo "<tr>
