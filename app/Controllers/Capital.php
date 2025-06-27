@@ -1196,6 +1196,9 @@ class Capital extends BaseController
         $worksheet->setCellValue( chr(65 + $col++)."1", "NOMBRE" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "TELEFONO" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "DIRECTOS" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "BOLSA" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "BONO" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "CANTIDAD" );
 
 
@@ -1213,13 +1216,17 @@ class Capital extends BaseController
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->nombre( 2, false, true ) );
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->telefono );
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet ?? "NO WALLET" );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $s[ "mes" ][ "directos" ] );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $s[ "mes" ][ "bolsa" ] );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $s[ "mes" ][ "bono" ] );
             $worksheet->setCellValue( chr(65 + $col++).$row, $cantidad );
         }
 
         $col--;
 
         $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
-        $worksheet->getStyle( "E2:E".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "F2:F".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "H2:H".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
         $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
 
         

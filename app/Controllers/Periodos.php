@@ -622,6 +622,12 @@ class Periodos extends BaseController
             }
         } 
 
+        // quitar ISR si es inversión capital24
+
+        if( $periodo[ "modelo_codigo" ] == "50-INVERSION" ){
+            $worksheet[ 2 ]->removeColumn('G', 3);
+        }
+
         // BITACORA descarga excel de corte
         bitacora( 46, $this->data[ "usuario" ]->id, [
             "periodo" => $this->request->getPost( "periodo" ),
