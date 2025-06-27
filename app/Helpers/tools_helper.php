@@ -326,6 +326,22 @@ function aplicaImpuestos( $cantidad, $tipo, $fecha = null, $modelo = null )
     return $desglose; 
 }
 
+
+function calcula_venta_periodo( $periodo )
+{
+    $db  = db_connect(); 
+
+    $sql = "SELECT sum( ped.data->>'$.total' ) as suma
+            from t_pedidos ped
+            join t_periodos per on per.codigo = '{$periodo[ "codigo" ]}' and ped.modelo_codigo = per.modelo_codigo
+            where cast( ped.fechas->>'$.pagado' as date ) between per.inicia and per.termina";
+
+    $periodo[ "data" ][ "venta" ] = $db->query( $sql )->getRow()->suma ?? 0;
+
+    model( "PeriodoModel" )->save( $periodo );
+}
+
+
 function get_hash( $pedido ){
     $db = db_connect();
     $sql = "SELECT * FROM t_inversiones 

@@ -16,9 +16,8 @@
             <th>Termina</th>
             <th>Pedidos</th>
             <th>Socios</th>
+            <th>Ingresos</th>
             <th>Comisiones</th>
-            <th>I.S.R.</th>
-            <th>Pagado</th> 
             <th>Estatus</th>
             <th></th>
         </tr>
@@ -26,18 +25,25 @@
 
     <tbody>
     <?php 
+        $a = 0;
         foreach( $periodos as $periodo ){
- // if( $periodo[ "codigo" ] == "50S202526") dd( $periodo );
-          // if( $periodo[ "codigo"] == "50S202514" )      dd($periodo); 
+
+            // Autofill de nuevo dato
+
+            if( $a++ < 5 && !isset( $periodo[ "data" ][ "venta" ] ) ){ 
+                calcula_venta_periodo( $periodo );
+            }
+            
+            // if( $periodo[ "codigo"] == "50S202514" )      dd($periodo); 
+            
             echo "<tr>
                 <td><span class=\"badge bg-marine\"><span class=\"d-none\">{$periodo[ "codigo"]}</span>".periodo( $periodo[ "codigo" ] )."</span></td>
                 <td><span class=\"d-none\">{$periodo[ "inicia" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "inicia" ] ) )."</td>
                 <td><span class=\"d-none\">{$periodo[ "termina" ]}</span> ".date( "d-m-Y", strtotime( $periodo[ "termina" ] ) )."</td>
                 <td>".( $periodo[ "data" ][ "pedidos" ] ?? 0 )."</td>
                 <td>".( $periodo[ "data" ][ "pagos" ] ?? 0 )."</td>
+                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "venta" ] ?? 0 , 2 )."</td>
                 <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "comisiones" ] ?? 0 , 2 )."</td>
-                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "isr" ] ?? 0 , 2 )."</td>
-                <td class=\"text-end\">$".number_format( $periodo[ "data" ][ "total" ] ?? 0 , 2 )."</td>
                 <td>".estatus( substr( codigo_periodo( $modelo ), 3 ) >= substr( $periodo[ "codigo" ], 3 ) ? $periodo[ "estatus_codigo" ] : "152-FUTURO" )."</td>
                 <td class=\"text-end\"><a href=\"".base_url( "periodo/".$periodo[ "codigo" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
             </tr>";
