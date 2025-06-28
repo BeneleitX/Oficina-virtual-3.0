@@ -44,6 +44,38 @@ function load_padres( extra = null){
 
 $(document).ready(function(){
 
+    $( '.form-check-input' ).on( 'change', function(e){
+        var valor  = $( this ).is( ':checked' ),
+            modelo = $( this ).attr( 'modelo' );
+
+        if( valor ){
+            $( '.select_permanentes[modelo=' + modelo + ']' ).prop( 'disabled', false );
+        }
+        else{
+            ninguno = $( '.select_permanentes[modelo=' + modelo + '] > option:first' ).attr( 'value' );
+            $( '.select_permanentes[modelo=' + modelo + ']' ).val( ninguno ).prop( 'disabled', true ).change();
+        }
+    });
+
+    $( '.select_permanentes' ).on( 'change', function(e){
+        var valor = $( this ).val();
+
+        if( valor.substring( 3, 5 ) == "--" ){
+            $( this ).removeClass( 'bg-teal text-white' );
+        }
+        else{ 
+            $( this ).addClass( 'bg-teal text-white' );
+        }
+    });
+
+    $( '.select_permanentes' ).each( function(){ 
+        $( this ).change(); 
+    });
+
+    $( '.form-check-input' ).each( function(){ 
+        $( this ).change(); 
+    });
+
     $( '#activa_editar' ).on( 'click', function(e){
         e.stopPropagation();
         e.preventDefault();

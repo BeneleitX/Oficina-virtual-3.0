@@ -327,23 +327,39 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         <h5 class="modal-title text-white m-0"><i class="fa fa-lock"></i> Bloqueo de usuarios</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body text-red text-center"><div class="small">
+                    <div class="modal-body text-red text-start"><div class="xsmall">
                             <p class=""><i class="fa fa-warning"></i> ATENCION:</p>
-                            <p class="mb">Al apagar una red, el estatus del socio <?php echo $socio->id(); ?> cambiará a BAJA MANUAL (gris) cancelando cualquier calificación o estatus activo en esa red y generando una compresión definitiva por lo que nunca podrá cobrar comisiones en esa red y perdiendo toda su estructura de socios en línea descendente. Si se apagan todas las redes, la cuenta se inactiva y el socio ya no podrá utilizar la oficina virtual.</p><p>El bloqueo podrá ser revertido para que se active y califique pero no recupera los socios que por compresión ahora pertenecen a su patrocinador.</p>
+                            <p class="mb">Al apagar una red, el estatus del socio <?php echo $socio->id( false, "marine" ); ?> cambiará a BAJA MANUAL (gris) cancelando cualquier calificación o estatus activo en esa red y generando una compresión definitiva por lo que nunca podrá cobrar comisiones en esa red y perdiendo toda su estructura de socios en línea descendente. Si se apagan todas las redes, la cuenta se inactiva y el socio ya no podrá utilizar la oficina virtual.</p><p>El bloqueo podrá ser revertido para que se active y califique pero no recupera los socios que por compresión ahora pertenecen a su patrocinador.</p>
                         </div>
                         <h5 class="mt-2 mb-3">Permisos de uso de redes para el socio <?php echo $socio->id(); ?></h5>
 
                         <table class="w-100"><tr>
                             <?php 
+
                             foreach( MODELOS as $m ){
                                 echo "\n
                                     <td width=\"20%\" class=\"text-center px-1\">
-                                        <div class=\"card\"><div class=\"card-body text-center\">
+                                        <div class=\"card\"><div class=\" px-1 card-body text-center\">
                                             <div class=\"form-check form-switch text-center\" style=\"padding-left: 0; zoom: 1.5\">
-                                            <input name=\"modelos[{$m[ "codigo" ]}]\" value=\"1\" class=\"form-check-input bg-red\" type=\"checkbox\" role=\"switch\" id=\"switch_{$m[ "codigo" ]}\" style=\"clear: both; margin-left: auto; float:none\" ".( $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ? "" : "checked" ).">
-                                            <label class=\"form-check-label\" for=\"switch_{$m[ "codigo" ]}\"></label></div>
-                                            <span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span>
-                                        </div></div>                                        
+                                            <input modelo=\"{$m[ "codigo" ]}\" name=\"modelos[{$m[ "codigo" ]}]\" value=\"1\" class=\"form-check-input bg-red\" type=\"checkbox\" role=\"switch\" id=\"switch_{$m[ "codigo" ]}\" style=\"clear: both; margin-left: auto; float:none\" ".( $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ? "" : "checked" )."><label class=\"form-check-label\" for=\"switch_{$m[ "codigo" ]}\"></label></div>";
+
+                                echo "\n
+                                            <span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></div></div>";
+
+ 
+                                echo "\n<small>Califica permanente</small><br><select name=\"calificaciones[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" class=\"select_permanentes small form-select form-select-sm\">";
+
+                                foreach( CALIFICACIONES as $c ){
+                                    if( $c[ "modelo_codigo" ] == $m[ "codigo" ] ){
+                                        echo "\n<option value=\"{$c[ "codigo" ]}\" ".( ( $socio->data->permanentes->{$m[ "codigo" ]} ?? "" ) == $c[ "codigo" ] ? "selected" : "" ).">{$c[ "descripcion" ]}</option>";
+                                    }
+                                }
+
+                                            
+                                echo "\n</select>";
+
+
+                                echo "\n        
                                     </td>
                                 ";
                             }

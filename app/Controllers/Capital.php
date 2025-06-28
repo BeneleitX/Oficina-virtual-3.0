@@ -1252,6 +1252,11 @@ class Capital extends BaseController
     }
 
 
+    /**
+     * Genera el excel de bono de liderazgo
+     * 
+     * @return string
+     */
     public function get_bono_liderazgo()
     {
         $mes   = $this->request->getPost( "mes" );

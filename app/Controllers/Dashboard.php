@@ -63,6 +63,7 @@ class Dashboard extends BaseController
 
         load_catalogo( "metodosentrega");
         load_catalogo( "almacenes");
+        load_catalogo( "calificaciones");
         
         // Obtenemos sus compras recientes
         
@@ -244,22 +245,21 @@ class Dashboard extends BaseController
             return redirect()->to( "no_permiso" ); 
         }
 
-        $bloqueos  = $this->request->getPost( "modelos" );
+        $bloqueos    = $this->request->getPost( "modelos" );
+        $permanentes = $this->request->getPost( "calificaciones" );
 
         if( $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) ) ){
             $db    = db_connect();
+
+            $data = $socio->data;
 
             foreach( MODELOS as $m ){
 
                 // Aplica bloqueo
                 if( !isset( $bloqueos[ $m[ "codigo" ] ] ) && $socio->data->estatus->modelos->{$m[ "codigo" ]} != "110-ELIMINADO" ){
                     
-                    $data = $socio->data;
                     $data->estatus->modelos->{$m[ "codigo" ]} = "110-ELIMINADO";
-                    $socio->data = $data;
                     
-                    model( "UsuarioModel" )->save( $socio );
-
                     // BITACORA Bloquear 
                     bitacora( 88, $this->data[ "usuario" ]->id, [ 
                         "socio"        => $socio->id,
@@ -274,12 +274,8 @@ class Dashboard extends BaseController
                 // Quita bloqueo
                 elseif( isset( $bloqueos[ $m[ "codigo" ] ] ) && $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ){
                     
-                    $data = $socio->data;
                     $data->estatus->modelos->{$m[ "codigo" ]} = "";
-                    $socio->data = $data;
                     
-                    model( "UsuarioModel" )->save( $socio );
-
                     // BITACORA Bloquear 
                     bitacora( 89, $this->data[ "usuario" ]->id, [ 
                         "socio"        => $socio->id,
@@ -288,9 +284,20 @@ class Dashboard extends BaseController
 
                     $up = true;
                 } 
+
+                // calificación permanente
+
+                if( !isset( $data->permanentes ) ){
+                    $data->permanentes = new \stdClass();
+                }
+
+                $data->permanentes->{$m[ "codigo" ]} = $permanentes[ $m[ "codigo" ] ] ?? "";
             }
 
             // actualizar estatus
+
+            $socio->data = $data;
+            model( "UsuarioModel" )->save( $socio );
 
             $db->query( "do f_get_estatus( {$socio->id}, 0 )" );
 
