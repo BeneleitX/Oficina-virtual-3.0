@@ -170,7 +170,7 @@ class Sesion extends BaseController
                     "password" => $datax[ "socio_password" ] 
                 ] );
 
-                return redirect()
+                return redirect() 
                     ->back()
                     ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
                     ->withInput();

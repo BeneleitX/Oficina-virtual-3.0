@@ -90,7 +90,7 @@ class Periodos extends BaseController
         $this->data[ "t" ] = [
             "previos"   => [],
             "actual"    => [],
-            "siguiente" => [],
+            "siguiente" => [], 
             "extras"    => []
         ];
 
