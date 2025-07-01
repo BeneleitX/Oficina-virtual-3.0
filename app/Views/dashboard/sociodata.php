@@ -418,5 +418,8 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
     </div>
 
 
-<?php } } ?>
+<?php 
+    } 
+}
+?>
     

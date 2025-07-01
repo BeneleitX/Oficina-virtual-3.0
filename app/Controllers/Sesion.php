@@ -81,6 +81,11 @@ class Sesion extends BaseController
             $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
             $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
 
+            if( strlen( $socio->data->clabe ) == 18 ){
+                // actualizaar pagos pendientes
+                $db->query( "update t_pagos set clabe = '{$socio->data->clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$socio->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+            }
+
             $this->session->set( "usuario", $socio->id );
             
             return redirect()->to( "inicio" );
@@ -192,6 +197,11 @@ class Sesion extends BaseController
                     ->back()
                     ->with( "errors", [ "socio_id" => "Socio inactivo" ] )
                     ->withInput();
+            }
+
+            if( strlen( $usuario->data->clabe ) == 18 ){
+                // actualizaar pagos pendientes
+                $db->query( "update t_pagos set clabe = '{$usuario->data->clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$usuario->id." and substring( estatus_codigo, 1, 3 ) < 400" );
             }
 
             $this->session->set( "usuario", $usuario->id );
