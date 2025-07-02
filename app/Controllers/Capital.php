@@ -816,7 +816,7 @@ class Capital extends BaseController
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
         $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
 
-        $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
+        // $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
 
         $this->data[ "i" ] = $i[ 0 ];
 
