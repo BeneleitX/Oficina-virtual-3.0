@@ -689,12 +689,19 @@ class Capital extends BaseController
 
             // generar retiro
 
+            $descuento = 0;
+
+            if( $t > 3 ){
+                $descuento = floor( 100 * ( $retiro[ $tipo -1 ] * 25 / 100 ) ) / 100;
+            }
+
             $retiro_add = [
                 "id" => NULL,
                 "estatus_codigo" => "255-PENDIENTE",
                 "usuario_id"     => $i[ "usuario_id" ], 
                 "inversion_id"   => $i[ "id" ],
                 "cantidad"       => $retiro[ $tipo -1 ],
+                "deposito"       => $retiro[ $tipo -1 ] - $descuento,
                 "tipo"           => $tipo,
                 "fechas"         => [
                     "creacion"       => date( "Y-m-d" ),
@@ -816,7 +823,7 @@ class Capital extends BaseController
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
         $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
 
-        // $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
+        $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
 
         $this->data[ "i" ] = $i[ 0 ];
 

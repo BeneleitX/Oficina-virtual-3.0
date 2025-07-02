@@ -17,6 +17,7 @@ class RetiroModel extends Model
         "usuario_id",
         "inversion_id",
         "cantidad",
+        "deposito",
         "tipo",
         "fechas"
     ];
