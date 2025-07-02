@@ -70,7 +70,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         $date = new \DateTime( $f_i );
     }
 
-    $meses = [];
+    $meses     = [];
 
     for( $a = 0; $a < 25; $a++ ){
         if( $a ){
@@ -79,11 +79,17 @@ function genera_meses( $pedido, $i, $producto = null ){
         }
  
         $retiros_mes = 0;
+        $c_semilla   = 0;
 
         foreach( $rts as $rt ){
             if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){
                 
-                $retiros_mes += $rt[ "cantidad" ];
+                if( in_array( $rt[ "tipo" ], [ "TOTAL", "PARCIAL", "MENSUAL" ]) ){
+                    $retiros_mes += $rt[ "cantidad" ];
+                }
+                elseif( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
+                    $c_semilla += $rt[ "cantidad" ];
+                }
             }
         }
 
@@ -92,8 +98,10 @@ function genera_meses( $pedido, $i, $producto = null ){
 
         $date->modify( "last day of this month" );  
         
+        $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
+
         $cantidad = 
-            ( $a ? $meses[ $a - 1 ][ "semilla" ] : $pedido[ "data" ][ "total" ] ) + 
+            $a_semilla + 
             ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + 
             ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - 
             ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
@@ -109,7 +117,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             $rendimiento_mes = ceil( $rendimiento_mes );
         }
 
-        $rendimiento_dia = floor( $rendimiento_mes / $dias_en_mes * 100 ) / 100; 
+        $rendimiento_dia = floor( ( ( $a_semilla > 0 ) * $rendimiento_mes ) / $dias_en_mes * 100 ) / 100; 
 
         if( $dias_parcial < $dias_en_mes ){
             $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
@@ -126,7 +134,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
             "Porcentaje"      => $producto->data->porcentaje,
-            "semilla"         => $pedido[ "data" ][ "total" ],
+            "semilla"         => $a_semilla,
+            "c_semilla"       => $c_semilla,
             "compuesto"       => $compuesto,
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,

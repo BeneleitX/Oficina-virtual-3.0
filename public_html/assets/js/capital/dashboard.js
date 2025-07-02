@@ -62,13 +62,27 @@ function carga_hash( inversion ){
 }
 
 
-function ask_retiro( inversion ){
+
+function ask_semilla( inversion ){
     var i   = $( '[inversion=' + inversion + ']' ),
         rendimiento = i.attr( 'rendimiento' ),
         semilla     = i.attr( 'semilla' ),
         mes         = i.attr( 'mes' );
 
-    console.log( inversion )
+    $( '#semilla_3' ).val( '' );
+    $( '[name=inversion_id]' ).val( inversion );
+    $( '#semilla_2' ).val( parseFloat( semilla ) );
+    $( '[name=opciones_semilla]' ).prop( 'checked', false );
+    $( '#confirma_semilla' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-outline-danger' );
+    $( '#semilla_modal' ).modal( 'show' );
+}
+
+
+function ask_retiro( inversion ){
+    var i   = $( '[inversion=' + inversion + ']' ),
+        rendimiento = i.attr( 'rendimiento' ),
+        semilla     = i.attr( 'semilla' ),
+        mes         = i.attr( 'mes' );
 
     $( '#cantidad_3' ).val( '' );
     $( '[name=inversion_id]' ).val( inversion );
@@ -145,8 +159,6 @@ $(document).ready(function(){
         else{
             $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
         }
-
-
     } );
 
     $( '#cantidad_3' ).on( 'keyup', function(){
@@ -158,8 +170,28 @@ $(document).ready(function(){
         else{
             $( '#confirma_agregar' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-outline-danger' );
         }
-        
     });
+
+
+    $( '[name=opciones_semilla]' ).on( 'change', function(){
+        if( $( this ).attr( 'id' ) == 'type_5' ){
+            $( '#semilla_3' ).keyup();
+        }
+        else{
+            $( '#confirma_semilla' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
+        }
+    } );
+
+    $( '#semilla_3' ).on( 'keyup', function(){
+        var total = $( this).val();
+
+        if( parseFloat( $( '#semilla_3' ).val() ) > 7 && parseFloat( $( '#semilla_2' ).val() ) >= parseFloat( total ) ){
+            $( '#confirma_semilla' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
+        }
+        else{
+            $( '#confirma_semilla' ).prop( 'disabled', true ).removeClass( 'btn-success' ).addClass( 'btn-outline-danger' );
+        }
+    });    
 
 });
 

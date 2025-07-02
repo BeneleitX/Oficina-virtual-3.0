@@ -672,15 +672,17 @@ class Capital extends BaseController
     {
 
         $i    = model( "InversionModel" )->find( $this->request->getPost( "inversion_id" ) );
-
         $p    = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
-        $tipo = intval( $this->request->getPost( "opciones_retiro" ) );
+        $t    = $this->request->getPost( "tipo" );
+        $tipo = intval( $this->request->getPost( "opciones_".( $t == "semilla" ? "semilla" : "retiro" ) ) );
         $bt   = balance_inversion( $i );
 
         $retiro = [
             $bt[ "rendimiento_mes_total"], 
             $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] < date( "Ym" ) ? $bt[ "total" ] : $bt[ "finmes" ], 
-            floatval( $this->request->getPost( "custom" ) )
+            floatval( $this->request->getPost( "custom" ) ), 
+            $bt[ "semilla" ],
+            floatval( $this->request->getPost( "custom" ) ), 
         ];
 
         if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
@@ -701,8 +703,7 @@ class Capital extends BaseController
                 ]
             ];
 
-            $where = "inversion_id = {$i[ "id" ]} and substring( estatus_codigo, 1, 3 ) > 200 and json_unquote( json_extract( fechas, '$.mes' ) ) = '{$this->request->getPost( "mes_apply" )}'";
-
+            $where  = "inversion_id = {$i[ "id" ]} and substring( estatus_codigo, 1, 3 ) > 200 and json_unquote( json_extract( fechas, '$.mes' ) ) = '{$this->request->getPost( "mes_apply" )}' and tipo in ( ".( $t == "semilla" ? "'STOTAL', 'SPARCIAL'" : "'TOTAL', 'PARCIAL', 'MENSUAL'" )." )";
             $existe = model( "RetiroModel" )->where( $where )->find();
 
             if( !$existe ){
@@ -722,11 +723,7 @@ class Capital extends BaseController
                     "retiro"    => $id,
                     "mes"       => $this->request->getPost( "mes_apply" ),
                     "cantidad"  => $retiro[ $tipo -1 ],
-                    "requested" => [
-                        $this->request->getPost( "mes" ),
-                        $this->request->getPost( "total" ),
-                        $this->request->getPost( "custom" )
-                    ]
+                    "requested" => $this->request->getPost()
                 ] );
                 
                 return redirect()->to( "capital" )->with( "msg", [ 
@@ -815,6 +812,11 @@ class Capital extends BaseController
         if( !sizeof( $i ) ){
             return redirect()->to( "capital" );
         }
+
+        $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
+        $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
+
+        $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
 
         $this->data[ "i" ] = $i[ 0 ];
 

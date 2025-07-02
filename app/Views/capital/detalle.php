@@ -58,6 +58,8 @@ for( $a = 0; $a < 25 ; $a++ ){
 
     $m = $i[ "extras" ][ "meses" ][ $a ];
 
+
+
     if( $m[ "Ym" ] < date( "Ym" ) ){
         $semilla[]   = $m[ "semilla" ];
         $compuesto[] = $m[ "compuesto" ];
@@ -65,12 +67,14 @@ for( $a = 0; $a < 25 ; $a++ ){
         $r  = $m[ "rendimiento_mes" ];
         $h += $m[ "rendimiento_mes" ];
         $retiros[] = $m[ "retiros" ];
+        $c_semilla[] = $m[ "c_semilla" ];
     }
     elseif( $m[ "Ym" ] == date( "Ym" ) ){
         $mes_actual  = $a;
         $semilla[]   = $m[ "semilla" ];
         $compuesto[] = $m[ "compuesto" ];
         $retiros[] = $m[ "retiros" ];
+        $c_semilla[] = $m[ "c_semilla" ];
         
         $h   += $m[ "rendimiento_mes" ];
         $dias = date( "d" ) - ( $m[ "dias_en_mes" ] - $m[ "dias_parcial" ] );
@@ -87,6 +91,7 @@ for( $a = 0; $a < 25 ; $a++ ){
         $r = 0;
         $dias = 0;
         $retiros[] = 0;
+        $c_semilla[] = 0;
     }
 
     $rendimiento[] = $r;
@@ -111,6 +116,7 @@ for( $a = 0; $a < 25 ; $a++ ){
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r, 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r + $compuesto[ $a ], 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">".( $retiros[ $a ] ? "<i class=\"fa fa-arrow-down text-red\"></i>" : "$0.00" )."</td>
+            <td></td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r, 2 )."</td>
             </tr>";
             
@@ -121,6 +127,7 @@ for( $a = 0; $a < 25 ; $a++ ){
             <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $m[ "rendimiento_mes" ], 2 )."</td>
             <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $m[ "rendimiento_mes" ] + $compuesto[ $a ], 2 )."</td>
             <td class=\"text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</td>
+            <td></td>
             <td class=\"text-end\" style=\"color:var(--bs-gray-500) !important\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $m[ "rendimiento_mes" ] - $retiros[ $a ], 2 )."</td>
             </tr>";
     
@@ -137,7 +144,8 @@ for( $a = 0; $a < 25 ; $a++ ){
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r, 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $r + $compuesto[ $a ], 2 )."</td>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\"><span class=\"".( $retiros[ $a ] ? "text-red" : "" )."\">$".number_format( $retiros[ $a ], 2 )."</span></td>
-            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r - $retiros[ $a ], 2 )."</td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\"><span class=\"".( $c_semilla[ $a ] ? "text-red" : "" )."\">$".number_format( $c_semilla[ $a ], 2 )."</span></td>
+            <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-end\">$".number_format( $semilla[ $a ] + $compuesto[ $a ] + $r - $retiros[ $a ] - $c_semilla[ $a ], 2 )."</td>
             </tr>";
         }
     }
@@ -242,7 +250,7 @@ echo "\n
     </script>
         ";
 
-    echo "<div class=\"card mb-4\"><div class=\"card-header bg-marine\"><h5 class=\"m-0 text-white\">Estado de cuenta</h5></div><table class=\"table table-striped m-0\"><thead>
+    echo "<div class=\"card mb-4 small\"><div class=\"card-header bg-marine\"><h5 class=\"m-0 text-white\">Estado de cuenta</h5></div><table class=\"table table-striped m-0\"><thead>
         <tr>
             <th class=\"text-center\">No.</th>
             <th class=\"text-start\">Mes</th>
@@ -253,7 +261,8 @@ echo "\n
             <th class=\"text-end\">Días</th>
             <th class=\"text-end\">Rend del mes</th>
             <th class=\"text-end\">Rend acumulado</th>
-            <th class=\"text-end\">Retiros</th>
+            <th class=\"text-end\">Retiro Rend</th>
+            <th class=\"text-end\">Retiro Semilla</th>
             <th class=\"text-end\">Saldo final</th>
         </tr>
     </thead><tbody>";
