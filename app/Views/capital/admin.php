@@ -90,7 +90,7 @@
                 <td nowrap>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
                 <td><span class=\"badge bg-{$p->data->color}\">{$p->data->porcentaje}%</span> <span class=\"badge bg-gray-600\">{$e[ "referencia" ]}-{$i[ "id" ]}</span></td>
                 <td class=\"text-end\"><span class=\"text-teal fw-bold\">$".number_format( $s[ "cantidad" ], 2 )."</span></td>
-                <td><span class=\"badge bg-marine\">{$s[ "tipo" ]}</span></td>
+                <td><span class=\"badge bg-".( substr( $s[ "tipo" ], 0, 1) == "S" ? "red" : "marine" )."\">".( substr( $s[ "tipo" ], 0, 1) == "S" ? "SEMILLA" : $s[ "tipo" ] )."</span></td>
                 <td>".estatus( $s[ "estatus_codigo" ] )."</td>
                 <td class=\"text-end\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" target=\"_blank\" class=\"btn btn-sm btn-info\"><i class=\"fa fa-magnifying-glass\"></i> Ver detalles</a>".( date( "Ym" )  > $s[ "fechas" ][ "mes" ] && $usuario->permiso( "40-ADMIN" ) ? " <button class=\"btn btn-sm btn-".( $s[ "estatus_codigo" ] == "421-APLICADO" ? "light" : "success" )."\" onclick=\"transferir_fondos( {$u->id}, {$s[ "inversion_id" ]} )\"><i class=\"fa fa-shuffle\"></i> Transferencias</button>" : "" )."</td>
             </tr>";
