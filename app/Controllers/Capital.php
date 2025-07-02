@@ -1052,7 +1052,8 @@ class Capital extends BaseController
                 r.estatus_codigo as estatus,
                 CONCAT( i.pedido_id, '-', i.id) as inversion,
                 u.data->>'$.wallet' as wallet,
-                r.cantidad 
+                r.cantidad,
+                r.depostio
             from t_retiros r
             join t_usuarios u on u.id = r.usuario_id
             join t_inversiones i on i.id = r.inversion_id
@@ -1075,7 +1076,7 @@ class Capital extends BaseController
         $worksheet->setCellValue( chr(65 + $col++)."1", "NOMBRE" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "TELEFONO" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "INVERSION" );
-        $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET" ); 
         $worksheet->setCellValue( chr(65 + $col++)."1", "CANTIDAD" );
         $worksheet->setCellValue( chr(65 + $col++)."1", "ESTATUS" );
 
