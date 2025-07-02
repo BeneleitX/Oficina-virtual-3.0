@@ -1053,7 +1053,7 @@ class Capital extends BaseController
                 CONCAT( i.pedido_id, '-', i.id) as inversion,
                 u.data->>'$.wallet' as wallet,
                 r.cantidad,
-                r.depostio
+                r.deposito
             from t_retiros r
             join t_usuarios u on u.id = r.usuario_id
             join t_inversiones i on i.id = r.inversion_id
