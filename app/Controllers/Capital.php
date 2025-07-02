@@ -665,7 +665,7 @@ class Capital extends BaseController
      * Actualiza la cantidad de meses de la inversión en la tabla `inversiones`.
      * Registra una bitácora de la acción.
      * Redirecciona a la página de capital con un mensaje de éxito.
-     * 
+     *  
      * @return void
      */
     public function crea_retiro()

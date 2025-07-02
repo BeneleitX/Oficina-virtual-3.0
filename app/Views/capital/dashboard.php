@@ -219,6 +219,7 @@ if( sizeof( $inversiones ) ){
                                     </table>
                                     
                                 </div>
+                                
                                 <div class=\"col-lg-6\">
                                     <table class=\"table table-sm m-0\">
                                 
