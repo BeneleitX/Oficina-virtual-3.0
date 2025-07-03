@@ -70,7 +70,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         $date = new \DateTime( $f_i );
     }
 
-    $meses     = [];
+    $meses  = [];
+    $factor = 1;
 
     for( $a = 0; $a < 25; $a++ ){
         if( $a ){
@@ -100,6 +101,10 @@ function genera_meses( $pedido, $i, $producto = null ){
         
         $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
 
+        if( $pedido[ "data" ][ "total" ] != $a_semilla ){
+            $factor = 2;
+        }
+
         $cantidad = 
             $a_semilla + 
             ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + 
@@ -109,7 +114,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         $dias_en_mes     = intval( $date->format( "d" ));
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = ( !$a && date( "d", strtotime( $f_i ) ) == 1 ) ? 0 : $dias_en_mes - $inicia_mes + 1;
-        $temp            = $cantidad * $producto->data->porcentaje / 100;
+        $temp            = $cantidad * ( $producto->data->porcentaje / $factor ) / 100;
         $rendimiento_mes = floor( $temp * 100 ) / 100;
         $corrije_float   = explode(".", $rendimiento_mes);
 
@@ -133,7 +138,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
-            "Porcentaje"      => $producto->data->porcentaje,
+            "Porcentaje"      => $producto->data->porcentaje / $factor,
             "semilla"         => $a_semilla,
             "c_semilla"       => $c_semilla,
             "compuesto"       => $compuesto,

@@ -823,7 +823,7 @@ class Capital extends BaseController
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
         $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
 
-        $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
+        // $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
 
         $this->data[ "i" ] = $i[ 0 ];
 
@@ -879,6 +879,7 @@ class Capital extends BaseController
                     u.data->>'$.wallet' as wallet,
                     r.estatus_codigo as estatus,
                     r.cantidad,
+                    r.deposito,
                     r.fechas->>'$.deposito' as pagado,
                     r.fechas->>'$.mes' as mes,
                     e.data->>'$.nombre' as producto,
@@ -927,11 +928,12 @@ class Capital extends BaseController
                 $r->estatus = "152-FUTURO";
             }
             $url = urlencode( base64_encode( $r->folio ) );
+            $cantidad = $r->deposito > 0 ? $r->deposito : $r->cantidad;
             $html .= "\n<tr>
                         <td><span class=\"badge bg-gray-600\">{$inversion}-{$r->folio}</span></td>
                         <td class=\"text-start\"><span class=\"badge bg-{$r->color}\">{$r->producto}</span></td>
                         <td><a href=\"javascript:navigator.clipboard.writeText( '{$r->wallet}' );\"><i class=\"fa fa-wallet text-teal\"></i></a> {$r->wallet}</td>
-                        <td class=\"text-end\"><span class=\"d-none\">{$r->cantidad}</span><strong>$".number_format( $r->cantidad,2 )."</strong> <button type=\"button\" class=\"btn btn-light btn-sm px-1 py-0\" onclick=\"navigator.clipboard.writeText( '{$r->cantidad}' )\"><i class=\"fa fa-copy\"></i></button></td>
+                        <td class=\"text-end\"><span class=\"d-none\">{$cantidad}</span><strong>$".number_format( $cantidad,2 )."</strong> <button type=\"button\" class=\"btn btn-light btn-sm px-1 py-0\" onclick=\"navigator.clipboard.writeText( '{$cantidad}' )\"><i class=\"fa fa-copy\"></i></button></td>
                         <td nowrap><span class=\"d-none\">{$r->mes}</span>".strtoupper( mes( substr( $r->mes, 4, 2 ), 3 ) )." ".substr( $r->mes , 0, 4 )."</td>
                         <td>".estatus( $r->estatus )."</td>
             <td class=\"text-end\">".( $r->mes < date( "Ym" ) && substr( $r->estatus, 0, 3 ) < 300 && $this->data[ "usuario" ]->permiso( "40-ADMIN") ? "<a href=\"".base_url()."entrega_retiro/{$url}\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-check\"></i> Marcar como tranferida</a>" : "" )."</td>
