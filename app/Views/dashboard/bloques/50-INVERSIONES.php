@@ -3,7 +3,10 @@
 $saldo = $usuario->saldo( "50-INVERSION", true );
 
 if( $saldo ){
-    echo "<div class=\"mt-3 px-3\"><a href=\"".base_url()."tienda/50-INVERSION\" class=\"btn w-100 mb-0 btn-success text-center\"><h1 class=\"text-white m-0\">$".number_format( $saldo, 2 )."</h1><p class=\"small m-0\">Tienes un saldo disponible para invertir en Capital24<br>Utilizalo ahora mismo haciendo click aquí</p><p class=\"text-center\"><span class=\"badge text-mustard\" style=\"background:rgba(0,0,0,0.3)\">Vigencia del saldo: ".fecha( date( "Y-m-d", strtotime( $usuario->historial->modelos->{"50-INVERSION"}->reset ." + 6 months - 1 day" ) ) )."</span></p></a></div>";
+    $registro = substr( $usuario->historial->registro, 0, 10 ); 
+    $fecha    = $registro > "2025-03-01" ? $registro : "2025-03-01";
+
+    echo "<div class=\"mt-3 px-3\"><a href=\"".base_url()."tienda/50-INVERSION\" class=\"btn w-100 mb-0 btn-success text-center\"><h1 class=\"text-white m-0\">$".number_format( $saldo, 2 )."</h1><p class=\"small m-0\">Tienes un saldo disponible para invertir en Capital24<br>Utilizalo ahora mismo haciendo click aquí</p><p class=\"text-center\"><span class=\"badge text-mustard\" style=\"background:rgba(0,0,0,0.3)\">Vigencia del saldo: ".fecha( date( "Y-m-d", strtotime( $fecha ." + 6 months - 1 day" ) ) )."</span></p></a></div>";
 }
 
 ?>

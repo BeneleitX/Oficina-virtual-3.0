@@ -639,63 +639,66 @@ class Pedidos extends BaseController
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
             $this->data[ "usuario" ]->permiso( "28-INGRESA" )
         ){
-            load_catalogo( "metodospago", "modelo_codigo = '{$p[ "modelo_codigo" ]}'" );
+            if( substr( $p[ "estatus_codigo" ], 0, 3 ) < 400 ){
+                                
+                load_catalogo( "metodospago", "modelo_codigo = '{$p[ "modelo_codigo" ]}'" );
 
-            $metodopago = METODOSPAGO[ $metodopago ];
-            $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
+                $metodopago = METODOSPAGO[ $metodopago ];
+                $u = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
-            $p[ "estatus_codigo" ]    = "420-PAGADO";
-            $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
+                $p[ "estatus_codigo" ]    = "420-PAGADO";
+                $p[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
 
-            $saldo = $u->saldo( $p[ "modelo_codigo" ] );
-            $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $saldo;
-        
-            $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
-            $p[ "fechas" ][ "pagado" ]    = $fecha_pagado;
-            $p[ "fechas" ][ "califica" ]  = $fecha_califica;
-            $p[ "fechas" ][ "reparte" ]   = $fecha_reparte;
-            $p[ "data" ][ "saldo" ]       = $saldo;
+                $saldo = $u->saldo( $p[ "modelo_codigo" ] );
+                $total = $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionentrega" ] - $saldo;
+            
+                $p[ "data"][ "comisionbanco"] = $metodopago[ "settings" ][ "tipocomision" ] == "efectivo" ? $metodopago[ "settings" ][ "comision" ] : ceil( ( $total * $metodopago[ "settings" ][ "comision" ] / 100 ) );
+                $p[ "fechas" ][ "pagado" ]    = $fecha_pagado;
+                $p[ "fechas" ][ "califica" ]  = $fecha_califica;
+                $p[ "fechas" ][ "reparte" ]   = $fecha_reparte;
+                $p[ "data" ][ "saldo" ]       = $saldo;
 
-            model( "PedidoModel" )->save( $p );
+                model( "PedidoModel" )->save( $p );
 
-            // Checamos si tiene derecho a regalo biex, si no, entonces se lo quitamos
-            check_biex( $p, $u );
+                // Checamos si tiene derecho a regalo biex, si no, entonces se lo quitamos
+                check_biex( $p, $u );
 
-            $data      = $u->data;                                    
-            $historial = $u->historial;  
+                $data      = $u->data;                                    
+                $historial = $u->historial;  
 
-            $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = 0;
-            $data->saldo->{$p[ "modelo_codigo" ]}->estatus  = 0;
-        
-            foreach( $p[ "PTS" ] as $promo => $pts ){
-                if( !is_object( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra ) ){
-                    $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
-                }
+                $data->saldo->{$p[ "modelo_codigo" ]}->cantidad = 0;
+                $data->saldo->{$p[ "modelo_codigo" ]}->estatus  = 0;
+            
+                foreach( $p[ "PTS" ] as $promo => $pts ){
+                    if( !is_object( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra ) ){
+                        $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra = json_decode( '{}' );
+                    }
 
-                if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
-                    $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
-                }    
-            } 
+                    if( !isset( $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} ) && $pts > 0 ){
+                        $historial->modelos->{$p[ "modelo_codigo" ]}->primercompra->{$promo} = substr( $p[ "fechas" ][ "califica" ], 0, 10 );
+                    }    
+                } 
 
-            $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
+                $historial->modelos->{$p[ "modelo_codigo" ]}->ultimacompra = $p[ "fechas" ][ "califica" ];
 
-            $u->data      = $data;
-            $u->historial = $historial;
+                $u->data      = $data;
+                $u->historial = $historial;
 
-            model( "UsuarioModel" )->save( $u );    
+                model( "UsuarioModel" )->save( $u );    
 
-            $db = db_connect();
-            $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
-            $db->query( "do f_get_estatus( {$u->id}, 0 )" );
-            $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
-        
-            // BITACORA Marcar pedido como pagado
-            bitacora( 56, $this->data[ "usuario" ]->id, [ 
-                "pedido"   => $p[ "id" ],
-                "pagado"   => $fecha_pagado,
-                "califica" => $fecha_califica,
-                "reparte"  => $fecha_reparte
-            ] );
+                $db = db_connect();
+                $db->query( "do f_update_PTS( {$u->id}, '{$p[ "modelo_codigo" ]}', '".date( "Ym", strtotime( $fecha_califica ) )."' )" );  
+                $db->query( "do f_get_estatus( {$u->id}, 0 )" );
+                $db->query( "do f_reparte_comisiones( {$p[ "id" ]}, 0 )" );
+            
+                // BITACORA Marcar pedido como pagado
+                bitacora( 56, $this->data[ "usuario" ]->id, [ 
+                    "pedido"   => $p[ "id" ],
+                    "pagado"   => $fecha_pagado,
+                    "califica" => $fecha_califica,
+                    "reparte"  => $fecha_reparte
+                ] );
+            }
         }
         
         return redirect()->to( 'pedido/'.$p[ "referencia"] );
