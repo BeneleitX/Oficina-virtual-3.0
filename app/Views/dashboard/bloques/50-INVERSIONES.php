@@ -3,10 +3,32 @@
 $saldo = $usuario->saldo( "50-INVERSION", true );
 
 if( $saldo ){
+
     $registro = substr( $usuario->historial->registro, 0, 10 ); 
     $fecha    = $registro > "2025-03-01" ? $registro : "2025-03-01";
 
-    echo "<div class=\"mt-3 px-3\"><a href=\"".base_url()."tienda/50-INVERSION\" class=\"btn w-100 mb-0 btn-success text-center\"><h1 class=\"text-white m-0\">$".number_format( $saldo, 2 )."</h1><p class=\"small m-0\">Tienes un saldo disponible para invertir en Capital24<br>Utilizalo ahora mismo haciendo click aquí</p><p class=\"text-center\"><span class=\"badge text-mustard\" style=\"background:rgba(0,0,0,0.3)\">Vigencia del saldo: ".fecha( date( "Y-m-d", strtotime( $fecha ." + 6 months - 1 day" ) ) )."</span></p></a></div>";
+    $fecha = date( "Y-m-d", strtotime( $fecha ." + 6 months - 1 day" ) );
+
+    // saldo vencido
+    if( $fecha < date( "Y-m-d" ) ){
+        
+        $data = $usuario->data;
+
+        $data->saldo->{"50-INVERSION"}->USDT = 0;
+
+        $usuario->data = $data;
+        model( "UsuarioModel" )->save( $usuario );
+
+        // BITACORA marca periodo como pagado
+        bitacora( 99, $usuario->id, [
+            "saldo" => $saldo
+        ] );        
+
+        $saldo = 0;
+    }
+    else{
+        echo "<div class=\"mt-3 px-3\"><a href=\"".base_url()."tienda/50-INVERSION\" class=\"btn w-100 mb-0 btn-success text-center\"><h1 class=\"text-white m-0\">$".number_format( $saldo, 2 )."</h1><p class=\"small m-0\">Tienes un saldo disponible para invertir en Capital24<br>Utilizalo ahora mismo haciendo click aquí</p><p class=\"text-center\"><span class=\"badge text-mustard\" style=\"background:rgba(0,0,0,0.3)\">Vigencia del saldo: ".fecha( $fecha )."</span></p></a></div>";
+    }
 }
 
 ?>
