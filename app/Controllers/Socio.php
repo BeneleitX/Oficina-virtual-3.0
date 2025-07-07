@@ -240,7 +240,7 @@ class Socio extends BaseController
         // BITACORA Eliminar beneficiario
         bitacora( 12, $this->data[ "socio" ]->id, [ 
             "nombre"     => $temp->nombre ?? "",
-            "porcentaje" => $temp->porcentaje,
+            "porcentaje" => $temp->porcentaje ?? "",
             "usuario"    => $this->data[ "usuario" ]->id
         ] );
 
