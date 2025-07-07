@@ -2,7 +2,7 @@
 
 $saldo = $usuario->saldo( "50-INVERSION", true );
 
-if( $saldo ){
+if( $saldo ){ 
 
     $registro = substr( $usuario->historial->registro, 0, 10 ); 
     $fecha    = $registro > "2025-03-01" ? $registro : "2025-03-01";
