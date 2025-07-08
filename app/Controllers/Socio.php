@@ -112,27 +112,29 @@ class Socio extends BaseController
             mkdir( $path, 0755, true );
         }
 
-        $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];
-        move_uploaded_file( $fileTmpName, $path.$filename );
+        if( $_FILES[ "image" ] ){
+            $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];
+            move_uploaded_file( $fileTmpName, $path.$filename );
 
-        // BITACORA Carga de foto INE o Acta
-        bitacora( $this->data["socio"]->es_menor() ? 15 : 6, $this->data[ "socio" ]->id, [ 
-            "archivo" => $filename,
-            "tipo"    => $tipo,
-            "usuario" => $this->data[ "usuario" ]->id
-        ] );
+            // BITACORA Carga de foto INE o Acta
+            bitacora( $this->data["socio"]->es_menor() ? 15 : 6, $this->data[ "socio" ]->id, [ 
+                "archivo" => $filename,
+                "tipo"    => $tipo,
+                "usuario" => $this->data[ "usuario" ]->id
+            ] );
 
-        session()->setFlashdata('msg', [ 
-            "clase"   => "success", 
-            "icono"   => "check", 
-            "texto"   => "Se ha recibido el {$tipo} de la credencial"]);
+            session()->setFlashdata('msg', [ 
+                "clase"   => "success", 
+                "icono"   => "check", 
+                "texto"   => "Se ha recibido el {$tipo} de la credencial"]);
 
-        echo json_encode([
-            "frente"  => $this->data["socio"]->data->credencial->frente,
-            "reverso" => $this->data["socio"]->data->credencial->reverso,
-            "acta"    => $this->data["socio"]->data->credencial->acta,
-            "path"    => base_url().$path
-        ]);
+            echo json_encode([
+                "frente"  => $this->data["socio"]->data->credencial->frente,
+                "reverso" => $this->data["socio"]->data->credencial->reverso,
+                "acta"    => $this->data["socio"]->data->credencial->acta,
+                "path"    => base_url().$path
+            ]);
+        }
     }    
 
 
