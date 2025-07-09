@@ -198,7 +198,7 @@ class Registro extends BaseController
 
         $datax = $usuario->data;
         $datax->talento_id = $respuesta->cliente_id;
-        $usuario->datax = $data;
+        $usuario->data = $datax;
       
         model( "UsuarioModel" )->save( $usuario );
 

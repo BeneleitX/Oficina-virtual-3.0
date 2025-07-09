@@ -22,7 +22,13 @@
             "icono" => "table-cells",
             "texto" => "Ingresos por empresa",
             "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN" ]
-        ]
+        ]/* ,
+        [
+            "url" => base_url( "reportes/V" ),
+            "icono" => "table-cells",
+            "texto" => "Ingresos por empresa",
+            "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN" ]
+        ] */
     ];
 
 
