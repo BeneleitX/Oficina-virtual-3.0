@@ -26,6 +26,7 @@ $menu = [
     [ "secondary", "tickets", "ticket", "Tickets de soporte", 0,[] ],  
     [ "success", "almacenes/".getModeloPrincipal(), "dolly", "Almacenes", $almacenes, ["20-ALMACEN", "18-STOCK", "40-ADMIN"] ],    
     [ "secondary", "bloques", "table-cells", "Bloques de inicio", 0,[] ],    
+    [ "success", "indicadores", "ranking-star", "Histórico mensual", 0,[ "39-REPORTES-CONTA"] ],    
     [ "danger", "facturacion", "file-invoice-dollar", "Facturacion y pagos", $facturas,["38-CONTABILIDAD", "40-ADMIN"] ],    
     [ "success", "estatus", "layer-group", "Estatus de socios", 0,[] ],  
     [ "success", "esquemas/".getModeloPrincipal(), "sack-dollar", "Tipos de comisiones", sizeof( $esquemas ), ["40-ADMIN"] ], 

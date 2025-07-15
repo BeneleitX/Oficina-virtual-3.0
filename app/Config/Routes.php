@@ -60,6 +60,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "reset_tarjeta",                     "Dashboard::reset_tarjeta" );
     $routes->post( "reset_wallet",                      "Dashboard::reset_wallet" );
 
+    $routes->get( "indicadores",                        "Indicadores::inicio" );
+    $routes->get( "indicadores/(:any)/(:num)",          "Indicadores::inicio/$1/$2" );
+
     $routes->get( "usuarios",                           "Usuarios::busqueda" );
     $routes->get( "usuarios/(:any)",                    "Usuarios::busqueda/$1" );
     $routes->post( "usuarios",                          "Usuarios::busqueda" );

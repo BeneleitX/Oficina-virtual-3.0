@@ -122,6 +122,9 @@
         if( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "00" ){
             $entrega = ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ];
         }
+        elseif( substr( $pedido[ "metodoentrega_codigo" ], 0, 2 ) == "11" ){
+            $entrega = $pedido[ "data" ][ "entrega" ];
+        }        
         else{                
             if( !isset( $pedido[ "data" ][ "domicilio" ] ) || !is_array( $pedido[ "data" ][ "domicilio" ] ) ){ 
 
