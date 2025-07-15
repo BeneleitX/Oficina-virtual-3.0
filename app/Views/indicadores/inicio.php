@@ -117,13 +117,6 @@
 </div>
 
 <h5 class="mt-5 mb-0">Productos</h5>
-<div class="row">
-    <div class="col-lg-4">
-        <div class="card mt-3"><div class="card-header bg-red"><h5 class="m-0 text-white">Venta total</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
-        </div>
-    </div>
-</div>
 
         <div class="card mt-3"><div class="card-header bg-red"><h5 class="m-0 text-white">Ranking de productos por venta</h5></div>
             <table class="table table-striped">
