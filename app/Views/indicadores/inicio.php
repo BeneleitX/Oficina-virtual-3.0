@@ -87,31 +87,31 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Total de socios Activos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios inscritos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios activos nuevos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios activos por recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios a inactividad</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 </div>
