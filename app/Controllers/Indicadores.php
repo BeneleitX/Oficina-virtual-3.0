@@ -12,7 +12,7 @@ class Indicadores extends BaseController
     public function inicio( $modelo = null, $mes = null )
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+            $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" )
         ) ){
             return redirect()->to( "no_permiso" ); 
         }
