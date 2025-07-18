@@ -72,9 +72,9 @@
                 $m2 = strtoupper( mes( date( "m", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-1 + 1 month" ) ) ) );
                 ?>
                 <p><i class="fa fa-warning"></i> Este archivo contiene los bonos de <strong><?php echo $m1; ?></strong><br>Que deben pagarse los primeros días de <strong><?php echo $m2; ?></strong></p>
-                <?php if( $mes < date( "Ym" ) ) { ?>
-                    <button class="btn btn-primary" onclick="excel_rangos( <?php echo $mes; ?> )"><i class="fa fa-file-excel"></i> Descargar excel</button>
-                <?php } ?>
+                
+                    <button class="<?php echo $mes < date( "Ym" ) ? "" : "d-none "; ?>btn btn-primary" onclick="excel_rangos( <?php echo $mes; ?> )"><i class="fa fa-file-excel"></i> Descargar excel</button>
+                
             </div>
         </div>
     </div>
