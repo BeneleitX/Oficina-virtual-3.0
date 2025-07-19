@@ -101,7 +101,8 @@ abstract class BaseController extends Controller
 
         // update profundidad
 
-        $this->data[ "usuario" ]->update_profundidad();
+        if( $this->data[ "usuario" ]->id )
+            $this->data[ "usuario" ]->update_profundidad();
     }
     
 }
