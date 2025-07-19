@@ -1087,6 +1087,23 @@ class E_usuario extends Entity
     }
 
     
+    public function update_profundidad()
+    {
+        if( ( $this->historial->modelos->{"10-NUTRICION"}->update_profundidad ?? "0000-00-00" ) < date( "Y-m-d", strtotime( date( "Y-m-d" )." - 1 day" ) ) ){
+            $db = db_connect();
+            $sql = "do f_update_nivel( {$this->id}, '10-NUTRICION', ".date( "Ym" ).")";
+            $db->query( $sql );
+
+            $h = $this->historial;
+            $h->modelos->{"10-NUTRICION"}->update_profundidad = date( "Y-m-d" );
+            $this->historial = $h;
+
+            model( "UsuarioModel" )->save( $this );
+        }
+    }
+
+
+
     /**
      * Obtiene el saldo de un usuario en un modelo de negocio determinado.
      * Si $checasaldo es true, se actualiza el saldo en USDT en caso de que el usuario esté en morado.
