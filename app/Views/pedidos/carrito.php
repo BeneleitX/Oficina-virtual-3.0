@@ -1,7 +1,9 @@
 <h4 class="mt-1 mb-0">
     <?php echo $titulo; ?> - 
     <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> 
-    <span style=\"font-size:16px\">".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
+    <span style=\"font-size:16px\">
+    ".( $pagado ? ( ( $pedido[ "data" ][ "primercompra" ] ?? -1 ) >= 0 ? ( $pedido[ "data" ][ "primercompra" ] == 1 ? "<span class=\"badge bg-violet rounded-pill\"><i class=\"fa fa-check\"></i> primer compra</span>" : "no pc" ) : "<span class=\"badge bg-white rounded-pill border border-red text-red\"><i class=\"fa fa-warning\"></i> no data</span>" ) : "" )."
+    ".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
 </h4>
 
 <p>
