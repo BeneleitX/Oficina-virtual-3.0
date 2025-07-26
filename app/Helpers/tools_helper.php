@@ -437,6 +437,12 @@ function random( $tipo )
 }
 
 
+function get_primercompra( $u, $m )
+{
+    return 0;
+}
+
+
 function marca( $queries, $texto, $case = null )
 {
     $replaces = [];
