@@ -46,7 +46,7 @@
                     }
                 }
 
-                if( $p[ "data" ][ "primercompra" ] == null ){
+                if( !isset( $p[ "data" ][ "primercompra" ] ) ){
                     $p[ "data" ][ "primercompra" ] = get_primercompra( $p[ "usuario_id" ], $p[ "modelo_codigo" ] );
                 }
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
