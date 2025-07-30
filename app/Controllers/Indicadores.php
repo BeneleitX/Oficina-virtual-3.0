@@ -25,11 +25,8 @@ class Indicadores extends BaseController
         $this->data[ "titulo" ] = "Histórico mensual";
 
         $this->data[ "historico" ] = [
-            "venta" => [
-                "total"    => historico_venta_total( $this->data[ "modelo" ], $this->data[ "mes" ] ),
-                "nuevos"   => historico_venta_nuevos( $this->data[ "modelo" ], $this->data[ "mes" ] ),
-                "recompra" => historico_venta_recompra( $this->data[ "modelo" ], $this->data[ "mes" ] )
-            ]
+            "venta" => historico_venta( $this->data[ "modelo" ], $this->data[ "mes" ] ),
+            "pedidos" => historico_pedidos( $this->data[ "modelo" ], $this->data[ "mes" ] )
         ];
 
         echo template( "indicadores/inicio", $this->data );

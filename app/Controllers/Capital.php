@@ -691,7 +691,7 @@ class Capital extends BaseController
 
             $descuento = 0;
 
-            if( $t > 3 ){
+            if( $t == "semilla" ){
                 $descuento = floor( 100 * ( $retiro[ $tipo -1 ] * 25 / 100 ) ) / 100;
             }
 
