@@ -80,19 +80,19 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-deep-purple"><h5 class="m-0 text-white">Reparto total</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "reparto" ][ "total" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-deep-purple"><h5 class="m-0 text-white">Reparto socios nuevos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "reparto" ][ "nuevos" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-deep-purple"><h5 class="m-0 text-white">Reparto por recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "reparto" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 </div>
@@ -101,19 +101,19 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-orange"><h5 class="m-0 text-white">Ticket promedio total</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "ticket" ][ "total" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-orange"><h5 class="m-0 text-white">Ticket promedio socios nuevos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "ticket" ][ "nuevos" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-orange"><h5 class="m-0 text-white">Ticket promedio por recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "ticket" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
         </div>
     </div>
 </div>
