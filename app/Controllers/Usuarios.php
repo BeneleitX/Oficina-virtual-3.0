@@ -124,7 +124,6 @@ class Usuarios extends BaseController
             $db->query( $sql ); 
             $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
-            dd($sql);
         }
 
         $db->query( "do f_get_estatus(  {$socio->id}, 1 )" );

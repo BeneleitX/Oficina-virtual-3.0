@@ -107,8 +107,10 @@ class Dashboard extends BaseController
             $socio->getPrimerCompra( $m[ "codigo" ] );
 
             $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
+
             $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( 'Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
             $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+            
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
 
