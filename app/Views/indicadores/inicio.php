@@ -5,6 +5,8 @@
         <p><a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
     </div>
     <div class="col-lg-6 text-end">
+        <button class="btn btn-success btn-sm" id="descarga_ingreso"><i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span></button>
+
         <select id="empresa_indicadores" class="mt-4 form-select form-select-sm" style="display: inline-block; width:auto">
             <?php
                 foreach( MODELOS as $m ){
