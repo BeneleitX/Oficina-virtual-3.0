@@ -65,7 +65,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 							</div>
 							
 						</div>
-						<p class="text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "formulario" ); ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aun no eres socio? Registrate aquí</a></p>
+						<p class="text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "formulario" ); ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
 
 
 						<p class="text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://core.beneleit.talentonet.com/activar/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Activa tu línea</a></p>

@@ -809,6 +809,8 @@ class Dashboard extends BaseController
     public function bolsa_inversiones()
     {
         $mes = date( "Ym", strtotime( date( "Ym" )."-01 + 1 month" ) );
+        $mes_actual   = date( "Ym", strtotime( date( "Ym" )."-01" ) );
+        $mes_anterior = date( "Ym", strtotime( date( "Ym" )."-01 - 1 month" ) );
 
         $db      = db_connect();
         $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
@@ -824,8 +826,12 @@ class Dashboard extends BaseController
             }
         }
 
-        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym" )} ) ){
-            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m" )."-01" );
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mes_anterior} ) ){
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m-d", strtotime( date( "Y-m-01" )." - 1 month" ) ) );
+        }
+
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mes_actual} ) ){
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m-01" ) );
         }
 
         echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
