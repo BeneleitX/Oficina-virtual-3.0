@@ -3,7 +3,7 @@
     <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> 
     <span style=\"font-size:16px\">
     ".( $pagado ? ( ( $pedido[ "data" ][ "primercompra" ] ?? -1 ) >= 0 ? ( $pedido[ "data" ][ "primercompra" ] == 1 ? "<span class=\"badge bg-violet rounded-pill\"><i class=\"fa fa-check\"></i> primer compra</span>" : "" ) : "<span class=\"badge bg-white rounded-pill border border-red text-red\"><i class=\"fa fa-warning\"></i> no data</span>" ) : "" )."
-    ".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
+    ".estatus( $pedido[ "estatus_codigo" ])."</span>".$pedido[ "data" ][ "primercompra" ]; ?>
 </h4>
 
 <p>

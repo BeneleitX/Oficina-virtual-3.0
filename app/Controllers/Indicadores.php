@@ -42,3 +42,9 @@ class Indicadores extends BaseController
         echo template( "indicadores/inicio", $this->data );
     }
 }
+
+
+
+// ts brenda
+// ing malaga 
+
