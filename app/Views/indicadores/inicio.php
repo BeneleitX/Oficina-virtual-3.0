@@ -124,48 +124,53 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Total de socios Activos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "socios" ][ "activos" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios inscritos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "socios" ][ "inscritos" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios activos nuevos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "socios" ][ "nuevos" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios activos por recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "socios" ][ "recompra" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-blue"><h5 class="m-0 text-white">Socios a inactividad</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid"><br><hr><h1><?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "socios" ][ "baja" ][ $mes ] ); ?></h1></div>
         </div>
     </div>
 </div>
 
-<h5 class="mt-5 mb-0">Productos</h5>
+<h5 class="mt-5 mb-0">Productos ordenados por venta mensual</h5>
 
-        <div class="card mt-3"><div class="card-header bg-red"><h5 class="m-0 text-white">Ranking de productos por venta</h5></div>
-            <table class="table table-striped">
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-            </table>
+<div class="row">
+
+                <?php
+                
+                    foreach( $historico[ "productos" ] as $p => $v ){
+                        echo "\n
+                            <div class=\"col-lg-4\">
+                                <div class=\"card mt-3\"><div class=\"card-header bg-red\"><h5 class=\"m-0 text-white\">{$v[ "nombre"]}</h5></div>
+                                    <div class=\"card-body text-center\"><img src=\"".base_url()."assets/img/demo.png\" class=\"d-none img-fluid\"><br><hr><h1>".number_format( 0 )."</h1></div>
+                                </div>
+                            </div>
+                            ";
+                    }
+                ?>
+
+
 </div>
 
 

@@ -28,7 +28,9 @@ class Indicadores extends BaseController
             "venta"   => historico_venta( $this->data[ "modelo" ], $this->data[ "mes" ] ),
             "pedidos" => historico_pedidos( $this->data[ "modelo" ], $this->data[ "mes" ] ),
             "ticket"  => [],
-            "reparto" => historico_reparto( $this->data[ "modelo" ], $this->data[ "mes" ] )
+            "productos" => [],
+            "reparto" => historico_reparto( $this->data[ "modelo" ], $this->data[ "mes" ] ),
+            "socios"  => historico_socios( $this->data[ "modelo" ], $this->data[ "mes" ] )
         ];
 
         $this->data[ "historico" ][ "ticket" ] = $this->data[ "historico" ][ "venta" ];
@@ -38,6 +40,8 @@ class Indicadores extends BaseController
             $this->data[ "historico" ][ "ticket" ][ "nuevos" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "nuevos" ][ $k ];
             $this->data[ "historico" ][ "ticket" ][ "recompra" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "recompra" ][ $k ];
         }
+
+        $this->data[ "historico" ][ "productos" ] = historico_productos( $this->data[ "modelo" ], $this->data[ "mes" ] );
 
         echo template( "indicadores/inicio", $this->data );
     }

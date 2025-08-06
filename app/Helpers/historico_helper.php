@@ -104,6 +104,47 @@ function historico_reparto( $modelo, $mes )
     return $respuesta;
 }
 
+function historico_socios( $modelo, $mes )
+{
+    $db  = db_connect(); 
+
+    $respuesta = [];
+    
+    $meses = get_meses( $mes );
+
+    $respuesta = [
+        "activos" => $meses,
+        "inscritos" => $meses,
+        "nuevos" => $meses,
+        "recompra" => $meses,
+        "baja" => $meses
+    ];
+
+    foreach( $meses as $m => $n ){
+        $data = VARIABLES[ "historial_activos" ][ "valor" ][ $m ] ?? [];
+
+        $respuesta[ "activos" ][ $m ] = $data[ "activos" ] ?? 0;
+    }
+
+    return $respuesta;
+}
+
+
+function historico_productos( $modelo, $mes )
+{
+    $db  = db_connect(); 
+
+    $respuesta = [];
+    $sql = "SELECT 
+            p.data->>'$.nombre' as nombre
+            
+        FROM t_productos p
+        WHERE p.modelo_codigo = '{$modelo}'
+        AND SUBSTRING( p.estatus_codigo, 1, 3 ) > 200";
+
+    return $db->query( $sql )->getResultArray();
+}
+
 
 
 
