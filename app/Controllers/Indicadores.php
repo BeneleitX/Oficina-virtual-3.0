@@ -24,7 +24,7 @@ class Indicadores extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Histórico mensual";
 
-        load_catalogo( "productos", "modelo_codigo = '{$this->data[ "modelo" ]}'", "prods");
+        load_catalogo( "productos", "modelo_codigo = '{$this->data[ "modelo" ]}'");
 
         
 
