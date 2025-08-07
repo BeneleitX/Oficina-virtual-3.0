@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <div class="row">
     <div class="col-lg-6">
@@ -41,7 +42,10 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Venta total</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "total" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center">
+                <div id="chart_ventas_total"></div><hr>
+                <h1>$<?php echo number_format( $historico[ "venta" ][ "total" ][ $mes ], 2 ); ?></h1>
+            </div>
         </div>
     </div>
 
@@ -182,6 +186,51 @@
 
 
 
+<script>
 
+    var options = {
+        colors: ['var(--bs-marine)'],
+        series: [{ 'name': 'Ventas', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "total" ] ); ?> ]}],
+        chart: {
+            type: 'bar',
+            height: 230,
+            stacked: false,
+            toolbar: {
+                show: true
+            },
+            zoom: {
+                enabled: true
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },        
+        yaxis: {
+        },      
+        grid: {
+            row: {
+                colors: ['#e5e5e5', 'transparent'],
+                opacity: 0.5
+            }, 
+        },
+        stroke: {
+            width: 2,
+            curve: 'smooth'
+        },
+        xaxis: {
+            categories: <?php echo json_encode( $meses ); ?>,
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart_ventas_total"), options);
+    chart.render();   
+
+</script>
 
 
