@@ -778,8 +778,9 @@ function load_catalogo( $tabla, $where = null, $nombre = null )
     }
 
     define( strtoupper( $nombre ?? $tabla ), $array );
-    dd( strtoupper( $nombre ?? $tabla ) );
-    
+
+    if( $nombre )
+    dd( PRODS );
 }
 
 
