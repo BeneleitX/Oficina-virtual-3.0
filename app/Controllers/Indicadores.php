@@ -26,8 +26,8 @@ class Indicadores extends BaseController
 
         load_catalogo( "productos", "modelo_codigo = '{$modelo}'");
 
-        dd(PRODUCTOS);
-        
+        dd(PRODUCTOS); 
+
         $this->data[ "historico" ] = [
             "venta"   => historico_venta( $this->data[ "modelo" ], $this->data[ "mes" ] ),
             "pedidos" => historico_pedidos( $this->data[ "modelo" ], $this->data[ "mes" ] ),
