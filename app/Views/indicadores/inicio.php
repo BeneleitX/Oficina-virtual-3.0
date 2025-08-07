@@ -165,7 +165,7 @@
                         if( !isset( $v[ $mes ] ) ){
                             $v[ $mes ] = 0;
                         }
-                        
+                        dd(PRODUCTOS);
                         echo "\n
                             <div class=\"col-lg-4\">
                                 <div class=\"card mt-3\"><div class=\"card-header bg-red\"><h5 class=\"m-0 text-white\">".PRODUCTOS[ substr( $p, 10 ) ][ "data" ][ "nombre" ]."</h5></div>
