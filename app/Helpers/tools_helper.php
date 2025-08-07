@@ -757,8 +757,9 @@ function getPaqueteMovil( $celular )
 
 function load_catalogo( $tabla, $where = null, $nombre = null )
 {
+    if($nombre)
     dd( strtoupper( $nombre ?? $tabla ) );
-    
+
     if( defined( strtoupper( $nombre ?? $tabla ) ) ) return;
     $db = db_connect();
 
