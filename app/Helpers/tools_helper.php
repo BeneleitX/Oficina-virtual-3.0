@@ -776,6 +776,7 @@ function load_catalogo( $tabla, $where = null, $nombre = null )
     }
 
     define( strtoupper( $nombre ?? $tabla ), $array );
+    phpinfo();
 }
 
 
