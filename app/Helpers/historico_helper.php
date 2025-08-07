@@ -106,46 +106,171 @@ function historico_reparto( $modelo, $mes )
 
 function historico_socios( $modelo, $mes )
 {
-    $db  = db_connect(); 
+    $fe    = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 12 month" ) );
+    $db    = db_connect(); 
+    $resp  = [];
+    $meses = get_meses( $mes );
+    $sql   = "SELECT *
+            FROM t_historico h
+            WHERE h.modelo_codigo = '{$modelo}'
+            and h.codigo like 'SOCIOS_%'
+            AND h.mes in ( ".implode( ",", array_keys($meses)).")";
+
+    $datos = $db->query( $sql )->getResultArray();    
+
+    foreach( $datos as $d ){
+        $resp[ $d[ "mes" ] ][ $d[ "codigo" ] ] = $d[ "cantidad" ];
+    }
+
+    foreach( $meses as $m => $c ){
+        if( $m == $mes || !isset( $resp[ $m ] ) ){
+            // si es mes actual, no jalar de histórico, calcular en tiempo real
+
+            $datos = historico_socios_data( $modelo, $m );
+            
+            foreach( $datos as $codigo => $v ){
+                $db->query( "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v} ) on duplicate key update cantidad = {$v}" );    
+            }
+
+            $resp[ $m ] = $datos;
+
+
+        }
+    }
 
     $respuesta = [];
-    
-    $meses = get_meses( $mes );
 
-    $respuesta = [
-        "activos" => $meses,
-        "inscritos" => $meses,
-        "nuevos" => $meses,
-        "recompra" => $meses,
-        "baja" => $meses
-    ];
-
-    foreach( $meses as $m => $n ){
-        $data = VARIABLES[ "historial_activos" ][ "valor" ][ $m ] ?? [];
-
-        $respuesta[ "activos" ][ $m ] = $data[ "activos" ] ?? 0;
+    foreach($resp as $m => $d){
+        foreach($d as $e => $f){
+            $respuesta[ $e ][ $m ] = $f;
+        }
     }
 
     return $respuesta;
 }
 
 
-function historico_productos( $modelo, $mes )
+function historico_socios_data( $modelo, $mes )
 {
-    $db  = db_connect(); 
+    $db = db_connect(); 
 
-    $respuesta = [];
-    $sql = "SELECT 
-            p.data->>'$.nombre' as nombre
-            
-        FROM t_productos p
-        WHERE p.modelo_codigo = '{$modelo}'
-        AND SUBSTRING( p.estatus_codigo, 1, 3 ) > 200";
+    $sql_activos = $db->query( "select count(*) as total 
+            from t_usuarios
+            where substring( data->>'$.estatus.modelos.\"{$modelo}\"', 1, 3 ) > 200" )->getRow();
 
-    return $db->query( $sql )->getResultArray();
+    $sql_inscritos = $db->query( "select count(*) as total
+            from t_usuarios
+            where date_format( historial->'$.registro', '%Y%m' ) = {$mes}" )->getRow();
+
+    $sql_nuevos = $db->query( "select count(*) as total from ( select u.id
+            from t_usuarios u
+            join t_pedidos p on p.usuario_id = u.id and p.modelo_codigo = \"{$modelo}\"
+            where p.data->>'$.primercompra' = 1 
+            and date_format( cast( p.fechas->>'$.pagado' as date ), '%Y%m' ) = {$mes} group by u.id ) a" )->getRow();
+
+    $sql_recompra = $db->query( "select count(*) as total from ( select u.id
+            from t_usuarios u
+            join t_pedidos p on p.usuario_id = u.id and p.modelo_codigo = \"{$modelo}\"
+            where p.data->>'$.primercompra' != 1 
+            and date_format( cast( p.fechas->>'$.pagado' as date ), '%Y%m' ) = {$mes} group by u.id ) a" )->getRow();
+
+    $sql_bajas = $db->query( "select count(*) as total
+            from t_usuarios u
+            where substring( u.data->>'$.estatus.modelos.\"{$modelo}\"', 1, 3 ) < 200
+            and date_format( cast( historial->>'$.modelos.\"{$modelo}\".reset' as date ), '%Y%m' ) = {$mes}" )->getRow();
+
+
+    $datos = [
+        "SOCIOS_ACTIVOS" => $sql_activos->total,
+        "SOCIOS_INSCRITOS" => $sql_inscritos->total,
+        "SOCIOS_NUEVOS" => $sql_nuevos->total,
+        "SOCIOS_RECOMPRA" => $sql_recompra->total,
+        "SOCIOS_BAJA" => $sql_bajas->total
+    ];
+
+
+    return $datos;
 }
 
 
+
+function historico_productos( $modelo, $mes )
+{
+    $fe    = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 12 month" ) );
+    $db    = db_connect(); 
+    $resp  = [];
+    $meses = get_meses( $mes );
+    $sql   = "SELECT *
+            FROM t_historico h
+            WHERE h.modelo_codigo = '{$modelo}'
+            AND h.codigo like 'PRODUCTOS_%'
+            AND h.mes in ( ".implode( ",", array_keys($meses)).")";
+
+    $datos = $db->query( $sql )->getResultArray();    
+
+    foreach( $datos as $d ){
+        $resp[ $d[ "mes" ] ][ $d[ "codigo" ] ] = $d[ "cantidad" ];
+    }
+
+    foreach( $meses as $m => $c ){
+        if( $m == date( "Ym") || !isset( $resp[ $m ] ) ){
+            // si es mes actual, no jalar de histórico, calcular en tiempo real
+
+            $datos = historico_productos_data( $modelo, $m );
+            
+            foreach( $datos as $codigo => $v ){
+                $sql = "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v} ) on duplicate key update cantidad = {$v}";
+                $db->query( $sql );    
+            }
+
+            $resp[ $m ] = $datos;
+        }
+    }
+
+    $respuesta = [];
+
+    foreach($resp as $m => $d){
+        foreach($d as $e => $f){
+            $respuesta[ $e ][ $m ] = intval( $f );
+        }
+    }
+
+    return $respuesta;
+}
+
+
+
+function historico_productos_data( $modelo, $mes )
+{
+    $db = db_connect(); 
+
+    $sql = $db->query( "SELECT 
+            date_format( cast( p.fechas->>'$.pagado' as date ), '%Y%m' ) as mes, 
+            pr.codigo as producto,
+        SUM(
+            JSON_UNQUOTE(JSON_EXTRACT(p.promociones, CONCAT('$.\"', categoria, '\".productos.\"', pr.codigo , '\".cantidad')))
+        ) AS total
+        FROM t_pedidos p
+        join t_productos pr on pr.modelo_codigo = p.modelo_codigo,
+        JSON_TABLE(
+        JSON_KEYS(p.promociones),
+        \"$[*]\" COLUMNS (
+            categoria VARCHAR(50) PATH \"$\"
+        )
+        ) AS cats
+        WHERE p.modelo_codigo = '{$modelo}'
+        and date_format( cast( p.fechas->>'$.pagado' as date ), '%Y%m' ) = '{$mes}'
+        group by mes, producto" );
+
+    $datos = [];
+
+    foreach( $sql->getResult() as $r ){
+        $datos[ "PRODUCTOS_".$r->producto ] = intval( $r->total ) ?? 0;
+    }
+
+
+    return $datos;
+}
 
 
 
@@ -154,6 +279,17 @@ function historico_random()
     return rand( 100, 100000 ) / 10;
 }
 
+
+function ordena_productos( $array, $mes )
+{
+    uasort($array, function( $a, $b ) use( $mes ){
+      
+        return $b[ $mes ] <=> $a[ $mes ];
+    });
+
+    // Mostrar resultado
+    return $array;
+}
 
 function get_meses( $mes )
 {
