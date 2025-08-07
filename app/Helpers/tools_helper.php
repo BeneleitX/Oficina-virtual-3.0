@@ -757,7 +757,6 @@ function getPaqueteMovil( $celular )
 
 function load_catalogo( $tabla, $where = null, $nombre = null )
 {
-    if($nombre)
     
 
     if( defined( strtoupper( $nombre ?? $tabla ) ) ) return;
