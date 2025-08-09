@@ -39,11 +39,11 @@
 </div>
 
 <h5 class="mt-5 mb-0">Venta</h5>
+<div id="chart_venta"></div>
 <div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Venta total</h5></div>
             <div class="card-body text-center">
-                <div id="chart_ventas_total"></div><hr>
                 <h1>$<?php echo number_format( $historico[ "venta" ][ "total" ][ $mes ], 2 ); ?></h1>
             </div>
         </div>
@@ -51,31 +51,44 @@
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Venta socios nuevos</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "nuevos" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center">
+                <h1>$<?php echo number_format( $historico[ "venta" ][ "nuevos" ][ $mes ], 2 ); ?></h1>
+            </div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Venta por recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1></div>
+            <div class="card-body text-center">
+                <h1>$<?php echo number_format( $historico[ "venta" ][ "recompra" ][ $mes ], 2 ); ?></h1>
+            </div>
         </div>
     </div>
+</div>
 
+<h5 class="mt-5 mb-0">Pedidos</h5>
+<div id="chart_pedidos"></div>
+<div class="row">
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Pedidos totales</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "pedidos" ][ "total" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center"><h1><?php echo number_format( $historico[ "pedidos" ][ "total" ][ $mes ] ); ?></h1>
+            </div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Pedidos primer compra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "pedidos" ][ "nuevos" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center">
+                <h1><?php echo number_format( $historico[ "pedidos" ][ "nuevos" ][ $mes ] ); ?></h1>
+            </div>
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="card mt-3"><div class="card-header bg-teal"><h5 class="m-0 text-white">Pedidos recompra</h5></div>
-            <div class="card-body text-center"><img src="<?php echo base_url(); ?>assets/img/demo.png" class="d-none img-fluid"><br><hr><h1><?php echo number_format( $historico[ "pedidos" ][ "recompra" ][ $mes ] ); ?></h1></div>
+            <div class="card-body text-center">
+                <h1><?php echo number_format( $historico[ "pedidos" ][ "recompra" ][ $mes ] ); ?></h1>
+            </div>
         </div>
     </div>
 
@@ -189,22 +202,32 @@
 <script>
 
     var options = {
-        colors: ['var(--bs-marine)'],
-        series: [{ 'name': 'Ventas', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "total" ] ); ?> ]}],
+        colors: ['var(--bs-red)', 'var(--bs-teal)', 'var(--bs-marine)'],
+        series: [
+            { 'type': 'bar', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "nuevos" ] ); ?> ] },
+            { 'type': 'bar', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "recompra" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "total" ] ); ?> ] }
+        ],
         chart: {
-            type: 'bar',
-            height: 230,
-            stacked: false,
+            type: 'line',
+            height: 330,
+            stacked: true,
+            stackOnlyBar: true,
             toolbar: {
-                show: true
+                show: false
             },
             zoom: {
-                enabled: true
+                enabled: false
             }
         },
         dataLabels: {
             enabled: false
         },        
+        plotOptions: {
+          bar: {
+            columnWidth: '50%'
+          }
+        },
         yaxis: {
         },      
         grid: {
@@ -228,8 +251,19 @@
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart_ventas_total"), options);
+    var chart = new ApexCharts(document.querySelector("#chart_venta"), options);
     chart.render();   
+
+    options.series = [
+            { 'type': 'bar', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "nuevos" ] ); ?> ] },
+            { 'type': 'bar', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "recompra" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "total" ] ); ?> ] }
+        ];
+
+    var chart = new ApexCharts(document.querySelector("#chart_pedidos"), options);
+    chart.render();   
+
+    options.series.data = [<?php echo implode( ',', $historico[ "venta" ][ "nuevos" ] ); ?>];    
 
 </script>
 

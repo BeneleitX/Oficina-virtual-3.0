@@ -806,6 +806,7 @@ function nuevo_pedido( $modelo )
         "usuario_id" => null,
         "data" => [
             "peso" => 0,
+            "primercompra" => 0,
             "sat" => [
                 "cfd" => null,
                 "fecha" => null,
