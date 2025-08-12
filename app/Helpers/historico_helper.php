@@ -11,7 +11,7 @@ function historico_venta( $modelo, $mes )
     $fe_t  = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month - 1 day" ) );
 
     $sql = "SELECT 
-                date_format( fechas->>'$.pagado', '%Y%m' ) as mes, 
+                date_format( cast( fechas->>'$.pagado' as date ), '%Y%m' ) as mes, 
                 sum( data->>'$.total' ) as total,
                 sum( IF( data->>'$.primercompra' = 1, data->>'$.total', 0 ) ) as nuevos,
                 sum( IF( data->>'$.primercompra' != 1, data->>'$.total', 0 ) ) as recompra
@@ -45,7 +45,7 @@ function historico_pedidos( $modelo, $mes )
     $fe_t  = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month - 1 day" ) );
 
     $sql = "SELECT 
-                date_format( fechas->>'$.pagado', '%Y%m' ) as mes, 
+                date_format( cast( fechas->>'$.pagado' as date ), '%Y%m' ) as mes, 
                 sum( 1 ) as total,
                 sum( IF( data->>'$.primercompra' = 1, 1, 0 ) ) as nuevos,
                 sum( IF( data->>'$.primercompra' != 1, 1, 0 ) ) as recompra
@@ -79,7 +79,7 @@ function historico_reparto( $modelo, $mes )
     $fe_t  = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month - 1 day" ) );
 
     $sql = "SELECT 
-                DATE_FORMAT( p.fechas->>'$.pagado', '%Y%m' ) AS mes, 
+                DATE_FORMAT( cast( p.fechas->>'$.pagado' as date ), '%Y%m' ) AS mes, 
 
                 sum( c.cantidad * IF( c.esquema_codigo = '118-PROMOS-50', 2.50, 1 ) ) as total,
                 sum( IF( data->>'$.primercompra' = 1, c.cantidad * IF( c.esquema_codigo = '118-PROMOS-50', 2.50, 1 ), 0 ) ) as nuevos,

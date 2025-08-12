@@ -225,7 +225,7 @@
         },        
         plotOptions: {
           bar: {
-            columnWidth: '50%'
+            columnWidth: '80%'
           }
         },
         yaxis: {
@@ -241,7 +241,7 @@
             curve: 'smooth'
         },
         xaxis: {
-            categories: <?php echo json_encode( $meses ); ?>,
+            categories: ['<?php echo implode( "','", $meses ); ?>'],
         },
         legend: {
             show: false

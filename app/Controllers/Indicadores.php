@@ -29,11 +29,11 @@ class Indicadores extends BaseController
         $this->data[ "meses" ] = [];
         $meses = 12;
 
-        $mes      = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - {$meses} month" ) );
-        $anterior = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - ".( $meses + 1)." month" ) );
-     
+        $mes      = date( "Ym", strtotime( substr( $this->data[ "mes" ], 0, 4 )."-".substr( $this->data[ "mes" ], 4, 2 )."-01 - {$meses} month" ) );
+        $anterior = date( "Ym", strtotime( substr( $this->data[ "mes" ], 0, 4 )."-".substr( $this->data[ "mes" ], 4, 2 )."-01 - ".( $meses + 1)." month" ) );
+    
         for( $a = 0; $a <= $meses; $a++ ){
-            $this->data[ "meses" ][] = strtoupper( mes( substr( $mes, 4, 2 ), 3) ); //." ".substr( $mes, 0, 4 );
+            $this->data[ "meses" ][ $mes ] = strtoupper( mes( substr( $mes, 4, 2 ), 3) ); //." ".substr( $mes, 0, 4 );
 
             $anterior = $mes;
             $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 + 1 month" ) );
