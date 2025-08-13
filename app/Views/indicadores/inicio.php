@@ -204,14 +204,14 @@
     var options = {
         colors: ['var(--bs-red)', 'var(--bs-teal)', 'var(--bs-marine)'],
         series: [
-            { 'type': 'bar', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "nuevos" ] ); ?> ] },
-            { 'type': 'bar', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "recompra" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "nuevos" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "recompra" ] ); ?> ] },
             { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "venta" ][ "total" ] ); ?> ] }
         ],
         chart: {
             type: 'line',
             height: 330,
-            stacked: true,
+            stacked: false,
             stackOnlyBar: true,
             toolbar: {
                 show: false
@@ -255,8 +255,8 @@
     chart.render();   
 
     options.series = [
-            { 'type': 'bar', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "nuevos" ] ); ?> ] },
-            { 'type': 'bar', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "recompra" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Nuevos', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "nuevos" ] ); ?> ] },
+            { 'type': 'line', 'name': 'Recompra', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "recompra" ] ); ?> ] },
             { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "total" ] ); ?> ] }
         ];
 

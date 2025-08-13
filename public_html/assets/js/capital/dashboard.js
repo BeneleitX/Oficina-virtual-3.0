@@ -164,7 +164,7 @@ $(document).ready(function(){
     $( '#cantidad_3' ).on( 'keyup', function(){
         var total = $( this).val();
 
-        if( parseFloat( $( '#cantidad_3' ).val() ) > 7 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
+        if( parseFloat( $( '#cantidad_3' ).val() ) > 10 && parseFloat( $( '#cantidad_2' ).val() ) >= parseFloat( total ) ){
             $( '#confirma_agregar' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
         }
         else{
@@ -185,7 +185,7 @@ $(document).ready(function(){
     $( '#semilla_3' ).on( 'keyup', function(){
         var total = $( this).val();
 
-        if( parseFloat( $( '#semilla_3' ).val() ) > 7 && parseFloat( $( '#semilla_2' ).val() ) >= parseFloat( total ) ){
+        if( parseFloat( $( '#semilla_3' ).val() ) > 10 && parseFloat( $( '#semilla_2' ).val() ) >= parseFloat( total ) ){
             $( '#confirma_semilla' ).prop( 'disabled', false ).removeClass( 'btn-outline-danger' ).addClass( 'btn-success' );
         }
         else{

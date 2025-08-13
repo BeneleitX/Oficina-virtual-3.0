@@ -372,7 +372,7 @@ if( sizeof( $inversiones ) ){
                             </div>
 
                             <div class="alert alert-danger py-2">
-                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
+                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa de transacción variable entre <strong>$7.00 y $10.00 USD</strong> que será descontada del monto de tu retiro. Te sugerimos considerarlo al momento de crear tu solicitud.
                             </div>
 
                         <?php } else { ?>
