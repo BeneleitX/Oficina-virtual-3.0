@@ -185,7 +185,6 @@ class Reportes extends BaseController
     public function pedidos_diarios(){
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
-            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -220,7 +219,6 @@ class Reportes extends BaseController
     {
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
-            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
