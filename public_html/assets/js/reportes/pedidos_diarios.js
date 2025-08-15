@@ -19,6 +19,7 @@ $(document).ready(function(){
             f_inicio = $( '[name=f_inicia]' ).val(),
             f_final  = $( '[name=f_final]' ).val(),
             m_pago   = $( '[name=d_metodospago]' ).val(),
+            c_primercompra   = $( '[name=c_primercompra]' ).val(),
             estatus  = $( '[name=d_estatus]' ).val();
 
         btn.addClass( 'disabled' ).html( '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...' );
@@ -30,6 +31,7 @@ $(document).ready(function(){
                 [csrf_token] : csrf_hash, 
                 'estatus'    : estatus, 
                 'm_pago'     : m_pago, 
+                'c_primercompra' : c_primercompra,
                 'f_inicio'   : f_inicio, 
                 'f_final'    : f_final },
             type: 'POST',

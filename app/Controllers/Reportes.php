@@ -230,6 +230,7 @@ class Reportes extends BaseController
         $modelo   = $this->request->getPost( "modelo" );
         $estatus  = $this->request->getPost( "estatus");
         $m_pago   = $this->request->getPost( "m_pago");
+        $c_primercompra   = $this->request->getPost( "c_primercompra");
         $f_inicio = $this->request->getPost( "f_inicio");
         $f_final  = $this->request->getPost( "f_final");
         $data     = [];
@@ -287,6 +288,7 @@ class Reportes extends BaseController
                 where
                     {$estatus}
                     ".( $m_pago != 'TODOS' ? "and p.metodopago_codigo = '{$m_pago}'" : "" )."
+                    ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
                     and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
                     and p.modelo_codigo = '{$modelo}'
 

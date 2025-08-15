@@ -1,7 +1,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "reportes" ); ?>"><i class="fa fa-undo"></i> Regresar a reportes</a></p>
 
-<div class="row">
+<div class="row mt-5">
     <div class="col-lg-6">
 
     <div class="row mb-3">
@@ -12,7 +12,7 @@
 
                 <?php
                 foreach( MODELOS as $m ){
-                    echo "\n<option value=\"{$m[ "codigo" ]}\">{$m[ "nombre" ]}</option>";
+                    echo "\n<option value=\"{$m[ "codigo" ]}\">".mb_strtoupper( $m[ "nombre" ] )."</option>";
                 }
                 ?>
             </select>
@@ -58,6 +58,18 @@
             </select>
         </div>
     </div>
+
+        <div class="row mb-3">
+        <legend class="col-form-label col-sm-4">Es primer compra?</legend>
+        <div class="col-sm-8">
+            <select class="form-select" name="c_primercompra" >
+                <option value="TODOS" selected>TODOS</option>
+                <option value="1">SI, SOLO LOS QUE SON PRIMER COMPRA</option>
+                <option value="0">NO, SOLO LOS QUE SON RECOMPRAS</option>
+            </select>
+        </div>
+    </div>
+
 
     <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
 
