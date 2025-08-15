@@ -60,7 +60,7 @@
     </div>
 
         <div class="row mb-3">
-        <legend class="col-form-label col-sm-4">Es primer compra?</legend>
+        <legend class="col-form-label col-sm-4">Es primer compra</legend>
         <div class="col-sm-8">
             <select class="form-select" name="c_primercompra" >
                 <option value="TODOS" selected>TODOS</option>
