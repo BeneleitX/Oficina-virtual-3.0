@@ -197,7 +197,7 @@ class Reportes extends BaseController
                 where substring( estatus_codigo,1,3) > 200
                 and metodopago_codigo is not null
                 and fechas->>'$.pagado' > '2024-10-01'
-                group by modelo_codigo, substring( metodopago_codigo, 4 )";
+                group by modelo_codigo, metodopago_codigo";
 
         $db     = db_connect();
         $result = $db->query( $sql );
