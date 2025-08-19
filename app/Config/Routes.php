@@ -123,11 +123,13 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "reportes",                           "Reportes::menu" );
     $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
-    $routes->get( "reportes/ingresos_por_empresa",      "Reportes::ingresos_por_empresa" );
-    $routes->get( "reportes/pedidos_diarios",           "Reportes::pedidos_diarios" );
     $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
-    $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
+    $routes->get( "reportes/ingresos_por_empresa",      "Reportes::ingresos_por_empresa" );
     $routes->post( "tabla_ingresos_por_empresa",        "Reportes::tabla_ingresos_por_empresa" ); 
+    $routes->get( "reportes/pedidos_diarios",           "Reportes::pedidos_diarios" );
+    $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
+    $routes->get( "reportes/venta_producto",            "Reportes::venta_producto" );
+    $routes->post( "excel_venta_producto",              "Reportes::excel_venta_producto" ); 
 
     $routes->get( "recompensas",                        "Recompensas::detalle" );     
     $routes->get( "admin_recompensas",                  "Recompensas::admin_recompensas" );     

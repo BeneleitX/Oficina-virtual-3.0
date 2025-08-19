@@ -44,12 +44,12 @@
     </div>
 
     <div class="row mb-3">
-        <legend class="col-form-label col-sm-4">Método de pago</legend>
+        <legend class="col-form-label col-sm-4">Método de entrega</legend>
         <div class="col-sm-8">
-            <select class="form-select" name="d_metodospago">
+            <select class="form-select" name="d_metodosentrega">
                 <option value="TODOS">TODOS</option>
                 <?php
-                foreach( $metodospago as $mod => $dat ){
+                foreach( $metodosentrega as $mod => $dat ){
                     foreach( $dat as $met ){                    
                         echo "\n<option style=\"display:none\" modelo=\"{$mod}\" value=\"{$met}\">".substr( $met, 3 )."</option>";
                     }
@@ -59,7 +59,8 @@
         </div>
     </div>
 
-        <div class="row mb-3">
+    <?php /*
+    <div class="row mb-3">
         <legend class="col-form-label col-sm-4">Es primer compra</legend>
         <div class="col-sm-8">
             <select class="form-select" name="c_primercompra" >
@@ -69,6 +70,8 @@
             </select>
         </div>
     </div>
+
+    */ ?>
 
 
     <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>

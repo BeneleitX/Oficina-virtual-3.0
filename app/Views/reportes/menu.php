@@ -14,7 +14,7 @@
         [
             "url" => base_url( "reportes/socios_por_estatus" ),
             "icono" => "file-excel",
-            "texto" => "Listado de socios por estatus",
+            "texto" => "Socios por estatus",
             "permisos" => [ "36-REPORTES", "40-ADMIN" ]
         ],
         [
@@ -22,11 +22,17 @@
             "icono" => "table-cells",
             "texto" => "Ingresos por empresa",
             "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN" ]
-        ] ,
+        ],
         [
             "url" => base_url( "reportes/pedidos_diarios" ),
             "icono" => "shopping-basket",
-            "texto" => "Pedidos diarios por empresa",
+            "texto" => "Pedidos por empresa",
+            "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN", "36-REPORTES" ]
+        ],
+        [
+            "url" => base_url( "reportes/venta_producto" ),
+            "icono" => "spray-can-sparkles",
+            "texto" => "Venta por producto",
             "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN", "36-REPORTES" ]
         ] 
     ];

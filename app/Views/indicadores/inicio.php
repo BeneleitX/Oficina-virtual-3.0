@@ -6,7 +6,7 @@
         <p><a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
     </div>
     <div class="col-lg-6 text-end">
-        <button class="btn btn-success btn-sm" id="descarga_ingreso"><i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span></button>
+        <button class="btn btn-success btn-sm disabled" disabled id="descarga_ingreso"><i class="fa fa-file-excel"></i><span class="d-none d-lg-inline"> Descargar Excel</span></button>
 
         <select id="empresa_indicadores" class="mt-4 form-select form-select-sm" style="display: inline-block; width:auto">
             <?php
@@ -221,7 +221,9 @@
                         echo "\n
                             <div class=\"col-lg-4\">
                                 <div class=\"card mt-3\"><div class=\"card-header bg-red\"><h5 class=\"m-0 text-white\">".PRODUCTOS[ substr( $p, 10 ) ][ "data" ][ "nombre" ]."</h5></div>
-                                    <div class=\"card-body text-center\"><img src=\"".base_url()."assets/img/demo.png\" class=\"d-none img-fluid\"><br><hr><h1>".number_format( $v[ $mes ] )."</h1></div>
+                                    <div class=\"card-body text-center\">
+                                    <div id=\"chart_producto_{$p}\"></div>
+                                    <hr><h1>".number_format( $v[ $mes ] )."</h1></div>
                                 </div>
                             </div>
                             ";
@@ -286,7 +288,7 @@
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart_venta"), options);
+    chart = new ApexCharts(document.querySelector("#chart_venta"), options);
     chart.render();   
 
     options.series = [
@@ -295,7 +297,7 @@
             { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "pedidos" ][ "total" ] ); ?> ] }
         ];
 
-    var chart = new ApexCharts(document.querySelector("#chart_pedidos"), options);
+    chart = new ApexCharts(document.querySelector("#chart_pedidos"), options);
     chart.render();   
 
     options.series = [
@@ -304,7 +306,7 @@
         { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "reparto" ][ "total" ] ); ?> ] }
     ];
 
-    var chart = new ApexCharts(document.querySelector("#chart_comisiones"), options);
+    chart = new ApexCharts(document.querySelector("#chart_comisiones"), options);
     chart.render(); 
     
     options.series = [
@@ -313,10 +315,28 @@
         { 'type': 'line', 'name': 'Total', 'data': [ <?php echo implode( ',', $historico[ "ticket" ][ "total" ] ); ?> ] }
     ];
 
-    var chart = new ApexCharts(document.querySelector("#chart_ticket"), options);
+    chart = new ApexCharts(document.querySelector("#chart_ticket"), options);
     chart.render();     
 
-    options.series.data = [<?php echo implode( ',', $historico[ "venta" ][ "nuevos" ] ); ?>];    
+
+
+    <?php
+
+        foreach( $historico[ "productos" ] as $p => $v ){
+            if( !isset( $v[ $mes ] ) ){
+                $v[ $mes ] = 0;
+            }
+            echo "\n
+            options.series = [ { 'type': 'line', 'name': 'Productos', 'data': [".implode(",", array_reverse( $v ) )."] } ];
+            chart = new ApexCharts(document.querySelector(\"#chart_producto_{$p}\"), options);
+            chart.render();     
+
+            ";
+
+
+
+        } 
+    ?>
 
 </script>
 
