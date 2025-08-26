@@ -113,6 +113,12 @@ class Eventos extends BaseController
         $worksheet->setCellValue( "F1", "PAGO" );
         $worksheet->setCellValue( "G1", "REGALOS" );
 
+        $worksheet->setCellValue( "H1", "N" );
+        $worksheet->setCellValue( "I1", "T" );
+        $worksheet->setCellValue( "J1", "A" );
+        $worksheet->setCellValue( "K1", "G" );
+        $worksheet->setCellValue( "L1", "I" );
+
         $sql = "SELECT 
                     p.usuario_id as usuario, 
                     any_value( p.fechas->>'$.pagado' ) AS fecha, 
@@ -141,16 +147,17 @@ class Eventos extends BaseController
             $worksheet->setCellValue( "F".( $row ),  $s[ "pago" ] );
             $worksheet->setCellValue( "G".( $row ),  $s[ "productos" ] );
 
-            $worksheet->setCellValue( "H".( $row ),  substr( $u->data->estatus->modelos->{"10-NUTRICION"}, 0, 3 ) );
-            $worksheet->setCellValue( "I".( $row ),  substr( $u->data->estatus->modelos->{"20-TELEFONIA"}, 0, 3 ) );
-            $worksheet->setCellValue( "J".( $row ),  substr( $u->data->estatus->modelos->{"30-ALIMENTOS"}, 0, 3 ) );
-            $worksheet->setCellValue( "K".( $row ),  substr( $u->data->estatus->modelos->{"40-GASOLINAS"}, 0, 3 ) );
-            $worksheet->setCellValue( "L".( $row ),  substr( $u->data->estatus->modelos->{"50-INVERSION"}, 0, 3 ) );
+            $worksheet->setCellValue( "H".( $row ),  substr( $u->data->estatus->modelos->{"10-NUTRICION"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "I".( $row ),  substr( $u->data->estatus->modelos->{"20-TELEFONIA"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "J".( $row ),  substr( $u->data->estatus->modelos->{"30-ALIMENTOS"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "K".( $row ),  substr( $u->data->estatus->modelos->{"40-GASOLINAS"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "L".( $row ),  substr( $u->data->estatus->modelos->{"50-INVERSION"}, 0, 3 ) > 300 ? "A" : "" );
 
         }
 
-        $worksheet->getStyle( "A1:G1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "A1:L1" )->getFont()->getColor()->setARGB('ffffff');
         $worksheet->getStyle( "A1:G1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        $worksheet->getStyle( "H1:L1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('47c24c');
 
         foreach( $worksheet->getColumnIterator() as $column ){
             $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
