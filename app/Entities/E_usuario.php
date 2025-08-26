@@ -478,7 +478,7 @@ class E_usuario extends Entity
                 default:
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
             }
-dd($this->verificado);
+
             return 
                 "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>"
                 .$this->avatar(150, false, true)
