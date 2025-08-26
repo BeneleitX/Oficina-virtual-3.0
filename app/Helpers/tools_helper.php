@@ -52,6 +52,17 @@ function getIP(){
 }
 
 
+function bloquea_ip( $ip )
+{
+    $ips = VARIABLES[ "IPs_bloqueadas" ][ "valor" ];
+    $ips[] = $ip;
+
+    $db = db_connect();
+    $sql = "update t_variables set valor = '".json_encode( $ips )."' where codigo = 'IPs_bloqueadas'";
+
+    $db->query( $sql );    
+}
+
 
 function validafecha($date, $format = "Y-m-d" ){ 
     $d = DateTime::createFromFormat($format, $date); 

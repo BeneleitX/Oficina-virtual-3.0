@@ -54,8 +54,10 @@ class Sesion extends BaseController
         $db = db_connect();
 
         // revisar IP bloqueada
+        $ip = getIP();
+
         foreach( VARIABLES[ "IPs_bloqueadas" ][ "valor" ] as $beta ){
-            if( str_contains( getIP(), $beta ) ){
+            if( str_contains( $ip, $beta ) ){
                 return redirect()
                 ->back()
                 ->with( "errors", [ "socio_id" => "Tu dirección IP está bloqueada" ] )
@@ -63,12 +65,13 @@ class Sesion extends BaseController
             } 
         }
 
-        $INTENTOS = 5; // maximop de intentos
-        $CASTIGO = 60; //segundos de bloqueo
+        $INTENTOS  = 5;   // maximop de intentos
+        $CASTIGO   = 60;  //segundos de bloqueo
+        $BLOQUEAIP = 100; // intentos en el mes para bloquear la IP permanentemente
 
-        // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
-        // esto elimina cualquier intento de ataque por briteforce
-
+        // Si hubo un intento fallido, se deben esperar 5 segundos para reintentar
+        // a los 5 intentos fallidos la cuenta se bloquea un minuto
+        // esto elimina cualquier intento de ataque por bruteforce
 
         if( session( "usert" ) != $this->request->getPost( "socio_id" ) ){
             $this->session->set( "usert", $this->request->getPost( "socio_id" ) );    
@@ -203,6 +206,22 @@ class Sesion extends BaseController
                 bitacora( 2, $usuario->id, [ 
                     "password" => $datax[ "socio_password" ] 
                 ] );
+
+                // revisar intentos totales de fallos
+                // si son mas de 1000 bloquear la IP en automático
+
+                $sql = "SELECT 
+                        count(*) as total
+                        from t_bitacoras
+                        where accion_id = 2
+                        and ip = '{$ip}'
+                        and fecha >  DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+
+                if( $db->query( $sql)->getRow()->total > $BLOQUEAIP ){
+                    bloquea_ip( $ip );
+                }
+
+                // regresar a login
 
                 return redirect() 
                     ->back()
