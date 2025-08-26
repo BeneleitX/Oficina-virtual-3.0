@@ -51,9 +51,9 @@ class Indicadores extends BaseController
          $this->data[ "historico" ][ "ticket" ] = $this->data[ "historico" ][ "venta" ];
 
         foreach( $this->data[ "historico" ][ "ticket" ][ "total" ] as $k => $v ){
-            $this->data[ "historico" ][ "ticket" ][ "total" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "total" ][ $k ];
-            $this->data[ "historico" ][ "ticket" ][ "nuevos" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "nuevos" ][ $k ];
-            $this->data[ "historico" ][ "ticket" ][ "recompra" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "recompra" ][ $k ];
+            $this->data[ "historico" ][ "pedidos" ][ "total" ][ $k ] ? ( $this->data[ "historico" ][ "ticket" ][ "total" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "total" ][ $k ] ) : 0;
+            $this->data[ "historico" ][ "pedidos" ][ "nuevos" ][ $k ] ? ( $this->data[ "historico" ][ "ticket" ][ "nuevos" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "nuevos" ][ $k ] ) : 0;
+            $this->data[ "historico" ][ "pedidos" ][ "recompra" ][ $k ] ? ( $this->data[ "historico" ][ "ticket" ][ "recompra" ][ $k ] /= $this->data[ "historico" ][ "pedidos" ][ "recompra" ][ $k ] ) : 0;
         } 
 
         $this->data[ "historico" ][ "productos" ] = historico_productos( $this->data[ "modelo" ], $this->data[ "mes" ] );
@@ -66,4 +66,11 @@ class Indicadores extends BaseController
 
 // ts brenda
 // ing malaga 
+
+
+
+
+
+
+
 

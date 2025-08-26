@@ -272,6 +272,23 @@ class Reportes extends BaseController
             $this->data[ "metodospago" ][ $m->modelo_codigo ][] = $m->metodopago_codigo;
         }
 
+        $sql = "SELECT 
+                modelo_codigo, 
+                metodoentrega_codigo
+                from t_pedidos
+                where substring( estatus_codigo,1,3) > 200
+                and metodoentrega_codigo is not null
+                and fechas->>'$.pagado' > '2024-10-01'
+                group by modelo_codigo, metodoentrega_codigo";
+
+        $db     = db_connect();
+        $result = $db->query( $sql );
+        $this->data[ "metodosentrega" ] = [];
+        
+        foreach( $result->getResult() as $m ){
+            $this->data[ "metodosentrega" ][ $m->modelo_codigo ][] = $m->metodoentrega_codigo;
+        }
+
         $this->data[ "navbar" ]    = true;
         $this->data[ "titulo" ]    = "Reportes: Pedidos diarios por empresa";
 
@@ -293,6 +310,7 @@ class Reportes extends BaseController
         $modelo   = $this->request->getPost( "modelo" );
         $estatus  = $this->request->getPost( "estatus");
         $m_pago   = $this->request->getPost( "m_pago");
+        $m_entrega   = $this->request->getPost( "m_entrega");
         $c_primercompra   = $this->request->getPost( "c_primercompra");
         $f_inicio = $this->request->getPost( "f_inicio");
         $f_final  = $this->request->getPost( "f_final");
@@ -351,6 +369,7 @@ class Reportes extends BaseController
                 where
                     {$estatus}
                     ".( $m_pago != 'TODOS' ? "and p.metodopago_codigo = '{$m_pago}'" : "" )."
+                    ".( $m_entrega != 'TODOS' ? "and p.metodoentrega_codigo = '{$m_entrega}'" : "" )."
                     ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
                     and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
                     and p.modelo_codigo = '{$modelo}'
@@ -412,6 +431,8 @@ class Reportes extends BaseController
             return redirect()->to( "no_permiso" ); 
         }
 
+        load_catalogo( "promociones" );
+
         $sql = "SELECT 
                 modelo_codigo, 
                 metodoentrega_codigo
@@ -429,8 +450,8 @@ class Reportes extends BaseController
             $this->data[ "metodosentrega" ][ $m->modelo_codigo ][] = $m->metodoentrega_codigo;
         }
 
-        $this->data[ "navbar" ]    = true;
-        $this->data[ "titulo" ]    = "Reportes: Venta por producto";
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Reportes: Venta por producto";
 
         echo template( "reportes/venta_producto", $this->data );
     }
@@ -449,8 +470,9 @@ class Reportes extends BaseController
         $db       = db_connect();
         $modelo   = $this->request->getPost( "modelo" );
         $estatus  = $this->request->getPost( "estatus");
+        $promos   = $this->request->getPost( "promos");
         $m_entrega   = $this->request->getPost( "m_entrega");
-        $c_primercompra   = "TODOS"; // $this->request->getPost( "c_primercompra");
+        $c_primercompra   = $this->request->getPost( "c_primercompra");
         $f_inicio = $this->request->getPost( "f_inicio");
         $f_final  = $this->request->getPost( "f_final");
         $data     = [];
@@ -463,7 +485,7 @@ class Reportes extends BaseController
         $row = 1;
         $d   = [];
         $e   = [];
-        $worksheet->setCellValue( "A1", "REFERENCIA" );
+        $worksheet->setCellValue( "A1", "MES" );
         $worksheet->setCellValue( "B1", "FECHA PAGO" );
         $worksheet->setCellValue( "C1", "METODO PAGO" );
         $worksheet->setCellValue( "D1", "FECHA ENTREGA" );
@@ -486,34 +508,30 @@ class Reportes extends BaseController
             case "500":   $estatus = "substring( p.estatus_codigo,1,3) > 500"; break;
         }
         $sql = "SELECT 
-                    p.referencia as REFERENCIA,
-                    u.id as SOCIO,
-                    p.estatus_codigo as ESTATUS,
-                    u.telefono as CELULAR,
-                    concat( u.data->>'$.nombre', ' ', u.data->>'$.apellidos[ 0 ]', ' ', u.data->>'$.apellidos[ 1 ]' ) as NOMBRE,
-                    p.data->>'$.productos' as PRODUCTOS,
-                    p.metodoentrega_codigo as METODO_ENTREGA,
-                    IF( p.metodoentrega_codigo = '00-ALMACEN', p.data->>'$.entrega', '' ) as ALMACEN,
-                    p.data->>'$.total' as SUBTOTAL_PRODUCTOS,
-                    p.data->>'$.comisionbanco' as COMISION_METODOPAGO,
-                    p.data->>'$.comisionentrega' as COMISION_ENTREGA,
-                    ( p.data->>'$.total' + p.data->>'$.comisionbanco' + p.data->>'$.comisionentrega' ) as TOTAL,
-                    IF( p.data->>'$.primercompra' = 1, 'SI', 'NO' ) as PRIMER_COMPRA,
-                    p.metodopago_codigo as METODO_PAGO,
-                    p.data->>'$.guia' as GUIA,
-                    cast( p.fechas->>'$.pagado' as date ) as FECHA_PAGO,
-                    cast( IF( p.metodoentrega_codigo = '00-ALMACEN', p.fechas->>'$.entregado', p.fechas->>'$.enviado') as date ) as FECHA_ENTREGA
-                from t_pedidos p
-                join t_usuarios u on p.usuario_id = u.id
-                where
-                    {$estatus}
-                    ".( $m_entrega != 'TODOS' ? "and p.metodoentrega_codigo = '{$m_entrega}'" : "" )."
-                    ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
-                    and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
-                    and p.modelo_codigo = '{$modelo}'
+	        prod.data->>'$.nombre' as producto,
+            ";
+        
+        foreach( $promos as $p ){
+            $sql .= "\nsum( CAST(JSON_UNQUOTE(JSON_EXTRACT(p.promociones, CONCAT( '$.\"{$p}\".productos.\"', prod.codigo, '\".cantidad' ))) AS UNSIGNED) ) AS '".substr( $p, 4 )."',";
+        }
 
-                order by cast( p.fechas->>'$.pagado' as date ) asc";
+        $sql .= "\np.metodoentrega_codigo as entrega
 
+            FROM t_pedidos p
+            JOIN t_productos prod on prod.modelo_codigo = @modelo and substring( prod.estatus_codigo,1,3) > 200
+                
+            WHERE 
+            {$estatus}
+
+            ".( $m_entrega != 'TODOS' ? "and p.metodoentrega_codigo = '{$m_entrega}'" : "" )."
+            ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
+
+            and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
+            and p.modelo_codigo = '{$modelo}'
+
+            group by prod.codigo, p.metodoentrega_codigo 
+            order by p.metodoentrega_codigo, prod.codigo";
+die($sql);
         $result = $db->query( $sql );
 
         foreach( $result->getResult() as $s ){

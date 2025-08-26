@@ -53,15 +53,38 @@ class Sesion extends BaseController
     {
         $db = db_connect();
 
-            // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
+        $INTENTOS = 5; // maximop de intentos
+        $CASTIGO = 60; //segundos de bloqueo
+
+        // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
         // esto elimina cualquier intento de ataque por briteforce
 
-        if( session( "login" ) + 3 > time() ){
+        if( session( "usert" ) != $this->request->getPost( "socio_id" ) ){
+            $this->session->set( "usert", $this->request->getPost( "socio_id" ) );    
+            $this->session->set( "tryset", 1 );
+        }
+        else{
+            $this->session->set( "tryset", session( "tryset" ) + 1 );
+        }
+         if( session( "login" ) + 5 > time() ){
             return redirect()
             ->back()
-            ->with( "errors", [ "socio_id" => "Intente de nuevo, por favor" ] )
+            ->with( "errors", [ "socio_id" => "Haga click de nuevo en el botón de ingresar, por favor" ] )
             ->withInput();
-        }
+        } 
+
+        if( session( "tryset" ) >= $INTENTOS ){
+
+            if( session( "login" ) + $CASTIGO < time() ){
+                $this->session->set( "tryset", 1 );
+            }
+            else{
+                return redirect()
+                ->back()
+                ->with( "errors", [ "socio_id" => "Demasiados intentos. Espere ".( ( session( "login" ) + $CASTIGO ) - time() )." segundos" ] )
+                ->withInput();
+            }
+        }       
 
         $this->session->set( "login", time() );
 
@@ -172,7 +195,7 @@ class Sesion extends BaseController
 
                 return redirect() 
                     ->back()
-                    ->with( "errors", [ "socio_password" => "El password es incorrecto" ] )
+                    ->with( "errors", [ "socio_password" => "El password es incorrecto (".session( "tryset" ).")" ] )
                     ->withInput();
             }
 
