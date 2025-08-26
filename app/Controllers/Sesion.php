@@ -65,7 +65,7 @@ class Sesion extends BaseController
             } 
         }
 
-        $INTENTOS  = 5;   // maximop de intentos
+        $INTENTOS  = 4;   // maximop de intentos
         $CASTIGO   = 60;  //segundos de bloqueo
         $BLOQUEAIP = 100; // intentos en el mes para bloquear la IP permanentemente
 
