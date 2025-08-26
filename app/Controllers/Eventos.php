@@ -140,6 +140,13 @@ class Eventos extends BaseController
             $worksheet->setCellValue( "E".( $row ),  $s[ "fecha" ] );
             $worksheet->setCellValue( "F".( $row ),  $s[ "pago" ] );
             $worksheet->setCellValue( "G".( $row ),  $s[ "productos" ] );
+
+            $worksheet->setCellValue( "H".( $row ),  substr( $u[ "data" ][ "estatus" ][ "10-NUTRICION" ], 0, 3 ) );
+            $worksheet->setCellValue( "I".( $row ),  substr( $u[ "data" ][ "estatus" ][ "20-TELEFONIA" ], 0, 3 ) );
+            $worksheet->setCellValue( "J".( $row ),  substr( $u[ "data" ][ "estatus" ][ "30-ALIMENTOS" ], 0, 3 ) );
+            $worksheet->setCellValue( "K".( $row ),  substr( $u[ "data" ][ "estatus" ][ "40-GASOLINAS" ], 0, 3 ) );
+            $worksheet->setCellValue( "L".( $row ),  substr( $u[ "data" ][ "estatus" ][ "50-INVERSION" ], 0, 3 ) );
+
         }
 
         $worksheet->getStyle( "A1:G1" )->getFont()->getColor()->setARGB('ffffff');

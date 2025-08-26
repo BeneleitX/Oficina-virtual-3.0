@@ -46,6 +46,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "splash",                            "Dashboard::splash" );
     $routes->get( "sociodata",                          "Dashboard::sociodata" );
     $routes->get( "update_estatus/(:any)",              "Dashboard::update_estatus/$1" );
+    $routes->get( "estadistica/(:any)/(:any)",          "Dashboard::estadistica/$1/$2" );
     $routes->get( "sociodata/(:any)",                   "Dashboard::sociodata/$1" );
     $routes->post( "sociodata",                         "Dashboard::sociodata" );
     $routes->post( "load_padres",                       "Dashboard::load_padres" );

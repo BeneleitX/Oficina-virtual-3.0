@@ -1102,4 +1102,19 @@ class Dashboard extends BaseController
         return redirect()->to( "sociodata/{$ruta}" );
     }
 
+    public function estadistica( $request, $modelo ){
+
+        if( !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        $request = base64_decode( urldecode( $request ) );
+        $this->data[ "socio" ]  = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+        $this->data[ "modelo" ] = $modelo;
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Estadística de desempeño de socio";
+
+        echo template( "dashboard/estadistica", $this->data );
+    }
 }

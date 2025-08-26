@@ -16,7 +16,7 @@
 </div>
 
 
-        <div class="col-3  offset-lg-2  col-lg-2">
+        <div class="col-3 col-lg-2">
             <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
         </div>
 
@@ -28,6 +28,9 @@
         </div>
         <div class="col-3 col-lg-2">
             <a href="<?php echo base_url( "oauth/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</a>
+        </div>
+        <div class="col-3 col-lg-2">
+            <a href="<?php echo base_url( "estadistica/".urlencode( base64_encode( $socio->password_original() ) )."/10-NUTRICION" ); ?>" class="btn btn-info2 w-100"><i class="fa fa-arrow-trend-up"></i> Estadística</a>
         </div>
 
 
