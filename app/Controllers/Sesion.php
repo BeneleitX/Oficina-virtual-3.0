@@ -53,11 +53,22 @@ class Sesion extends BaseController
     {
         $db = db_connect();
 
+        // revisar IP bloqueada
+        foreach( VARIABLES[ "IPs_bloqueadas" ][ "valor" ] as $beta ){
+            if( str_contains( getIP(), $beta ) ){
+                return redirect()
+                ->back()
+                ->with( "errors", [ "socio_id" => "Tu dirección IP está bloqueada" ] )
+                ->withInput();
+            } 
+        }
+
         $INTENTOS = 5; // maximop de intentos
         $CASTIGO = 60; //segundos de bloqueo
 
         // Si hubo un intento fallido, se deben esperar 3 segundos para reintentar
         // esto elimina cualquier intento de ataque por briteforce
+
 
         if( session( "usert" ) != $this->request->getPost( "socio_id" ) ){
             $this->session->set( "usert", $this->request->getPost( "socio_id" ) );    
