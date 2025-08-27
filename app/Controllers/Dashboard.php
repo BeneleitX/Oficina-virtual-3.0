@@ -1107,10 +1107,16 @@ class Dashboard extends BaseController
         if( !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
             return redirect()->to( "no_permiso" ); 
         }
+
+        $mes = date( "Ym" );
         
         $request = base64_decode( urldecode( $request ) );
-        $this->data[ "socio" ]  = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+        $socio  = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+        $this->data[ "socio" ]  = model( "UsuarioModel" )->find( $socio->id );
         $this->data[ "modelo" ] = $modelo;
+        $this->data[ "mes" ]    = $mes;
+
+        $this->data[ "stats" ][ "202508" ] = get_estadistica( $socio->id, $mes, $modelo );
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Estadística de desempeño de socio";

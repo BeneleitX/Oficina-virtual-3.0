@@ -145,7 +145,7 @@ if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
                         foreach( VARIABLES[ "puntos_verificacion" ][ "valor" ] as $codigo => $punto){
 
                                 $p = $socio->verificado->puntos->{$codigo};
-        
+    
                                 if( $p->requerido ){ 
                                     if( $p->checked ){
                                         echo "<span class=\"badge text-teal border border-teal\"><i class=\"fas fa-square-check text-teal\"></i> {$punto[ "nombre" ]}</span> &nbsp;";

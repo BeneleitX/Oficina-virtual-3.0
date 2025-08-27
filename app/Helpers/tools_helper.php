@@ -850,3 +850,62 @@ function nuevo_pedido( $modelo )
     return $nuevo;
 }
 
+function get_estadistica( $socio, $mes, $modelo )
+{
+    $db = db_connect();
+
+    $stats = [
+        "consumo_red" => 0,
+        "socios_activos" => 0,
+        "ingresos_red" => 0,
+        "nuevos" => 0,
+        "rojos" => 0,
+        "niveles" => [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+        ],
+        "ticket_promedio" => 0
+    ];
+    
+    $sql = "CALL f_get_estadistica( {$socio}, {$mes}, '{$modelo}' );";
+
+    foreach( $db->query( $sql )->getResult() as $s ){
+        if( $s->id == $socio ){
+            $stats[ "socio" ] = $s;
+        }
+        else{
+            
+        }
+
+        if( intval( substr( $s->estatus, 0, 3 ) ) > 300 ){
+            $stats[ "niveles" ][ $s->nivel ]++;
+            $stats[ "socios_activos" ]++;
+            $stats[ "consumo_red" ] += $s->consumo;
+            $stats[ "ingresos_red" ] += $s->ingresos;
+
+            if( intval( substr( $s->estatus, 0, 3 ) ) < 400 ){
+                $stats[ "rojos" ]++;
+            }
+
+            if( $mes == date( "Ym", strtotime( $s->primercompra ) ) ){
+                $stats[ "nuevos" ]++;
+            }
+        }
+    }
+
+    $stats[ "ticket_promedio" ] = $stats[ "socios_activos" ] ? $stats[ "consumo_red" ] / $stats[ "socios_activos" ] : 0;
+
+
+    $sql = "INSERT into t_historico 
+            values ( 'CONSUMO_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "consumo_red" ]} ) 
+            on duplicate key update cantidad = {$stats[ "consumo_red" ]}";   
+
+
+    $db->query( $sql );
+
+    return $stats;
+}
