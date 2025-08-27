@@ -887,7 +887,7 @@ function get_estadistica( $socio, $mes, $modelo )
             $stats[ "consumo_red" ] += $s->consumo;
             $stats[ "ingresos_red" ] += $s->ingresos;
 
-            if( intval( substr( $s->estatus, 0, 3 ) ) < 400 ){
+            if( intval( substr( $s->estatus, 0, 3 ) ) == 310 ){
                 $stats[ "rojos" ]++;
             }
 
