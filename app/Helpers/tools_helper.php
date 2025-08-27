@@ -871,7 +871,7 @@ function get_estadistica( $socio, $mes, $modelo )
         "ticket_promedio" => 0
     ];
     
-    $sql = "CALL f_get_estadistica( {$socio}, {$mes}, '{$modelo}' );";
+    $sql = "CALL p_get_estadistica( {$socio}, {$mes}, '{$modelo}' );";
 
     foreach( $db->query( $sql )->getResult() as $s ){
         if( $s->id == $socio ){
