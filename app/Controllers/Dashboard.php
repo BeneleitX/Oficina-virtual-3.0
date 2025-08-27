@@ -1104,7 +1104,9 @@ class Dashboard extends BaseController
 
     public function estadistica( $request, $modelo ){
 
-        if( !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+        if( 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) AND
+            !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
             return redirect()->to( "no_permiso" ); 
         }
 

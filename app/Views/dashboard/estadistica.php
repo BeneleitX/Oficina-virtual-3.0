@@ -29,7 +29,7 @@
             </div>
             <div class="col-lg-3 text-center">
                 <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "nuevos" ] ); ?></h1>
-                Socios nuevos activos en el mes
+                Socios nuevos en la red
             </div>
             <div class="col-lg-3 text-center">
                 <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "rojos" ] ); ?></h1>
