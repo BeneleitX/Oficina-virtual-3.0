@@ -864,7 +864,7 @@ function get_estadistica( $socio, $mes, $modelo )
 
     $result = $db->query( $sql )->getRow();
 
-    // Generar datos 
+    // Generar datos  
     // - cuando no existan
     // - cuando pertenezcan al mes actual y no hayan sido consultados en más de una hora
 echo $result->updated ." - ". date( "Y-m-d H:i:s", strtotime( date( "Y-m-d H:i:s" )." -1 minute" ) );
