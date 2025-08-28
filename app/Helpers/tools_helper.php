@@ -856,7 +856,7 @@ function get_estadistica( $socio, $mes, $modelo )
 
     $sql = "SELECT 
             JSON_OBJECTAGG( codigo, cantidad ) as json,
-            DATE_FORMAT( updated, '%Y%m' ) as updated
+            DATE_FORMAT( any_value( updated ), '%Y%m' ) as updated
             from t_historico
             where codigo like '%_{$socio}'
             and modelo_codigo = '{$modelo}'
