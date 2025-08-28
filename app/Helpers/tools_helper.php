@@ -868,7 +868,7 @@ function get_estadistica( $socio, $mes, $modelo )
     // - cuando no existan
     // - cuando pertenezcan al mes actual y no hayan sido consultados en más de una hora
 
-    if( $result->updated && date( "Ym", strtotime( $result->updated ) ) == $mes && $result->updated < date( "Y-m-d H:i:s", strtotime( "-1 minute" ) ) ){
+    if( $result->updated && date( "Ym", strtotime( $result->updated ) ) == $mes && $result->updated < date( "Y-m-d H:i:s", strtotime( date( "Y-m-d H:i:s" )." -1 minute" ) ) ){
         $pre    = json_decode( $result->json, true );
         $stats  = [
             "consumo"  => $pre[ "CONSUMO_25918" ],
