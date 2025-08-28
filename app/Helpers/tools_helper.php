@@ -884,7 +884,8 @@ function get_estadistica( $socio, $mes, $modelo )
                 1 => $pre[ "NIVELES_1_RED_25918" ],
                 2 => $pre[ "NIVELES_2_RED_25918" ],
                 3 => $pre[ "NIVELES_3_RED_25918" ],
-                4 => $pre[ "NIVELES_4_RED_25918" ]
+                4 => $pre[ "NIVELES_4_RED_25918" ],
+                5 => $pre[ "NIVELES_5_RED_25918" ]
             ]
         ];
     }
@@ -902,7 +903,8 @@ function get_estadistica( $socio, $mes, $modelo )
                 1 => 0,
                 2 => 0,
                 3 => 0,
-                4 => 0
+                4 => 0,
+                5 => 0
             ]
         ];
         
@@ -953,7 +955,8 @@ function get_estadistica( $socio, $mes, $modelo )
                 ( 'NIVELES_1_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 1 ]}, '{$ts}' ), 
                 ( 'NIVELES_2_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 2 ]}, '{$ts}' ), 
                 ( 'NIVELES_3_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 3 ]}, '{$ts}' ), 
-                ( 'NIVELES_4_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 4 ]}, '{$ts}' ) 
+                ( 'NIVELES_4_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 4 ]}, '{$ts}' ), 
+                ( 'NIVELES_5_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 5 ]}, '{$ts}' ) 
 
                 on duplicate key update cantidad = VALUES( cantidad ), updated = VALUES( updated )";   
 
