@@ -764,7 +764,7 @@ function getPaqueteMovil( $celular )
             WHERE pe.estatus_codigo = '420-PAGADO' AND pe.modelo_codigo = '20-TELEFONIA' AND pe.data->>'$.entrega' = '{$celular}'
             AND now() BETWEEN CAST( pe.fechas->>'$.pagado' AS DATE ) AND CAST( DATE_FORMAT( CAST( pe.fechas->>'$.pagado' AS DATE ) + INTERVAL pr.data->>'$.dias' DAY, '%Y-%m-%d' ) AS DATE )
             ORDER BY pr.data->'$.puntos.\"310-TELEFONIA\"' DESC" )->getResultArray();
-}
+} 
 
 
 function load_catalogo( $tabla, $where = null, $nombre = null )
