@@ -795,7 +795,7 @@ function load_catalogo( $tabla, $where = null, $nombre = null )
 }
 
 
-function nuevo_pedido( $modelo )
+function nuevo_pedido( $modelo ) 
 {
     load_catalogo( "promociones", "estatus_codigo = '201-ACTIVO' AND ( modelo_codigo = '{$modelo}' OR settings->'$.universal' = true )", "pp" );
     
