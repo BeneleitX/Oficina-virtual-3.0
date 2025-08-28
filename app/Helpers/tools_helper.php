@@ -860,7 +860,7 @@ function get_estadistica( $socio, $mes, $modelo )
             from t_historico
             where codigo like '%_{$socio}'
             and modelo_codigo = '{$modelo}'
-            and mes = {$mes}";
+            and mes = {$mes}"; 
 
     $result = $db->query( $sql )->getRow();
 
