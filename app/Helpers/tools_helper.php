@@ -856,7 +856,7 @@ function get_estadistica( $socio, $mes, $modelo )
 
     $sql = "SELECT 
             JSON_OBJECTAGG( codigo, cantidad ) as json,
-            DATE_FORMAT( any_value( updated ), '%Y%m' ) as updated
+            any_value( updated ) as updated
             from t_historico
             where codigo like '%_{$socio}'
             and modelo_codigo = '{$modelo}'
@@ -864,7 +864,11 @@ function get_estadistica( $socio, $mes, $modelo )
 
     $result = $db->query( $sql )->getRow();
 
-    if( $result->updated && $result->updated == $mes ){
+    // Generar datos 
+    // - cuando no existan
+    // - cuando pertenezcan al mes actual y no hayan sido consultados en más de una hora
+
+    if( $result->updated && date( "Ym", strtotime( $result->updated ) ) == $mes && $result->updated > date( "Y-m-d H:i:s", strtotime( "-1 minute" ) ) ){
         $pre    = json_decode( $result->json, true );
         $stats  = [
             "consumo"  => $pre[ "CONSUMO_25918" ],
