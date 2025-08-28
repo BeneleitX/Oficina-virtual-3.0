@@ -954,7 +954,7 @@ function get_estadistica( $socio, $mes, $modelo )
                 ( 'NIVELES_3_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 3 ]}, '{$ts}' ), 
                 ( 'NIVELES_4_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 4 ]}, '{$ts}' ) 
 
-                on duplicate key update cantidad = VALUES( cantidad )";   
+                on duplicate key update cantidad = VALUES( cantidad ), updated = VALUES( updated )";   
 
         $db->query( $sql );
     }
