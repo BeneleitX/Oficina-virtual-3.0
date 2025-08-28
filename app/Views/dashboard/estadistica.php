@@ -18,43 +18,67 @@
 
 <div class="card mb-5" style="border-color: var(--bs-border-color); border-top:none; border-radius: 0 0 6px 6px">
     <div class="card-body">
-       <div class="row">
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "socios_activos" ] ); ?></h1>
-                Socios activos en la red
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "niveles" ][ 1 ] ); ?></h1>
-                Socios activos directos
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "nuevos" ] ); ?></h1>
-                Socios nuevos en la red
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0"><?php echo number_format( $stats[ "202508" ][ "rojos" ] ); ?></h1>
-                Socios en rojo
-            </div>
-        </div>
+       <table class="w-100">
+            <tr>    
+                <td class="text-center py-3" style="width: 40%" colspan="2">
+                    <table align="center">
+                        <tr>
+                            <?php 
+                            for( $i = 1; $i <= MODELOS[ $modelo][ "settings" ][ "niveles" ]; $i++ ){ 
+                                echo "\n<td style=\"padding-right: 5px\"><div class=\"input-group input-group-sm\">
+                                        <span class=\"input-group-text bg-gray-200 text-gray-500 border-gray-200 fw-bold\" id=\"basic-addon1\">{$i}°</span>
+                                        <input style=\"display:inline-block; width:50px\" type=\"text\" class=\"form-control border-gray-200\" value=\"".number_format( $stats[ "202508" ][ "niveles" ][ $i ] )."\">
+                                        </div></td>";
+                            //    echo "\n<td class=\"text-center\"><span class=\"small text-center\">{$i}</span><h5 class=\"my-0 mx-3\">{}</h5></td>"; 
+                            } 
+                            ?>
+                            <td>
+                    <h2 class="my-0 mx-3">
+                        <?php echo number_format( array_sum( $stats[ "202508" ][ "niveles" ] ) ); ?>
+                    </h2>
+                            </td>
+                        </tr>
+                    </table>
+                    Socios activos en la red
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "nuevos" ] ); ?></h2>
+                    Socios nuevos en la red
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "rojos" ] ); ?></h2>
+                    Socios en rojo
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "compras_red" ] ); ?></h2>
+                    Compras en la red
+                </td>
+            </tr>
 
-        <div class="row mt-4 mb-3">
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0">$<?php echo number_format( $stats[ "202508" ][ "consumo_red" ], 2 ); ?></h1>
-                Consumo de red en el mes
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0">$<?php echo number_format( $stats[ "202508" ][ "ticket_promedio" ], 2 ); ?></h1>
-                Ticket promedio
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0">$<?php echo number_format( $stats[ "202508" ][ "socio" ]->ingresos, 2 ); ?></h1>
-                Comisiones propias en el mes
-            </div>
-            <div class="col-lg-3 text-center">
-                <h1 class="display-5 m-0">$<?php echo number_format( $stats[ "202508" ][ "ingresos_red" ], 2 ); ?></h1>
-                Comisiones de la red en el mes
-            </div>
-        </div>
+
+            <tr>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "consumo" ], 2 ); ?></h2>
+                    Consumo propio en el mes
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "consumo_red" ], 2 ); ?></h2>
+                    Consumo de la red en el mes
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ticket_promedio" ], 2 ); ?></h2>
+                    Ticket promedio
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ingresos" ], 2 ); ?></h2>
+                    Comisiones propias en el mes
+                </td>
+                <td class="text-center py-3" style="width: 20%">
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ingresos_red" ], 2 ); ?></h2>
+                    Comisiones de la red en el mes
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 

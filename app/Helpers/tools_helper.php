@@ -854,58 +854,106 @@ function get_estadistica( $socio, $mes, $modelo )
 {
     $db = db_connect();
 
-    $stats = [
-        "consumo_red" => 0,
-        "socios_activos" => 0,
-        "ingresos_red" => 0,
-        "nuevos" => 0,
-        "rojos" => 0,
-        "niveles" => [
-            0 => 0,
-            1 => 0,
-            2 => 0,
-            3 => 0,
-            4 => 0,
-            5 => 0,
-        ],
-        "ticket_promedio" => 0
-    ];
-    
-    $sql = "CALL p_get_estadistica( {$socio}, {$mes}, '{$modelo}' );";
+    $sql = "SELECT 
+            JSON_OBJECTAGG( codigo, cantidad ) as json,
+            DATE_FORMAT( updated, '%Y%m' ) as updated
+            from t_historico
+            where codigo like '%_{$socio}'
+            and modelo_codigo = '{$modelo}'
+            and mes = {$mes}";
 
-    foreach( $db->query( $sql )->getResult() as $s ){
-        if( $s->id == $socio ){
-            $stats[ "socio" ] = $s;
-        }
-        else{
-            
-        }
+    $result = $db->query( $sql )->getRow();
 
-        if( intval( substr( $s->estatus, 0, 3 ) ) > 300 ){
-            $stats[ "niveles" ][ $s->nivel ]++;
-            $stats[ "socios_activos" ]++;
-            $stats[ "consumo_red" ] += $s->consumo;
-            $stats[ "ingresos_red" ] += $s->ingresos;
-
-            if( intval( substr( $s->estatus, 0, 3 ) ) == 310 ){
-                $stats[ "rojos" ]++;
-            }
-
-            if( $mes == date( "Ym", strtotime( $s->primercompra ) ) ){
-                $stats[ "nuevos" ]++;
-            }
-        }
+    if( $result->updated && $result->updated == $mes ){
+        $pre    = json_decode( $result->json, true );
+        $stats  = [
+            "consumo"  => $pre[ "CONSUMO_25918" ],
+            "ingresos" => $pre[ "INGRESOS_25918" ],
+            "consumo_red"  => $pre[ "CONSUMO_RED_25918" ],
+            "compras_red"  => $pre[ "COMPRAS_RED_25918" ],
+            "ingresos_red" => $pre[ "INGRESOS_RED_25918" ],
+            "nuevos" => $pre[ "NUEVOS_25918" ],
+            "rojos"  => $pre[ "ROJOS_25918" ],
+            "ticket_promedio" => $pre[ "TICKET_PROMEDIO_25918" ],
+            "niveles" => [
+                1 => $pre[ "NIVELES_1_RED_25918" ],
+                2 => $pre[ "NIVELES_2_RED_25918" ],
+                3 => $pre[ "NIVELES_3_RED_25918" ],
+                4 => $pre[ "NIVELES_4_RED_25918" ]
+            ]
+        ];
     }
+    else{
+        $stats = [
+            "consumo" => 0,
+            "ingresos" => 0,
+            "consumo_red" => 0,
+            "compras_red" => 0,
+            "ingresos_red" => 0,
+            "nuevos" => 0,
+            "rojos" => 0,
+            "ticket_promedio" => 0,
+            "niveles" => [
+                1 => 0,
+                2 => 0,
+                3 => 0,
+                4 => 0
+            ]
+        ];
+        
+        $sql = "CALL p_get_estadistica( {$socio}, {$mes}, '{$modelo}' );";
+        $resultado = $db->query( $sql )->getResult();
 
-    $stats[ "ticket_promedio" ] = $stats[ "socios_activos" ] ? $stats[ "consumo_red" ] / $stats[ "socios_activos" ] : 0;
+        foreach( $resultado as $s ){
+            $s->consumo = json_decode( $s->consumo );
 
+            if( $s->id == $socio ){
+                $stats[ "consumo" ] = $s->consumo->consumo ?? 0;
+                $stats[ "ingresos" ] = $s->ingresos ?? 0;
+            }
 
-    $sql = "INSERT into t_historico 
-            values ( 'CONSUMO_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "consumo_red" ]} ) 
-            on duplicate key update cantidad = {$stats[ "consumo_red" ]}";   
+            if( intval( substr( $s->estatus, 0, 3 ) ) > 300 ){
+                $stats[ "consumo_red" ]  += $s->consumo->consumo;
+                $stats[ "compras_red" ]  += $s->consumo->compras;
+                $stats[ "ingresos_red" ] += $s->ingresos;
 
+                if( $s->nivel > 0 ){
+                    $stats[ "niveles" ][ $s->nivel ]++;
+                }
 
-    $db->query( $sql );
+                if( intval( substr( $s->estatus, 0, 3 ) ) == 310 ){
+                    $stats[ "rojos" ]++;
+                }
+
+                if( $mes == date( "Ym", strtotime( $s->primercompra ) ) ){
+                    $stats[ "nuevos" ]++;
+                }
+            }
+        }
+
+        $stats[ "ticket_promedio" ] = $stats[ "consumo_red" ] / $stats[ "compras_red" ];
+    
+        $ts  = date( "Y-m-d H:i:s" );
+        $sql = "INSERT into t_historico ( codigo, modelo_codigo, mes, cantidad, updated ) 
+                values 
+                ( 'CONSUMO_{$socio}', '{$modelo}', {$mes}, {$stats[ "consumo" ]}, '{$ts}' ), 
+                ( 'INGRESOS_{$socio}', '{$modelo}', {$mes}, {$stats[ "ingresos" ]}, '{$ts}' ), 
+                ( 'CONSUMO_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "consumo_red" ]}, '{$ts}' ), 
+                ( 'COMPRAS_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "compras_red" ]}, '{$ts}' ), 
+                ( 'INGRESOS_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "ingresos_red" ]}, '{$ts}' ), 
+                ( 'NUEVOS_{$socio}', '{$modelo}', {$mes}, {$stats[ "nuevos" ]}, '{$ts}' ), 
+                ( 'ROJOS_{$socio}', '{$modelo}', {$mes}, {$stats[ "rojos" ]}, '{$ts}' ), 
+                ( 'TICKET_PROMEDIO_{$socio}', '{$modelo}', {$mes}, {$stats[ "ticket_promedio" ]}, '{$ts}' ), 
+
+                ( 'NIVELES_1_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 1 ]}, '{$ts}' ), 
+                ( 'NIVELES_2_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 2 ]}, '{$ts}' ), 
+                ( 'NIVELES_3_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 3 ]}, '{$ts}' ), 
+                ( 'NIVELES_4_RED_{$socio}', '{$modelo}', {$mes}, {$stats[ "niveles" ][ 4 ]}, '{$ts}' ) 
+
+                on duplicate key update cantidad = VALUES( cantidad )";   
+
+        $db->query( $sql );
+    }
 
     return $stats;
 }
