@@ -30,7 +30,7 @@
                                         <input style=\"display:inline-block; width:50px\" type=\"text\" class=\"form-control border-gray-200\" value=\"".number_format( $stats[ "202508" ][ "niveles" ][ $i ] )."\">
                                         </div></td>";
                             //    echo "\n<td class=\"text-center\"><span class=\"small text-center\">{$i}</span><h5 class=\"my-0 mx-3\">{}</h5></td>"; 
-                            } 
+                            }  
                             ?>
                             <td>
                     <h2 class="my-0 mx-3">
