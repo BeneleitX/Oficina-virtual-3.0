@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
@@ -34,7 +35,7 @@
                             ?>
                             <td>
                     <h2 class="my-0 mx-3">
-                        <?php echo number_format( array_sum( $stats[ "202508" ][ "niveles" ] ) ); ?>
+                        <?php echo number_format( array_sum( $stats[ $mes_actual ][ "niveles" ] ) ); ?>
                     </h2>
                             </td>
                         </tr>
@@ -42,15 +43,15 @@
                     Socios activos en la red
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "nuevos" ] ); ?></h2>
+                    <h2 class=" m-0"><?php echo number_format( $stats[ $mes_actual ][ "nuevos" ] ); ?></h2>
                     Socios nuevos en la red
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "rojos" ] ); ?></h2>
+                    <h2 class=" m-0"><?php echo number_format( $stats[ $mes_actual ][ "rojos" ] ); ?></h2>
                     Socios en rojo
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0"><?php echo number_format( $stats[ "202508" ][ "compras_red" ] ); ?></h2>
+                    <h2 class=" m-0"><?php echo number_format( $stats[ $mes_actual ][ "compras_red" ] ); ?></h2>
                     Compras en la red
                 </td>
             </tr>
@@ -58,23 +59,23 @@
 
             <tr>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "consumo" ], 2 ); ?></h2>
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ $mes_actual ][ "consumo" ], 2 ); ?></h2>
                     Consumo propio en el mes
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "consumo_red" ], 2 ); ?></h2>
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ $mes_actual ][ "consumo_red" ], 2 ); ?></h2>
                     Consumo de la red en el mes
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ticket_promedio" ], 2 ); ?></h2>
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ $mes_actual ][ "ticket_promedio" ], 2 ); ?></h2>
                     Ticket promedio
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ingresos" ], 2 ); ?></h2>
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ $mes_actual ][ "ingresos" ], 2 ); ?></h2>
                     Comisiones propias en el mes
                 </td>
                 <td class="text-center py-3" style="width: 20%">
-                    <h2 class=" m-0">$<?php echo number_format( $stats[ "202508" ][ "ingresos_red" ], 2 ); ?></h2>
+                    <h2 class=" m-0">$<?php echo number_format( $stats[ $mes_actual ][ "ingresos_red" ], 2 ); ?></h2>
                     Comisiones de la red en el mes
                 </td>
             </tr>
@@ -87,10 +88,10 @@
     <div class="col-lg-6 mb-4">
         <div class="card">
             <div class="card-header bg-teal">
-                <h5 class="m-0 text-white">Socios activos</h5>
+                <h5 class="m-0 text-white">Socios activos en la red</h5>
             </div>
             <div class="card-body text-center">
-                <img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid">
+                <div id="chart_socios_red"></div>
             </div>
         </div>
     </div>
@@ -101,7 +102,7 @@
                 <h5 class="m-0 text-white">Nuevos socios</h5>
             </div>
             <div class="card-body text-center">
-                <img src="<?php echo base_url(); ?>assets/img/demo.png" class="img-fluid">
+                <div id="chart_nuevos_socios"></div>
             </div>
         </div>
     </div>
@@ -128,3 +129,89 @@
         </div>
     </div>
 </div>
+
+
+
+<script>
+        var options = {
+        colors: ['var(--bs-red)', 'var(--bs-violet)', 'var(--bs-deep-purple)', 'var(--bs-blue)', 'var(--bs-teal)' ],
+        series: [
+            <?php
+            $mes = date( "Ym" );
+            $meses = [];
+            $niveles = [];
+
+            for( $a = 0; $a <= 12; $a++ ){
+                $meses[] = $mes;
+                for( $i = 1; $i <= MODELOS[ $modelo][ "settings" ][ "niveles" ]; $i++ ){ 
+                    $niveles[ $i ][ $mes ] = $stats[ $mes ][ "niveles" ][ $i ];
+                }    
+                $mes = date( "Ym", strtotime( date( "Y-m-01" )."-".(12 - $a)." month" ) );
+            }
+
+            for( $i = 1; $i <= MODELOS[ $modelo][ "settings" ][ "niveles" ]; $i++ ){ 
+                echo "\n{ 'type': 'bar', 'name': 'Nivel {$i}°', 'data': [ ".implode( ',', $niveles[ $i ] )." ] },";
+            }   
+            ?>            
+        ],
+        chart: {
+            type: 'bar',
+            height: 230,
+            stacked: true,
+            stackOnlyBar: true,
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },        
+        plotOptions: {
+          bar: {
+            columnWidth: '80%'
+          }
+        },
+        yaxis: {
+        },      
+        grid: {
+            row: {
+                colors: ['#e5e5e5', 'transparent'],
+                opacity: 0.5
+            }, 
+        },
+        stroke: {
+            width: 3,
+            curve: 'smooth'
+        },
+        xaxis: {
+            categories: ['<?php echo implode( "','", $meses ); ?>'],
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        }
+    };
+
+    chart = new ApexCharts(document.querySelector("#chart_socios_red"), options);
+    chart.render();  
+
+    options.series = [
+            <?php
+
+            foreach( $meses as $m ){
+                $nuevos[ $m ] = $stats[ $m ][ "nuevos" ];
+            }
+
+            echo "\n{ 'type': 'line', 'name': 'Nuevos activos', 'data': [ ".implode( ',', $nuevos )." ] },";
+            ?>            
+        ];
+
+    chart = new ApexCharts(document.querySelector("#chart_nuevos_socios"), options);
+    chart.render();   
+
+</script>

@@ -159,10 +159,21 @@ class Sesion extends BaseController
             $datax    = $this->request->getPost();
             $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
 
-            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
-
             $usuario->valida_modelo();
 
+            foreach( MODELOS as $m ){
+                $db->query( "do f_update_PTS( {$usuario->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+                $db->query( "call p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
+            }
+
+            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
+            $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' )" );
+
+            if( strlen( $usuario->data->clabe ) == 18 ){
+                // actualizaar pagos pendientes
+                $db->query( "update t_pagos set clabe = '{$usuario->data->clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$socio->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+            }
+            
             // Password corrompido, debe generar uno nuevo
 
             if( !$usuario->password_original() ){

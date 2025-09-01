@@ -1116,9 +1116,12 @@ class Dashboard extends BaseController
         $socio  = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
         $this->data[ "socio" ]  = model( "UsuarioModel" )->find( $socio->id );
         $this->data[ "modelo" ] = $modelo;
-        $this->data[ "mes" ]    = $mes;
+        $this->data[ "mes_actual" ] = $mes;
 
-        $this->data[ "stats" ][ "202508" ] = get_estadistica( $socio->id, $mes, $modelo );
+        for( $a = 0; $a <= 12; $a++ ){
+            $mes = date( "Ym", strtotime( date( "Y-m-01" )."-{$a} month" ) );
+            $this->data[ "stats" ][ $mes ] = get_estadistica( $socio->id, $mes, $modelo );
+        }
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Estadística de desempeño de socio";

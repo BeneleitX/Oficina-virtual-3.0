@@ -869,23 +869,23 @@ function get_estadistica( $socio, $mes, $modelo )
     // - cuando pertenezcan al mes actual y no hayan sido consultados en más de una hora
     // - cuando pertenezcan al mes anterior y estemos en la primer semana del mes actual
 
-    if( $result->updated && ( date( "Ym", strtotime( $result->updated ) ) < $mes || ( date( "d" ) < 7 && date( "Ym", strtotime( $result->updated." +1 month" ) ) == $mes ) || $result->updated > date( "Y-m-d H:i:s", strtotime( date( "Y-m-d H:i:s" )." -3 hour" ) ) ) ){
+    if( $result->updated && ( date( "Ym", strtotime( $result->updated ) ) <= $mes || ( date( "d" ) < 7 && date( "Ym", strtotime( $result->updated." +1 month" ) ) == $mes ) || $result->updated > date( "Y-m-d H:i:s", strtotime( date( "Y-m-d H:i:s" )." -3 hour" ) ) ) ){
         $pre    = json_decode( $result->json, true );
         $stats  = [
-            "consumo"  => $pre[ "CONSUMO_25918" ],
-            "ingresos" => $pre[ "INGRESOS_25918" ],
-            "consumo_red"  => $pre[ "CONSUMO_RED_25918" ],
-            "compras_red"  => $pre[ "COMPRAS_RED_25918" ],
-            "ingresos_red" => $pre[ "INGRESOS_RED_25918" ],
-            "nuevos" => $pre[ "NUEVOS_25918" ],
-            "rojos"  => $pre[ "ROJOS_25918" ],
-            "ticket_promedio" => $pre[ "TICKET_PROMEDIO_25918" ],
+            "consumo"  => $pre[ "CONSUMO_{$socio}" ],
+            "ingresos" => $pre[ "INGRESOS_{$socio}" ],
+            "consumo_red"  => $pre[ "CONSUMO_RED_{$socio}" ],
+            "compras_red"  => $pre[ "COMPRAS_RED_{$socio}" ],
+            "ingresos_red" => $pre[ "INGRESOS_RED_{$socio}" ],
+            "nuevos" => $pre[ "NUEVOS_{$socio}" ],
+            "rojos"  => $pre[ "ROJOS_{$socio}" ],
+            "ticket_promedio" => $pre[ "TICKET_PROMEDIO_{$socio}" ],
             "niveles" => [
-                1 => $pre[ "NIVELES_1_RED_25918" ],
-                2 => $pre[ "NIVELES_2_RED_25918" ],
-                3 => $pre[ "NIVELES_3_RED_25918" ],
-                4 => $pre[ "NIVELES_4_RED_25918" ],
-                5 => $pre[ "NIVELES_5_RED_25918" ]
+                1 => $pre[ "NIVELES_1_RED_{$socio}" ],
+                2 => $pre[ "NIVELES_2_RED_{$socio}" ],
+                3 => $pre[ "NIVELES_3_RED_{$socio}" ],
+                4 => $pre[ "NIVELES_4_RED_{$socio}" ],
+                5 => $pre[ "NIVELES_5_RED_{$socio}" ]
             ]
         ];
     }
@@ -924,17 +924,17 @@ function get_estadistica( $socio, $mes, $modelo )
                 $stats[ "compras_red" ]  += $s->consumo->compras;
                 $stats[ "ingresos_red" ] += $s->ingresos;
 
-                if( $s->nivel > 0 ){
+                if( $mes == date( "Ym") && $s->nivel > 0 ){
                     $stats[ "niveles" ][ $s->nivel ]++;
                 }
 
                 if( intval( substr( $s->estatus, 0, 3 ) ) == 310 ){
                     $stats[ "rojos" ]++;
                 }
+            }
 
-                if( $mes == date( "Ym", strtotime( $s->primercompra ) ) ){
-                    $stats[ "nuevos" ]++;
-                }
+            if( $mes == date( "Ym", strtotime( $s->primercompra ) ) ){
+                $stats[ "nuevos" ]++;
             }
         }
 
