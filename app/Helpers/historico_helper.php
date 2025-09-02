@@ -129,7 +129,7 @@ function historico_socios( $modelo, $mes )
             $datos = historico_socios_data( $modelo, $m );
             
             foreach( $datos as $codigo => $v ){
-                $db->query( "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v} ) on duplicate key update cantidad = {$v}" );    
+                $db->query( "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v}, '{".date( "Y-m-d H:i:s" )."}' ) on duplicate key update cantidad = {$v}, updated = '{".date( "Y-m-d H:i:s" )."}'" );    
             }
 
             $resp[ $m ] = $datos;
@@ -137,6 +137,11 @@ function historico_socios( $modelo, $mes )
 
         }
     }
+
+
+
+
+
 
     $respuesta = [];
 
@@ -219,7 +224,7 @@ function historico_productos( $modelo, $mes )
             $datos = historico_productos_data( $modelo, $m );
             
             foreach( $datos as $codigo => $v ){
-                $sql = "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v} ) on duplicate key update cantidad = {$v}";
+                $sql = "insert into t_historico values ( '{$codigo}', '{$modelo}', {$m}, {$v}, '{".date( "Y-m-d H:i:s" )."}' ) on duplicate key update cantidad = {$v}, updated = '{".date( "Y-m-d H:i:s" )."}'";
                 $db->query( $sql );    
             }
 
