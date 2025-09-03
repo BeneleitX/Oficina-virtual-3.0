@@ -2,7 +2,7 @@
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
 
-$y = date( "Y" ) - ( date( "n" ) < 9 ? 1 : 0 );
+$y = date( "Y" ) - ( date( "n" ) < 10 ? 1 : 0 );
 
 $bono = $usuario->getBono( $esquema, $y );
 
