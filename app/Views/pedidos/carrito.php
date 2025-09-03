@@ -814,7 +814,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                         
         $db = db_connect();
 
-        $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]}" )->getResult();
+        $comisiones = $db->query( "select * from t_comisiones where pedido_id = {$pedido[ "id" ]} order by nivel" )->getResult();
 
         foreach( $comisiones as $c ){
             $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";

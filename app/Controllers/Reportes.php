@@ -193,7 +193,7 @@ class Reportes extends BaseController
         $db = db_connect();
 
         $tabla = "";
-        $sql = "SELECT 
+        echo $sql = "SELECT 
                 p.modelo_codigo as 'EMPRESA',
 
                 count(*) as VENTAS,
@@ -531,8 +531,18 @@ class Reportes extends BaseController
 
             group by prod.codigo, p.metodoentrega_codigo 
             order by p.metodoentrega_codigo, prod.codigo";
-die($sql);
-        $result = $db->query( $sql );
+        
+        
+        
+        
+        
+            die($sql);
+        
+        
+        
+        
+        
+            $result = $db->query( $sql );
 
         foreach( $result->getResult() as $s ){
             $row++;
