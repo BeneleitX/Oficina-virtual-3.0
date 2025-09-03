@@ -1546,6 +1546,7 @@ class E_usuario extends Entity
                 left join t_bitacoras b on b.variables->>'$.periodo' = a.data->>'$.periodos.deposito' and accion_id = 47
                 WHERE a.usuario_id = {$this->id} 
                 AND a.modelo_codigo = '{$modelo}' 
+                AND SUBSTRING( a.estatus_codigo,1,3) > 200
                 -- and p.inicia > '2024-08-18'
                 ORDER BY a.data->>'$.periodos.creacion' desc";
 

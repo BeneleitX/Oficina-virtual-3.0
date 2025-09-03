@@ -192,6 +192,7 @@ class Ingresos extends BaseController
         $this->data[ "titulo" ] = "Depósitos por pago de comisiones";
         $this->data[ "socio"  ] = $this->data[ "usuario" ];
         $this->data[ "pagos" ]  = $this->data[ "socio" ]->getPagos( $modelo );
+
         load_catalogo( "esquemas", "modelo_codigo = '{$modelo}'");
 
         echo template( "ingresos/depositos", $this->data );
