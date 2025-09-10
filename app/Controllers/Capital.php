@@ -162,7 +162,7 @@ class Capital extends BaseController
 
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Dashboard Capital24";
-        load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500");
+        load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500 and estatus_codigo = '201-ACTIVO'" );
 
         $sql = "SELECT count(*) as total from (
                     SELECT any_value(i.id), i.usuario_id, count(*)
@@ -265,10 +265,10 @@ class Capital extends BaseController
                     date_format( i.fechas->>'$.pagado', '%Y%m' ) as fecha
                 from t_inversiones i
                 join t_pedidos p on p.id = i.pedido_id and substring( p.estatus_codigo, 1, 3 ) > 400
-                join t_productos o on o.codigo = i.producto_codigo
+                join t_productos o on o.codigo = substring( i.producto_codigo, 1, 13 )
                 where substring( i.estatus_codigo, 1, 3 ) > 300
                 and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
-                group by i.producto_codigo, fecha
+                group by substring( i.producto_codigo, 1, 13 ), fecha
                 order by fecha";
 
         $inversiones = $db->query( $sql )->getResultArray();
@@ -324,16 +324,16 @@ class Capital extends BaseController
                 from
                 t_inversiones i 
                 join t_pedidos p on p.id = i.pedido_id
-                join t_productos o on o.codigo = i.producto_codigo
+                join t_productos o on o.codigo = substring( i.producto_codigo, 1, 13 )
                 join t_periodos e on cast( p.fechas->>'$.reparte' as date ) between e.inicia and e.termina and e.modelo_codigo = '50-INVERSION'
                 where 
                 substring( p.estatus_codigo,1, 3) > 400
                 and p.modelo_codigo = '50-INVERSION'
                 and substring(i.estatus_codigo,1,3) > 200
-                group by e.codigo, i.producto_codigo";
+                group by e.codigo, substring( i.producto_codigo, 1, 13 )";
 
         $compras = $db->query( $sql )->getResultArray();
-        
+      
         $this->data[ "compras" ]       = [];
         $this->data[ "total_compras" ] = 0;
 
