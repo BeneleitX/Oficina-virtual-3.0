@@ -351,7 +351,7 @@ class Capital extends BaseController
 
         $sql = "SELECT 
                     u.id as socio, 
-                    f_get_semilla( u.id, date_format( now(), '%Y%m' ) ) as semilla,
+                    f_get_semilla( u.id, date_format( now(), '%Y%m' ), u.id ) as semilla,
                     json_unquote( json_extract( u.historial, concat( '$.modelos.\"50-INVERSION\".corte_mensual.\"', date_format( now(), '%Y%m'), '\".bolsa' ) ) ) as bolsa,
                     json_unquote( json_extract( u.historial, concat( '$.modelos.\"50-INVERSION\".corte_mensual.\"', date_format( now(), '%Y%m'), '\".directos' ) ) ) as directos	
                 from t_usuarios u

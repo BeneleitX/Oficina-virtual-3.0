@@ -56,10 +56,12 @@ if( $saldo ){
         $inv = [];
 
         foreach( $inversiones as $i ){
-            $p  = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 
-            if( !isset( $inv[ $i[ "producto_codigo" ] ] ) ){
-                $inv[ $i[ "producto_codigo" ] ] = [ 
+            $px = substr($i[ "producto_codigo" ], 0, 13);
+            $p  = model( "ProductoModel" )->find( $px );
+
+            if( !isset( $inv[ $px ] ) ){
+                $inv[ $px ] = [ 
                     "total" => 0.00,
                     "inversiones" => 0
                 ];
@@ -74,13 +76,14 @@ if( $saldo ){
 
             $bt = balance_inversion( $i );
 
-            $inv[ $i[ "producto_codigo" ] ][ "total" ] += $bt[ "total" ];
-            $inv[ $i[ "producto_codigo" ] ][ "inversiones" ] ++;
+            $inv[ $px ][ "total" ] += $bt[ "total" ];
+            $inv[ $px ][ "inversiones" ] ++;
         }
 
         $ps = model( "ProductoModel" )->where( "modelo_codigo = '50-INVERSION' AND estatus_codigo = '201-ACTIVO'" )->findAll();
 
         foreach( $ps as $p ){
+    
             if( !isset( $inv[ $p->codigo ] ) ){
                 $inv[ $p->codigo ] = [ 
                     "total" => 0.00,

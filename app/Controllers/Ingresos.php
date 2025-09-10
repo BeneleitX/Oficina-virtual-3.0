@@ -52,7 +52,7 @@ class Ingresos extends BaseController
                 $inicia  = $dto->format('Y-m-d');
                 $dto->modify('+6 days');
                 $termina = $dto->format('Y-m-d');
-            }
+            } 
             elseif( $modelo[ "settings" ][ "periodo" ] == "MENSUAL" ){
                 $dto->setDate( substr( $periodo, 3, 4 ),  substr( $periodo, 7, 2 ), "01" );
                 $inicia  = $dto->format('Y-m-d');
@@ -318,7 +318,7 @@ class Ingresos extends BaseController
         $modelo = MODELOS[ $modelo ];
 
         $ingresosxdia = $socio->getIngresosPorDia( $modelo[ "codigo" ] );
-    
+
         $inicia = "2024-08-12"; //date( "Y-m-d", strtotime( date( "Y-m-d", strtotime( $socio->historial->registro." + 1 day" ) )." last Monday" ) );
     
         while( $inicia <= date( "Y-m-d") ){
