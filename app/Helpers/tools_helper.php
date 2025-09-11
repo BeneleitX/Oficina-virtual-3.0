@@ -5,7 +5,7 @@ function alertas( $a ){
 }
 
 // devuelve un número formateado con ceros a la izquierda
-function id($n, $digitos = 0)
+function id( $n, $digitos = 0 )
 {
     $array = array_map('intval', str_split(str_pad($n,$digitos,"0", STR_PAD_LEFT)));
     $i     = array_shift($array);

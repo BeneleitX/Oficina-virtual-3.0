@@ -243,6 +243,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "capital24",                          "Capital::admin" );
     $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
     $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
+    $routes->get( "confirma_retiro/(:any)",             "Capital::confirma_retiro/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );
     $routes->get( "entrega_retiros/(:num)",             "Capital::entrega_retiros/$1" );
     $routes->get( "rangos_inversion",                   "Capital::rangos_inversion" ); 

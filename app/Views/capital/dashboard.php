@@ -127,34 +127,56 @@ if( sizeof( $inversiones ) ){
         $bt = balance_inversion( $i );
 
         $retiros_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $retiros_pendientes = "<table class=\"table table-sm m-0\">";
 
             foreach( $retiros as $retiro ){
+
+                $br = $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ? "border:none" : "";
+
                 $retiros_pendientes .= "\n<tr class=\"\">
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">Solicitud de retiro de rendimientos</td>
+                    <td style=\"{$br}\">Solicitud de retiro de rendimientos</td>
              
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
+                    <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+
+                if( $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
+
+                    $a = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
+                    $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
+
+                    $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">RENDIMIENTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> recibida.</strong> Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico<br>
+                    
+                    <a href=\"{$url}\">confirmar</a>
+                    </div></td></tr>";
+                }
             }
 
             $retiros_pendientes .= "</table>";
         }
 
         $semilla_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND estatus_codigo = '255-PENDIENTE' AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $semilla_pendientes = "<table class=\"table table-sm m-0\">";
 
+
             foreach( $retiros as $retiro ){
+                $br = $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ? "border:none" : "";
+    
                 $semilla_pendientes .= "\n<tr class=\"\">
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">Solicitud de retiro de capital semilla</td>
+                    <td style=\"{$br}\">Solicitud de retiro de capital semilla</td>
              
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\">".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
-                    <td style=\"xbackground:var(--bs-danger-bg-subtle)\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
+                    <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+
+
+                if( $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
+                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">CAPITAL SEMILLA</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> recibida.</strong> Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico</td></tr>";
+                }                    
             }
 
             $semilla_pendientes .= "</table>";
@@ -297,6 +319,10 @@ if( sizeof( $inversiones ) ){
             </script>
                 ";
     }
+
+
+
+
 }else{
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
 }

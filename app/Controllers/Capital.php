@@ -697,7 +697,7 @@ class Capital extends BaseController
 
             $retiro_add = [
                 "id" => NULL,
-                "estatus_codigo" => "255-PENDIENTE",
+                "estatus_codigo" => "165-ESPERANDO-CODIGO",
                 "usuario_id"     => $i[ "usuario_id" ], 
                 "inversion_id"   => $i[ "id" ],
                 "cantidad"       => $retiro[ $tipo -1 ],
@@ -715,7 +715,7 @@ class Capital extends BaseController
 
             if( !$existe ){
                 model( "RetiroModel" )->save( $retiro_add );
-                $id = model( "RetiroModel" )->insertID();
+                $r = model( "RetiroModel" )->find( model( "RetiroModel" )->insertID() );
 
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
                 $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
@@ -727,12 +727,51 @@ class Capital extends BaseController
                 bitacora( 86, $this->data[ "usuario" ]->id, [ 
                     "socio"     => $i[ "usuario_id" ],
                     "inversion" => $i[ "id" ],
-                    "retiro"    => $id,
+                    "retiro"    => $r[ "id" ],
                     "mes"       => $this->request->getPost( "mes_apply" ),
                     "cantidad"  => $retiro[ $tipo -1 ],
                     "requested" => $this->request->getPost()
                 ] );
                 
+
+                // ENVIAR CORREO
+
+                $imagenes = [
+                ];
+
+                $u = $this->data[ "usuario" ];
+                $a = [ $u->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
+                $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
+
+                $subject = "Solicitud de retiro ".strip_tags( id( $r[ "id" ], 5 ) );
+                $message = "
+                    
+                    <p>¡Hola ".$u->nombre()."! </p>
+                    <p>Hemos recibido tu solicitud de retiro de CAPITAL24. Por favor verifica que todos los datos sean correctos. Para confirmar la solicitud haz click en el botón o el enlace. Una vez confirmada se enviará para ser procesada durante <strong>los primeros tres días hábiles del próximo mes</strong>.</p>
+
+                    <table align=\"center\" border=\"1\" cellpadding=\"10\" style=\"border-collapse:collapse\">
+                        <tr><td>Socio</td><td>".id( $u->id, 7 )."</td></tr>
+                        <tr><td>Inversión</td><td>".id( $i[ "id" ], 6 )."</td></tr>
+                        <tr><td>TxHash</td><td>{$i[ "extras" ][ "TxHash" ]}</td></tr>
+                        <tr><td>Fecha de solicitud</td><td>".fecha( $r[ "fechas" ][ "creacion" ] )."</td></tr>
+                        <tr><td>Folio</td><td>".id( $r[ "id" ], 5 )."</td></tr>
+                        <tr><td>Tipo de retiro</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ?  substr( $r[ "tipo" ], 1 )." CAPITAL SEMILLA" : $r[ "tipo" ]." RENDIMIENTOS" )."</td></tr>
+                        <tr><td>Cantidad solicitada</td><td>$".number_format( $r[ "cantidad" ], 2 )."</td></tr>
+                        <tr><td>Penalización</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ? "$".number_format( $r[ "cantidad" ] - $r[ "deposito" ], 2 )." (25%)" : "$0.00" )."</td></tr>
+                        <tr><td>Cantidad a depositar</td><td>$".number_format( $r[ "deposito" ], 2 )."</td></tr>
+                        <tr><td>Wallet TRON USDT destino</td><td>{$u->data->wallet}</td></tr>
+                    </table>
+
+                    <p style=\"word-wrap: break-word; text-align:center\">
+                        <a href=\"{$url}\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:400px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">Confirmar solicitud</span></a>
+                        <br><br>
+                        <a href=\"{$url}\">{$url}</a>
+                    </p>
+              
+                ";
+
+                $respuesta = envia_correo( $u, $subject, $message, $imagenes );
+
                 return redirect()->to( "capital" )->with( "msg", [ 
                     "clase" => "success", 
                     "icono" => "check", 
@@ -761,7 +800,7 @@ class Capital extends BaseController
         
         $retiro = model( "RetiroModel" )->find( $this->request->getPost( "solicitud_id" ) );
 
-        if ($retiro && $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ) {
+        if ($retiro && substr( $retiro[ "estatus_codigo" ], 0, 3 ) < 400 ) {
 
             $retiro["estatus_codigo"] = "150-CANCELADO";
             $retiro[ "fechas" ][ "cancelado" ] = date( "Y-m-d H:i:s" );
@@ -841,6 +880,39 @@ class Capital extends BaseController
 
         echo template( "capital/detalle", $this->data );
     }
+
+
+    public function confirma_retiro( $hash )
+    {
+        $hash    = json_decode( base64_decode( urldecode( $hash ) ) );
+        $retiro  = model( "RetiroModel" )->find( $hash[ 1 ] );
+        $usuario = model( "UsuarioModel" )->find( $retiro[ "usuario_id" ] );
+
+        $pass = substr( $hash[ 0 ], 0, strlen( $usuario->password_original() ));
+        
+        // si el usuario coincide con el uid del retiro, y aun no se hace el proceso
+        // de confirmación, aplicamos el cambio 
+
+        if( $pass == $usuario->password_original() && $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
+
+            // BITACORA Confirma solicitud de retiro
+            bitacora( 100, $this->data[ "usuario" ]->id, [ 
+                "socio"  => $usuario->id,
+                "retiro" => $retiro
+            ] );
+                
+            $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
+            model( "RetiroModel" )->save( $retiro );
+
+            return redirect()->to( "capital" )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "check", 
+                "texto" => "Se confirmó la solicitud de retiro" ] ); 
+        }
+
+        return redirect()->to( "capital" );
+    }
+
 
 
     /**
