@@ -148,8 +148,7 @@ if( sizeof( $inversiones ) ){
                     $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
                     $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">RENDIMIENTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> recibida.</strong> Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico<br>
-                    
-                    <a href=\"{$url}\">confirmar</a>
+                
                     </div></td></tr>";
                 }
             }
