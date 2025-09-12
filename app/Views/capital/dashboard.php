@@ -139,7 +139,7 @@ if( sizeof( $inversiones ) ){
                 $retiros_pendientes .= "\n<tr class=\"\">
                     <td style=\"{$br}\">Solicitud de retiro de rendimientos</td>
              
-                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
+                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button></td>
                     <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
 
                 if( $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
@@ -169,7 +169,7 @@ if( sizeof( $inversiones ) ){
                 $semilla_pendientes .= "\n<tr class=\"\">
                     <td style=\"{$br}\">Solicitud de retiro de capital semilla</td>
              
-                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-link text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\">cancelar </button></td>
+                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button></td>
                     <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
 
 

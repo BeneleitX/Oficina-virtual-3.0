@@ -258,7 +258,7 @@ class Capital extends BaseController
 
 
         $sql = "SELECT 
-                    o.codigo, 
+                    substring( i.producto_codigo, 1, 13 ), 
                     o.data->>'$.porcentaje' as porcentaje, 
                     o.data->>'$.color' as color, 
                     count(*) as cantidad, 
@@ -320,7 +320,7 @@ class Capital extends BaseController
 
         $periodos = $db->query( $sql )->getResultArray();
 
-        $sql = "SELECT e.codigo as periodo, o.codigo as tipo, count(*) as total
+        $sql = "SELECT e.codigo as periodo, substring( i.producto_codigo, 1, 13 ) as tipo, count(*) as total
                 from
                 t_inversiones i 
                 join t_pedidos p on p.id = i.pedido_id
