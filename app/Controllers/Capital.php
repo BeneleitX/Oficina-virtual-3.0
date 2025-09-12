@@ -259,8 +259,8 @@ class Capital extends BaseController
 
         $sql = "SELECT 
                     substring( i.producto_codigo, 1, 13 ), 
-                    o.data->>'$.porcentaje' as porcentaje, 
-                    o.data->>'$.color' as color, 
+                    any_value( o.data->>'$.porcentaje' ) as porcentaje, 
+                    any_value( o.data->>'$.color' ) as color, 
                     count(*) as cantidad, 
                     date_format( i.fechas->>'$.pagado', '%Y%m' ) as fecha
                 from t_inversiones i
@@ -270,6 +270,7 @@ class Capital extends BaseController
                 and cast( now() as date ) between cast( i.fechas->>'$.pagado' as date ) and cast( i.fechas->>'$.cierre' as date )
                 group by substring( i.producto_codigo, 1, 13 ), fecha
                 order by fecha";
+
 
         $inversiones = $db->query( $sql )->getResultArray();
 
