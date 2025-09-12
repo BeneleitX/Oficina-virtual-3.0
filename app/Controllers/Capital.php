@@ -258,7 +258,7 @@ class Capital extends BaseController
 
 
         $sql = "SELECT 
-                    substring( i.producto_codigo, 1, 13 ), 
+                    substring( i.producto_codigo, 1, 13 ) as codigo, 
                     any_value( o.data->>'$.porcentaje' ) as porcentaje, 
                     any_value( o.data->>'$.color' ) as color, 
                     count(*) as cantidad, 
