@@ -382,7 +382,7 @@ function update_pedido( flag = null ){
     
         caption  = ( total_productos_pedido > 0 || subtotal > 0 ) ? ( Moneda.format( comision + subtotal ) ) : '--';
         cantidad.html( caption );
-        costo_extra.html( 'Comisión bancaria por ' + Moneda.format( comision ) );
+        costo_extra.html( 'Cargo operativo por ' + Moneda.format( comision ) );
         console.log();
 
         es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 0, 2 ) != '00' && pedido.metodoentrega_codigo.substring( 0, 2 ) != '11' : false;

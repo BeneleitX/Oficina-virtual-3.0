@@ -1,8 +1,8 @@
 <?php
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
-
-$y = date( "Y" ) - ( date( "n" ) < 10 ? 1 : 0 );
+chapo
+$y = date( "Y" ) - 1; // ( date( "n" ) < 10 ? 1 : 0 );
 
 $bono = $usuario->getBono( $esquema, $y );
 

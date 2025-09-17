@@ -584,7 +584,7 @@
                         if( ( $pagado || $bloqueado || $cancelado ) ){ 
                             ?>
                             <tr>
-                                <td valign="middle" class="">Comisión bancaria</td>
+                                <td valign="middle" class="">Cargo operativo</td>
                                 
                                 <td valign="middle" class="text-end">
                                     <h5 class="m-0 text-teal" total_banco="<?php echo $comisionbanco; ?>">$<?php echo number_format(  $comisionbanco, 2 ); ?></h5>

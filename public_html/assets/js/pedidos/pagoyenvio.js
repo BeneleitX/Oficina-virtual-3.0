@@ -43,7 +43,7 @@ $(document).ready(function()
             comision = metodospago[ metodopago_activo ].settings.comision;
         }
 
-        $( '.mp_costo' ).html( 'Utilizar este método de pago, genera una comisión bancaria de ' + 
+        $( '.mp_costo' ).html( 'Utilizar este método de pago, genera un cargo operativo por ' + 
         Moneda.format( comision ) );
 
         $( '[total_banco]' ).attr( 'total_banco', comision );
