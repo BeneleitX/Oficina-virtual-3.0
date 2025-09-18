@@ -168,7 +168,30 @@ if( $saldo ){
     </div>
 </div>
 
+<?php
 
+if( sizeof( $directos ) ){
+    $pendientes = $usuario->get_pendientes( "50-INVERSION" );
+
+    if( sizeof( $pendientes ) ){
+        echo "<div class=\"alert alert-warning m-3\">";
+        
+        echo "<p class=\"m-0 text-center\">Comisiones generadas por inversiones mayores a 10K que se encuentran pendientes de pago</p>";
+        echo "<table class=\"table my-3\"><thead><tr><th>Inversión</th><th>A pagar</th><th class=\"text-end\">Comision</th></tr></thead><tbody>";
+
+        foreach( $pendientes as $p ){
+            echo "<tr>
+                    <td>".get_semana( $p->fechacompra )."</td><td>".get_semana( $p->fechapago )."</td><td class=\"text-end\"><strong class=\"text-teal\">$".number_format( $p->cantidad, 2 )."</strong></td></tr>";   
+        }
+        
+        echo "</tbody></table>
+        <p class=\"small m-0\"><i class=\"text-red fa fa-warning\"></i> Recuerda que cuando la ssuma de las inversiones de un socio realizadas durante las ultimas 4 semanas superan los 10K, comenzarán a generar comisiones que serán pagadas después de un plazo de 8 semanas.</p>
+        </div>";
+    }
+}
+
+
+?>
 
 
 <script>

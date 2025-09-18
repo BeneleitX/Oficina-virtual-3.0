@@ -449,6 +449,12 @@ function random( $tipo )
 }
 
 
+function get_semana( $fecha )
+{
+    return date( "W-Y", strtotime( $fecha ) );    
+}
+
+
 function get_primercompra( $u, $m )
 {
     return 0;

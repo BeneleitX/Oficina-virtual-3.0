@@ -1745,4 +1745,23 @@ class E_usuario extends Entity
 
         return RANGOS[ $this->data->rango_inversion ];
     }
+
+
+    public function get_pendientes( $modelo )
+    {
+        $db  = db_connect();
+        $sql = "SELECT 
+                c.cantidad,
+                c.fecha as fechapago,
+                p.fechas->>'$.pagado' as fechacompra
+                from t_comisiones c
+                join t_pedidos p on p.id = c.pedido_id
+                where c.usuario_id = {$this->id} 
+                and c.estatus_codigo = '255-PENDIENTE' 
+                and substring( c.esquema_codigo, 1, 1 ) = '".substr( $modelo, 0, 1 )."'
+                and c.periodo_codigo is null
+                and c.fecha >= DATE_ADD( cast( now() as date ), INTERVAL ( 9 - DAYOFWEEK( cast( now() as date ) ) ) DAY )";        
+
+        return $db->query( $sql )->getResult(); 
+    }
 }
