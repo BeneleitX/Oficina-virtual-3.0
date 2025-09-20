@@ -770,8 +770,9 @@ class Capital extends BaseController
                     </p>
               
                 ";
-
-                $respuesta = envia_correo( $u, $subject, $message, $imagenes );
+                if( ENVIRONMENT === 'development' ){
+                    $respuesta = envia_correo( $u, $subject, $message, $imagenes );
+                }
 
                 return redirect()->to( "capital" )->with( "msg", [ 
                     "clase" => "success", 

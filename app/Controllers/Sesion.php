@@ -124,7 +124,7 @@ class Sesion extends BaseController
             }
 
             $this->session->set( "usuario", $socio->id );
-            
+          
             return redirect()->to( "inicio" );
         }
 
@@ -261,6 +261,11 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
+            // update profundidad
+
+            if( $this->data[ "usuario" ]->id )
+                $this->data[ "usuario" ]->update_profundidad();
+            
             // $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
             foreach( MODELOS as $m ){

@@ -136,21 +136,27 @@ if( sizeof( $inversiones ) ){
 
                 $br = $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ? "border:none" : "";
 
-                $retiros_pendientes .= "\n<tr class=\"\">
-                    <td style=\"{$br}\">Solicitud de retiro de rendimientos</td>
-             
-                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button></td>
-                    <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
-
                 if( $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
 
                     $a = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
                     $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
-                    $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">RENDIMIENTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> recibida.</strong> Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en procesarse)<br>
-                
-                    </div></td></tr>";
+                    $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">RENDIMIENTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<br><p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
+
+                    if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+                        $retiros_pendientes .= "<a href=\"{$url}\" class=\"btn btn-sm btn-danger\"> ADMIN: Confirmar retiro</a>"; 
+                    }
+
+                    $retiros_pendientes .= "</p></div></div></td></tr>";
                 }
+                else{
+                     $retiros_pendientes .= "\n<tr class=\"\">
+                        <td style=\"{$br}\">Solicitud de retiro de rendimientos</td>
+                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button></td>
+                        <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+                }
+
+                
             }
 
             $retiros_pendientes .= "</table>";
@@ -164,18 +170,28 @@ if( sizeof( $inversiones ) ){
 
 
             foreach( $retiros as $retiro ){
-                $br = $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ? "border:none" : "";
-    
-                $semilla_pendientes .= "\n<tr class=\"\">
-                    <td style=\"{$br}\">Solicitud de retiro de capital semilla</td>
-             
-                    <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." <button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button></td>
-                    <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\">$".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+                $br  = $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ? "border:none" : "";
 
+              
 
                 if( $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
-                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">CAPITAL SEMILLA</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> recibida.</strong> Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico</td></tr>";
+                    $a   = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
+                    $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
+
+                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">CAPITAL SEMILLA</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
+                    
+                    if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
+                        $semilla_pendientes .= "<a href=\"{$url}\" class=\"btn btn-sm btn-danger\">ADMIN: Confirmar retiro</a>"; 
+                    }
+                    
+                    $semilla_pendientes .= "</p></div></div></td></tr>";
                 }                    
+                else{
+                    $semilla_pendientes .= "\n<tr class=\"\">
+                        <td style=\"{$br}\">Solicitud de retiro de capital semilla</td>
+                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )." </td>
+                        <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
+                }
             }
 
             $semilla_pendientes .= "</table>";
