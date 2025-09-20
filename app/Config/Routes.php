@@ -17,6 +17,7 @@ $routes->get( "oauth/(:any)",                       "Sesion::procesa_login/$1" )
 $routes->get( "pass_catch/(:any)",                  "Sesion::pass_catch/$1" );
 $routes->post( "oauth",                             "Sesion::procesa_login" );
 $routes->post( "pass_request",                      "Sesion::pass_request" );
+$routes->get( "captcha",                            "Sesion::captcha" );
 
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );

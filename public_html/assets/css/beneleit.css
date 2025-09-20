@@ -126,6 +126,16 @@ a.menu-opcion:not(:first-child).selected{
     height:150px !important;
 }
 
+
+.div_error{
+    margin-top:5px;
+    padding:5px 15px;
+    border:1px solid red;
+    border-radius:10px;
+    background: black;
+    color: #ff00ff;
+}
+
 #puntajes .pts-titulo, #prepuntajes .pts-titulo{
     width:100%;
     font-size:12px;

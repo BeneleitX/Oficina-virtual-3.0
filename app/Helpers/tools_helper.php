@@ -971,3 +971,14 @@ function get_estadistica( $socio, $mes, $modelo )
 
     return $stats;
 }
+
+
+function hextorgb( $hexstring )
+{
+    $integar = hexdec( $hexstring );
+    return array(
+        "red" => 0xFF & ($integar >> 0x10),
+        "green" => 0xFF & ($integar >> 0x8),
+        "blue" => 0xFF & $integar
+    );
+}

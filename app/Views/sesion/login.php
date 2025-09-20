@@ -56,9 +56,18 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 								<form id="login_bsumbit" method="post" action="<?php echo base_url( "oauth" ); ?>">
 									<?php echo csrf_field() ?>
 									<input type="text" class="form-control ps-4 xrounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo $id ?? old( "socio_id" ); ?>" placeholder="Socio">
-									<p class="small text-white bg-red"><?php echo session( "errors.socio_id" ); ?></p>
+									<p class="text-red"><?php echo session( "errors.socio_id" ); ?></p>
 									<input type="password" class="form-control ps-4 mt-3 xrounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password">
-									<p class="small text-white bg-red"><?php echo session( "errors.socio_password" ); ?></p>
+									<p class="text-red"><?php echo session( "errors.socio_password" ); ?></p>
+									
+										<table class="w-100"><tr>
+											<td><a href="javascript:reload_captcha()"><i class="fa fa-refresh text-gray-600"></i></a></td>
+											<td><img width="240" height="40" class="me-1" src="" id="captcha"></td>
+											<td><input type="text" class="form-control text-center <?php echo session( "errors.captcha" ) ? "is-invalid" : ""; ?>" name="captcha" value=""></td>
+										</tr></table>
+
+										<p class="text-red"><?php echo session( "errors.captcha" ); ?></p>
+
 									<p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary xrounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
 									<p class="text-center mt-3 mb-0"><a class="text-mustard" href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>
 								</form>

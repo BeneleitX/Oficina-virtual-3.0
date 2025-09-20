@@ -609,7 +609,7 @@ function update_pedido( flag = null ){
         }
     });
 
-    console.log( flag );
+    // console.log( flag );
 }
 
 

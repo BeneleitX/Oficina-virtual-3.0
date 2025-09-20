@@ -55,18 +55,19 @@ class Sesion extends BaseController
 
         // revisar IP bloqueada
         $ip = getIP();
+        $icono = "<i class=\"fa fa-warning text-mustard\"></i>";
 
         foreach( VARIABLES[ "IPs_bloqueadas" ][ "valor" ] as $beta ){
             if( str_contains( $ip, $beta ) ){
                 return redirect()
                 ->back()
-                ->with( "errors", [ "socio_id" => "Tu dirección IP está bloqueada" ] )
+                ->with( "errors", [ "socio_id" => "{$icono } Tu dirección IP está bloqueada" ] )
                 ->withInput();
             } 
         }
 
-        $INTENTOS  = 4;   // maximop de intentos
-        $CASTIGO   = 60;  //segundos de bloqueo
+        $INTENTOS  = 5;   // maximop de intentos
+        $CASTIGO   = 120;  //segundos de bloqueo
         $BLOQUEAIP = 100; // intentos en el mes para bloquear la IP permanentemente
 
         // Si hubo un intento fallido, se deben esperar 5 segundos para reintentar
@@ -83,7 +84,7 @@ class Sesion extends BaseController
          if( session( "login" ) + 5 > time() ){
             return redirect()
             ->back()
-            ->with( "errors", [ "socio_id" => "Haga click de nuevo en el botón de ingresar, por favor" ] )
+            ->with( "errors", [ "socio_id" => "{$icono } Haga click de nuevo en el botón de ingresar, por favor" ] )
             ->withInput();
         } 
 
@@ -95,7 +96,7 @@ class Sesion extends BaseController
             else{
                 return redirect()
                 ->back()
-                ->with( "errors", [ "socio_id" => "Demasiados intentos. Espere ".( ( session( "login" ) + $CASTIGO ) - time() )." segundos" ] )
+                ->with( "errors", [ "socio_id" => "{$icono } Demasiados intentos. Espere ".( ( session( "login" ) + $CASTIGO ) - time() )." segundos" ] )
                 ->withInput();
             }
         }       
@@ -130,6 +131,16 @@ class Sesion extends BaseController
 
         // Si es un login normal,proceder a validar datos
         else{
+            $datax    = $this->request->getPost();
+     
+             if( strlen( $datax[ "captcha" ] ) != 6 || md5( $datax[ "captcha" ] ) != $_COOKIE[ "captcha" ] ){
+                
+                return redirect() 
+                    ->route( "login" )
+                    ->with( "errors", [ "captcha" => "{$icono} El número es incorrecto" ] )
+                    ->withInput();
+            } 
+
             $validation = service( "validation" );
 
             $validation->setRules(
@@ -139,12 +150,12 @@ class Sesion extends BaseController
                 ],
                 [
                     "socio_id"       => [
-                        "required"           => "No has escrito un No. de socio",
-                        "is_natural_no_zero" => "No es un No. de socio válido",
-                        "is_not_unique"      => "El socio no existe",
+                        "required"           => "{$icono} No has escrito un No. de socio",
+                        "is_natural_no_zero" => "{$icono} No es un No. de socio válido",
+                        "is_not_unique"      => "{$icono} El socio no existe",
                     ],
                     "socio_password" => [
-                        "required"           => "No has escrito un password",
+                        "required"           => "{$icono} No has escrito un password",
                     ]
                 ]
             );
@@ -156,7 +167,7 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $datax    = $this->request->getPost();
+            
             $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
 
             $usuario->valida_modelo();
@@ -197,7 +208,7 @@ class Sesion extends BaseController
                     }
                 }
             }
-            
+
 
             if( ( $usuario->password != $datax[ "socio_password" ] && base64_decode( VARIABLES[ "master_key" ][ "valor" ] ) != $datax[ "socio_password" ] ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
 
@@ -224,7 +235,7 @@ class Sesion extends BaseController
 
                 return redirect() 
                     ->back()
-                    ->with( "errors", [ "socio_password" => "El password es incorrecto (".session( "tryset" ).")" ] )
+                    ->with( "errors", [ "socio_password" => "{$icono} El password es incorrecto (".session( "tryset" ).")" ] )
                     ->withInput();
             }
 
@@ -247,7 +258,7 @@ class Sesion extends BaseController
 
                 return redirect()
                     ->back()
-                    ->with( "errors", [ "socio_id" => "Socio inactivo" ] )
+                    ->with( "errors", [ "socio_id" => "{$icono}Socio inactivo" ] )
                     ->withInput();
             }
 
@@ -301,6 +312,9 @@ class Sesion extends BaseController
 
     public function pass_request()
     {
+
+        $icono = "<i class=\"fa fa-warning text-mustard\"></i>";
+
         $validation = service("validation");
         $validation->setRules([
             "socio_id" => "trim|required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
@@ -313,13 +327,13 @@ class Sesion extends BaseController
                 "is_not_unique" => "El socio no existe"
             ],
             "socio_telefono" => [
-                "required" => "No has escrito un número telefónico",
-                "exact_length" => "El número debe ser a 10 dígitos",
-                "numeric" => "El número no es válido"
+                "required" => "{$icono} No has escrito un número telefónico",
+                "exact_length" => "{$icono} El número debe ser a 10 dígitos",
+                "numeric" => "{$icono} El número no es válido"
             ],
             "socio_correo" => [
-                "required" => "No has escrito un correo electrónico",
-                "valid_email" => "El correo electrónico no es válido"
+                "required" => "{$icono} No has escrito un correo electrónico",
+                "valid_email" => "{$icono}  El correo electrónico no es válido"
             ]
         ]);
 
@@ -466,5 +480,74 @@ class Sesion extends BaseController
         }
 
         print_r( $socios );
+    }
+
+
+    public function captcha()
+    {
+        $captcha = "";
+        $captcha_b = "";
+        $letra = "";
+        $captchaHeight = 40;
+        $captchaWidth = 240;
+        $totalCharacters = 6;
+        $possibleLetters = "1234567890";
+        $captchaFont = "assets/captcha.ttf";
+        $randomDots = 20;
+        $randomLines = 10;
+        $textColor = "009779";
+        $noiseColor = "009779";
+        $character = 0;
+
+        while ($character < $totalCharacters) {
+            $letra = substr($possibleLetters, mt_rand(0, strlen($possibleLetters)-1), 1);
+            $captcha .= $letra;
+            $captcha_b .= "    ".$letra;
+            $character++;
+        }
+        
+        session( "captcha", $captcha );
+
+        $captchaFontSize = $captchaHeight * 0.65;
+        $captchaImage = @imagecreate($captchaWidth,$captchaHeight);
+        $backgroundColor = imagecolorallocate($captchaImage,26,37,66);
+        $arrayTextColor = hextorgb($textColor);
+        $textColor = imagecolorallocate($captchaImage,$arrayTextColor['red'],$arrayTextColor['green'],$arrayTextColor['blue']);
+        $arrayNoiseColor = hextorgb($noiseColor);
+        $imageNoiseColor = imagecolorallocate($captchaImage,$arrayNoiseColor['red'],$arrayNoiseColor['green'],$arrayNoiseColor['blue']);
+
+        for( $captchaDotsCount=0; $captchaDotsCount<$randomDots; $captchaDotsCount++ ) {
+            imagefilledellipse($captchaImage,mt_rand(0,$captchaWidth),mt_rand(0,$captchaHeight),2,3,$imageNoiseColor);
+        }
+
+        for( $captchaLinesCount=0; $captchaLinesCount<$randomLines; $captchaLinesCount++ ) {
+            imageline($captchaImage,mt_rand(0,$captchaWidth),mt_rand(0,$captchaHeight),mt_rand(0,$captchaWidth),mt_rand(0,$captchaHeight),$imageNoiseColor);
+        }
+        $text_box = imagettfbbox($captchaFontSize,0,$captchaFont,$captcha_b);
+
+        $x = ($captchaWidth - $text_box[4])/2;
+        $y = ($captchaHeight - $text_box[5])/2;
+
+        imagettftext($captchaImage,$captchaFontSize,0,$x,$y,$textColor,$captchaFont,$captcha_b);
+        header('Content-Type: image/jpeg');
+        imagejpeg($captchaImage);
+        imagedestroy($captchaImage);
+
+        
+
+        /*
+        $numero = rand(100000,999999); # generamos un numero aleatorio
+
+        session( "captcha", $numero );
+
+        header("Content-type: image/png");
+        $im = imagecreate(100, 25);
+        $fondo = imagecolorallocate($im, 0, 0, 0); 
+        $texto = imagecolorallocate($im, 255, 255, 255);
+
+        imagestring($im, 12, 20, 5, $numero, $texto);
+        imagepng($im);
+
+        */
     }
 }
