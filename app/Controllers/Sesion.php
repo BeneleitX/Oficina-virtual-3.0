@@ -133,7 +133,7 @@ class Sesion extends BaseController
         else{
             $datax    = $this->request->getPost();
      
-             if( strlen( $datax[ "captcha" ] ) != 6 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "000000") ){
+             if( strlen( $datax[ "captcha" ] ) != 5 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "00000") ){
                 
                 return redirect() 
                     ->route( "login" )
@@ -146,7 +146,8 @@ class Sesion extends BaseController
             $validation->setRules(
                 [
                     "socio_id"       => "required|is_natural_no_zero|is_not_unique[t_usuarios.id]|trim",
-                    "socio_password" => "required"
+                    "socio_password" => "required",
+                    "captcha"        => "required|is_natural_no_zero"
                 ],
                 [
                     "socio_id"       => [
@@ -154,6 +155,10 @@ class Sesion extends BaseController
                         "is_natural_no_zero" => "{$icono} No es un No. de socio válido",
                         "is_not_unique"      => "{$icono} El socio no existe",
                     ],
+                    "captcha"       => [
+                        "required"           => "{$icono} No has escrito un número",
+                        "is_natural_no_zero" => "{$icono} No es número válido"
+                    ],                    
                     "socio_password" => [
                         "required"           => "{$icono} No has escrito un password",
                     ]

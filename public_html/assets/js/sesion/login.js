@@ -32,6 +32,14 @@ $(document).ready(function(){
         var socio = $.trim( $( '[name=socio_id]').val() );
         $( '[name=socio_id]').val( socio );
 
+        $( 'input' ).prop( 'readonly', true ).css( 'background', '#ccc');
+
+        const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+
+        for (let i = 1; i < interval_id; i++) {
+            window.clearInterval(i);
+        }
+
         return true; // ensure form still submits
     });
 });
