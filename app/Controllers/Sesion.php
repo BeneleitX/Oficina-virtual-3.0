@@ -133,7 +133,7 @@ class Sesion extends BaseController
         else{
             $datax    = $this->request->getPost();
      
-             if( strlen( $datax[ "captcha" ] ) != 6 || md5( $datax[ "captcha" ] ) != $_COOKIE[ "captcha" ] ){
+             if( strlen( $datax[ "captcha" ] ) != 6 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "000000") ){
                 
                 return redirect() 
                     ->route( "login" )
@@ -533,21 +533,5 @@ class Sesion extends BaseController
         imagejpeg($captchaImage);
         imagedestroy($captchaImage);
 
-        
-
-        /*
-        $numero = rand(100000,999999); # generamos un numero aleatorio
-
-        session( "captcha", $numero );
-
-        header("Content-type: image/png");
-        $im = imagecreate(100, 25);
-        $fondo = imagecolorallocate($im, 0, 0, 0); 
-        $texto = imagecolorallocate($im, 255, 255, 255);
-
-        imagestring($im, 12, 20, 5, $numero, $texto);
-        imagepng($im);
-
-        */
     }
 }

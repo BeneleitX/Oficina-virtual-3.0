@@ -32,7 +32,7 @@ while ($character < $totalCharacters) {
     $character++;
 }
 
-setcookie( "captcha", md5( $captcha ), time() + 60, "/");
+setcookie( "captcha", md5( $captcha ), time() + 32, "/");
 
 $captchaFontSize = $captchaHeight * 0.65;
 $captchaImage = @imagecreate($captchaWidth,$captchaHeight);

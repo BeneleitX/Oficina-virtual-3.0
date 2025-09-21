@@ -1,9 +1,27 @@
+
 function reload_captcha(){
-//    var url = base_url + 'captcha?' + Math.random()*1000;
-    var url = base_url + 'captcha.php?' + Math.random()*1000;
-    
-    $('#captcha').attr('src', url );
+
+    const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+
+    for (let i = 1; i < interval_id; i++) {
+        window.clearInterval(i);
+    }
+
+    $( '.circlebar' ).empty().append( '<div id="contador"></div>' );
+
+    new Circlebar({
+        element: "#contador",
+        startValue: 0,
+        maxValue: 30,
+        dialWidth: 3,
+        counter: 1000,
+        size: "38px",
+        type: "timer"
+    });
+
+    $('#captcha').attr('src', base_url + 'captcha.php?' + Math.random()*1000 );
 }
+
 
 $(document).ready(function(){
 
