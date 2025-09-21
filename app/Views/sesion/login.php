@@ -155,7 +155,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 											    <div class="circlebar"></div>	
 											
 											</td>
-											<td><img width="240" height="40" class="me-1" src="" id="captcha"></td>
+											<td><img width="140" height="40" class="me-1" src="" id="captcha"></td>
 											<td><input type="text" class="form-control text-center <?php echo session( "errors.captcha" ) ? "is-invalid" : ""; ?>" name="captcha" value=""></td>
 										</tr></table>
 

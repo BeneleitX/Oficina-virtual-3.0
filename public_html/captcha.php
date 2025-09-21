@@ -15,7 +15,7 @@ $captcha = "";
 $captcha_b = "";
 $letra = "";
 $captchaHeight = 40;
-$captchaWidth = 240;
+$captchaWidth = 140;
 $totalCharacters = 5;
 $possibleLetters = "1234567890";
 $captchaFont = "assets/captcha.ttf";
@@ -28,7 +28,7 @@ $character = 0;
 while ($character < $totalCharacters) {
     $letra = substr($possibleLetters, mt_rand(0, strlen($possibleLetters)-1), 1);
     $captcha .= $letra;
-    $captcha_b .= "    ".$letra;
+    $captcha_b .= "   ".$letra;
     $character++;
 }
 
