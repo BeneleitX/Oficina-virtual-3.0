@@ -15,8 +15,8 @@ $captcha = "";
 $captcha_b = "";
 $letra = "";
 $captchaHeight = 40;
-$captchaWidth = 140;
-$totalCharacters = 5;
+$captchaWidth = 110;
+$totalCharacters = 4;
 $possibleLetters = "1234567890";
 $captchaFont = "assets/captcha.ttf";
 $randomDots = 20;
@@ -58,7 +58,7 @@ $y = ($captchaHeight - $text_box[5])/2;
 
 imagettftext($captchaImage,$captchaFontSize,0,$x,$y,$textColor,$captchaFont,$captcha_b);
 header('Content-Type: image/jpeg');
-imagejpeg($captchaImage);
+imagejpeg($captchaImage, null, 100);
 imagedestroy($captchaImage);
 
 

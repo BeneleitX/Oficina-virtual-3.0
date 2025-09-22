@@ -149,17 +149,18 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 									<input type="password" class="form-control ps-4 mt-3 xrounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password">
 									<p class="text-red"><?php echo session( "errors.socio_password" ); ?></p>
 									
-										<table class="w-100"><tr>
+									<table xclass="w-100" align="center"><tr>
+										
 											<td class="pe-2" style="position:relative">
-												<div style="position:absolute; top:9px; left:12px;z-index:20"><a href="javascript:reload_captcha()"><i class="fa fa-refresh text-gray-600"></i></a></div>
+												<div style="position:absolute; top:9px; left:12px;z-index:20"><a data-bs-toggle="tooltip" title="Click para solicitar un nuevo número" href="javascript:reload_captcha()"><i class="fa fa-refresh text-gray-600"></i></a></div>
 											    <div class="circlebar"></div>	
 											
 											</td>
-											<td><img width="140" height="40" class="me-1" src="" id="captcha"></td>
-											<td><input type="text" class="form-control text-center <?php echo session( "errors.captcha" ) ? "is-invalid" : ""; ?>" name="captcha" value=""></td>
+											<td class="text-center"><img width="110" height="40" class="me-1" src="" id="captcha" title="Para validar que eres humano, ingresa estos números en el cuadro de texto a la derecha." data-bs-toggle="tooltip"></td>
+											<td class="text-end"><input type="text" class="form-control text-center <?php echo session( "errors.captcha" ) ? "is-invalid" : ""; ?>" name="captcha" value="" style="width:7rem"></td>
 										</tr></table>
 
-										<p class="text-red"><?php echo session( "errors.captcha" ); ?></p>
+										<p class="text-red text-center m-0"><?php echo session( "errors.captcha" ); ?></p>
 
 									<p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary xrounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
 									<p class="text-center mt-3 mb-0"><a class="text-mustard" href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>

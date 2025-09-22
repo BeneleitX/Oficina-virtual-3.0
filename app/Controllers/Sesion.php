@@ -133,7 +133,7 @@ class Sesion extends BaseController
         else{
             $datax    = $this->request->getPost();
      
-             if( strlen( $datax[ "captcha" ] ) != 5 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "00000") ){
+             if( strlen( $datax[ "captcha" ] ) != 4 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "0000") ){
                 
                 return redirect() 
                     ->route( "login" )
