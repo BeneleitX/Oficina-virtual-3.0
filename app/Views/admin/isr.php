@@ -8,38 +8,39 @@
 
 <?php
 
-$year = null;
+$tablas = [];
 
 foreach( $isr as $row ){
-
-    if( $row[ "anio"] != $year ){
-        if( $year )
-        echo "</tbody></table></div>";
-
-        $year = $row[ "anio" ];
-
-        echo  "\n
-        <div class=\"card w-50\"><div class=\"card-header bg-marine\"><h5 class=\"m-0 text-white\">{$row[ "anio" ]}</h5></div><div class=\"card-body\">
-        <table class=\"table table-striped bg-white tabla_isr\">
-            <thead>
-                <tr>
-                    <th>Minimo</th>
-                    <th>Máximo</th>
-                    <th>Fijo</th>
-                    <th>Porcentaje</th>
-                </tr>
-            </thead>
-
-            <tbody>
-        ";
-    }
-
-    echo "\n<tr>
-        <td>{$row[ "minimo" ]}</td>
-        <td>{$row[ "maximo" ]}</td>
-        <td>{$row[ "fijo" ]}</td>
-        <td>{$row[ "porcentaje" ]}</td>
-    </tr>";
+    $tablas[ $row[ "anio"] ][ $row[ "tipo" ] ][] = $row;
 }
 
-echo "\n</tbody></table></div></div>";
+foreach( $tablas as $year => $years ){
+    foreach( $years as $tipo => $tipos ){
+
+        echo  "\n
+            <div class=\"card w-50 mb-4\"><div class=\"card-header bg-marine\"><h5 class=\"m-0 text-white\">{$year} {$tipo}</h5></div><div class=\"card-body\">
+            <table class=\"table table-striped bg-white tabla_isr\">
+                <thead>
+                    <tr>
+                        <th>Minimo</th>
+                        <th>Máximo</th>
+                        <th>Fijo</th>
+                        <th>Porcentaje</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+            ";
+
+        foreach( $tipos as $row ){
+            echo "\n<tr>
+                <td>{$row[ "minimo" ]}</td>
+                <td>{$row[ "maximo" ]}</td>
+                <td>{$row[ "fijo" ]}</td>
+                <td>{$row[ "porcentaje" ]}</td>
+            </tr>";
+        }
+
+        echo "\n</tbody></table></div></div>";
+    }
+}
