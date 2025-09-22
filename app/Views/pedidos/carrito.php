@@ -1,6 +1,6 @@
 <h4 class="mt-1 mb-0">
     <?php echo $titulo; ?> - 
-    <?php echo "Pedido No. <span class=\"badge bg-marine\">{$pedido[ "referencia" ]}</span> 
+    <?php echo "Pedido No. ".referencia( $pedido )." 
     <span style=\"font-size:16px\">
     ".( $pagado ? ( ( $pedido[ "data" ][ "primercompra" ] ?? -1 ) >= 0 ? ( $pedido[ "data" ][ "primercompra" ] == 1 ? "<span class=\"badge bg-violet rounded-pill\"><i class=\"fa fa-check\"></i> primer compra</span>" : "" ) : "<span class=\"badge bg-white rounded-pill border border-red text-red\"><i class=\"fa fa-warning\"></i> no data</span>" ) : "" )."
     ".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
@@ -861,7 +861,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                 if( $pagado ){ 
                     ?>
                     <div class="col-lg-3 col-6 m-0">
-                        <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-calendar"></i> Cambiar fecha de compra</button>
+                        <button class="btn btn-danger col-12" onclick="$( '#cambia_fecha' ).modal( 'show' );"><i class="fa fa-calendar"></i> Cambiar fechas</button>
                     </div>
 
                     <div class="col-lg-3 col-6 m-0">
@@ -899,7 +899,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                     <input type="hidden" name="old_beneficiario"  value="">
 
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-calendar"></i> Cambiar fecha de compra</h5>
+                        <h5 class="modal-title"><i class="fa fa-calendar"></i> Cambiar fechas</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -908,12 +908,22 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                             <li>Un cambio de fecha de calificación altera la calificación del socio.</li>
                         </ul></div>
 
-                        <label class="form-label">Actualiza la fecha y guarda los cambios usando el botón</label>
+                        <label class="form-label">Actualiza las fechas y guarda los cambios usando el botón</label>
                         <div class="row">
+
+                            <div class="col-6">Pago recibido</div>
                             <div class="col-6">
-                                
-                                <input class="form-control col-6" type="date" name="nueva" value="<?php echo substr( $pedido[ "fechas" ][ "califica" ] ?? "", 0, 10 ) ?>">
+                                <input class="form-control col-6" type="date" name="nueva_pagado" value="<?php echo substr( $pedido[ "fechas" ][ "pagado" ] ?? "", 0, 10 ) ?>">
                             </div>
+                            <div class="col-6">Califica</div>
+                            <div class="col-6">
+                                <input class="form-control col-6" type="date" name="nueva_califica" value="<?php echo substr( $pedido[ "fechas" ][ "califica" ] ?? "", 0, 10 ) ?>">
+                            </div>
+                            <div class="col-6">Reparto comisiones</div>
+                            <div class="col-6">
+                                <input class="form-control col-6" type="date" name="nueva_reparte" value="<?php echo substr( $pedido[ "fechas" ][ "reparte" ] ?? "", 0, 10 ) ?>">
+                            </div>
+
                         </div>
                     </div>
 

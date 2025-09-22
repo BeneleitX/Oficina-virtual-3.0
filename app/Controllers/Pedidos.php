@@ -413,7 +413,9 @@ class Pedidos extends BaseController
         if( 
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) || 
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) &&
-            validafecha( $this->request->getPost( "nueva" ) ) 
+            validafecha( $this->request->getPost( "nueva_pagado" ) ) &&
+            validafecha( $this->request->getPost( "nueva_reparte" ) ) &&
+            validafecha( $this->request->getPost( "nueva_califica" ) ) 
         ){
 
             $pedido = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
@@ -422,13 +424,19 @@ class Pedidos extends BaseController
             // BITACORA Cambiar fecha de calificacion en pedido
             bitacora( 32, $this->data[ "usuario" ]->id, [ 
                 "pedido"   => $pedido[ "id" ],
-                "anterior" => $fechas[ "califica" ],
-                "nueva"    => $this->request->getPost( "nueva" )
+                "anterior" => $fechas,
+                "nueva"    => [ 
+                    "pagado"   => $this->request->getPost( "nueva_pagado" ),
+                    "reparte"  => $this->request->getPost( "nueva_reparte" ),
+                    "califica" => $this->request->getPost( "nueva_califica" )
+                ]
             ] );
 
             $mesprevio = date( "Ym", strtotime( $fechas[ "califica" ] ) );
 
-            $fechas[ "califica" ] = $this->request->getPost( "nueva" );
+            $fechas[ "pagado" ]   = $this->request->getPost( "nueva_pagado" );
+            $fechas[ "reparte" ]  = $this->request->getPost( "nueva_reparte" );
+            $fechas[ "califica" ] = $this->request->getPost( "nueva_califica" );
             $pedido[ "fechas" ]   = $fechas;
 
             model( "PedidoModel" )->save( $pedido );
@@ -450,7 +458,7 @@ class Pedidos extends BaseController
         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
-            "texto" => "Se actualizó la fecha de compra del pedido" ] );      
+            "texto" => "Se actualizaron las fechas del pedido" ] );      
     }
 
 

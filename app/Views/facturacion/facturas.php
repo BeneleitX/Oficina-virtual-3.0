@@ -37,7 +37,7 @@
                 $u  = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
                 echo "\n<tr pedido=\"{$p[ "id" ]}\" referencia=\"{$p[ "referencia" ]}\" correo=\"".( $p[ "data" ][ "sat" ][ "correo" ] ?? "" )."\" mp=\"".( $p[ "data" ][ "sat" ][ "mp" ] ?? "" )."\" uso=\"".( $p[ "data" ][ "sat" ][ "uso" ] ?? "" )."\" rfc=\"{$u->data->sat->rfc}\" link=\"".base_url()."data/{$u->id}/csf/{$u->data->sat->csf}\">
-                    <td class=\"text-center\"><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
+                    <td class=\"text-center\">".referencia( $p )."</td>
                     <td>".$u->id( $p[ "modelo_codigo" ] )."</td>
                     <td>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
 

@@ -50,7 +50,7 @@
                     $p[ "data" ][ "primercompra" ] = get_primercompra( $p[ "usuario_id" ], $p[ "modelo_codigo" ] );
                 }
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
-                    <td class=\"text-center\"><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span>".( $p[ "data" ][ "primercompra" ] == 1 ? " <span class=\"badge bg-white small text-purple border border-purple\">1°</span>" : "" )."</td>
+                    <td class=\"text-center\">".referencia( $p ).( $p[ "data" ][ "primercompra" ] == 1 ? " <span class=\"badge bg-white small text-purple border border-purple\">1°</span>" : "" )."</td>
                     <td>".estatus( $p[ "estatus_codigo" ] )."</td>
                     <td>{$PTS} &nbsp; ";
                     

@@ -132,7 +132,7 @@ while( $hoy <= $periodo[ "termina" ] ){
 
                                 $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
                                 echo "\n<tr\">
-                                    <td width=\"10%\" class=\"text-center\">".( $usuario->es_admin() ? "<a href=\"".base_url()."/pedido/{$c->referencia}\"><span class=\"badge bg-marine\">{$c->referencia}</span></a>" : "<span class=\"badge bg-marine\">{$c->referencia}</span>" )."</td>
+                                    <td width=\"10%\" class=\"text-center\">".( $usuario->es_admin() ? "<a href=\"".base_url()."/pedido/{$c->referencia}\">".referencia( null, true, $c->referencia, substr( $c->esquema_codigo, 0, 1 ) )."</a>" : referencia( null, true, $c->referencia, substr( $c->esquema_codigo, 0, 1 ) ) )."</td>
 
                                     <td width=\"10%\" class=\"text-end\"><strong>".( $c->esquema_codigo == "118-PROMOS-50" ? "" : "$" ).number_format( $c->cantidad, $c->esquema_codigo == "118-PROMOS-50" ? 0 : 2 )."</strong>".( $c->esquema_codigo == "118-PROMOS-50" ? " <i class=\"fa fa-tag text-pink\"></i> Promo".( $c->cantidad > 1 ? "s" : "" ) : "" )."</td>
 

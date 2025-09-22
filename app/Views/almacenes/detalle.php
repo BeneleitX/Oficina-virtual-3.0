@@ -68,7 +68,7 @@
                     $p[ "socio" ] = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
                     echo "\n<tr almacen=\"{$p[ "id" ]}\">
-                        <td><span class=\"badge bg-marine\">{$p[ "referencia" ]}</span></td>
+                        <td>".referencia( $p )."</td>
                         <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id( $p[ "modelo_codigo" ] )." ".$p[ "socio" ]->nombre(2)."</td>
                         <td>".estatus( $p[ "estatus_codigo" ] )."</td>
 

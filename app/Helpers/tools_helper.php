@@ -91,6 +91,34 @@ function getReferencia( string $p ){
     // listo ;)
 }
 
+function referencia( $pedido, $formato = true, $cadena = false, $indice_modelo = false )
+{
+    if( $cadena && $indice_modelo ){
+        foreach( MODELOS as $m ){
+            if( substr( $m[ "codigo" ], 0, 1 ) == $indice_modelo ){
+                $modelo = $m;
+            } 
+        }
+
+        $p1 = substr( $modelo[ "nombre" ], 0, 1 );
+        $p2 = $cadena;
+    } 
+    else{
+        $modelo = MODELOS[ $pedido[ "modelo_codigo" ] ];
+
+        $p1 = substr( $modelo[ "nombre" ], 0, 1 );
+        $p2 = $pedido[ "referencia" ];
+    }
+
+    $p3 = str_pad( $p2, 9, "0", STR_PAD_LEFT );
+
+    if( $formato ){
+        return "<span class=\"d-none\">{$p3}</span><span style=\"padding-right: 0.35em; border-radius: 0.375rem 0 0 0.375rem;\" class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\">{$p1}</span><span style=\"padding-left: 0.35em; border-radius: 0 0.375rem 0.375rem 0;\" class=\"badge bg-marine\">{$p2}</span>";
+    } 
+    
+    return $p1."-".$p2;
+}
+
 function random_password(){
     $cad = bin2hex( random_bytes(2) );
     $pos = rand(0, strlen($cad));
