@@ -770,7 +770,7 @@ class Capital extends BaseController
                     </p>
               
                 ";
-                if( ENVIRONMENT === 'development' ){
+                if( ENVIRONMENT != 'development' ){
                     $respuesta = envia_correo( $u, $subject, $message, $imagenes );
                 }
 
