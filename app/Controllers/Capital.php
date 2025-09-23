@@ -766,7 +766,7 @@ class Capital extends BaseController
                     <p style=\"word-wrap: break-word; text-align:center\">
                         <a href=\"{$url}\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:400px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">Confirmar solicitud</span></a>
                         <br><br>
-                        <a href=\"{$url}\">{$url}</a>
+                        <p class=\"small text-center\"><a href=\"{$url}\">{$url}</a></p>
                     </p>
               
                 ";
