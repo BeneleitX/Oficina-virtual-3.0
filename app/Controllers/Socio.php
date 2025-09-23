@@ -504,7 +504,7 @@ class Socio extends BaseController
         $email->setTo('scabbia@gmail.com');
         $email->setMessage('Testing the email class. {unwrap}http://example.com/a_long_link_that_should_not_be_wrapped.html{/unwrap}');
 
-        $email->send( false );
+       // $email->send( false );
 
 
         $this->data[ "socio" ] = $this->data[ "usuario" ];
