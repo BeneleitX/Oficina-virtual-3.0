@@ -19,8 +19,8 @@
                     <form action="<?php echo base_url( "sociodata" ); ?>" method="post" class="m-0">
                         <?php echo csrf_field(); ?>
                         <div class="input-group xinput-group-sm">
-                            <input type="text" name="search_id" value="" placeholder="Número de socio" class="form-control">
-                            <span class="input-group-text bg-mustard border-0"><i class="fa fa-magnifying-glass"></i></span>                           
+                            <input type="text" name="search_id" value="" placeholder="SOCIO O PEDIDO" class="form-control">
+                            <span class="input-group-text bg-teal border-0 px-3"><i class="fa fa-magnifying-glass"></i></span>                           
                         </div>
                     </form>        
                     <?php

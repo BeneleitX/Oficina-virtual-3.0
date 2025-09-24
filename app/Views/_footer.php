@@ -6,19 +6,17 @@
         <script src="<?php echo base_url(); ?>assets/js/OverlayScrollbars.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/confetti.js"></script>
 
-        <div class="modal fade" id="modal_splash" tabindex="-1" aria-labelledby="add_rolLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <p class="text-center p-5"><i class="fa-solid fa-circle-notch fa-spin"></i></p>
-                        <button type="button" class="d-none btn bg-secondary" data-bs-dismiss="modal" ><i class="i-cancelar"></i> Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div> 
+
+
+
 
         <?php 
-        if( $usuario ){
+
+        $router = \Config\Services::router();
+        $_method = $router->methodName();
+        $_controller = explode("\\", $router->controllerName()); 
+
+        if( $usuario->id > 0 ){
             $data = (array)$usuario->data;
 
             if( $data && sizeof( $data[ "splash" ] )  > 0 ){
@@ -26,7 +24,19 @@
                 $splash = array_shift( $data[ "splash" ] );
                 $splash->tipo = strtolower( $splash->tipo );
 
-                echo "<script>$(document).ready(function(){ modal_splash( '{$splash->tipo}', '".json_encode( $splash->parametros )."' ) });</script>";
+                echo "
+                <div class=\"modal fade\" id=\"modal_splash\" tabindex=\"-1\" aria-labelledby=\"add_rolLabel\" aria-hidden=\"true\">
+                    <div class=\"modal-dialog modal-fullscreen\">
+                        <div class=\"modal-content\">
+                            <div class=\"modal-body\">
+                                <p class=\"text-center p-5\"><i class=\"fa-solid fa-circle-notch fa-spin\"></i></p>
+                                <button type=\"button\" class=\"d-none btn bg-secondary\" data-bs-dismiss=\"modal\" ><i class=\"i-cancelar\"></i> Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                
+                <script>$(document).ready(function(){ modal_splash( '{$splash->tipo}', '".json_encode( $splash->parametros )."' ) });</script>";
                 $usuario->data = $data;
                 model( "UsuarioModel" )->save( $usuario );
                 ?>
@@ -59,11 +69,32 @@
                 </script>
                 <?php
             }
+            elseif( $_controller[3] != "Socio" AND $usuario->data->verificacion->password == false ){
+                echo "
+                <div class=\"modal fade\" id=\"modal_password\" tabindex=\"-1\" aria-labelledby=\"add_rolLabel\" aria-hidden=\"true\">
+                    <div class=\"modal-dialog\">
+                        <div class=\"modal-content\">
+                            <div class=\"modal-header bg-red\">
+                                <h5 class=\"text-center text-white\"><i class=\"fa fa-warning text-mustard\"></i> ¡Atención!</h5>
+                            </div>
+                            <div class=\"modal-body text-center fw-bold\">
+                                <p>Tu cuenta tiene password temporal. Es importante que ingreses a tu perfil de socio y lo actualices por uno propio. Esta acción es obligatoria y es necesaria para el cobro de comisiones.</p>
+                                <br>
+                                <p class=\"\"><a href=\"".base_url( "perfil" )."\" class=\"btn btn-lg btn-danger\">Ir ahora a mi perfil</a><br>
+                                <button type=\"button\" class=\"x-none btn bg-secondary\" data-bs-dismiss=\"modal\" ><i class=\"i-cancelar\"></i> En otro momento</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <script>$(document).ready(function(){ $( '#modal_password' ).modal( 'show' ); }); </script>";
+            }
         }
+
+        
         ?>
         <script>
 
-function randomInRange(min, max) {
+            function randomInRange(min, max) {
                         return Math.random() * (max - min) + min;
                     }
                     
@@ -88,9 +119,7 @@ function randomInRange(min, max) {
         </script>
 
         <?php
-            $router = \Config\Services::router();
-            $_method = $router->methodName();
-            $_controller = explode("\\", $router->controllerName()); 
+
 
             $mainscript = "assets/js/beneleit.js";
             if(file_exists( $mainscript )) echo "<script src=\"".base_url().$mainscript."?1".filemtime( $mainscript )."\"></script>";

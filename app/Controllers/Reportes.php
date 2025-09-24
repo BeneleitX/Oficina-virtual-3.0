@@ -327,28 +327,31 @@ class Reportes extends BaseController
         $worksheet->setCellValue( "A1", "REFERENCIA" );
         $worksheet->setCellValue( "B1", "FECHA PAGO" );
         $worksheet->setCellValue( "C1", "METODO PAGO" );
-        $worksheet->setCellValue( "D1", "FECHA ENTREGA" );
-        $worksheet->setCellValue( "E1", "METODO ENTREGA" );
-        $worksheet->setCellValue( "F1", "DETALLE ENTREGA" );
-        $worksheet->setCellValue( "G1", "ESTATUS" );
-        $worksheet->setCellValue( "H1", "SOCIO" );
-        $worksheet->setCellValue( "I1", "NOMBRE" );
-        $worksheet->setCellValue( "J1", "CELULAR" );
-        $worksheet->setCellValue( "K1", "PRODUCTOS" );
-        $worksheet->setCellValue( "L1", "PRIMER COMPRA" );
-        $worksheet->setCellValue( "M1", "SUB TOTAL" );
-        $worksheet->setCellValue( "N1", "GASTOS ENTREGA" );
-        $worksheet->setCellValue( "O1", "COMISION BANCO" );
-        $worksheet->setCellValue( "P1", "TOTAL" );
+        $worksheet->setCellValue( "D1", "OPERACION" );
+        $worksheet->setCellValue( "E1", "FECHA ENTREGA" );
+        $worksheet->setCellValue( "F1", "METODO ENTREGA" );
+        $worksheet->setCellValue( "G1", "DETALLE ENTREGA" );
+        $worksheet->setCellValue( "H1", "ESTATUS" );
+        $worksheet->setCellValue( "I1", "SOCIO" );
+        $worksheet->setCellValue( "J1", "NOMBRE" );
+        $worksheet->setCellValue( "K1", "CELULAR" );
+        $worksheet->setCellValue( "L1", "PRODUCTOS" );
+        $worksheet->setCellValue( "M1", "PRIMER COMPRA" );
+        $worksheet->setCellValue( "N1", "SUB TOTAL" );
+        $worksheet->setCellValue( "O1", "GASTOS ENTREGA" );
+        $worksheet->setCellValue( "P1", "COMISION BANCO" );
+        $worksheet->setCellValue( "Q1", "TOTAL" );
 
         switch( $estatus ){
             case "TODOS": $estatus = "substring( p.estatus_codigo,1,3) > 400"; break;
             case "400":   $estatus = "substring( p.estatus_codigo,1,3) between 400 AND 500"; break;
             case "500":   $estatus = "substring( p.estatus_codigo,1,3) > 500"; break;
         }
+
         $sql = "SELECT 
                     p.referencia as REFERENCIA,
                     u.id as SOCIO,
+                    f.extras as EXTRAS,
                     p.estatus_codigo as ESTATUS,
                     u.telefono as CELULAR,
                     concat( u.data->>'$.nombre', ' ', u.data->>'$.apellidos[ 0 ]', ' ', u.data->>'$.apellidos[ 1 ]' ) as NOMBRE,
@@ -366,6 +369,7 @@ class Reportes extends BaseController
                     cast( IF( p.metodoentrega_codigo = '00-ALMACEN', p.fechas->>'$.entregado', p.fechas->>'$.enviado') as date ) as FECHA_ENTREGA
                 from t_pedidos p
                 join t_usuarios u on p.usuario_id = u.id
+                left join t_fondeos f on f.referencia = p.referencia
                 where
                     {$estatus}
                     ".( $m_pago != 'TODOS' ? "and p.metodopago_codigo = '{$m_pago}'" : "" )."
@@ -380,22 +384,30 @@ class Reportes extends BaseController
 
         foreach( $result->getResult() as $s ){
             $row++;
+            $s->EXTRAS = json_decode( $s->EXTRAS );
+            switch( $s->METODO_PAGO ){
+                case "21-GETNET": $operacion = $s->EXTRAS->auth; break;
+                default: $operacion = ""; break;
+            }
+
+
             $worksheet->setCellValue( "A".( $row ),  $s->REFERENCIA);
             $worksheet->setCellValue( "B".( $row ),  $s->FECHA_PAGO);
             $worksheet->setCellValue( "C".( $row ),  substr( $s->METODO_PAGO, 3 ) );
-            $worksheet->setCellValue( "D".( $row ),  $s->FECHA_ENTREGA);
-            $worksheet->setCellValue( "E".( $row ),  substr( $s->METODO_ENTREGA, 3 ) );
-            $worksheet->setCellValue( "F".( $row ),  $s->METODO_ENTREGA == "00-ALMACEN" ? substr( $s->ALMACEN, 4 ) : ( $s->GUIA ?? "" ) );
-            $worksheet->setCellValue( "G".( $row ),  strtoupper( ESTATUS[ $s->ESTATUS ][ "descripcion" ] ) );
-            $worksheet->setCellValue( "H".( $row ),  $s->SOCIO);
-            $worksheet->setCellValue( "I".( $row ),  $s->NOMBRE);
-            $worksheet->setCellValue( "J".( $row ),  $s->CELULAR);
-            $worksheet->setCellValue( "K".( $row ),  $s->PRODUCTOS);
-            $worksheet->setCellValue( "L".( $row ),  $s->PRIMER_COMPRA);
-            $worksheet->setCellValue( "M".( $row ),  $s->SUBTOTAL_PRODUCTOS);
-            $worksheet->setCellValue( "N".( $row ),  $s->COMISION_ENTREGA);
-            $worksheet->setCellValue( "O".( $row ),  $s->COMISION_METODOPAGO);
-            $worksheet->setCellValue( "P".( $row ),  $s->SUBTOTAL_PRODUCTOS + $s->COMISION_ENTREGA + $s->COMISION_METODOPAGO);
+            $worksheet->setCellValue( "D".( $row ),  $operacion);
+            $worksheet->setCellValue( "E".( $row ),  $s->FECHA_ENTREGA);
+            $worksheet->setCellValue( "F".( $row ),  substr( $s->METODO_ENTREGA, 3 ) );
+            $worksheet->setCellValue( "G".( $row ),  $s->METODO_ENTREGA == "00-ALMACEN" ? substr( $s->ALMACEN, 4 ) : ( $s->GUIA ?? "" ) );
+            $worksheet->setCellValue( "H".( $row ),  strtoupper( ESTATUS[ $s->ESTATUS ][ "descripcion" ] ) );
+            $worksheet->setCellValue( "I".( $row ),  $s->SOCIO);
+            $worksheet->setCellValue( "J".( $row ),  $s->NOMBRE);
+            $worksheet->setCellValue( "K".( $row ),  $s->CELULAR);
+            $worksheet->setCellValue( "L".( $row ),  $s->PRODUCTOS);
+            $worksheet->setCellValue( "M".( $row ),  $s->PRIMER_COMPRA);
+            $worksheet->setCellValue( "N".( $row ),  $s->SUBTOTAL_PRODUCTOS);
+            $worksheet->setCellValue( "O".( $row ),  $s->COMISION_ENTREGA);
+            $worksheet->setCellValue( "P".( $row ),  $s->COMISION_METODOPAGO);
+            $worksheet->setCellValue( "Q".( $row ),  $s->SUBTOTAL_PRODUCTOS + $s->COMISION_ENTREGA + $s->COMISION_METODOPAGO);
             
         }
 

@@ -25,8 +25,18 @@ class Dashboard extends BaseController
     public function sociodata( $request = null ){
 
         $db = db_connect();
+        $query = $this->request->getPost( "search_id" ) ?? false;
 
-        if( $this->request->getPost( "search_id" ) ){
+        // es busqueda de pedido
+        if( $query ){
+            
+            // es busqueda de pedido
+            if( strlen( $query ) == 8 ){
+                return redirect()->to( "pedido/{$query}" ); 
+            }
+
+            // si es búsqueda de socio, continuar
+
             $temp = model( "UsuarioModel" )->find( $this->request->getPost( "search_id" ) );
 
             if( $temp->id ?? false ){
