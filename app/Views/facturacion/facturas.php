@@ -46,7 +46,7 @@
                     <td class=\"text-end\"><strong>$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ] - $p[ "data" ][ "saldo" ], 2 )."</strong></td>
                     <td class=\"text-center\"><span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) )."</td>
                     
-                    <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a> <button class=\"btn btn-xs btn-primary\" onclick=\"registra_folio( {$p[ "id" ]} )\">REGISTRA FOLIO</button></td>
+                    <td class=\"text-end\"><a title=\"Cancelar solicitud\" data-bs-toggle=\"tooltip\" href=\"".base_url( "cancela_facturacion/".urlencode( base64_encode( $p[ "id" ] ) ) )."\" class=\"btn btn-xs btn-danger\"><i class=\"fa fa-trash\"></i></a> <a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a> <button class=\"btn btn-xs btn-primary\" onclick=\"registra_folio( {$p[ "id" ]} )\">REGISTRA FOLIO</button></td>
                 </tr>";
             }
         ?>

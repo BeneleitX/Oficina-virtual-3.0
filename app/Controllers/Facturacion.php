@@ -146,5 +146,30 @@ class Facturacion extends BaseController
         
         return redirect()->to( "facturas" );
     }
+
+
+    public function cancela_facturacion( $pedido ){
+
+        if( !(
+            $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        $pedido = base64_decode(urldecode($pedido));
+        $pedido = model( "PedidoModel" )->find( $pedido );
+        
+        unset( $pedido[ "data" ][ "sat" ] );
+        
+        model( "PedidoModel" )->save( $pedido );
+
+        // BITACORA registro de folio factura
+        bitacora( 101, $this->data[ "usuario" ]->id, [ 
+            "pedido" => $pedido[ "id" ]
+        ] );
+        
+        return redirect()->to( "facturas" );
+    }
 }
 

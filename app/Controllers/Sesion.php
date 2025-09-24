@@ -104,7 +104,7 @@ class Sesion extends BaseController
         $this->session->set( "login", time() );
 
         // SI es un login automático de switch de admin
-        if( $socio ){
+        if( $socio > 0 ){
             
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
@@ -219,7 +219,7 @@ class Sesion extends BaseController
 
                 // BITACORA inicio de sesión fallido
                 bitacora( 2, $usuario->id, [ 
-                    "password" => $datax[ "socio_password" ] 
+                    "password" => $datax[ "socio_password" ] ?? ""
                 ] );
 
                 // revisar intentos totales de fallos

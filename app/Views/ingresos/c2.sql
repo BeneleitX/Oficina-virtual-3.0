@@ -1037,7 +1037,7 @@ BEGIN
 	
 			CASE
 			    WHEN llave = "clabe" THEN 
-			    	SET requerido = IF( fn != '0000-00-00' AND fn <= DATE_SUB(NOW(), INTERVAL -18 YEAR), 0, 1 );
+			    	SET requerido = IF( fn is null OR fn != '0000-00-00' AND fn <= DATE_SUB(NOW(), INTERVAL -18 YEAR), 0, 1 );
 			    WHEN llave = "csf" THEN 
 			    	SET requerido = IF( u_data->'$.sat.estatus', 1, 0 );
 			   	ELSE  

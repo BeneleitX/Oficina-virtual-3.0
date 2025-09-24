@@ -187,6 +187,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "facturacion",                        "Facturacion::listado" ); 
     $routes->get( "facturas",                           "Facturacion::facturas" ); 
     $routes->get( "facturas_historial",                 "Facturacion::facturas_historial" ); 
+    $routes->get( "cancela_facturacion/(:any)",         "Facturacion::cancela_facturacion/$1" ); 
     $routes->post( "poner_ventas",                      "Facturacion::poner_ventas" ); 
     $routes->post( "quitar_ventas",                     "Facturacion::quitar_ventas" ); 
     $routes->post( "do_factura",                        "Facturacion::do_factura" );     

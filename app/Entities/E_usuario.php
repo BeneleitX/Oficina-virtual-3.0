@@ -351,9 +351,13 @@ class E_usuario extends Entity
      */
     protected function setCurp( string $curp )
     {
+        $data = json_decode( $this->attributes[ "data" ] );
+
         $this->attributes[ "curp" ]     = strtoupper( $curp );
         $yn = substr( $curp, 4, 2) ;
-        $this->attributes[ "fechanac" ] = implode("-", [ ( intval( $yn ) >= date("y") ? "19" : "20").$yn, substr( $curp, 6, 2), substr( $curp, 8, 2) ] );
+        $this->attributes[ "fechanac" ] = $data->ubicacion->origen == "MX" ?
+            implode("-", [ ( intval( $yn ) >= date("y") ? "19" : "20").$yn, substr( $curp, 6, 2), substr( $curp, 8, 2) ] ) :
+            null;
 
         $caras = [
             "face-smile",
@@ -398,7 +402,7 @@ class E_usuario extends Entity
             "brown",
         ];
 
-        $data = json_decode( $this->attributes[ "data" ] );
+        
         $data->genero =  substr( $curp, 10, 1) == "H" ? "MASCULINO" : "FEMENINO";
         $data->nacionalidad = substr( $this->attributes[ "curp" ], 11, 2) != "NE" ? "MEXICANA" : "EXTRANJERA";
         $data->avatar->face = $caras[ rand( 0, sizeof( $caras   ) - 1 ) ];
@@ -1103,7 +1107,7 @@ class E_usuario extends Entity
     
     public function update_profundidad()
     {
-        if( $this->historial && ( $this->historial->modelos->{"10-NUTRICION"}->update_profundidad ?? "0000-00-00" ) < date( "Y-m-d", strtotime( date( "Y-m-d" )." - 1 day" ) ) ){
+        if( $this->historial && ( $this->historial->modelos->{"10-NUTRICION"}->update_profundidad ?? "1979-01-01" ) < date( "Y-m-d", strtotime( date( "Y-m-d" )." - 1 day" ) ) ){
             $db = db_connect();
             $sql = "do f_update_nivel( {$this->id}, '10-NUTRICION', ".date( "Ym" ).")";
             $db->query( $sql );
