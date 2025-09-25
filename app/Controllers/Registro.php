@@ -64,6 +64,9 @@ class Registro extends BaseController
 
         // Creamos plantilla para crear la nueva entidad usuario
         $fecha  = date( "Y-m-d H:i:s" );
+
+        $fechanac = get_fechanac( $data[ "curp" ] );
+
         $recibe = [
             "estatus_codigo" => "201-ACTIVO",
             "rol_codigos"    => [ "10-SOCIO" ],
@@ -75,8 +78,9 @@ class Registro extends BaseController
                     "imagenes"      => [],
                     "activo"        => null
                 ],
-                "verificacion"  => [],
-                "ubicacion"     => [
+                "verificacion"   => [],
+                "verificaciones" => [],
+                "ubicacion"      => [
                     "code"          => $data[ "pais" ],
                     "origen"        => $data[ "origen" ]
                 ],
@@ -122,6 +126,7 @@ class Registro extends BaseController
             "correo"        => strtolower( $data[ "correo" ] ),
             "telefono"      => $data[ "celular" ],
             "curp"          => $data[ "curp" ],
+            "fechanac"      => $fechanac,
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
             ],
@@ -131,10 +136,11 @@ class Registro extends BaseController
                 "modelos"       => [],
                 "rangos"        => [],
                 "reset"         => $fecha
-            ]               
+            ]            
         ];
     
         // Complementamos la plantilla con información inicial para cada modelo de negocio
+        
         foreach( MODELOS as $m ){
             if( $m[ "settings" ][ "efectivo" ] ){
                 $recibe[ "historial" ][ "modelos" ][ $m[ "codigo" ] ] = [
@@ -154,6 +160,7 @@ class Registro extends BaseController
                     "cantidad" => 0.00,
                     "estatus"  => 0
                 ];
+
                 $recibe[ "data" ][ "estatus" ][ "modelos" ][ $m[ "codigo"] ] = "210-NUEVO";
 
                 $recibe[ "redes" ][ "modelos" ][ $m[ "codigo" ] ] = [
@@ -176,8 +183,23 @@ class Registro extends BaseController
             $recibe[ "data"][ "verificacion" ][ $codigo ] = false;
         }
 
-        $usuario = model( "UsuarioModel" );
+        $puntos_verificacion = admin( "verificaciones" );
+        foreach( $puntos_verificacion as $codigo => $punto){
 
+            // temporal activamos el telefono al no existir verificación por ahora, el resto en false
+            $recibe[ "data"][ "verificaciones" ][ $punto->codigo ] = false;
+        }
+
+        // puntos de verificación iniciales
+
+        if( $recibe[ "fechanac" ] ){
+            $recibe[ "data"][ "verificaciones" ][ "FECHANAC" ] = true;
+        }
+
+        $recibe[ "data"][ "verificaciones" ][ "EMAIL" ]   = true;
+        $recibe[ "data"][ "verificaciones" ][ "CELULAR" ] = true;
+
+        $usuario = model( "UsuarioModel" );
         $entidad = new \App\Entities\E_usuario();
         $entidad->fill( $recibe );
 
@@ -223,43 +245,43 @@ class Registro extends BaseController
             "password" => $recibe[ "password" ]
         ] );
 
-                // ENVIAR CORREO
+        // ENVIAR CORREO
 
-                $imagenes = [
-                    "bienvenida" => "assets/img/bienvenida.png",
-                    "menu" => "assets/img/menu.png"
-                ];
+        $imagenes = [
+            "bienvenida" => "assets/img/bienvenida.png",
+            "menu" => "assets/img/menu.png"
+        ];
 
-                $subject = "¡Te damos la bienvenida!";
-                $message = "
-                    <img src=\"%%bienvenida%%\" width=\"100%\" alt=\"bienvenida\">
-                    <p>¡Hola ".$usuario->nombre()."! </p>
-                    <p>Hemos creado tu cuenta de socio Beneleit, a la cual se le ha asignado un número único con el que te identificarás de ahora en adelante. Recuerdalo y compartelo:</p>
+        $subject = "¡Te damos la bienvenida!";
+        $message = "
+            <img src=\"%%bienvenida%%\" width=\"100%\" alt=\"bienvenida\">
+            <p>¡Hola ".$usuario->nombre()."! </p>
+            <p>Hemos creado tu cuenta de socio Beneleit, a la cual se le ha asignado un número único con el que te identificarás de ahora en adelante. Recuerdalo y compartelo:</p>
 
-                <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">".$usuario->id()."</span></p>
+            <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">".$usuario->id()."</span></p>
 
-                    <p>Tambien hemos habilitado tu oficina virtual, un espacio personal de trabajo donde podrás llevar un control total de tu cuenta a través de herramientas e indicadores que te brindarán asistencia en tu experiencia de negocios en Beneleit</p>
-                    
-                    <ul>
-                        <li style=\"margin: 10px 0\"><strong>Perfil de socio:</strong> Donde podrás verificar tu cuenta, personalizarla y mantenerla actualizada.</li>
-                        <li style=\"margin: 10px 0\"><strong>Panel de inicio:</strong> Un resumen general de tus redes, compras, calificaciones, ingresos y progresión en las diferentes promociones y bonos.</li>
-                        <li style=\"margin: 10px 0\"><strong>Ingresos:</strong> Detalles de tus ingresos por día, semana, mes y en general desde tu inicio como socio Beneleit. Aquí puedes monitorear cómo tu red va generando comisiones que cobrarás semana a semana directo en tu cuenta bancaria.</li>
-                        <li style=\"margin: 10px 0\"><strong>Compras:</strong> Nuestra tienda en línea donde podrás adquirir todos nuestros productos.</li>
-                        <li style=\"margin: 10px 0\"><strong>Redes:</strong> Representación gráfica de tus redes, con información a detalle de los socios que la conforman.</li>
-                        <li style=\"margin: 10px 0\"><strong>Centro de ayuda:</strong> Desde aquí podrás consultar manuales y tutoriales para sacarle un máximo provecho a tu oficina virtual, podrás levantar tickets de soporte para reportar incidencias o solicitar información, o si requieres una atención más personalizada, ponerte en contacto directo con nuestro servicio de Call Center a través de Whatsapp.</li>
-                    </ul>
-                <img src=\"%%menu%%\" style=\"border-radius:6px\" width=\"100%\" alt=\"menu\">
+            <p>Tambien hemos habilitado tu oficina virtual, un espacio personal de trabajo donde podrás llevar un control total de tu cuenta a través de herramientas e indicadores que te brindarán asistencia en tu experiencia de negocios en Beneleit</p>
+            
+            <ul>
+                <li style=\"margin: 10px 0\"><strong>Perfil de socio:</strong> Donde podrás verificar tu cuenta, personalizarla y mantenerla actualizada.</li>
+                <li style=\"margin: 10px 0\"><strong>Panel de inicio:</strong> Un resumen general de tus redes, compras, calificaciones, ingresos y progresión en las diferentes promociones y bonos.</li>
+                <li style=\"margin: 10px 0\"><strong>Ingresos:</strong> Detalles de tus ingresos por día, semana, mes y en general desde tu inicio como socio Beneleit. Aquí puedes monitorear cómo tu red va generando comisiones que cobrarás semana a semana directo en tu cuenta bancaria.</li>
+                <li style=\"margin: 10px 0\"><strong>Compras:</strong> Nuestra tienda en línea donde podrás adquirir todos nuestros productos.</li>
+                <li style=\"margin: 10px 0\"><strong>Redes:</strong> Representación gráfica de tus redes, con información a detalle de los socios que la conforman.</li>
+                <li style=\"margin: 10px 0\"><strong>Centro de ayuda:</strong> Desde aquí podrás consultar manuales y tutoriales para sacarle un máximo provecho a tu oficina virtual, podrás levantar tickets de soporte para reportar incidencias o solicitar información, o si requieres una atención más personalizada, ponerte en contacto directo con nuestro servicio de Call Center a través de Whatsapp.</li>
+            </ul>
+            <img src=\"%%menu%%\" style=\"border-radius:6px\" width=\"100%\" alt=\"menu\">
 
-                    <p>Tu oficina virtual es una herramienta muy valiosa. ¡Usala!, si tienes dudas sobre alguna de sus funciones, puedes apoyarte en tu patrocinador o consultar nuestros canales de ayuda.</p>
-                    <p>Ingresa ahora utilizando el password temporal que te hemos asignado, no olvides que una vez dentro, deberás ir a tu perfil de usuario para cambiarlo por uno que te sea familiar, seguro y fácil de recordar.</p>
-                           <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\">{$recibe[ "password" ]}</span></p>
-                    <p style=\"text-align:center\">de parte de todo el equipo Beneleit:<br><strong>¡Bienvenido!</strong></p>
-                    <p><a href=\"".base_url()."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Ir ahora a mi oficina virtual</a></p>
-                    
-              
-                ";
+            <p>Tu oficina virtual es una herramienta muy valiosa. ¡Usala!, si tienes dudas sobre alguna de sus funciones, puedes apoyarte en tu patrocinador o consultar nuestros canales de ayuda.</p>
+            <p>Ingresa ahora utilizando el password temporal que te hemos asignado, no olvides que una vez dentro, deberás ir a tu perfil de usuario para cambiarlo por uno que te sea familiar, seguro y fácil de recordar.</p>
+                    <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\">{$recibe[ "password" ]}</span></p>
+            <p style=\"text-align:center\">de parte de todo el equipo Beneleit:<br><strong>¡Bienvenido!</strong></p>
+            <p><a href=\"".base_url()."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Ir ahora a mi oficina virtual</a></p>
+            
         
-                $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
+        ";
+
+        $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
         
 
         if( $demo > 0 ){

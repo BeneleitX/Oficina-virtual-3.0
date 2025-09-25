@@ -25,7 +25,7 @@ class Dashboard extends BaseController
     public function sociodata( $request = null ){
 
         $db = db_connect();
-        $query = $this->request->getPost( "search_id" ) ?? false;
+        $query = trim( $this->request->getPost( "search_id" ) ) ?? false;
 
         // es busqueda de pedido
         if( $query ){
@@ -349,8 +349,17 @@ class Dashboard extends BaseController
 
         if( $socio->telefono != $r[ "telefono" ] ){ $cambios[] = [ "telefono", $socio->telefono, $r[ "telefono" ] ]; $socio->telefono = $r[ "telefono" ]; } 
         if( $socio->correo   != $r[ "correo" ]   ){ $cambios[] = [ "correo", $socio->correo,   $r[ "correo" ] ]; $socio->correo   = $r[ "correo" ];   } 
-        if( $socio->fechanac != $r[ "fechanac" ] ){ $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; $socio->fechanac = $r[ "fechanac" ]; } 
         if( $socio->curp     != $r[ "curp" ]     ){ $cambios[] = [ "curp", $socio->curp,     $r[ "curp" ] ]; $socio->curp     = $r[ "curp" ];     } 
+
+        $rr = explode( "-", $r[ "fechanac" ] );
+        $fechanac = checkdate( $rr[ 1 ],  $rr[ 2 ], $rr[ 0 ] ) ? $r[ "fechanac" ] : null;
+
+        if( $socio->fechanac != $r[ "fechanac" ] ){ 
+            $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; 
+            $socio->fechanac = $r[ "fechanac" ]; 
+            
+            $data->verificaciones->{"FECHANAC"} = $fechanac ? true : false;
+        } 
 
         if( $data->nombre != $r[ "nombre" ] ){ $cambios[] = [ "nombre", $data->nombre, $r[ "nombre" ] ]; $data->nombre = $r[ "nombre" ]; } 
         if( $data->apellidos[0] != $r[ "apellido1" ] ){ $cambios[] = [ "apellido1", $data->apellidos[0], $r[ "apellido1" ] ]; $data->apellidos[0] = $r[ "apellido1" ]; } 
@@ -1097,6 +1106,7 @@ class Dashboard extends BaseController
 
         $data = $socio->data;
         $anterior = $data->wallet;
+        $data->verificaciones->{"WALLET"} = false;
         $data->wallet = "";
         $socio->data = $data;
 

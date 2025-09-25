@@ -131,9 +131,11 @@ class Admin extends BaseController
         $json = $socio->data;
         $json->credencial->estatus = $accion == "acepta" ? "2" : "-1";
         $json->credencial->motivo  = $motivo;
-        $json->verificacion->credencial = $accion == "acepta";
         
-
+        $json->verificaciones->{"DNI"}  = 
+        $json->verificaciones->{"ACTA"} = 
+        $json->verificacion->credencial = ( $accion == "acepta" );
+        
         if( $accion == "acepta" ){
             $historial = $socio->historial;    
             $historial->validacion = date( "Y-m-d" ); 
@@ -598,5 +600,58 @@ class Admin extends BaseController
         echo template( "admin/apikeys", $this->data );
     } 
 
+    public function verificaciones()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        /**********************************/
 
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Puntos para verificación de cuenta";
+
+        echo template( "admin/verificaciones", $this->data );
+    }
+
+    public function guarda_verificaciones()
+    {
+        $check = $this->request->getPost( "check" );
+
+        foreach( MODELOS as $modelo ){
+            $previo = $modelo[ "settings" ][ "verificaciones" ] ?? [];
+            $guarda = false;
+
+            $verificado = $previo;
+
+            foreach( VARIABLES[ "tipos_de_cuenta" ][ "valor" ] as $tipo => $data ){
+                foreach( VARIABLES[ "verificaciones" ][ "valor" ] as $punto ){
+                    $verificado[ $tipo ][ $punto[ "codigo" ] ] = ( $check[ $modelo[ "codigo" ] ][ $tipo ][ $punto[ "codigo" ] ] ?? 0 ) ? true : false;
+
+                    if( $verificado[ $tipo ][ $punto[ "codigo" ] ] != ( $previo[ $tipo ][ $punto[ "codigo" ] ] ?? false ) ){
+                        $guarda = true;
+                    }
+                }
+            }
+
+            if( $guarda ){
+                $m = model( "ModeloModel" )->find( $modelo[ "codigo" ] );
+                $m[ "settings" ][ "verificaciones" ] = $verificado;
+                model( "ModeloModel" )->save( $m );
+
+                bitacora( 102, $this->data[ "usuario" ]->id, [ 
+                    "modelo"   => $modelo[ "codigo" ],
+                    "anterior" => $previo,
+                    "nuevo"    => $verificado
+                ] );  
+            }
+        }
+
+        return redirect()->to( "verificaciones" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Puntos de verificación actualizados"] );  
+    }
 }

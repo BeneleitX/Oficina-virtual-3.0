@@ -539,4 +539,38 @@ class Sesion extends BaseController
         imagedestroy($captchaImage);
 
     }
+
+
+    public function confirma_retiro( $hash )
+    {
+        $hash    = json_decode( base64_decode( urldecode( $hash ) ) );
+        $retiro  = model( "RetiroModel" )->find( $hash[ 1 ] );
+        $usuario = model( "UsuarioModel" )->find( $retiro[ "usuario_id" ] );
+
+        $pass = substr( $hash[ 0 ], 0, strlen( $usuario->password_original() ));
+        
+        // si el usuario coincide con el uid del retiro, y aun no se hace el proceso
+        // de confirmación, aplicamos el cambio 
+
+        if( $pass == $usuario->password_original() && $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
+
+            // BITACORA Confirma solicitud de retiro
+            bitacora( 100, $this->data[ "usuario" ]->id, [ 
+                "socio"  => $usuario->id,
+                "retiro" => $retiro
+            ] );
+                
+            $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
+            model( "RetiroModel" )->save( $retiro );
+
+            return redirect()->to( "capital" )->with( "msg", [ 
+                "clase" => "success", 
+                "icono" => "check", 
+                "texto" => "Se confirmó la solicitud de retiro" ] ); 
+        }
+
+        $this->session->set( "usuario", $usuario->id );
+        
+        return redirect()->to( "capital" );
+    }
 }

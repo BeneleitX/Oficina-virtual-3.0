@@ -223,6 +223,7 @@ class E_usuario extends Entity
         
         $data = $this->data;
         $data->verificacion->password = false;
+        $json->verificaciones->{"PASSWORD"} = false;
         $this->data = $data;
 
         $historial = $this->historial;
@@ -353,11 +354,7 @@ class E_usuario extends Entity
     {
         $data = json_decode( $this->attributes[ "data" ] );
 
-        $this->attributes[ "curp" ]     = strtoupper( $curp );
-        $yn = substr( $curp, 4, 2) ;
-        $this->attributes[ "fechanac" ] = $data->ubicacion->origen == "MX" ?
-            implode("-", [ ( intval( $yn ) >= date("y") ? "19" : "20").$yn, substr( $curp, 6, 2), substr( $curp, 8, 2) ] ) :
-            null;
+        $this->attributes[ "curp" ] = strtoupper( $curp );
 
         $caras = [
             "face-smile",

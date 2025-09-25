@@ -68,6 +68,7 @@ class Socio extends BaseController
         $json->avatar->activo      = sizeof( $json->avatar->imagenes ) -1;
         $json->avatar->updated     = time();
         $json->verificacion->foto  = true;
+        $json->verificaciones->{"FOTO"} = true;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
@@ -202,6 +203,7 @@ class Socio extends BaseController
 
         if( $nporc == 100 ){
             $json->verificacion->beneficiario = true;
+            $json->verificaciones->{"BENEFICIARIO"} = true;
         }
         $this->data["socio"]->data = $json; 
 
@@ -235,6 +237,7 @@ class Socio extends BaseController
 
         $json->beneficiarios = array_values( $json->beneficiarios );
         $json->verificacion->beneficiario = false;
+        $json->verificaciones->{"BENEFICIARIO"} = false;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
@@ -313,6 +316,7 @@ class Socio extends BaseController
         $json = $socio->data;
         $json->clabe = $clabe;
         $json->verificacion->clabe = true;
+        $json->verificaciones->{"CLABE"} = true;
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio );
@@ -379,6 +383,7 @@ class Socio extends BaseController
         $json = $socio->data;
         $json->wallet = $wallet;
         $json->verificacion->wallet = true;
+        $json->verificaciones->{"WALLET"} = true;
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio );
@@ -445,6 +450,7 @@ class Socio extends BaseController
 
         $json = $socio->data;
         $json->verificacion->password = true;
+        $json->verificaciones->{"PASSWORD"} = true;
         $socio->data = $json; 
         $socio->password = $nuevo;
 
@@ -632,6 +638,8 @@ class Socio extends BaseController
         
         $json = $this->data["socio"]->data;
         $json->verificacion->domicilio = true;
+        $json->verificaciones->{"DOMICILIO"} = true;
+
         if( !isset($json->domicilio) || $json->domicilio == null ){
             $json->domicilio = $id;
         }
@@ -663,6 +671,7 @@ class Socio extends BaseController
 
             $json = $socio->data;
             $json->verificacion->domicilio = false;
+            $json->verificaciones->{"DOMICILIO"} = false;
 
             $socio->data = $json; 
             model( "UsuarioModel" )->save( $socio );    
@@ -751,6 +760,7 @@ class Socio extends BaseController
         $json->sat->csf = $filename;
         $json->sat->estatus = 2;
         $json->verificacion->csf = true;
+        $json->verificaciones->{"CSF"} = true;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
@@ -796,6 +806,7 @@ class Socio extends BaseController
         $json->sat->csf = null;
         $json->sat->estatus = 1;
         $json->verificacion->csf = false;
+        $json->verificaciones->{"CSF"} = false;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );

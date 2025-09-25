@@ -91,6 +91,21 @@ function getReferencia( string $p ){
     // listo ;)
 }
 
+
+function get_fechanac( $curp ){
+
+    if( strlen( $curp ) != 18 ){
+        return null;
+    }
+
+    $y = ( substr( $curp, 4, 2) >= date("y") ? "19" : "20" ).substr( $curp, 4, 2);
+    $m = substr( $curp, 6, 2);
+    $d = substr( $curp, 8, 2);
+
+    return checkdate($m, $d, $y) ? "{$y}-{$m}-{$d}" : null;
+}
+
+
 function referencia( $pedido, $formato = true, $cadena = false, $indice_modelo = false )
 {
     if( $cadena && $indice_modelo ){
