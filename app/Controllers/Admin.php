@@ -159,6 +159,7 @@ class Admin extends BaseController
         return redirect()->to( "valida_credenciales" );        
     }
 
+
     /**
      * Muestra la lista de promociones de un modelo
      * @param string $modelo Código del modelo
@@ -457,6 +458,7 @@ class Admin extends BaseController
         ] );        
     }
 
+
     /**
      * Agrega saldos a favor de un socio
      *
@@ -600,6 +602,7 @@ class Admin extends BaseController
         echo template( "admin/apikeys", $this->data );
     } 
 
+
     public function verificaciones()
     {
         if( !(
@@ -616,6 +619,7 @@ class Admin extends BaseController
         echo template( "admin/verificaciones", $this->data );
     }
 
+    
     public function guarda_verificaciones()
     {
         $check = $this->request->getPost( "check" );

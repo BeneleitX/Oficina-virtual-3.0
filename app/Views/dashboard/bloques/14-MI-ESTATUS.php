@@ -32,11 +32,19 @@ foreach( MODELOS as $m ){
     $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
 
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
+    $v = $usuario->verificacion( $m[ "codigo" ] );
+
+    $pendientes = [];
+    foreach( $v->puntos as $p => $e ){
+        if( $e != true ){
+            $pendientes[] = $p;
+        }
+    }
     
     echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
     
-    <div class=\"progress mb-1\" aria-valuenow=\"{$usuario->verificado->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:20px; border-radius:10px\">
-        <div class=\"progress-bar bg-".( $usuario->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated" )."\" style=\"width: {$usuario->verificado->porcentaje}%\">".( $usuario->verificado->estatus ? "VERIFICADO" : "VERIFICACION ".$usuario->verificado->porcentaje."%" )."</div></div>
+    <div class=\"progress mb-1\" aria-valuenow=\"{$v->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:20px; border-radius:10px\">
+        <div class=\"progress-bar bg-".( $v->estatus ? "teal" : "red progress-bar-striped progress-bar-animated" )."\" style=\"width: {$v->porcentaje}%\">".( $v->estatus ? "VERIFICADO" : "VERIFICACION ".$v->porcentaje."%" )."</div></div>
 
     <div class=\"card bg-{$estatus[ "color" ]}\"><div class=\"xcard-body\">";
 

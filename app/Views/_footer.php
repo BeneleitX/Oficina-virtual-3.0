@@ -99,7 +99,7 @@
                     }
                     
             if( <?php echo isset( $print ) ? 0 : 1; ?> ){
-                const osInstance = OverlayScrollbars(document.querySelector('body'), { });
+               // const osInstance = OverlayScrollbars(document.querySelector('body'), { });
             }
 
             const base_url = '<?php echo base_url(); ?>',

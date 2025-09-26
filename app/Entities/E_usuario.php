@@ -1765,4 +1765,12 @@ class E_usuario extends Entity
 
         return $db->query( $sql )->getResult(); 
     }
+
+
+    public function verificacion( $modelo )
+    {
+        $db  = db_connect();
+        $sql = "select f_get_verificacion( 162056, '10-NUTRICION' ) as data";        
+        return json_decode( $db->query( $sql )->getRow()->data );
+    }
 }
