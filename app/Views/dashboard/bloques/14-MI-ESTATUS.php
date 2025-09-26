@@ -1,9 +1,3 @@
-<div class="position-relative mx-4 mt-4 mb-3">
-    <div class="text-center position-absolute bg-<?php echo $usuario->verificado->estatus ? "teal" : ( $usuario->verificado->porcentaje ? "red" : "gray-500" );  ?> fs-2 rounded-circle d-block" style="width:3rem;height:3rem; line-height:3rem; top:-11px; left:-5px"><i class="far fa-circle-<?php echo $usuario->verificado->estatus ? "check" : "xmark"; ?> text-white"></i></div>
-    <div class="progress" aria-valuenow="<?php echo $usuario->verificado->porcentaje; ?>" aria-valuemin="0" aria-valuemax="100" style="height:24px; border-radius:10px">
-    <div class="progress-bar bg-<?php echo $usuario->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated"; ?>" style="width: <?php echo $usuario->verificado->porcentaje; ?>%"><?php echo $usuario->verificado->estatus ? "SOCIO VERIFICADO" : "VERIFICACION AL ".$usuario->verificado->porcentaje."%"; ?></div>
-    </div>
-</div>
 
 <div class="row mx-2 my-3">
 <?php
@@ -39,7 +33,12 @@ foreach( MODELOS as $m ){
 
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
     
-    echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div><div class=\"card bg-{$estatus[ "color" ]}\"><div class=\"xcard-body\">";
+    echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
+    
+    <div class=\"progress mb-1\" aria-valuenow=\"{$usuario->verificado->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:20px; border-radius:10px\">
+        <div class=\"progress-bar bg-".( $usuario->verificado->estatus ? "teal" : "red progress-bar-striped progress-bar-animated" )."\" style=\"width: {$usuario->verificado->porcentaje}%\">".( $usuario->verificado->estatus ? "VERIFICADO" : "VERIFICACION ".$usuario->verificado->porcentaje."%" )."</div></div>
+
+    <div class=\"card bg-{$estatus[ "color" ]}\"><div class=\"xcard-body\">";
 
     echo "\n<div class=\"small mb-2\"><div class=\"pt-2 xbadge col-12 bg-{$estatus[ "color" ]} text-white\" style=\"line-height:1.1\">{$estatus[ "descripcion" ]}</div></div><div class=\"pb-2 px-2\">";
   
