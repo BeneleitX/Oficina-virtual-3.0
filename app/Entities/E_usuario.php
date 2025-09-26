@@ -223,7 +223,7 @@ class E_usuario extends Entity
         
         $data = $this->data;
         $data->verificacion->password = false;
-        $json->verificaciones->{"PASSWORD"} = false;
+        $data->verificaciones->{"PASSWORD"} = false;
         $this->data = $data;
 
         $historial = $this->historial;
