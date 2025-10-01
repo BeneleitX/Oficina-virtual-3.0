@@ -134,6 +134,8 @@ class Dashboard extends BaseController
         $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
         $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
+        $socio->update_verificacion();
+        
         // BITACORA Forzar update
         bitacora( 62, $this->data[ "usuario" ]->id, [ 
             "socio"   => $socio->id
