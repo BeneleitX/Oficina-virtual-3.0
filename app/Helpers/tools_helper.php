@@ -212,7 +212,7 @@ function admin( $codigo ){
 
 
 
-function fecha_Valida( $date ) {
+function fecha_valida( $date ) {
     return date('Y-m-d', strtotime($date)) === $date;
 }
 

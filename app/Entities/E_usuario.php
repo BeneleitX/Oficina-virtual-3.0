@@ -1802,7 +1802,7 @@ class E_usuario extends Entity
         $data = $this->data;
 
         // verificación FECHANAC
-        $data->verificaciones->{"FECHANAC"} = fecha_Valida( $this->fechanac );
+        $data->verificaciones->{"FECHANAC"} = fecha_valida( $this->fechanac );
         
         // verificación PASSWORD  
         $data->verificaciones->{"PASSWORD"} = !str_contains( $this->password, '*' ) || strlen( $this->password ) > 5; 
@@ -1820,7 +1820,7 @@ class E_usuario extends Entity
         // verificación ACTA       
         $data->verificaciones->{"ACTA"} = $this->es_menor() && $data->credencial->estatus == 2 && $data->credencial->acta != null;
 
-        // verificación         
+        // verificación 
         $data->verificaciones->{"FOTO"} = isset( $data->avatar->updated ) && $data->avatar->updated > 0;
 
         // verificación CSF        
