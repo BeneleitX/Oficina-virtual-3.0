@@ -1716,6 +1716,23 @@ class E_usuario extends Entity
     }
 
 
+
+    public function password_personalizado()
+    {
+        $db  = db_connect();
+
+        $sql = "SELECT variables->>'$.nuevo' as password
+                from t_bitacoras
+                where usuario_id = $this->id
+                and accion_id = 37
+                order by fecha desc
+                limit 1";      
+
+        $password = $db->query( $sql )->getRow()->password;
+
+        return $password != $this->password;
+    }
+
     /**
      * Devuelve el rango de inversiones correspondiente al n mero de directos que se le pasa como par metro.
      * Si el rango cambia, se guarda el nuevo valor.
@@ -1767,10 +1784,71 @@ class E_usuario extends Entity
     }
 
 
-    public function verificacion( $modelo )
+    /**
+     * Actualiza las verificaciones de un usuario
+     * 
+     * Actualiza las verificaciones de un usuario en base a sus datos personales y de negocio
+     * 
+     * @return void
+     */
+    public function update_verificacion()
     {
         $db  = db_connect();
-        $sql = "select f_get_verificacion( 162056, '10-NUTRICION' ) as data";        
+
+        $data = $this->data;
+
+        // verificación FECHANAC
+        $data->verificaciones->{"FECHANAC"} = fecha_Valida( $this->fechanac );
+        
+        // verificación PASSWORD  
+        $data->verificaciones->{"PASSWORD"} = $this->password_personalizado(); 
+        // hay que comparar con el temporal, no con el nuevo, porque al cambiar por mas de una vez el password, se pierde la asociación
+            
+        // verificación BENEFICIARIO        
+        $data->verificaciones->{"BENEFICIARIO"} = $this->porcentaje_beneficiarios() == 100;
+  
+        // verificación DOMICILIO        
+        $data->verificaciones->{"DOMICILIO"} = $data->domicilio > 0;
+
+        // verificación DNI  
+        $data->verificaciones->{"DNI"} = !$this->es_menor() && $data->credencial->estatus == 2 && $data->credencial->frente != null && $data->credencial->reverso != null;
+            
+        // verificación ACTA       
+        $data->verificaciones->{"ACTA"} = $this->es_menor() && $data->credencial->estatus == 2 && $data->credencial->acta != null;
+
+        // verificación         
+        $data->verificaciones->{"FOTO"} = $data->avatar->activo != null;
+
+        // verificación CSF        
+        $data->verificaciones->{"CSF"} = $data->sat->csf != null;
+
+        // verificación CLABE
+        $data->verificaciones->{"CLABE"} = strlen( $data->clabe ) == 18;
+
+        // verificación WALLET        
+        $data->verificaciones->{"WALLET"} = strlen( $data->wallet ) == 18;
+
+        // verificación RFC        
+        $data->verificaciones->{"RFC"} = strlen( $data->sat->rfc ) == 13;        
+
+        // verificación TARJETA        
+        $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ) == 19;        
+
+        // verificación CELULAR     
+        $data->verificaciones->{"CELULAR"} = strlen( $this->telefono ) > 8;    
+
+        // verificación EMAIL      
+        $data->verificaciones->{"EMAIL"} = filter_var( $this->correo, FILTER_VALIDATE_EMAIL ) != false;
+        
+        $this->data = $data;
+        model( "UsuarioModel" )->save( $this );
+    }
+
+
+    public function get_verificacion( $modelo )
+    {
+        $db  = db_connect();
+        $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as data";        
         return json_decode( $db->query( $sql )->getRow()->data );
     }
 }

@@ -350,6 +350,7 @@ $(document).ready(function(){
 		formData.append( 'pdf', $( this )[0].files[0] ); 
 		formData.append( [csrf_token] , csrf_hash ),
 
+		$( '#csf_loader' ).html( loader );
 		$.ajax({
 			url: base_url + 'carga_csf',
 			data: formData,

@@ -13,7 +13,25 @@ class Socio extends BaseController
         $this->data[ "titulo" ] = "Perfil de socio ".$this->data[ "socio"  ]->id( null, "marine" );
         $this->data[ "porc" ]   = $this->data[ "socio"  ]->porcentaje_beneficiarios();
         
-        foreach( $this->data["socio"]->data->verificacion as $j => $k){
+        // cuando el menor de edad sea mayor de edad, reseteamos documentación
+
+        $json = $this->data["socio"]->data;
+        $update = false;
+
+        if( $this->data[ "socio"  ]->es_menor() ){
+            if( !$this->data[ "socio"  ]->data->credencial->acta ){
+                $json->credencial->estatus = 0;
+                $update = true;
+            }
+        }
+        else{
+            if( !$this->data[ "socio"  ]->data->credencial->frente || !$this->data[ "socio"  ]->data->credencial->reverso ){
+                $json->credencial->estatus = 0;
+                $update = true;
+            }
+        }
+
+/*         foreach( $this->data["socio"]->data->verificacion as $j => $k){
             $total++;
             if( $k == true ){ 
                 $checked++;
@@ -31,18 +49,20 @@ class Socio extends BaseController
                     if( $this->data["socio"]->data->ubicacion->origen != "MX" ){
                         $checked++;
 
-                        $json = $this->data["socio"]->data;
                         $json->verificacion->domicilio = true;
                         $json->verificacion->clabe = $json->verificacion->wallet ?? false;
-                        $this->data["socio"]->data = $json; 
                 
-                        model( "UsuarioModel" )->save( $this->data["socio"] );                        
+                        $update = true;
                     }
                 }
             }
+        } */
+
+        if( $update ){
+            $this->data["socio"]->data = $json;
+            model( "UsuarioModel" )->save( $this->data["socio"] );
         }
-        $this->data[ "avance" ] = number_format($checked * 100 / $total,0);
-        
+
         echo template( "socio/perfil", $this->data );
     }
 
@@ -68,10 +88,11 @@ class Socio extends BaseController
         $json->avatar->activo      = sizeof( $json->avatar->imagenes ) -1;
         $json->avatar->updated     = time();
         $json->verificacion->foto  = true;
-        $json->verificaciones->{"FOTO"} = true;
+
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+        $this->data[ "socio" ]->update_verificacion();
 
         list($type, $data) = explode(';', $data);
         list(, $data)      = explode(',', $data);
@@ -201,14 +222,12 @@ class Socio extends BaseController
 
         $nporc = $nuevo[ "porcentaje" ] + $this->data[ "socio" ]->porcentaje_beneficiarios();
 
-        if( $nporc == 100 ){
-            $json->verificacion->beneficiario = true;
-            $json->verificaciones->{"BENEFICIARIO"} = true;
-        }
-        $this->data["socio"]->data = $json; 
+        $this->data[ "socio" ]->data = $json; 
 
         if(  $nporc <= 100 ){
             model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+            $this->data[ "socio" ]->update_verificacion();
 
             // BITACORA Agregar beneficiario
             bitacora( 11, $this->data[ "socio" ]->id, [ 
@@ -237,10 +256,11 @@ class Socio extends BaseController
 
         $json->beneficiarios = array_values( $json->beneficiarios );
         $json->verificacion->beneficiario = false;
-        $json->verificaciones->{"BENEFICIARIO"} = false;
-        $this->data["socio"]->data = $json; 
+        $this->data[ "socio" ]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        $this->data[ "socio" ]->update_verificacion();
 
         // BITACORA Eliminar beneficiario
         bitacora( 12, $this->data[ "socio" ]->id, [ 
@@ -316,10 +336,10 @@ class Socio extends BaseController
         $json = $socio->data;
         $json->clabe = $clabe;
         $json->verificacion->clabe = true;
-        $json->verificaciones->{"CLABE"} = true;
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio );
+        $socio->update_verificacion();
 
         // actualizaar pagos pendientes
         $db->query( "update t_pagos set clabe = '{$clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
@@ -383,10 +403,10 @@ class Socio extends BaseController
         $json = $socio->data;
         $json->wallet = $wallet;
         $json->verificacion->wallet = true;
-        $json->verificaciones->{"WALLET"} = true;
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio );
+        $socio->update_verificacion();
 
         // actualizaar pagos pendientes
         $db->query( "update t_pagos set clabe = '{$wallet}' where modelo_codigo = '50-INVERSION' and usuario_id = ".$this->data[ "usuario" ]->id." and substring( estatus_codigo, 1, 3 ) < 400" );
@@ -450,11 +470,12 @@ class Socio extends BaseController
 
         $json = $socio->data;
         $json->verificacion->password = true;
-        $json->verificaciones->{"PASSWORD"} = true;
         $socio->data = $json; 
         $socio->password = $nuevo;
 
         model( "UsuarioModel" )->save( $socio );
+
+        $socio->update_verificacion();
 
         // BITACORA Crear nuevo password
         bitacora( 14, $socio->id, [ 
@@ -638,14 +659,15 @@ class Socio extends BaseController
         
         $json = $this->data["socio"]->data;
         $json->verificacion->domicilio = true;
-        $json->verificaciones->{"DOMICILIO"} = true;
-
+        
         if( !isset($json->domicilio) || $json->domicilio == null ){
             $json->domicilio = $id;
         }
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+
+        $this->data[ "socio" ]->update_verificacion();
 
         // BITACORA Crea/edita domicilio
         bitacora( $dom_id ? 39 : 20, $this->data[ "socio" ]->id, [ 
@@ -665,17 +687,23 @@ class Socio extends BaseController
         model( "DomicilioModel" )->save( $domiciliomodel );
 
         $socio = $this->data[ "usuario" ];
-        $d = $socio->getDomicilios();
+        $d     = $socio->getDomicilios();
+        $json  = $socio->data;
 
-        if( !sizeof( $d ) ){
-
-            $json = $socio->data;
-            $json->verificacion->domicilio = false;
-            $json->verificaciones->{"DOMICILIO"} = false;
-
-            $socio->data = $json; 
-            model( "UsuarioModel" )->save( $socio );    
+        if( sizeof( $d ) ){
+            if( $json->domicilio == $dom_id ){
+                $json->domicilio = $d[0][ "id" ];
+            }
         }
+        else{
+            $json->verificacion->domicilio = false;
+            $json->domicilio = false;
+        }
+
+        $socio->data = $json; 
+        model( "UsuarioModel" )->save( $socio );
+
+        $socio->update_verificacion();
 
         // BITACORA Borra domicilio
         bitacora( 55, $socio->id, [ 
@@ -760,10 +788,11 @@ class Socio extends BaseController
         $json->sat->csf = $filename;
         $json->sat->estatus = 2;
         $json->verificacion->csf = true;
-        $json->verificaciones->{"CSF"} = true;
+      
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+        $this->data["socio"]->update_verificacion();
 
         if( !is_dir( $path ) ){
             mkdir( $path, 0755, true );
@@ -806,10 +835,10 @@ class Socio extends BaseController
         $json->sat->csf = null;
         $json->sat->estatus = 1;
         $json->verificacion->csf = false;
-        $json->verificaciones->{"CSF"} = false;
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+        $this->data["socio"]->update_verificacion();
 
         // actualizaar pagos pendientes
         $db = db_connect();
@@ -854,6 +883,7 @@ class Socio extends BaseController
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio );
+        $socio->update_verificacion();
 
         // BITACORA Actualziar RFC
         bitacora( 48, $socio->id, [ 

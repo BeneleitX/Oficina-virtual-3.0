@@ -17,6 +17,8 @@ class Dashboard extends BaseController
 
         $sql = "estatus_codigo = '201-ACTIVO'";
         $this->data[ "bloques" ] = model( "BloqueModel" )->where( $sql , null, false )->orderBy('columna', 'asc')->orderBy('orden', 'asc')->findAll();
+        
+        //  $this->data[ "usuario" ]->update_verificacion();
 
         echo template( "dashboard/inicio", $this->data );
     }
@@ -358,7 +360,7 @@ class Dashboard extends BaseController
             $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; 
             $socio->fechanac = $r[ "fechanac" ]; 
             
-            $data->verificaciones->{"FECHANAC"} = $fechanac ? true : false;
+            $socio->update_verificacion();
         } 
 
         if( $data->nombre != $r[ "nombre" ] ){ $cambios[] = [ "nombre", $data->nombre, $r[ "nombre" ] ]; $data->nombre = $r[ "nombre" ]; } 
@@ -391,6 +393,8 @@ class Dashboard extends BaseController
                 "texto" => "No se detectaron cambios en los datos del socio. No hubo guardado de cambios."
             ]);
         }
+
+        $socio->update_verificacion();
 
         $ruta = urlencode( base64_encode( $socio->password_original() ) );
         return redirect()->to( "sociodata/{$ruta}" );
@@ -1083,6 +1087,7 @@ class Dashboard extends BaseController
         $socio->data = $data;
 
         model( "UsuarioModel" )->save( $socio );
+        $socio->update_verificacion();
 
         // BITACORANuevo password
         bitacora( 93, $this->data[ "usuario" ]->id, [ 
@@ -1106,11 +1111,11 @@ class Dashboard extends BaseController
 
         $data = $socio->data;
         $anterior = $data->wallet;
-        $data->verificaciones->{"WALLET"} = false;
         $data->wallet = "";
         $socio->data = $data;
 
         model( "UsuarioModel" )->save( $socio );
+        $socio->update_verificacion();
 
         // BITACORANuevo password
         bitacora( 94, $this->data[ "usuario" ]->id, [ 

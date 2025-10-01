@@ -76,7 +76,9 @@ if( !$socio->data->verificacion->correo ){ ?>
 <div class="row">
 	<div class="col-md-6">
 
-		<?php if( $socio->es_menor() ){
+		<?php 
+		
+		if( $socio->es_menor() ){
 		?>
 		<div class="card mb-4">
             <div class="card-header"><h5 class="mb-0">Acta de nacimiento</h5></div>
@@ -148,7 +150,7 @@ if( !$socio->data->verificacion->correo ){ ?>
             <div class="card-body">
 				
 				<?php 
-			
+				
 				switch( $socio->data->credencial->estatus ){
 					case "-2" : 
 						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-address-card\"></i> Tenemos un problema con tus documentos. Por favor carga las imagenes faltantes.</div>";
@@ -372,7 +374,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 									<a href="<?php echo base_url("cancela_csf"); ?>" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar constancia</a></td>
 						</tr></table>
 						<?php } else { ?>
-							<button tipo="frente" onclick="$( '#carga_csf' ).click()" class="btn bg-white btn-outline-success col-6 xoffset-3 py-4 mt-3">Cargar <h5 class="text-green m-0">Constancia de Situación Fiscal</h5>reciente</button>
+							<button tipo="constancia" onclick="$( '#carga_csf' ).click()" class="btn bg-white btn-outline-success col-6 xoffset-3 py-4 mt-3">Cargar <h5 class="text-green m-0">Constancia de Situación Fiscal</h5><span id="csf_loader">reciente</span></button>
 						<?php } ?>
 
 						

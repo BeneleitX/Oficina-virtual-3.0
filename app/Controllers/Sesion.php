@@ -105,28 +105,32 @@ class Sesion extends BaseController
 
         // SI es un login automático de switch de admin
         if( $socio > 0 ){
-            
+   
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
-            $socio->valida_modelo();
+            if( $socio ){
+                $socio->valida_modelo();
 
-            foreach( MODELOS as $m ){
-                $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
-                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                foreach( MODELOS as $m ){
+                    $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+                    $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                }
+
+                $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
+                $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
+
+                if( strlen( $socio->data->clabe ) == 18 ){
+                    // actualizaar pagos pendientes
+                    $db->query( "update t_pagos set clabe = '{$socio->data->clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$socio->id." and substring( estatus_codigo, 1, 3 ) < 400" );
+                }
+
+                $this->session->set( "usuario", $socio->id );
+            
+                return redirect()->to( "inicio" );
             }
 
-            $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
-            $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
-
-            if( strlen( $socio->data->clabe ) == 18 ){
-                // actualizaar pagos pendientes
-                $db->query( "update t_pagos set clabe = '{$socio->data->clabe}' where modelo_codigo != '50-INVERSION' and usuario_id = ".$socio->id." and substring( estatus_codigo, 1, 3 ) < 400" );
-            }
-
-            $this->session->set( "usuario", $socio->id );
-          
-            return redirect()->to( "inicio" );
+            return redirect()->to( "logout" );
         }
 
         // Si es un login normal,proceder a validar datos

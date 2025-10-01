@@ -132,8 +132,6 @@ class Admin extends BaseController
         $json->credencial->estatus = $accion == "acepta" ? "2" : "-1";
         $json->credencial->motivo  = $motivo;
         
-        $json->verificaciones->{"DNI"}  = 
-        $json->verificaciones->{"ACTA"} = 
         $json->verificacion->credencial = ( $accion == "acepta" );
         
         if( $accion == "acepta" ){
@@ -149,6 +147,7 @@ class Admin extends BaseController
         $socio->data = $json; 
 
         model( "UsuarioModel" )->save( $socio ); 
+        $socio->update_verificacion();
 
         // BITACORA Creación de cuenta de usuario
         bitacora( $accion == "acepta" ? ( $socio->es_menor() ? 18 : 8 ) : ( $socio->es_menor() ? 19 : 9 ), $socio->id, [ 

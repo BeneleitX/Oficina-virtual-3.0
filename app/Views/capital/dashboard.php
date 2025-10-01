@@ -127,7 +127,7 @@ if( sizeof( $inversiones ) ){
         $bt = balance_inversion( $i );
 
         $retiros_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( (  session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND" )." substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $retiros_pendientes = "<table class=\"table table-sm m-0\">";
@@ -163,7 +163,7 @@ if( sizeof( $inversiones ) ){
         }
 
         $semilla_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( (  session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND " )."substring( estatus_codigo,1,3 ) between 160 and 300 AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $semilla_pendientes = "<table class=\"table table-sm m-0\">";

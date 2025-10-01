@@ -32,7 +32,7 @@ foreach( MODELOS as $m ){
     $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
 
     $estatus = ESTATUS[ $usuario->data->estatus->modelos->{$m[ "codigo" ]} ];
-    $v = $usuario->verificacion( $m[ "codigo" ] );
+    $v = $usuario->get_verificacion( $m[ "codigo" ] );
 
     $pendientes = [];
     foreach( $v->puntos as $p => $e ){

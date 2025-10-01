@@ -317,17 +317,17 @@ class Registro extends BaseController
 
 
     public function registro_exito( $nuevo_id ){
-        $id = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first();
+        if( $id = model( "UsuarioModel" )->where( "password = '".base64_decode( $nuevo_id )."'" )->first() ){
 
-        $this->data[ "navbar" ] = false;
-        $this->data[ "titulo" ] = "Nuevo socio creado";
-        $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $id->id );
+            $this->data[ "navbar" ] = false;
+            $this->data[ "titulo" ] = "Nuevo socio creado";
+            $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $id->id );
 
-        if($this->data[ "nuevo" ] ){
-            echo template( "registro/exito", $this->data );
+            if($this->data[ "nuevo" ] ){
+                return template( "registro/exito", $this->data );
+            }
         }
-        else{
-            return redirect()->to( "login" );
-        }
+
+        return redirect()->to( "login" );
     }
 }
