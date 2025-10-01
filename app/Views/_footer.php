@@ -19,6 +19,10 @@
         if( $usuario->id > 0 ){
             $data = (array)$usuario->data;
 
+            if( !isset( $usuario->data->verificaciones->{"PASSWORD"} ) ){
+                $usuario->update_verificacion();
+            }
+            
             if( $data && sizeof( $data[ "splash" ] )  > 0 ){
                 // shuffle( $data[ "splash" ] );
                 $splash = array_shift( $data[ "splash" ] );
