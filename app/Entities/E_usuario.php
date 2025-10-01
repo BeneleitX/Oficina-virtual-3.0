@@ -1852,7 +1852,7 @@ class E_usuario extends Entity
     public function get_verificacion( $modelo )
     {
         $db  = db_connect();
-        $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as data";        
-        return json_decode( $db->query( $sql )->getRow()->data );
+        $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as datos";        
+        return json_decode( $db->query( $sql )->getRow()->datos );
     }
 }
