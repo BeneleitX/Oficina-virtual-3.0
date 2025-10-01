@@ -1821,7 +1821,7 @@ class E_usuario extends Entity
         $data->verificaciones->{"ACTA"} = $this->es_menor() && $data->credencial->estatus == 2 && $data->credencial->acta != null;
 
         // verificación         
-        $data->verificaciones->{"FOTO"} = $data->avatar->activo != null;
+        $data->verificaciones->{"FOTO"} = $data->avatar->update > 0;
 
         // verificación CSF        
         $data->verificaciones->{"CSF"} = $data->sat->csf != null;
