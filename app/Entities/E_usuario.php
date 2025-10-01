@@ -1805,7 +1805,7 @@ class E_usuario extends Entity
         $data->verificaciones->{"FECHANAC"} = fecha_Valida( $this->fechanac );
         
         // verificación PASSWORD  
-        $data->verificaciones->{"PASSWORD"} = $this->password_personalizado(); 
+        $data->verificaciones->{"PASSWORD"} = !str_contains( $this->password, '*' ) || strlen( $this->password ) > 5; 
         // hay que comparar con el temporal, no con el nuevo, porque al cambiar por mas de una vez el password, se pierde la asociación
             
         // verificación BENEFICIARIO        
