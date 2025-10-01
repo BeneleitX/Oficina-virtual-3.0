@@ -1712,7 +1712,7 @@ class E_usuario extends Entity
         }
 
         $db = db_connect();
-        return $db->query($sql)->getResult();
+        return $db->query($sql)->getResult(); 
     }
 
 
