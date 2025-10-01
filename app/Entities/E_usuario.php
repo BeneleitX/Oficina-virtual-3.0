@@ -1830,13 +1830,13 @@ class E_usuario extends Entity
         $data->verificaciones->{"CLABE"} = strlen( $data->clabe ) == 18;
 
         // verificación WALLET        
-        $data->verificaciones->{"WALLET"} = strlen( $data->wallet ) == 34;
+        $data->verificaciones->{"WALLET"} = strlen( $data->wallet ?? "" ) == 34;
 
         // verificación RFC        
         $data->verificaciones->{"RFC"} = strlen( $data->sat->rfc ) == 13;        
 
         // verificación TARJETA        
-        $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ) == 19;        
+        $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ?? "" ) == 19;        
 
         // verificación CELULAR     
         $data->verificaciones->{"CELULAR"} = strlen( $this->telefono ) > 8;    
