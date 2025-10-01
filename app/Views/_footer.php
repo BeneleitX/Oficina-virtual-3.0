@@ -6,10 +6,6 @@
         <script src="<?php echo base_url(); ?>assets/js/OverlayScrollbars.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/confetti.js"></script>
 
-
-
-
-
         <?php 
 
         $router = \Config\Services::router();
