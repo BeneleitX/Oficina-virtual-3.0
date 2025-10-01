@@ -1822,7 +1822,11 @@ class E_usuario extends Entity
 
         // verificación 
         $data->verificaciones->{"FOTO"} = isset( $data->avatar->updated ) && $data->avatar->updated > 0;
+dd(
+isset( $data->avatar->updated ) && $data->avatar->updated > 0,
+isset($data->avatar->updated ), $data->avatar->updated
 
+);
         // verificación CSF        
         $data->verificaciones->{"CSF"} = $data->sat->csf != null;
 
