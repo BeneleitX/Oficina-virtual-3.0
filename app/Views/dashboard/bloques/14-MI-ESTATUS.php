@@ -44,7 +44,7 @@ foreach( MODELOS as $m ){
     
     echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
     
-    <div class=\"progress mb-1\" aria-valuenow=\"{$v->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:10px; border-radius:10px\" title=\"".( $v->estatus ? "100% VERIFICADO" : "VERIFICACION AL ".$v->porcentaje."%" )."\" data-bs-toggle=\"tooltip\">
+    <div class=\"progress mb-1\" aria-valuenow=\"{$v->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:6px; border-radius:10px\" title=\"".( $v->estatus ? "CUENTA VERIFICADA" : "VERIFICACION AL ".$v->porcentaje."%" )."\" data-bs-toggle=\"tooltip\">
         <div class=\"progress-bar bg-".( $v->estatus ? "teal" : "red progress-bar-striped progress-bar-animated" )."\" style=\"width: {$v->porcentaje}%\"></div>
     </div>
 
