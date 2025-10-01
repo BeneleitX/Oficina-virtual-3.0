@@ -255,6 +255,7 @@ class Sesion extends BaseController
             $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
             
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
+            $usuario->update_verificacion();
 
             // si es password original revisa si es activo, si no, rechaza login
             if( $usuario->password == $datax[ "socio_password" ] && $usuario->estatus_codigo == "120-BAJA" && $usuario->id > 60 ){
