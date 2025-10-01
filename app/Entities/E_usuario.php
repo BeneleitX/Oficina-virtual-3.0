@@ -1797,7 +1797,7 @@ class E_usuario extends Entity
      */
     public function update_verificacion()
     {
-        $db  = db_connect();
+        $db  = db_connect(); 
 
         $data = $this->data;
 
