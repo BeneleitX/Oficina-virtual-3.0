@@ -1728,9 +1728,13 @@ class E_usuario extends Entity
                 order by fecha desc
                 limit 1";      
 
-        $password = $db->query( $sql )->getRow()->password;
+        $password = $db->query( $sql )->getRow();
 
-        return $password != $this->password;
+        if( $password ){
+            return $password->password != $this->password;
+        }
+
+        return false;
     }
 
     /**
