@@ -1135,7 +1135,7 @@ class Capital extends BaseController
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->nombre( 2, false, true ) );
             $worksheet->setCellValue( chr(65 + $col++).$row, $u->telefono );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->inversion );
-            $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $u->data->wallet ?? "NO-WALLET" );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->deposito > 0 ? $r->deposito : $r->cantidad );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->estatus );
         }
