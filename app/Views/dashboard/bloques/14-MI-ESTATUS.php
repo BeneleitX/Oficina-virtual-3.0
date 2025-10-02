@@ -36,15 +36,17 @@ foreach( MODELOS as $m ){
     $v = $usuario->get_verificacion( $m[ "codigo" ] );
 
     $pendientes = [];
+
     foreach( $v->puntos as $p => $e ){
+
         if( $e != true ){
-            $pendientes[] = $p;
+            $pendientes[] = VARIABLES[ "verificaciones" ][ "valor" ][ $p ][ "descripcion" ];
         }
     } 
     
     echo "\n<div class=\"col-6 text-center mt-3 mb-1\"><div class=\"text-{$m[ "settings" ][ "color" ]}\"><strong><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</strong></div>
     
-    <div class=\"progress mb-1\" aria-valuenow=\"{$v->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:6px; border-radius:10px\" title=\"".( $v->estatus ? "CUENTA VERIFICADA" : "VERIFICACION AL ".$v->porcentaje."%" )."\" data-bs-toggle=\"tooltip\">
+    <div class=\"progress mb-1\" data-bs-html=\"true\" aria-valuenow=\"{$v->porcentaje}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:6px; border-radius:10px\" title=\"".( $v->estatus ? "CUENTA VERIFICADA" : "VERIFICACION AL ".$v->porcentaje."%<hr class='mt-0'><p style='text-align:left'>En espera:<ul style='text-align:left'><li>".implode( "</li><li>", $pendientes )."</li></ul></p>" )."\" data-bs-toggle=\"tooltip\">
         <div class=\"progress-bar bg-".( $v->estatus ? "teal" : "red progress-bar-striped progress-bar-animated" )."\" style=\"width: {$v->porcentaje}%\"></div>
     </div>
 

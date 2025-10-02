@@ -1800,6 +1800,9 @@ class E_usuario extends Entity
         $db  = db_connect(); 
 
         $data = $this->data;
+        if( !isset( $data->verificaciones )){
+            $data->verificaciones = new \stdClass();
+        }
 
         // verificación FECHANAC
         $data->verificaciones->{"FECHANAC"} = fecha_valida( $this->fechanac );

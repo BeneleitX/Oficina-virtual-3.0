@@ -222,11 +222,14 @@ class Socio extends BaseController
 
         $nporc = $nuevo[ "porcentaje" ] + $this->data[ "socio" ]->porcentaje_beneficiarios();
 
+        if( $nporc == 100 ){
+            $json->verificacion->beneficiario = true;
+        }
+
         $this->data[ "socio" ]->data = $json; 
 
         if(  $nporc <= 100 ){
             model( "UsuarioModel" )->save( $this->data[ "socio" ] );
-
             $this->data[ "socio" ]->update_verificacion();
 
             // BITACORA Agregar beneficiario
