@@ -1063,7 +1063,7 @@ function tipo_entrega( $p, $u )
             break;        
 
         default:
-            $entrega = "-- sin datos --";
+            $entrega = "Sin entrega";
             break;                                                                
     }
 
