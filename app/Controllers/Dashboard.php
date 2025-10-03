@@ -76,6 +76,8 @@ class Dashboard extends BaseController
         load_catalogo( "metodosentrega");
         load_catalogo( "almacenes");
         load_catalogo( "calificaciones");
+
+        $this->data[ "socio" ]->update_verificacion();
         
         // Obtenemos sus compras recientes
         
