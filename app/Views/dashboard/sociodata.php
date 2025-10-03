@@ -200,7 +200,7 @@ if( $socio ){
                     }
                 ?>
 
-                    <table class="w-100 my-4">
+                    <table class="w-100 mt-4">
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
@@ -214,7 +214,7 @@ if( $socio ){
                     </table>
 
 
-                <div class="card" style="overflow:hidden">
+                <div class="card mt-2" style="overflow:hidden">
                     <table class="table table-striped-columns m-0">
                         <tbody>
                             <?php 
