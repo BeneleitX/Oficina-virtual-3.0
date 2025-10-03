@@ -150,6 +150,7 @@ if( $socio ){
                 </div>
 
                 <?php 
+                    $db  = db_connect();
 
                     $filas = [
                         "PRIMERA" => [ "<th>Primer compra</th>" ],
@@ -157,6 +158,7 @@ if( $socio ){
                         "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button></th>" : "<th></th>" ) ],
                         "ULTIMA"  => [ "<th>Ultima compra</th>" ],
                         "SALDO"   => [ "<th>Saldo a favor</th>" ],
+                        "PTS"   => [ "<th>Puntos en el mes</th>" ],
                         "VERIFICACION" => [ "<th>Cuenta verificada</th>" ],
                     ];
 
@@ -173,7 +175,7 @@ if( $socio ){
                         $filas[ "VERIFICACION" ][] .= "<ul></td>";
 
                         if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){                            
-                            $db  = db_connect();
+                            
                             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
                             $socio = model( "UsuarioModel" )->find( $socio->id );    
                         }
@@ -197,6 +199,37 @@ if( $socio ){
                         $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
 
                         $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
+
+
+                        $k = 0;
+                        $pts = "";
+
+                        $sql = "SELECT * FROM t_promociones where estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$m[ "codigo" ]}'";
+
+                        $promos = $db->query( $sql )->getResultArray();
+                        $socio->PTS = $socio->getCalificaciones( $m[ "codigo" ] );
+
+                        foreach( $promos as $p ){
+                            $p[ "settings" ] = json_decode( $p[ "settings" ], true );
+                            
+                            if( isset( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
+                                $k++;
+
+                                $pts .=  "\n<div class=\"pts text-white bg-white\">
+                                            <div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div>
+                                            <div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div>
+                                        </div>";
+                            }
+                        }
+
+                        if( !$k ){
+                            $pts = "\n<div class=\"pts text-white bg-white\">
+                                <div class=\"pts-titulo bg-gray-400\">PTS</div>
+                                <div class=\"pts-numero bg-gray-400\">0</div>
+                            </div>";
+                        }
+
+                        $filas[ "PTS" ][] = "<td class=\"text-center pre_puntajes\" style=\"zoom:0.7\">{$pts}</td>";
                     }
                 ?>
 
