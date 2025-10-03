@@ -1053,7 +1053,7 @@ function tipo_entrega( $p, $u )
             break;
 
         case "PAQUETERIA":
-            $domicilios = $socio->getDomicilios( false, true );
+            $domicilios = $u->getDomicilios( false, true );
 
             $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span><br>".( intval( $p[3] ?? 0) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
             break;
