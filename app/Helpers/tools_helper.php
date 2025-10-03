@@ -106,11 +106,21 @@ function get_fechanac( $curp ){
 }
 
 
+/**
+ * Genera una referencia para un pedido, dada una cadena de identificaci n
+ * y un n mero de modelo.
+ *
+ * @param string $pedido identificador nico del pedido
+ * @param boolean $formato si es true, se devuelve una cadena formateada
+ * @param boolean $cadena si es true, se devuelve la cadena de identificaci n
+ * @param boolean $indice_modelo si es true, se devuelve el n mero de modelo
+ * @return string la referencia generada
+ */
 function referencia( $pedido, $formato = true, $cadena = false, $indice_modelo = false )
 {
     if( $cadena && $indice_modelo ){
         foreach( MODELOS as $m ){
-            if( substr( $m[ "codigo" ], 0, 1 ) == $indice_modelo ){
+            if( substr( $m[ "codigo" ], 0, 1 ) == $indice_modelo || $m[ "codigo" ] == $indice_modelo ){
                 $modelo = $m;
             } 
         }
@@ -128,7 +138,7 @@ function referencia( $pedido, $formato = true, $cadena = false, $indice_modelo =
     $p3 = str_pad( $p2, 9, "0", STR_PAD_LEFT );
 
     if( $formato ){
-        return "<span class=\"d-none\">{$p3}</span><span style=\"padding-right: 0.35em; border-radius: 0.375rem 0 0 0.375rem;\" class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\">{$p1}</span><span style=\"padding-left: 0.35em; border-radius: 0 0.375rem 0.375rem 0;\" class=\"badge bg-marine\">{$p2}</span>";
+        return "<span class=\"d-none\">{$p3} </span><span style=\"padding-right: 0.45em; border-radius: 0.375rem 0 0 0.375rem;\" class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\"> {$p1}</span><span style=\"padding-left: 0.45em; border-radius: 0 0.375rem 0.375rem 0;\" class=\"badge bg-marine\">{$p2}</span>";
     } 
     
     return $p1."-".$p2;
@@ -1032,4 +1042,30 @@ function hextorgb( $hexstring )
         "green" => 0xFF & ($integar >> 0x8),
         "blue" => 0xFF & $integar
     );
+}
+
+
+function tipo_entrega( $p, $u )
+{
+    switch( substr( $p[2], 3 ) ){
+        case "ALMACEN":
+            $entrega = "<span class=\"badge bg-lime\">ALMACEN</span><br>".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "-- sin datos --" );
+            break;
+
+        case "PAQUETERIA":
+            $domicilios = $socio->getDomicilios( false, true );
+
+            $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span><br>".( intval( $p[3] ?? 0) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
+            break;
+
+        case "CELULAR":
+            $entrega = "<span class=\"badge bg-purple\">RECARGA</span> ".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );
+            break;        
+
+        default:
+            $entrega = "-- sin datos --";
+            break;                                                                
+    }
+
+    return $entrega;
 }

@@ -1,4 +1,3 @@
-<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
@@ -55,11 +54,9 @@ if( $socio ){
                         <p>SOCIO<br><?php echo $socio->id( null, "marine" ); ?></p>
                         <p>PATROCINADOR<br><?php echo $patro->id( null, "gray-600" ); ?></p>
                         <?php
-                            $v = $socio->get_verificacion( "10-NUTRICION" );
-
-                            if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
-                                echo "<a class=\"btn btn-sm btn-outline-danger mb-3\" href=\"javascript:modal_cambia_patrocinador()\"><i class=\"fa fa-warning\"></i> Cambiar patrocinador</a>";
-                            }                      
+if( $this->data[ "usuario" ]->permiso( "41-RED" ) ){
+    echo "<a class=\"btn btn-sm btn-outline-danger mb-3\" href=\"javascript:modal_cambia_patrocinador()\"><i class=\"fa fa-warning\"></i> Cambiar patrocinador</a>";
+}                      
                         ?>
                         <p><?php echo $socio->avatar( 120 ); ?></p>
                         <p><?php echo $socio->rango( 150 ); ?></p>
@@ -79,9 +76,6 @@ if( $socio ){
                     <div class="col-lg-6">
                         <div class="card mb-4" style="overflow:hidden">
                             <table class="table table-striped mb-0">
-                                <tr><td class="text-end">TIPO DE CUENTA</td>
-                                <td class="pt-2 pb-3"><span class="badge bg-teal"><?php echo $v->tipo; ?></span> <?php echo VARIABLES[ "tipos_de_cuenta" ][ "valor" ][ $v->tipo ][ "descripcion" ]; ?></td></tr>
-
                                 <tr><td class="text-end">ID</td>
                                 <td><h4 class="mb-1"><?php echo $socio->id( null, "marine"); ?></h4></td></tr>
 
@@ -110,9 +104,6 @@ if( $socio ){
                     <div class="col-lg-6">
                         <div class="card" style="overflow:hidden">
                             <table class="table table-striped m-0">
-
-                                <tr><td class="text-end">NACIONALIDAD</td>
-                                <td class="pt-2 pb-3"><img class="rounded rounded-1" src="https://flagcdn.com/w40/<?php echo strtolower( $socio->data->ubicacion->origen ) ?>.png"> <?php echo $socio->data->ubicacion->origen; ?></td></tr>
 
                                 <tr><td class="text-end">CURP</td>
                                 <td><input name="curp" disabled class="form-control" value="<?php echo $socio->curp; ?>"></td></tr>
@@ -149,92 +140,91 @@ if( $socio ){
                     </div>           
                 </div>
 
-                <?php 
+                <div class="mb-4 d-none">
+                        <?php
+                        foreach( VARIABLES[ "puntos_verificacion" ][ "valor" ] as $codigo => $punto){
 
-                    $filas = [
-                        "PRIMERA" => [ "<th>Primer compra</th>" ],
-                        "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
-                        "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button></th>" : "<th></th>" ) ],
-                        "ULTIMA"  => [ "<th>Ultima compra</th>" ],
-                        "SALDO"   => [ "<th>Saldo a favor</th>" ],
-                        "VERIFICACION" => [ "<th>Cuenta verificada</th>" ],
-                    ];
+                                $p = $socio->verificado->puntos->{$codigo};
+    
+                                if( $p->requerido ){ 
+                                    if( $p->checked ){
+                                        echo "<span class=\"badge text-teal border border-teal\"><i class=\"fas fa-square-check text-teal\"></i> {$punto[ "nombre" ]}</span> &nbsp;";
+                                    }
+                                    else{
+                                        echo "<span class=\"badge text-red border border-red\"><i class=\"far fa-square\"></i> {$punto[ "nombre" ]}</span> &nbsp;"; 
+                                    }
+                                }
+                              
+                            } 
+                        ?>
+                </div>
 
+                <div class="card" style="overflow:hidden">
+                    <table class="table table-striped m-0">
+                        <tr>
+                            <th>Red</th>
+                            <th>Upline <a href="<?php echo base_url()."upline/10-NUTRICION/{$socio->id}"; ?>" class="btn btn-link btn-sm"><i class="fa fa-diagram-project text-mustard"></i></a></th>
+                            <th>Estatus<?php if( $this->data[ "usuario" ]->permiso( "41-RED" ) ) echo " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>"; ?></th>
+                            <th>Primer compra</th>
+                            <th>Ultima compra</th>
+                            <th>Pedido</th>
+                            <th>Entrega</th>
+                        </tr>
+                    <?php 
+                    $pats = [];
                     foreach( MODELOS as $m ){
-                        $v = $socio->get_verificacion( $m[ "codigo" ] );
-
-                        $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "ok text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
-
-                        foreach( $v->puntos as $p => $e ){
-
-                                $filas[ "VERIFICACION" ][] .= "<li class=\"text-start text-".( $e ? "teal" : "red" )."\">".VARIABLES[ "verificaciones" ][ "valor" ][ $p ][ "descripcion" ]."</li>";
-                        } 
-
-                        $filas[ "VERIFICACION" ][] .= "<ul></td>";
-
-                        if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){                            
+                        
+                        if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){
+                            
                             $db  = db_connect();
                             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
                             $socio = model( "UsuarioModel" )->find( $socio->id );    
+                           // if( "40-GASOLINAS" == $m[ "codigo" ] ) dd($socio->redes->modelos->{$m[ "codigo" ]});
                         }
-
+                        //if( "40-GASOLINAS" == $m[ "codigo" ] ) dd($socio);
                         $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre );
                         
-                        if( $p = $pedidos[ $m[ "codigo" ] ] ?? null ){
-                           
-                            $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">".date( "d-m-Y", strtotime( $socio->getPrimerCompra( $m[  "codigo" ] ) ) )."</td>";
-                            $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2\">".date( "d-m-Y", strtotime( $p[1] ) )."</p>".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</td>";
+                        $pats[ $m[ "codigo" ] ] = $pat;
+                        //  $pat->valida_modelo();
+                        echo "\n<tr><td><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><span class=\"small\">".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</span>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td><td><h5 class=\"m-0\">".$socio->id( $m[ "codigo" ] )."</h5><span class=\"small\">".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</span></td>";
+                        
+                        if( isset( $pedidos[ $m[ "codigo" ] ] ) ){
+                            $p = $pedidos[ $m[ "codigo" ] ];
+                            
+                            switch( substr( $p[2], 3 ) ){
+                                case "ALMACEN":
+                                    $entrega = "<span class=\"badge bg-lime\">ALMACEN</span> ".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "-- sin datos --" );
+                                    break;
+
+                                case "PAQUETERIA":
+                                    $domicilios = $socio->getDomicilios( false, true );
+
+                                    $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span> ".( intval( $p[3] ?? 0) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "-- sin datos --" );
+                                    break;
+
+                                case "CELULAR":
+                                    $entrega = "<span class=\"badge bg-purple\">RECARGA</span> ".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );
+                                    break;        
+
+                                default:
+                                    $entrega = "-- sin datos --";
+                                    break;                                                                
+                            }
+
+                            echo "<td>".date( "d-m-Y", strtotime( $socio->getPrimerCompra( $m[ "codigo" ] ) ) )."</td><td>".date( "d-m-Y", strtotime( $p[1] ) )."</td><td><a href=\"".base_url( "pedido/".$p[0] )."\" class=\"btn btn-sm btn-secondary\"><i class=\"fa fa-shopping-cart\"></i> {$p[0]}</a></td><td>{$entrega}</td>";
                         }
                         else{
-                            $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>";
-                            $filas[ "ULTIMA" ][] = "<td></td>";
+                            echo "<td></td><td></td><td></td><td></td>";
                         }
-
-                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><span class=\"small\">".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</span>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td>";
-
-                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\">".$socio->id( $m[ "codigo" ] )."</h5><span class=\"small\">".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</span></td>";
-
-                        $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
-
-                        $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
+                        
+                        echo "</tr>";
                     }
-                ?>
-
-                    <table class="w-100">
-                        <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <?php 
-                                foreach( MODELOS AS $m ){
-                                    echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
-                                }
-                                ?>
-                            </tr>
-                        </thead>
-                    </table>
-
-
-                <div class="card" style="overflow:hidden">
-                    <table class="table table-striped-columns m-0">
-                        <tbody>
-                            <?php 
-
-                            
-                            foreach( $filas as $m => $f ){
-                                echo "\n<tr>";
-
-                                foreach( $f as $v ){
-                                    echo $v;
-                                }
-
-                                echo "</tr>";
-                            }
-                            ?>
-                        </tbody>
+                    ?>
                     </table>
                 </div>
                 
                 <div id="edicion" class="card border-red mt-3" style="display:none">
+                    
                     <div class="card-header">
                         <h5 class="text-red mb-0">Editar datos de socio</h5>
                     </div>
