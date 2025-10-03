@@ -1059,7 +1059,7 @@ function tipo_entrega( $p, $u )
             break;
 
         case "CELULAR":
-            $entrega = "<span class=\"badge bg-purple\">RECARGA</span> ".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );
+            $entrega = "<span class=\"badge bg-purple\">RECARGA</span><br>".( strlen( $p[3] ) == 10 ? $p[3] : "-- sin datos --" );
             break;        
 
         default:

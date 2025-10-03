@@ -163,7 +163,7 @@ if( $socio ){
                     foreach( MODELOS as $m ){
                         $v = $socio->get_verificacion( $m[ "codigo" ] );
 
-                        $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "ok text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
+                        $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "check text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
 
                         foreach( $v->puntos as $p => $e ){
 
