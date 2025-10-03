@@ -901,7 +901,7 @@ function nuevo_pedido( $modelo )
             "comisionentrega" => 0,
             "entrega" => null,
             "productos" => 0,
-            "tercernivel" => [
+            "tercernivel" => [ 
                 "cantidad" => 0,
                 "socio" => 0
             ]
