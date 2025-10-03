@@ -91,4 +91,10 @@ $(document).ready(function(){
 
         load_padres( true );
     });
+
+    new DataTable('#tabla_bitacora', {
+        order: [[0, 'desc']],
+        pageLength: 50
+    });
+    
 });

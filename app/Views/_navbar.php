@@ -71,7 +71,7 @@
 
     <a data-bs-toggle="tooltip" 
 		title="Sistema Pro-Mind" class="xd-none xd-lg-block menu-opcion" 
-		href="https://promind.beneleit.mx/" target="_blank">
+		href="https://promindbeneleit.netlify.app/" target="_blank">
 		<i class="fa fa-graduation-cap"></i>
 	</a>
 

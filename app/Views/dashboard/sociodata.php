@@ -1,4 +1,7 @@
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
@@ -153,9 +156,12 @@ if( $socio ){
                     $db  = db_connect();
 
                     $filas = [
-                        "PRIMERA" => [ "<th>Primer compra</th>" ],
-                        "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
                         "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button></th>" : "<th></th>" ) ],
+                        
+                        "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
+
+                        "PRIMERA" => [ "<th>Primer compra</th>" ],
+
                         "ULTIMA"  => [ "<th>Ultima compra</th>" ],
                         "SALDO"   => [ "<th>Saldo a favor</th>" ],
                         "PTS"   => [ "<th>Puntos en el mes</th>" ],
@@ -239,21 +245,32 @@ if( $socio ){
                     }
                 ?>
 
-                    <table class="w-100 mt-4">
-                        <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <?php 
-                                foreach( MODELOS AS $m ){
-                                    echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
-                                }
-                                ?>
-                            </tr>
-                        </thead>
-                    </table>
+                <div id="edicion" class="card border-red mt-4" style="display:none">
+                    <div class="card-header">
+                        <h5 class="text-red mb-0">Editar datos de socio</h5>
+                    </div>
+                    <div class="card-body text-red" style="position:relative; padding-right:250px">
+                    <img src="<?php echo base_url(); ?>assets/img/gatos/cat1.png" style="width:250px; position:absolute; bottom:0; right:0px">
+                        <p><i class="fa fa-warning text-mustard"></i> La edición de datos es un proceso que puede no ser reversible. Por favor VERIFICA bien la información antes de procesarla. Todo cambio de datos puede afectar la interacción del socio con el sistema, por lo que esta acción estará siendo monitoreada y registrada en una bitácora de movimientos.</p>
 
+                        <button type="submit" class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-save"></i> Guardar cambios</button>
+                    </div>
+                </div>
 
-                <div class="card mt-2" style="overflow:hidden">
+                <table class="w-100 mt-4">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <?php 
+                            foreach( MODELOS AS $m ){
+                                echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                </table>
+
+                <div class="card mt-2 mb-4" style="overflow:hidden">
                     <table class="table table-striped-columns m-0">
                         <tbody>
                             <?php 
@@ -273,17 +290,41 @@ if( $socio ){
                     </table>
                 </div>
                 
-                <div id="edicion" class="card border-red mt-3" style="display:none">
-                    <div class="card-header">
-                        <h5 class="text-red mb-0">Editar datos de socio</h5>
-                    </div>
-                    <div class="card-body text-red" style="position:relative; padding-right:250px">
-                    <img src="<?php echo base_url(); ?>assets/img/gatos/cat1.png" style="width:250px; position:absolute; bottom:0; right:0px">
-                        <p><i class="fa fa-warning text-mustard"></i> La edición de datos es un proceso que puede no ser reversible. Por favor VERIFICA bien la información antes de procesarla. Todo cambio de datos puede afectar la interacción del socio con el sistema, por lo que esta acción estará siendo monitoreada y registrada en una bitácora de movimientos.</p>
+                <style>
+                    #tabla_bitacora th, #tabla_bitacora td:not(:nth-child(6)){
+                        white-space: nowrap;
+                    }
+                </style>
 
-                        <button type="submit" class="btn btn-danger" href="<?php echo base_url( "bitacora/".$socio->id ); ?>"><i class="fa fa-save"></i> Guardar cambios</button>
-                    </div>
-                </div>
+                <table class="table bg-white table-striped xnowrap" id="tabla_bitacora">
+                    <thead>
+                        <tr>
+                            <th>Id movimiento</th>
+                            <th>Código</th>
+                            <th>IP Address</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Movimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $movimientos = $socio->getBitacora();
+
+                        foreach( $movimientos as $m ){
+                            echo "\n<tr>
+                                <td>{$m->indice}</td>
+                                <td><span class=\"badge bg-marine\">{$m->codigo}</span></td>
+                                <td>{$m->ip}</td>
+                                <td>".substr( $m->fecha, 0, 10)."</td>
+                                <td>".substr( $m->fecha, 11, 8)."</td>
+                                <td>{$m->string}</td>
+                            </tr>";
+                        }
+                        
+                        ?>
+                    </tbody>
+                </table>                
             </div>
         </div>
 
@@ -475,3 +516,7 @@ if( $socio ){
 }
 ?>
     
+
+
+
+
