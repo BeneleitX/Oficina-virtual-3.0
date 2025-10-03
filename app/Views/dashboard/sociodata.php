@@ -156,7 +156,7 @@ if( $socio ){
                     $db  = db_connect();
 
                     $filas = [
-                        "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button></th>" : "<th></th>" ) ],
+                        "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
                         
                         "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
 
