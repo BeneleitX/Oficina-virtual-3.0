@@ -195,14 +195,14 @@ if( $socio ){
 
                             $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
 
-                            $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2\">".date( "d-m-Y", strtotime( $p[1] ) )."</p>".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</td>";
+                            $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2 small\"><strong>".fecha( $p[1] )."</strong></p><span class=\"small\">".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</span></td>";
                         }
                         else{
                             $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>";
                             $filas[ "ULTIMA" ][] = "<td></td>";
                         }
 
-                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td>";
+                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\" data-bs-toggle=\"tooltip\" data-bs-title=\"El patrocinador no puede tener una fecha de inicio de operaciones posterior a la del socio\"></i>" : "" )."</td>";
 
                         $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
 

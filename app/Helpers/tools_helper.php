@@ -1049,21 +1049,21 @@ function tipo_entrega( $p, $u )
 {
     switch( substr( $p[2], 3 ) ){
         case "ALMACEN":
-            $entrega = "<span class=\"badge bg-lime\">ALMACEN</span><br>".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "<span class=\"text-gray-700 small\">Sin datos de entrega</span>" );
+            $entrega = "<span class=\"badge bg-lime\">ALMACEN</span><br>".( isset( ALMACENES[ $p[3] ] ) ? ALMACENES[ $p[3] ][ "nombre" ] : "<span class=\"text-gray-700\">Sin datos de entrega</span>" );
             break;
 
         case "PAQUETERIA":
             $domicilios = $u->getDomicilios( false, true );
 
-            $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span><br>".( intval( $p[3] ?? 0) > 0 ? $domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "<span class=\"text-gray-700 small\">Sin datos de entrega</span>" );
+            $entrega = "<span class=\"badge bg-blue\">PAQUETERIA</span><br>".( intval( $p[3] ?? 0) > 0 ? "<i class=\"fa fa-location-dot text-red\"></i> ".$domicilios[ $p[3] ][ "localidad" ]." ".$domicilios[ $p[3] ][ "entidad" ] : "<span class=\"text-gray-700\">Sin datos de entrega</span>" );
             break;
 
         case "CELULAR":
-            $entrega = "<span class=\"badge bg-purple\">RECARGA</span><br>".( strlen( $p[3] ) == 10 ? $p[3] : "<span class=\"text-gray-700 small\">Sin datos de entrega</span>" );
+            $entrega = "<span class=\"badge bg-purple\">RECARGA</span><br>".( strlen( $p[3] ) == 10 ? "<i class=\"fa fa-phone text-cyan\"></i> ".$p[3] : "<span class=\"text-gray-700\">Sin datos de entrega</span>" );
             break;        
 
         default:
-            $entrega = "<span class=\"text-gray-700 small\">Sin datos de entrega</span>";
+            $entrega = "<span class=\"text-gray-700\">Sin datos de entrega</span>";
             break;                                                                
     }
 
