@@ -83,7 +83,7 @@ if( $socio ){
                         <div class="card mb-4" style="overflow:hidden">
                             <table class="table table-striped mb-0">
                                 <tr><td class="text-end">TIPO DE CUENTA</td>
-                                <td class="pt-2 pb-3"><span class="badge bg-teal"><?php echo $v->tipo; ?></span> <?php echo VARIABLES[ "tipos_de_cuenta" ][ "valor" ][ $v->tipo ][ "descripcion" ]; ?></td></tr>
+                                <td class="pt-2 pb-3"><span class="badge bg-<?php echo VARIABLES[ "tipos_de_cuenta" ][ "valor" ][ $v->tipo ][ "color" ]; ?>"><?php echo $v->tipo; ?></span> <?php echo VARIABLES[ "tipos_de_cuenta" ][ "valor" ][ $v->tipo ][ "descripcion" ]; ?></td></tr>
 
                                 <tr><td class="text-end">ID</td>
                                 <td><h4 class="mb-1"><?php echo $socio->id( null, "marine"); ?></h4></td></tr>
