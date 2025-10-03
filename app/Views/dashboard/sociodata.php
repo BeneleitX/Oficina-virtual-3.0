@@ -184,7 +184,11 @@ if( $socio ){
                         
                         if( $p = $pedidos[ $m[ "codigo" ] ] ?? null ){
                            
-                            $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">".date( "d-m-Y", strtotime( $socio->getPrimerCompra( $m[  "codigo" ] ) ) )."</td>";
+                            $pr = $socio->getPrimerCompra( $m[  "codigo" ] );
+                            $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
+
+                            $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
+
                             $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2\">".date( "d-m-Y", strtotime( $p[1] ) )."</p>".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</td>";
                         }
                         else{
@@ -192,9 +196,11 @@ if( $socio ){
                             $filas[ "ULTIMA" ][] = "<td></td>";
                         }
 
-                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><span class=\"small\">".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</span>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td>";
+                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\"></i>" : "" )."</td>";
 
-                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\">".$socio->id( $m[ "codigo" ] )."</h5><span class=\"small\">".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</span></td>";
+                        $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
+
+                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong></p></td>";
 
                         $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
 
@@ -211,7 +217,7 @@ if( $socio ){
 
                         foreach( $promos as $p ){
                             $p[ "settings" ] = json_decode( $p[ "settings" ], true );
-                            
+
                             if( isset( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
                                 $k++;
 
