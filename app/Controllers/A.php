@@ -8,6 +8,6 @@ class A extends BaseController
 
         $request = base64_decode( urldecode( $u ) );
         $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
-        echo "<p>Landing page (".$socio->nombre(2).")</p><ul><li>Registro directo</li><li>Tienda en línea</li></ul>";
+        echo "<p>TEST Landing page (".$socio->nombre(2).")</p><ul><li>RLink para registro directo</li><li>Link para tienda en línea directa</li></ul>";
     }
 }
