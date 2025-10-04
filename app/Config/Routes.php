@@ -35,6 +35,8 @@ $routes->get( "no_internet",                        "Tools::no_internet" );
 $routes->get( "no_permiso",                         "Tools::no_permiso" );
 $routes->get( "compresion/(:any)/(:num)/(:num)",    "Tools::compresion/$1/$2/$3" );
 
+$routes->get( "landing/(:any)",                     "A::landing/$1" );
+
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                             "Sesion::logout" );

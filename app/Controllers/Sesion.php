@@ -559,19 +559,29 @@ class Sesion extends BaseController
 
         if( $pass == $usuario->password_original() && $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
 
-            // BITACORA Confirma solicitud de retiro
-            bitacora( 100, $this->data[ "usuario" ]->id, [ 
-                "socio"  => $usuario->id,
-                "retiro" => $retiro
-            ] );
-                
-            $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
-            model( "RetiroModel" )->save( $retiro );
+            if( $retiro[ "fechas" ][ "mes" ] == date( "Ym" ) ){
 
-            return redirect()->to( "capital" )->with( "msg", [ 
-                "clase" => "success", 
-                "icono" => "check", 
-                "texto" => "Se confirmó la solicitud de retiro" ] ); 
+
+                // BITACORA Confirma solicitud de retiro
+                bitacora( 100, $this->data[ "usuario" ]->id, [ 
+                    "socio"  => $usuario->id,
+                    "retiro" => $retiro
+                ] );
+                    
+                $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
+                model( "RetiroModel" )->save( $retiro );
+
+                return redirect()->to( "capital" )->with( "msg", [ 
+                    "clase" => "success", 
+                    "icono" => "check", 
+                    "texto" => "Se confirmó la solicitud de retiro" ] ); 
+            }
+            else{
+                return redirect()->to( "capital" )->with( "msg", [ 
+                    "clase" => "danger", 
+                    "icono" => "warning", 
+                    "texto" => "El retiro no corresponde al mes actual" ] ); 
+            }
         }
 
         $this->session->set( "usuario", $usuario->id );
