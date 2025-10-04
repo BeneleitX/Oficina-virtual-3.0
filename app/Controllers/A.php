@@ -5,8 +5,9 @@ class A extends BaseController
 {
     public function Landing( $u ){
 
-        dd("xx", $u, $request = base64_decode( urldecode( $u ) ) );
+
+        $request = base64_decode( urldecode( $u ) );
         $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
-        echo "<p>Landing de ".$socio->nombre(2)."</p>";
+        echo "<p>Landing page (".$socio->nombre(2).")</p><ul><li>Registro directo</li><li>Tienda en línea</li></ul>";
     }
 }
