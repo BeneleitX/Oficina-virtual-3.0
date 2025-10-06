@@ -138,7 +138,7 @@ function referencia( $pedido, $formato = true, $cadena = false, $indice_modelo =
     $p3 = str_pad( $p2, 9, "0", STR_PAD_LEFT );
 
     if( $formato ){
-        return "<span class=\"d-none\">{$p3} </span><span style=\"padding-right: 0.45em; border-radius: 0.375rem 0 0 0.375rem;\" class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\"> {$p1}</span><span style=\"padding-left: 0.45em; border-radius: 0 0.375rem 0.375rem 0;\" class=\"badge bg-marine\">{$p2}</span>";
+        return "<span class=\"d-none\">{$p3} </span> <span style=\"padding-right: 0.45em; border-radius: 0.375rem 0 0 0.375rem;\" class=\"badge bg-{$modelo[ "settings" ][ "color" ]}\"> {$p1}</span><span style=\"padding-left: 0.45em; border-radius: 0 0.375rem 0.375rem 0;\" class=\"badge bg-marine\">{$p2}</span>";
     } 
     
     return $p1."-".$p2;
