@@ -439,28 +439,56 @@ function check_biex( $pedido, $usuario, $dia_limite = 25 )
     $dia   = date( "d", strtotime( $fecha ) );
 
     // si el pedido está pagado y tiene regalo biex y la fecha de pago es despues del 25
-    if( 
-        $pedido[ "modelo_codigo" ] == "10-NUTRICION" &&
-        substr( $pedido[ "estatus_codigo" ], 0, 3 ) > 400 && 
-        $pedido[ "PTS" ][ "230-REGALOBIEX" ] > 0 &&
-        $dia > $dia_limite
-    ){    
+    if( isset( $pedido[ "PTS" ][ "230-REGALOBIEX" ] ) ){
+        if( 
+            $pedido[ "modelo_codigo" ] == "10-NUTRICION" &&
+            substr( $pedido[ "estatus_codigo" ], 0, 3 ) > 400 && 
+            $pedido[ "PTS" ][ "230-REGALOBIEX" ] > 0 &&
+            $dia > $dia_limite
+        ){    
 
-        // Si el socio se registró antes del 25
-        // quitar el regalo biex
-        if( date( "Y-m-d", strtotime( $usuario->historial->registro ) ) < "{$year}-{$mes}-".( $dia_limite + 1 ) ){
+            // Si el socio se registró antes del 25
+            // quitar el regalo biex
+            if( date( "Y-m-d", strtotime( $usuario->historial->registro ) ) < "{$year}-{$mes}-".( $dia_limite + 1 ) ){
 
-            $db  = db_connect(); 
+                $db  = db_connect(); 
 
-            $sql = "UPDATE t_pedidos p
-                    set p.data = json_set( p.data, '$.productos', p.data->'$.productos' - p.PTS->'$.\"230-REGALOBIEX\"' ),
-                    p.PTS = json_set( p.PTS, '$.\"230-REGALOBIEX\"', 0 ),
-                    p.promociones = json_set( p.promociones, '$.\"230-REGALOBIEX\".productos', json_object() )
-                    where p.id = {$pedido[ "id" ]}";
+                $sql = "UPDATE t_pedidos p
+                        set p.data = json_set( p.data, '$.productos', p.data->'$.productos' - p.PTS->'$.\"230-REGALOBIEX\"' ),
+                        p.PTS = json_set( p.PTS, '$.\"230-REGALOBIEX\"', 0 ),
+                        p.promociones = json_set( p.promociones, '$.\"230-REGALOBIEX\".productos', json_object() )
+                        where p.id = {$pedido[ "id" ]}";
 
-            $db->query( $sql );
+                $db->query( $sql );
+            }
         }
     }
+    // si el pedido está pagado y tiene regalo biex y la fecha de pago es despues del 25
+    if( isset( $pedido[ "PTS" ][ "024-REGALO" ] ) ){
+        if( 
+            $pedido[ "modelo_codigo" ] == "10-NUTRICION" &&
+            substr( $pedido[ "estatus_codigo" ], 0, 3 ) > 400 && 
+            $pedido[ "PTS" ][ "024-REGALO" ] > 0 &&
+            $dia > $dia_limite
+        ){    
+
+            // Si el socio se registró antes del 25
+            // quitar el regalo biex
+            if( date( "Y-m-d", strtotime( $usuario->historial->registro ) ) < "{$year}-{$mes}-".( $dia_limite + 1 ) ){
+
+                $db  = db_connect(); 
+
+                $sql = "UPDATE t_pedidos p
+                        set p.data = json_set( p.data, '$.productos', p.data->'$.productos' - p.PTS->'$.\"024-REGALO\"' ),
+                        p.PTS = json_set( p.PTS, '$.\"024-REGALO\"', 0 ),
+                        p.promociones = json_set( p.promociones, '$.\"024-REGALO\".productos', json_object() )
+                        where p.id = {$pedido[ "id" ]}";
+
+                $db->query( $sql );
+            }
+        }
+    }
+    
 }
 
 
