@@ -621,6 +621,14 @@ class Admin extends BaseController
     
     public function guarda_verificaciones()
     {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN")
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+        
+        /**********************************/
+                
         $check = $this->request->getPost( "check" );
 
         foreach( MODELOS as $modelo ){
@@ -656,5 +664,10 @@ class Admin extends BaseController
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Puntos de verificación actualizados"] );  
+    }
+
+
+    public function estatus_test(){
+        echo template( "admin/estatus_test", $this->data );
     }
 }

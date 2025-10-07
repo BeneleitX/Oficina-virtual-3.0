@@ -38,6 +38,8 @@ $routes->get( "compresion/(:any)/(:num)/(:num)",    "Tools::compresion/$1/$2/$3"
 $routes->get( "landing/(:any)",                     "A::landing/$1" );
 $routes->get( "landing/test/(:num)",                "A::landing/$1" );
 
+    $routes->get( "estatus/test",                       "Admin::estatus_test" ); 
+
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                             "Sesion::logout" );
