@@ -206,7 +206,7 @@ if( $socio ){
 
                         $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
 
-                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong></p></td>";
+                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong></p></td>";
 
                         $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
 
