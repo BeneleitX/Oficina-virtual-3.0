@@ -111,7 +111,8 @@
 
 			foreach( PROMOCIONES as $p ){
               
-                if( $p[ "estatus_codigo" ] == "201-ACTIVO" || isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ){
+                if( $p[ "estatus_codigo" ] == "201-ACTIVO" || ( $pagado && isset( $pedido[ "promociones" ][ $p[ "codigo" ] ] ) ) ){
+
                     $cant_productos = isset( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) ? sizeof( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] ) : 0;
 
                     $evento  = "false";
@@ -208,6 +209,8 @@
             $celulares  = $socio->getCelulares();
 			?>
 		</div>
+
+        <p id="shoploader" class="text-center m-0 p-3"><i style="zoom:4" class="fa fa-circle-notch fa-spin"></i></p>
 	</div>
 
     <div class="col-lg-6">
@@ -242,8 +245,14 @@
 
                         $metodos = [ "almacen", "efectivo", "recarga" ];
 
-                        if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado ) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
+                        if( (  $me[ "estatus_codigo" ] == "201-ACTIVO" || $pagado) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
                             echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")."><label class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn btn-outline-secondary col-12 mb-1\" for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
+                        }
+
+                        // envio express gratis con 9 puntos o mas
+
+                        elseif( ( $me[ "codigo" ] == "12-EXPRESS" ) && in_Array( $me[ "settings" ][ "tipocosto" ], $metodos ) ){
+                            echo "\n<input type=\"radio\" class=\"".( ( $pagado || $bloqueado || $cancelado ) && $me[ "codigo" ] != $pedido[ "metodoentrega_codigo" ] ? "d-none" : "" )." btn-check\" id=\"me-{$me[ "codigo" ]}\" autocomplete=\"off\" name=\"metodosentrega\" value=\"{$me[ "codigo" ]}\" ".( $me[ "codigo" ] == $pedido[ "metodoentrega_codigo" ] ? "checked" : "")." ><label class=\"d-none btn btn-outline-primary col-12 mb-1\" readonly for=\"me-{$me[ "codigo" ]}\">{$me[ "nombre" ]}</label>";
                         }
                     }
                     /* }
@@ -1486,6 +1495,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 </div>
 
 <?php 
+
 $pedido[ "no_stock" ] = false;
 $pedido[ "suma" ] = new \stdClass();
 $prods = [];
@@ -1496,6 +1506,9 @@ foreach( $productos as $p ){
 ?>
 
 <script>
+
+    
+
     <?php echo "// ".substr( $socio->historial->registro, 0, 10 )." - ".date( "Y-m-25" ); ?>
 
     var modelo 			= '<?php echo $modelo; ?>',
@@ -1521,7 +1534,12 @@ foreach( $productos as $p ){
         hoy = new Date(),
         update_productos = <?php echo $update_productos; ?>;
 
+    const f = new Date();
+    const mes_actual = f.getYear() + '' + f.getMonth();
+
     if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
+
+
 
 </script>
 

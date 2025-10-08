@@ -119,7 +119,7 @@ function cambia_cantidad( promocion, producto ){
         disponible       = eval( cat_promociones[ promocion ].formulas.disponible ),
         campo = $( '.card[promocion=' + promocion + '] table[productos] > tr[producto=' + producto + '] input.cantidad' );
     
-    console.log( 'disponible ' + promocion, disponible );
+    // console.log( 'disponible ' + promocion, disponible );
     
         // revisar máximos
     if( disponible > 0){
@@ -178,7 +178,7 @@ function update_costos(){
                     orden    = parseInt( $( this ).attr( 'orden' ) );
 
                 cuenta_productos += parseInt( cantidad );
-                console.log( promocion, producto, cantidad)
+                //console.log( promocion, producto, cantidad)
                 if( cantidad ){
                     pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
                         "cantidad"    : cantidad,
@@ -257,7 +257,7 @@ function update_pedido( flag = null ){
     });
 
     $.each( pedido.PTS, function( promocion, puntos ){
-        pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ meses[0] ] ?? 0 );
+        pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ mes_actual ] ?? 0 );
     });
 
     $( '.card[promocion]' ).each( function(){
@@ -280,7 +280,6 @@ function update_pedido( flag = null ){
             'estatus' : tag.attr( 'estatus' ) ?? 'false',
             'activo' : 'false'
         };
-
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
         // console.log( 'activacion: ' + promocion, formula, pedido.suma[ promocion] );
@@ -455,15 +454,63 @@ function update_pedido( flag = null ){
 
     if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' ){
         $( '.metodosentrega, .me_respuesta' ).hide();
-
-        $( '#no_costo' ).show();
+        if( pedido.data.productos > 0 ) $( '#no_costo' ).show();
     }
     else{
-        $( '.metodosentrega, .me_respuesta' ).show();
+        $( '.metodosentrega' ).show();
+        if( pedido.metodoentrega_codigo != null ) $( '.me_respuesta' ).show();
         $( '#no_costo' ).hide();
     }
 
+    // ***************************************
+
+    // Costo de envío segun calificación del socio
+
+    es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'PAQUETERIA' : false;
+    puntos = Math.floor( pedido.suma[ "010-DISTRIBUIDOR" ] / 3 );
+    
+   
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
+
+    if( puntos < 2 ){
+        $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
+        $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
+    }
+
+    else if( puntos == 2 ){
+        pedido.data.comisionentrega = 0;
+
+        $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
+        $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
+
+        if( pedido.metodoentrega_codigo == '10-PAQUETERIA' ||pedido.metodoentrega_codigo == '12-EXPRESS' ){
+            pedido.metodoentrega_codigo = '10-PAQUETERIA';    
+
+
+            $( '#me-12-EXPRESS' ).prop( 'checked', false );
+            $( '#me-10-PAQUETERIA' ).prop( 'checked', true );
+        }
+    }
+
+    else if( puntos > 2 ){
+        pedido.data.comisionentrega = 0;
+
+        $( '[for=me-10-PAQUETERIA]' ).addClass( 'd-none' );
+        $( '[for=me-12-EXPRESS]' ).removeClass( 'd-none' );
+
+        if( pedido.metodoentrega_codigo == '12-EXPRESS' || pedido.metodoentrega_codigo == '10-PAQUETERIA' ){
+            pedido.metodoentrega_codigo = '12-EXPRESS';  
+            
+            $( '#me-12-EXPRESS' ).prop( 'checked', true );
+            $( '#me-10-PAQUETERIA' ).prop( 'checked', false );
+
+        }
+    }
+
+    console.log( puntos, pedido.metodoentrega_codigo, pedido.data.costoxbulto );
+
+    // ***************************************
+
 
     $( '[total_entrega]' ).attr( 'total_entrega', pedido.data.comisionentrega );
     $( '.me_costo' ).html( parseInt( pedido.data.comisionentrega ) ? 'Utilizar este método de entrega, genera un costo de ' + Moneda.format( pedido.data.comisionentrega ) : 'Este método de entrega no genera costo' ).show();
@@ -557,7 +604,7 @@ function update_pedido( flag = null ){
         
             $errores = '';
         
-            
+        /*      
         console.log(
             ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
             !pendientes,
@@ -566,6 +613,7 @@ function update_pedido( flag = null ){
             ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ),
             ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen )
         );  
+        */
 
         if( !permitepagos ){
             $( this ).prop( 'disabled', true );
@@ -627,6 +675,8 @@ function update_pedido( flag = null ){
     });
 
     // console.log( flag );
+
+    $( '#shoploader' ).hide();
 }
 
 
@@ -767,6 +817,7 @@ var pendientes = 0;
 
 $(document).ready(function()
 { 
+
     $( '.variante_productos' ).on( 'change', function(){
         update_variantes();
     }).on( 'keyup', function(){
@@ -831,7 +882,9 @@ $(document).ready(function()
             $( this ).find( 'input' ).prop( 'checked', false );
         });
 
-        $( '.me_respuesta' ).hide();
+        $( '[name=metodosentrega]:checked' ).prop( 'checked', false );
+        $( '[name=metodosentrega]' ).change();
+        $( '.me_formulario, .me_costo, .me_respuesta' ).hide();
         
 		update_pedido( "borra todo" );
 	});
@@ -865,14 +918,17 @@ $(document).ready(function()
         var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() != '' ? $( '[name=metodosentrega]:checked' ).val() : null,
             entrega = $( 'div[domicilio_id]' ).attr( 'domicilio_id' );
 
+        if( metodoentrega_activo == undefined) metodoentrega_activo = null;
+
         pedido.data.costoxbulto = 0;
         entrega = null;
+
+        $( '.me_formulario, .me_costo, .me_respuesta' ).hide();
 
         if( metodoentrega_activo != null && parseInt( pedido.data.peso ) > 0 ) {
             pedido.data.costoxbulto = parseFloat( metodosentrega[ metodoentrega_activo ].settings.costo, 2 );
 
             $( '.me_descripcion' ).html( metodosentrega[ metodoentrega_activo ].settings.descripcion );
-            $( '.me_formulario, .me_costo' ).hide();
             $( '.me_respuesta' ).show();
 
             if( metodoentrega_activo.substring( 0, 2 ) == '00' ){

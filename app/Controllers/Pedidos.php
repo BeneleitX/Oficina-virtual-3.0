@@ -201,7 +201,7 @@ class Pedidos extends BaseController
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
             load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
-            load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' ) )");
+            load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
 
