@@ -1487,6 +1487,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
 <?php 
 $pedido[ "no_stock" ] = false;
+$pedido[ "suma" ] = new \stdClass();
 $prods = [];
 foreach( $productos as $p ){
     $prods[ $p->codigo ] = $p;

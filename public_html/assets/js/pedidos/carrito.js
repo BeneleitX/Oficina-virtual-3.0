@@ -118,8 +118,10 @@ function cambia_cantidad( promocion, producto ){
     var cuenta_productos = 0,
         disponible       = eval( cat_promociones[ promocion ].formulas.disponible ),
         campo = $( '.card[promocion=' + promocion + '] table[productos] > tr[producto=' + producto + '] input.cantidad' );
-
-    // revisar máximos
+    
+    console.log( 'disponible ' + promocion, disponible );
+    
+        // revisar máximos
     if( disponible > 0){
         $( '.card[promocion=' + promocion + '] table[productos] > tr[producto] input.cantidad' ).each( function(){
             cuenta_productos += parseInt( $( this ).val() );
@@ -251,6 +253,14 @@ function update_pedido( flag = null ){
         total_productos_pedido = 0;
 
     $( '.card[promocion]' ).each( function(){
+        update_puntos( $( this ).attr( 'promocion' ) );
+    });
+
+    $.each( pedido.PTS, function( promocion, puntos ){
+        pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ meses[0] ] ?? 0 );
+    });
+
+    $( '.card[promocion]' ).each( function(){
 
         var tag = $( this ), 
             cuenta_productos   = 0,
@@ -260,7 +270,8 @@ function update_pedido( flag = null ){
             disponible         = 0;
 
         disponible = eval( cat_promociones[ promocion ].formulas.disponible );
-
+        console.log( 'disponible ' + promocion, disponible );
+        
         pedido.promociones[ promocion ] = {
             'productos'    : {},
             'precio'       : 0,
@@ -269,9 +280,10 @@ function update_pedido( flag = null ){
             'estatus' : tag.attr( 'estatus' ) ?? 'false',
             'activo' : 'false'
         };
-        
+
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
+        console.log( 'activacion: ' + promocion, formula, pedido.suma[ promocion] );
 
         if( formula ){
             $( '.card[promocion=' + promocion + ']' ).show();
