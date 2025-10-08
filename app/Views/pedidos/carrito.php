@@ -144,7 +144,7 @@
                                         <div class=\"col-md-5\"><h5 class=\"text-white m-0\">{$p[ "settings" ][ "nombre" ]}</h5></div>
                                         <div class=\"col-md-7\">
                                             <small conteo>{$cant_productos} productos</small>
-                                            ".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span xclass=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."
+                                            ".( $pagado || $bloqueado || $cancelado ? "" : "<button onclick=\"show_modal_productos('{$p[ "codigo" ]}')\" class=\"btn btn-sm btn-light float-end agrega_productos text-teal ".( $p[ "settings" ][ "forced" ] == "true" ? "d-none" : "" )."\"><i class=\"fa fa-plus\"></i><span xclass=\"d-none d-lg-inline\"> Agregar productos</span></button>" )."
                                         </div>
                                     </div>
                                 </div>

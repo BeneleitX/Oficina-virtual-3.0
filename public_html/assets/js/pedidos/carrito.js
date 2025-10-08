@@ -270,7 +270,7 @@ function update_pedido( flag = null ){
             disponible         = 0;
 
         disponible = eval( cat_promociones[ promocion ].formulas.disponible );
-        console.log( 'disponible ' + promocion, disponible );
+        // console.log( 'disponible ' + promocion, disponible );
         
         pedido.promociones[ promocion ] = {
             'productos'    : {},
@@ -283,7 +283,7 @@ function update_pedido( flag = null ){
 
 
         formula = eval( cat_promociones[ promocion ].formulas.activacion );
-        console.log( 'activacion: ' + promocion, formula, pedido.suma[ promocion] );
+        // console.log( 'activacion: ' + promocion, formula, pedido.suma[ promocion] );
 
         if( formula ){
             $( '.card[promocion=' + promocion + ']' ).show();
@@ -361,8 +361,13 @@ function update_pedido( flag = null ){
         
         $( this ).find( '.total_promo' ).html( Moneda.format( total_promo ) );
 
-        if( !cuenta_productos){
+        if( cuenta_productos){
+            $( this ).find( 'table[productos], .card-footer' ).show();
+        }
+        else{
             $( this ).find( 'table[productos]' ).html( '<tr><td class="text-center text-gray-400"><i class="fa fa-cart-plus"></i> No hay productos aquí</td></tr>' );
+
+            $( this ).find( 'table[productos], .card-footer' ).hide();
         }
         
         // Si aun hay slots disponibles
@@ -374,10 +379,10 @@ function update_pedido( flag = null ){
                 pendientes = 1;
 
                 // console.log(promocion);
-                $( '.card[promocion=' + promocion + '] .agrega_productos' ).removeClass( 'btn-light' ).addClass( 'btn-warning' );
+                $( '.card[promocion=' + promocion + '] .agrega_productos' ).removeClass( 'btn-light text-teal' ).addClass( 'btn-danger text-white' );
             }
             else{
-                $( '.card[promocion=' + promocion + '] .agrega_productos' ).addClass( 'btn-light' ).removeClass( 'btn-warning' );
+                $( '.card[promocion=' + promocion + '] .agrega_productos' ).addClass( 'btn-light text-teal' ).removeClass( 'btn-danger text-white' );
             }
         }
 
