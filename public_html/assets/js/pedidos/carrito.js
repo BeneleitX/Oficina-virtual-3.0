@@ -507,7 +507,7 @@ function update_pedido( flag = null ){
         }
     }
 
-    console.log( puntos, pedido.metodoentrega_codigo, pedido.data.costoxbulto );
+    // console.log( puntos, pedido.metodoentrega_codigo, pedido.data.costoxbulto );
 
     // ***************************************
 
@@ -675,8 +675,6 @@ function update_pedido( flag = null ){
     });
 
     // console.log( flag );
-
-    $( '#shoploader' ).hide();
 }
 
 
@@ -1161,4 +1159,6 @@ $(document).ready(function()
     if( update_productos ){
         update_costos();
     }    
+
+    $( '#shoploader' ).hide();
 });
