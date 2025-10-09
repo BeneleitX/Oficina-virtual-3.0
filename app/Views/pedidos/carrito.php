@@ -1534,8 +1534,7 @@ foreach( $productos as $p ){
         hoy = new Date(),
         update_productos = <?php echo $update_productos; ?>;
 
-    const f = new Date();
-    const mes_actual = f.getYear() + '' + f.getMonth();
+    const mes_actual = <?php echo date( "Ym" ); ?>;
 
     if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
 
