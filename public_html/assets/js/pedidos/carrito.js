@@ -259,7 +259,7 @@ function update_pedido( flag = null ){
 
     $.each( pedido.PTS, function( promocion, puntos ){
 
-        if( usuario.PTS[ promocion ] === undefined ){
+        if( usuario.PTS[ promocion ] === undefined || ( cat_promociones[ promocion ] === undefined && !pagado ) ){
             pedido.PTS[ promocion ] = 0;
         }
         else{
