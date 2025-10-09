@@ -259,11 +259,7 @@ function update_pedido( flag = null ){
 
     $.each( pedido.PTS, function( promocion, puntos ){
 
-        if( usuario.PTS[ promocion ] === undefined ){
-            console.log( 'problema con ' + promocion);
-        }
-        else{
-            console.log( 'ok con ' + promocion);
+        if( usuario.PTS[ promocion ] !== undefined ){
             pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ mes_actual ] ?? 0 );
         }
     });
