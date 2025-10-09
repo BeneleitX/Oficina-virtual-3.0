@@ -362,7 +362,7 @@
                 </div>
 
 
-                <div class="me_formulario" mp="domicilio" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "PAQUETERIA" ) echo "style=\"display:none\""; ?>>
+                <div class="me_formulario" mp="domicilio" <?php if( !in_array( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ), [ "PAQUETERIA", "EXPRESS" ] ) ) echo "style=\"display:none\""; ?>>
                     <?php 
                  
                     $dom = $usuario->data->domicilio ?? 0;
