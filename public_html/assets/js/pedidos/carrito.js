@@ -236,6 +236,7 @@ function update_costos(){
 
 
 function update_pedido( flag = null ){
+    
     if( pedido.estatus_codigo != '250-EN-PROCESO' ){
       // return;
     }
