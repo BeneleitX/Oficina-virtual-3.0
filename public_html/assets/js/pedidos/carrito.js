@@ -259,6 +259,7 @@ function update_pedido( flag = null ){
 
     $.each( pedido.PTS, function( promocion, puntos ){
 
+        // si se bsucan puntos de una promo descontinuada, evitar el chequeo
         if( usuario.PTS[ promocion ] === undefined || ( cat_promociones[ promocion ] === undefined && !pagado ) ){
             pedido.PTS[ promocion ] = 0;
         }
