@@ -236,7 +236,7 @@ function update_costos(){
 
 
 function update_pedido( flag = null ){
-    
+
     if( pedido.estatus_codigo != '250-EN-PROCESO' ){
       // return;
     }
@@ -258,7 +258,12 @@ function update_pedido( flag = null ){
     });
 
     $.each( pedido.PTS, function( promocion, puntos ){
-        pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ mes_actual ] ?? 0 );
+
+        if( usuario.PTS[ promocion ] === undefined ){
+            console.log( 'problema con ' + promocion);
+        }
+        else
+            pedido.suma[ promocion ] = puntos + ( usuario.PTS[ promocion ][ 'meses' ][ mes_actual ] ?? 0 );
     });
 
     $( '.card[promocion]' ).each( function(){
