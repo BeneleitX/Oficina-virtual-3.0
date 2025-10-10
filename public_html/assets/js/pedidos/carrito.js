@@ -87,7 +87,7 @@ function revisa_stock(){
 }
 
 
-function update_puntos( promocion ){
+function update_puntos( promocion, pesaje = false ){
     
     pedido.PTS[ promocion ] = 0;
 
@@ -106,9 +106,11 @@ function update_puntos( promocion ){
 
                 pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
 
-                pedido.data.peso += ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
-                console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
-                pedido.data.productos += parseInt( cantidad );
+                if( pesaje ){
+                    pedido.data.peso += ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
+                    pedido.data.productos += parseInt( cantidad );
+                    console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
+                }
             });
         }
     }
@@ -255,7 +257,7 @@ function update_pedido( flag = null ){
         total_productos_pedido = 0;
 
     $( '.card[promocion]' ).each( function(){
-        update_puntos( $( this ).attr( 'promocion' ) );
+        update_puntos( $( this ).attr( 'promocion' ), false );
     });
 
     $.each( pedido.PTS, function( promocion, puntos ){
@@ -356,7 +358,7 @@ function update_pedido( flag = null ){
             });
         }
 
-        update_puntos( promocion );
+        update_puntos( promocion, true );
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
             // pedido.PTS[ promocion ] = cuenta_productos ? 1 : 0;
