@@ -525,6 +525,7 @@ function update_pedido( flag = null ){
 
     porcentaje1 = 100 * pedido.data.peso / pedido.data.pesoxbulto;
     porcentaje2 = 100 * pedido.data.productos / pedido.data.productosxbulto;
+    console.log( pedido.data.peso, pedido.data.pesoxbulto, porcentaje1, pedido.data.productos, pedido.data.productosxbulto, porcentaje2, bultos1, bultos2 );
 
     if( 0 && porcentaje2 > porcentaje1 ){
         $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) + ( packs ? '<small><br>Envío gratis <span class="badge bg-light-blue">CHIPS</span> x' + packs + '</small>' : '' ) ); 
