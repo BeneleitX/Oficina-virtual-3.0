@@ -115,6 +115,8 @@ class Dashboard extends BaseController
         $request = base64_decode( urldecode( $request ) );
         $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
+        $socio->update_verificacion();
+        
         $db = db_connect();
         foreach( MODELOS as $m ){
 
@@ -127,16 +129,18 @@ class Dashboard extends BaseController
             
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
-
         
         foreach( MODELOS as $m ){
-            $db->query( "do f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+            $sql = "select f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );";
+            $db->query( $sql );
+
+            echo $sql."<br>";
         }
         
         $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
         $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
-        $socio->update_verificacion();
+        
         
         // BITACORA Forzar update
         bitacora( 62, $this->data[ "usuario" ]->id, [ 
@@ -144,7 +148,8 @@ class Dashboard extends BaseController
         ] );
 
         $ruta = urlencode( base64_encode( $socio->password_original() ) );
-        return redirect()->to( "sociodata/{$ruta}" );
+
+      //  return redirect()->to( "sociodata/{$ruta}" );
     }
 
 
