@@ -93,7 +93,7 @@ class Dashboard extends BaseController
         $this->data[ "pedidos" ] = json_decode( $db->query( $sql )->getRow()->data, 1 );
         
         echo template( "dashboard/sociodata", $this->data );
-    }
+    } 
 
 
     /**
@@ -116,7 +116,7 @@ class Dashboard extends BaseController
         $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
         $socio->update_verificacion();
-        
+
         $db = db_connect();
         foreach( MODELOS as $m ){
 
@@ -149,7 +149,7 @@ class Dashboard extends BaseController
 
         $ruta = urlencode( base64_encode( $socio->password_original() ) );
 
-      //  return redirect()->to( "sociodata/{$ruta}" );
+        return redirect()->to( "sociodata/{$ruta}" );
     }
 
 
