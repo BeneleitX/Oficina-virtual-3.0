@@ -132,6 +132,7 @@ class Almacenes extends BaseController
 
         $this->data[ "pedido" ][ "productos" ] = [];
         foreach( $this->data[ "pedido" ][ "promociones" ] as $promo ){
+            if( isset( $promo[ "productos" ] ) )
             foreach( $promo[ "productos" ] as $codigo => $producto ){
                 $productos[] = $codigo;
                 $this->data[ "pedido" ][ "productos" ][ $codigo ] = $producto[ "cantidad" ] + ( $this->data[ "pedido" ][ "productos" ][ $codigo ] ?? 0 );
