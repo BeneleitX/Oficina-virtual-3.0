@@ -192,12 +192,16 @@ if( $socio ){
                            
                             $pr = $socio->getPrimerCompra( $m[  "codigo" ] );
 
-                            if(!$pr) dd($socio, $pr, $m[ "codigo"], $p);
+                            if($pr){
+                                $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
 
-                            $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
+                                $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
 
-                            $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
-
+                            }
+                            else{
+                                $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>"; 
+                            }
+                       
                             $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2 small\"><strong>".fecha( $p[1] )."</strong></p><span class=\"small\">".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</span></td>";
                         }
                         else{
