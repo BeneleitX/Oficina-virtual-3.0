@@ -191,6 +191,9 @@ if( $socio ){
                         if( $p = $pedidos[ $m[ "codigo" ] ] ?? null ){
                            
                             $pr = $socio->getPrimerCompra( $m[  "codigo" ] );
+
+                            if(!$pr) dd($socio, $pr, $m[ "codigo"], $p);
+
                             $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
 
                             $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";

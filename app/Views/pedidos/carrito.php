@@ -828,11 +828,19 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
         foreach( $comisiones as $c ){
             $u = $c->usuario_id ? model( "UsuarioModel" )->find( $c->usuario_id ) : "SIN RECEPTOR";
 
+            $estrellas = null;
+
+            if( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ){
+                for( $a = 0; $a < $c->cantidad; $a++ ){
+                    $estrellas .= "<i class=\"fa fa-star text-amber\"></i>";
+                }
+            }
+            
             echo "\n<tr class=\"".( substr( $c->estatus_codigo, 0, 3 ) < 200 ? "opaco" : "" )."\">
                         <td class=\"text-center\"><span class=\"badge bg-marine\">{$c->id}</span></td>
                         <td>".ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "titulo" ]."</td>
                         <td><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge  border border-red text-red\">Compresion</span>" : "")."</td>
-                        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ] == "estrellas" ? ( $c->cantidad == 1 ? "<i class=\"fa fa-star text-amber\"></i>" : "<i class=\"fa fa-star text-amber\"></i><i class=\"fa fa-star text-amber\"></i>") : number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promo".( $c->cantidad > 1 ? "s" : "" ) ) )."</td>
+                        <td class=\"text-end\">".( in_array( ESQUEMAS[ $c->esquema_codigo ][ "settings" ][ "reparto" ], [ "efectivo", "porcentaje" ] ) ? "$".number_format( $c->cantidad, 2 ) : " ".( $estrellas ?? number_format( $c->cantidad )." <i class=\"fa fa-tag text-pink\"></i>Promo".( $c->cantidad > 1 ? "s" : "" ) ) )."</td>
                         <td>".estatus( $c->estatus_codigo )." ".( $c->periodo_codigo ? "<span class=\"badge bg-marine\">".periodo( $c->periodo_codigo )."</span>" : "")."</td>
                         <td>".( isset($u->id) ? $u->avatar(25)." ".$u->id( $modelo )." ".$u->nombre( 2 ) : $u )."</td>
                     </tr>"; 
