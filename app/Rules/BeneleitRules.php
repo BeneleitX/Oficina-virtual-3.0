@@ -4,6 +4,8 @@ namespace App\Rules;
 
 class BeneleitRules
 {
+    public $db;
+    
     public function __construct()
     {
         $this->db = db_connect();
