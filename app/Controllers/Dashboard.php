@@ -1198,9 +1198,17 @@ class Dashboard extends BaseController
         $pad    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
         $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->patrocinador );
 
-        $fah = $socio->fecha_arranque_hijos( $modelo );
+        $hij = $socio->fecha_arranque_hijos( $modelo );
         $gpc = $socio->getPrimerCompra( $modelo );
         $arr = $socio->fecha_arranque( $modelo );
+        $pad = $pad->historial->modelos->{ $modelo }->reset;
+        $pat = $pat->historial->modelos->{ $modelo }->reset;
+        $aa  = $socio->historial->modelos->{ $modelo }->reset;
+
+        $ico_pad = " <i class=\"fa fa-".( $pad > $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
+        $ico_pat = " <i class=\"fa fa-".( $pat > $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
+        $ico_hij = " <i class=\"fa fa-".( $hij >= $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
+
         echo "
         
             <h4 class=\"my-1 text-center\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h4><p class=\"small\">".$socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 )."</p>
@@ -1213,7 +1221,7 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Arranque actual</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->modelos->{ $modelo }->reset )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $aa )."</td>
                 </tr>
 
                 <tr>
@@ -1228,17 +1236,17 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Arranque padre</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $pad->historial->modelos->{ $modelo }->reset )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $pad )."{$ico_pad}</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque patrocinador</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $pat->historial->modelos->{ $modelo }->reset )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $pat )."{$ico_pat}</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque hijos</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $fah )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $hij )."{$ico_hij}</td>
                 </tr>
             </table>
 
