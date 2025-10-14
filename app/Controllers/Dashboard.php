@@ -1198,6 +1198,7 @@ class Dashboard extends BaseController
         $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
 
         $fah = $socio->fecha_arranque_hijos( $modelo );
+        $gpc = $socio->getPrimerCompra( $modelo );
         echo "
         
             <h4 class=\"my-1 text-center\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h4><p class=\"small\">".$socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 )."</p>
@@ -1215,7 +1216,7 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Primer compra</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->getPrimerCompra( $modelo ) )."</td>
+                    <td class=\"fw-bold\" nowrap>".( $gpc ?fecha( $gpc ) : "" )."</td>
                 </tr>
 
                 <tr>
