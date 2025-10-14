@@ -1199,6 +1199,7 @@ class Dashboard extends BaseController
 
         $fah = $socio->fecha_arranque_hijos( $modelo );
         $gpc = $socio->getPrimerCompra( $modelo );
+        $arr = $socio->fecha_arranque( $modelo );
         echo "
         
             <h4 class=\"my-1 text-center\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h4><p class=\"small\">".$socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 )."</p>
@@ -1216,12 +1217,12 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Primer compra</td>
-                    <td class=\"fw-bold\" nowrap>".( $gpc ?fecha( $gpc ) : "" )."</td>
+                    <td class=\"fw-bold\" nowrap>".( $gpc ? fecha( $gpc ) : "" )."</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque calculado</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->fecha_arranque( $modelo ) )."</td>
+                    <td class=\"fw-bold\" nowrap>".( $arr ? fecha( $arr ) : "" )."</td>
                 </tr>
 
                 <tr>
