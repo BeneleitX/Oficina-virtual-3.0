@@ -1195,7 +1195,8 @@ class Dashboard extends BaseController
         
         $socio  = model( "UsuarioModel" )->find( $socio );
         $m      = MODELOS[ $modelo ];
-        $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
+        $pad    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
+        $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->patrocinador );
 
         $fah = $socio->fecha_arranque_hijos( $modelo );
         $gpc = $socio->getPrimerCompra( $modelo );
@@ -1217,22 +1218,27 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Primer compra</td>
-                    <td class=\"fw-bold\" nowrap>".( $gpc ? fecha( $gpc ) : "" )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $gpc )."</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque calculado</td>
-                    <td class=\"fw-bold\" nowrap>".( $arr ? fecha( $arr ) : "" )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $arr )."</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque padre</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $pad->historial->modelos->{ $modelo }->reset )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Arranque patrocinador</td>
                     <td class=\"fw-bold\" nowrap>".fecha( $pat->historial->modelos->{ $modelo }->reset )."</td>
                 </tr>
 
                 <tr>
                     <td nowrap>Arranque hijos</td>
-                    <td class=\"fw-bold\" nowrap>".( $fah ? fecha( $fah ) : "" )."</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $fah )."</td>
                 </tr>
             </table>
 

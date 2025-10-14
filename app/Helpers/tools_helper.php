@@ -251,6 +251,10 @@ function estatus( $codigo, $bn = false ){
 
 function fecha( $fecha, $tipo = "normal" )
 {
+    if( !$fecha ){
+        return "";
+    }
+
     $f = explode( "-", $fecha );
 
     switch( $tipo ){
@@ -463,7 +467,7 @@ function check_biex( $pedido, $usuario, $dia_limite = 25 )
             }
         }
     }
-    
+
     // si el pedido está pagado y tiene regalo biex y la fecha de pago es despues del 25
     if( isset( $pedido[ "PTS" ][ "024-REGALO" ] ) ){
         if( 
