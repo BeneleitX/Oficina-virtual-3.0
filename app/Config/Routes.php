@@ -55,6 +55,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "update_estatus/(:any)",              "Dashboard::update_estatus/$1" );
     $routes->get( "estadistica/(:any)/(:any)",          "Dashboard::estadistica/$1/$2" );
     $routes->get( "sociodata/(:any)",                   "Dashboard::sociodata/$1" );
+    $routes->get( "fechas_arranque/(:any)",             "Dashboard::fechas_arranque/$1" );
     $routes->post( "sociodata",                         "Dashboard::sociodata" );
     $routes->post( "load_padres",                       "Dashboard::load_padres" );
     $routes->post( "update_lock",                       "Dashboard::update_lock" );
@@ -67,6 +68,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "cambia_patrocinador",               "Dashboard::cambia_patrocinador" );
     $routes->post( "reset_tarjeta",                     "Dashboard::reset_tarjeta" );
     $routes->post( "reset_wallet",                      "Dashboard::reset_wallet" );
+    $routes->post( "load_fechas",                       "Dashboard::load_fechas" );
+    $routes->post( "update_arranque",                   "Dashboard::update_arranque" );
 
     $routes->get( "indicadores",                        "Indicadores::inicio" );
     $routes->get( "indicadores/(:any)/(:num)",          "Indicadores::inicio/$1/$2" );

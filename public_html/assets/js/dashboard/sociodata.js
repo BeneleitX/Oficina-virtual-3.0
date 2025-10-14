@@ -41,6 +41,27 @@ function load_padres( extra = null){
 }
 
 
+function check_fechas( socio, modelo ){
+    //  href=\"".base_url()."fechas_arranque/".urlencode( base64_encode( json_encode( [ $socio->password_original(), $m[ "codigo" ] ] ) ) )."\" 
+
+    $( '#modal_fechas .modal-body' ).html( loader );
+    $( '#modal_fechas' ).modal( 'show' );
+
+    $.ajax({
+        url: base_url + 'load_fechas',
+        type: 'POST',
+        data: {
+            [csrf_token] : csrf_hash, 
+            'socio'  : socio,
+            'modelo' : modelo
+        },
+        success: function( response ){
+            $( '#modal_fechas .modal-body' ).html( response );
+        }
+    });    
+}
+
+
 
 $(document).ready(function(){
 

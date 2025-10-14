@@ -156,15 +156,18 @@ if( $socio ){
                     $db  = db_connect();
 
                     $filas = [
-                        "ESTATUS" => [ "<th>Estatus".( $this->data[ "usuario" ]->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
+                        "CALIFICACION" => [ "<th>Calificación</th>" ],
+                        "PTS"   => [ "<th>Puntos en el mes</th>" ],
+                        "ESTATUS" => [ "<th>Estatus".( $usuario->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
                         
+
                         "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
+
+                                                "SALDO"   => [ "<th>Saldo a favor</th>" ],
 
                         "PRIMERA" => [ "<th>Primer compra</th>" ],
 
                         "ULTIMA"  => [ "<th>Ultima compra</th>" ],
-                        "SALDO"   => [ "<th>Saldo a favor</th>" ],
-                        "PTS"   => [ "<th>Puntos en el mes</th>" ],
                         "VERIFICACION" => [ "<th>Cuenta verificada</th>" ],
                     ];
 
@@ -209,16 +212,76 @@ if( $socio ){
                             $filas[ "ULTIMA" ][] = "<td></td>";
                         }
 
-                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\"><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\" data-bs-toggle=\"tooltip\" data-bs-title=\"El patrocinador no puede tener una fecha de inicio de operaciones posterior a la del socio\"></i>" : "" )."</td>";
+                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><small>".$pat->nombre(1)."</small><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\" data-bs-toggle=\"tooltip\" data-bs-title=\"El patrocinador no puede tener una fecha de inicio de operaciones posterior a la del socio\"></i>" : "" )."</td>";
 
                         $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
 
-                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong></p></td>";
+                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong> ".( $usuario->permiso( "40-ADMIN" ) ? "<button class=\"btn btn-link btn-sm\" onclick=\"check_fechas( {$socio->id}, '{$m[ 'codigo' ]}' )\" data-bs-toggle=\"tooltip\" title=\"Revisar si las fechas de arranque son válidas\"><i class=\"fa fa-circle-info text-gray-400\"></i></button>" : "" )."</p></td>";
 
                         $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
 
                         $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
 
+
+                        $cal     = "";
+                        $mascara = date( "Y-m" )."-01";
+
+                        $m_0 = date( "Ym" );
+                        $m_1 = date( "Ym", strtotime( $mascara." -1 month" ) );
+                        $m_2 = date( "Ym", strtotime( $mascara." -2 month" ) );
+
+                        $t_0 = strtoupper( mes( date( "m" ) ) )." ".date( "Y" );
+                        $t_1 = strtoupper( mes( date( "m", strtotime( $mascara. " -1 month" ) ) ) )." ".date( "Y", strtotime( $mascara. " -1 month" ) );
+                        $t_2 = strtoupper( mes( date( "m", strtotime( $mascara. " -2 month" ) ) ) )." ".date( "Y", strtotime( $mascara. ' -2 month' ) );
+
+                        $estatus = ESTATUS[ $socio->data->estatus->modelos->{$m[ "codigo" ]} ];
+
+                        $sql = "select 
+                            f_get_calificacion( {$socio->id}, '{$m_2}', '{$m[ "codigo" ]}' ) as 'm_2', 
+                            f_get_calificacion( {$socio->id}, '{$m_1}', '{$m[ "codigo" ]}' ) as 'm_1', 
+                            f_get_calificacion( {$socio->id}, '{$m_0}', '{$m[ "codigo" ]}' ) as 'm_0'";
+                        
+                        $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
+
+                        $cal = "<div class=\"input-group input-group-sm border border-gray-400 m-0\" data-bs-toggle=\"tooltip\" title=\"\">";
+
+                        switch( $m["codigo"] ){
+                            case "10-NUTRICION": 
+
+                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "gray-300" : "gray-100" )."); border:none\">
+                                
+                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+                                
+                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"border-left:1px solid #fff !important; font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                break;
+
+                            case "20-TELEFONIA": 
+
+                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                break; 
+
+                            case "30-ALIMENTOS": 
+                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+
+                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+
+                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                break;
+
+                            case "40-GASOLINAS": 
+                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+
+                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                break;
+
+                            case "50-INVERSION": 
+                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                break;                
+                        }
+
+                        $cal .= "</div>";
+
+                        $filas[ "CALIFICACION" ][] = "\n<td class=\"text-center\">{$cal}</td>";
 
                         $k = 0;
                         $pts = "";
@@ -264,7 +327,14 @@ if( $socio ){
                     </div>
                 </div>
 
-                <table class="w-100 mt-4">
+             
+            </div>
+
+        </div>
+    </form>
+
+
+                <table class="w-100 mt-5">
                     <thead>
                         <tr>
                             <th>&nbsp;</th>
@@ -331,12 +401,7 @@ if( $socio ){
                         
                         ?>
                     </tbody>
-                </table>                
-            </div>
-        </div>
-
-    </form>
-
+                </table>   
     <div class="modal" tabindex="-1" id="resetpass">
         <div class="modal-dialog">
             <div class="modal-content" style="position_relative; overflow:hidden">
@@ -471,6 +536,19 @@ if( $socio ){
                         <button type="submit" class="btn btn-danger"><i class="fa fa-lock"></i> Aplicar cambios</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="modal_fechas">
+        <div class="modal-dialog">
+            <div class="modal-content" style="position_relative; overflow:hidden">
+                <div class="modal-header bg-teal">
+                    <h5 class="modal-title text-white m-0"><i class="fa fa-calendar-check"></i> Fechas de arranque</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-5"></div>
             </div>
         </div>
     </div>

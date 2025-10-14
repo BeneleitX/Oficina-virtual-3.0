@@ -1126,7 +1126,7 @@ class Dashboard extends BaseController
         model( "UsuarioModel" )->save( $socio );
         $socio->update_verificacion();
 
-        // BITACORANuevo password
+        // BITACORA Nuevo password
         bitacora( 94, $this->data[ "usuario" ]->id, [ 
             "socio"  => $socio->id,
             "wallet" => $anterior
@@ -1161,5 +1161,139 @@ class Dashboard extends BaseController
         $this->data[ "titulo" ] = "Estadística de desempeño de socio";
 
         echo template( "dashboard/estadistica", $this->data );
+    }
+
+
+    public function fechas_arranque( $request )
+    {
+        if( 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $request = base64_decode( urldecode( $request ) );
+        $socio  = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
+ 
+        foreach( MODELOS as $m ){
+            $f = $socio->fecha_arranque( $m[ "codigo" ] );
+            $r = $socio->historial->modelos->{ $m[ "codigo" ] }->reset;
+            $p = $socio->getPrimerCompra( $m[ "codigo" ] );
+
+            echo "\n<br>{$m[ "codigo" ]} : {$f} : {$p} : {$r} ".( $f != $r ? " <span style=\"color:red\">X</span>" : "" );
+        }
+    }
+
+
+    public function load_fechas()
+    {
+        if( 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        extract( $this->request->getPost() );
+        
+        $socio  = model( "UsuarioModel" )->find( $socio );
+        $m      = MODELOS[ $modelo ];
+        $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
+
+        echo "
+        
+            <h4 class=\"my-1 text-center\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h4><p class=\"small\">".$socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 )."</p>
+
+        <table class=\"table table-striped mt-3\">
+                <tr>
+                    <td nowrap>Arranque actual</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->modelos->{ $modelo }->reset )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Registro</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->registro )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Primer compra</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->getPrimerCompra( $modelo ) )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Arranque calculado</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->fecha_arranque( $modelo ) )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Arranque padre</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $pat->historial->modelos->{ $modelo }->reset )."</td>
+                </tr>
+
+                <tr>
+                    <td nowrap>Arranque hijos</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->fecha_arranque_hijos( $modelo ) )."</td>
+                </tr>
+            </table>
+
+            <div class=\"alert m-0 alert-danger\"><i class=\"fa fa-warning\"></i> Modificar estas fechas puede afectar el comportamiento de la red del socio y sus calificaciones
+                    <form method=\"post\" action=\"".base_url( "update_arranque" )."\">
+                        ".csrf_field()."
+                        <input type=\"hidden\" name=\"socio\" value=\"{$socio->id}\">
+                        <input type=\"hidden\" name=\"modelo\" value=\"{$modelo}\">
+
+                        <div class=\"input-group input-group-sm mb-0 mt-3\">
+                            <input type=\"date\" name=\"nueva_fecha\" class=\"form-control form-control-sm\" value=\"".date( "Y-m-d", strtotime( $socio->historial->modelos->{ $modelo }->reset ) )."\">
+                            <button class=\"btn btn-sm btn-danger\">Actualizar</button>
+                        </div>
+                    </form>
+            
+            </div>";
+    }
+
+
+
+    public function update_arranque()
+    {
+        extract( $this->request->getPost() );
+        
+        $socio = model( "UsuarioModel" )->find( $socio );
+        $m     = MODELOS[ $modelo ];
+
+        $historial = $socio->historial;
+        $historial->modelos->{ $modelo }->reset = date( "Y-m-d", strtotime( $nueva_fecha ) );
+        $socio->historial = $historial;
+        model( "UsuarioModel" )->save( $socio );
+
+        // BITACORA modificación de fecha reset
+        bitacora( 104, $this->data[ "usuario" ]->id, [ 
+            "socio"  => $socio->id,
+            "modelo" => $modelo,
+            "tipo"   => "manual"
+        ] );
+
+        session()->setFlashdata('msg', [ 
+            "clase" => "success", 
+            "icono" => "user-check", 
+            "texto" => "Se actualizói la fecha de arranque del socio"
+        ]);
+
+        // actualizar socios patrocinados
+
+        $db  = db_connect();
+        $sql = "SELECT
+                    id
+                from t_usuarios
+                where
+                    redes->>'$.modelos.\"{$modelo}\".patrocinador' = {$socio->id}
+                and estatus_codigo = '201-ACTIVO'
+                and SUBSTRING( data->>'$.estatus.modelos.\"{$modelo}\"', 1, 3 ) > 200";
+
+        $hijos = $db->query( $sql );
+
+        foreach( $hijos->getResult() as $h ){
+            $sql = "select f_reset_padre( {$h->id}, '{$modelo}' );";
+            $db->query( $sql );
+        }
+
+        $ruta = urlencode( base64_encode( $socio->password_original() ) );
+        return redirect()->to( "sociodata/{$ruta}" );
     }
 }

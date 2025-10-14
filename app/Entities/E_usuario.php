@@ -1862,4 +1862,87 @@ isset($data->avatar->updated ), $data->avatar->updated
         $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as datos";        
         return json_decode( $db->query( $sql )->getRow()->datos );
     }
+
+
+
+
+    public function fecha_arranque( $modelo )
+    {
+        $db  = db_connect();
+        $sql = "SELECT 
+			    floor( sum( JSON_EXTRACT( p.PTS, CONCAT( '$.\"', promo,'\"') ) ) ) as ptss, 
+                date_format( p.fechas->>'$.califica' , '%Y-%m-%d' ) as f
+
+                from t_pedidos p
+                join t_modelos m on m.codigo = p.modelo_codigo,
+                JSON_TABLE( m.settings->>'$.promocion_base', '$[*]' COLUMNS (
+                    promo VARCHAR(40)  PATH '$'
+                ) ) promos
+                
+                where p.modelo_codigo = '{$modelo}'
+                and p.usuario_id = {$this->id}   
+                AND CAST( substring( p.estatus_codigo, 1, 3 ) AS UNSIGNED ) > 400
+                
+                group by date_format( p.fechas->>'$.califica' , '%Y-%m-%d' )
+                having ptss >= 1
+                ORDER BY f desc";
+
+        $puntos  = $db->query( $sql )->getResult();
+        $meses = [];
+
+        foreach( $puntos as $p ){
+            $mes = date( "Ym", strtotime( $p->f ) );
+
+            if( !isset( $meses[ $mes ] ) ){
+                $meses[ $mes ] = [ 
+                    "pts" => 0,
+                    "fecha" => $p->f
+                ];
+            }
+            
+            $meses[ $mes ][ "pts" ] += $p->ptss;
+        }
+
+        $mes   = date( "Ym" );
+        $fecha = null;
+        $a     = 0;
+        
+        do{
+            $next = 0;
+            
+            if( isset( $meses[ $mes ] ) ){
+                if( $meses[ $mes ][ "pts" ] > 0 ){
+                    $fecha = $meses[ $mes ][ "fecha" ];
+                    $next = 1;
+                }
+            }
+
+            $mes = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+
+        } while( $next == 1 && $mes > 202201 );
+
+        if( !$fecha ){
+            $fecha = $this->getPrimerCompra( $modelo );
+        }
+
+        return $fecha;
+    }
+
+
+
+    public function fecha_arranque_hijos( $modelo )
+    {
+        $db  = db_connect();
+        $sql = "SELECT
+                    historial->>'$.modelos.\"{$modelo}\".reset' as fecha
+                from t_usuarios
+                where
+                    redes->>'$.modelos.\"{$modelo}\".padre' = {$this->id}
+                and estatus_codigo = '201-ACTIVO'
+                and SUBSTRING( data->>'$.estatus.modelos.\"{$modelo}\"', 1, 3 ) > 200
+                order by fecha asc
+                limit 1";
+
+        return $db->query( $sql )->getRow()->fecha;
+    }    
 }
