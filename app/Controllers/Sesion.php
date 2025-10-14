@@ -115,8 +115,11 @@ class Sesion extends BaseController
 
                 $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
 
-                $db->query( "do f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-                $db->query( "do f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+                $sql = "do f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
+           //     $db->query( $sql );  
+
+                $sql = "do f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
+            //    $db->query( $sql );  
 
                 foreach( MODELOS as $m ){
                     $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
