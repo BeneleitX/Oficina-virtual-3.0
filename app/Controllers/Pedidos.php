@@ -1324,7 +1324,19 @@ class Pedidos extends BaseController
                             "anterior"  => $cuenta_anterior,
                             "nuevo"     => $cuenta_nueva
                         ];
-                        
+
+
+                        if( !isset( $pedido[ "promociones" ][ $promocion ] )){
+                            $pedido[ "promociones" ][ $promocion ] = [
+                                "estatus" => $data_promocion[ "estatus_codigo" ] == "201-ACTIVO" ? true : false,
+                                "evento" => $data_promocion[ "settings" ][ "evento" ] == "true" ? true : false,
+                                "precio" => 0,
+                                "activo" => null,
+                                "comisionable" => null,
+                                "productos" => []
+                            ];
+                        }                        
+
                         if( !isset( $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] )){
                             $pedido[ "promociones" ][ $promocion ][ "productos" ][ $producto ] = [
                                 "orden" => sizeof( $pedido[ "promociones" ][ $promocion ][ "productos" ] ) + 1,
