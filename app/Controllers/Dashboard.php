@@ -1197,6 +1197,7 @@ class Dashboard extends BaseController
         $m      = MODELOS[ $modelo ];
         $pat    = model( "UsuarioModel" )->find( $socio->redes->modelos->{$modelo}->padre );
 
+        $fah = $socio->fecha_arranque_hijos( $modelo );
         echo "
         
             <h4 class=\"my-1 text-center\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h4><p class=\"small\">".$socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 )."</p>
@@ -1229,7 +1230,7 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Arranque hijos</td>
-                    <td class=\"fw-bold\" nowrap>".( $fah = $socio->fecha_arranque_hijos( $modelo ) ? fecha( $fah ) : "" )."</td>
+                    <td class=\"fw-bold\" nowrap>".( $fah ? fecha( $fah ) : "" )."</td>
                 </tr>
             </table>
 
