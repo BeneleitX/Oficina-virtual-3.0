@@ -113,19 +113,19 @@ class Sesion extends BaseController
             if( $socio ){
                 $socio->valida_modelo();
 
-                $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
+                $db->query( "select f_get_estatus(  {$socio->id}, 0 )" );
 
-                $sql = "do f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
-           //     $db->query( $sql );  
-
-                $sql = "do f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
-            //    $db->query( $sql );  
+                $sql = "select f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
+                $db->query( $sql );  
+                
+                 $sql = "select f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
+                $db->query( $sql );  
 
                 foreach( MODELOS as $m ){
                     $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
                 }
 
-                $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
+                $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
 
                 if( strlen( $socio->data->clabe ) == 18 ){
                     // actualizaar pagos pendientes
