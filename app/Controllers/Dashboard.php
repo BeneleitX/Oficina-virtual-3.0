@@ -1203,13 +1203,13 @@ class Dashboard extends BaseController
 
         <table class=\"table table-striped mt-3\">
                 <tr>
-                    <td nowrap>Arranque actual</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->modelos->{ $modelo }->reset )."</td>
+                    <td nowrap>Registro</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->registro )."</td>
                 </tr>
 
                 <tr>
-                    <td nowrap>Registro</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->registro )."</td>
+                    <td nowrap>Arranque actual</td>
+                    <td class=\"fw-bold\" nowrap>".fecha( $socio->historial->modelos->{ $modelo }->reset )."</td>
                 </tr>
 
                 <tr>
