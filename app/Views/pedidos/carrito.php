@@ -1070,7 +1070,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                 foreach( PROMOCIONES as $p ){
                                     $activo = false;
 
-                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" || ( $pedido[ "PTS" ][ $p[ "codigo" ] ] ?? 0 ) ){
                                         echo "\n<li class=\"nav-item small\"><button class=\"px-3 xtext-marine xbg-{$p[ "settings" ][ "clase" ]} nav-link ".( $activo ? "active" : "" )."\" id=\"tab_{$p[ "codigo" ]}\" data-bs-toggle=\"tab\" data-bs-target=\"#panel_{$p[ "codigo" ]}\" type=\"button\" role=\"tab\" aria-controls=\"panel_{$p[ "codigo" ]}\" aria-selected=\"".( $activo ? "true" : "false" )."\"><strong>".substr( $p[ "codigo" ], 4 )."</strong></button></li>";
                                     }
                                 }
@@ -1082,7 +1082,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                                 foreach( PROMOCIONES as $p ){
                                     $activo = false;
 
-                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" ){
+                                    if( $p[ "estatus_codigo" ] == "201-ACTIVO" || ( $pedido[ "PTS" ][ $p[ "codigo" ] ] ?? 0 ) ){
                                         echo "\n<div class=\"tab-pane fade ".( $activo ? "show active" : "" )."\" id=\"panel_{$p[ "codigo" ]}\" role=\"tabpanel\" aria-labelledby=\"tab_{$p[ "codigo" ]}\" tabindex=\"0\">
 
                                         <div class=\"card border-{$p[ "settings" ][ "clase" ]} mb-3\">

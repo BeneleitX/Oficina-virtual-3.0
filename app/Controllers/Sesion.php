@@ -102,6 +102,7 @@ class Sesion extends BaseController
         }       
 
         $this->session->set( "login", time() );
+        $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
         // SI es un login automático de switch de admin
         if( $socio > 0 ){
@@ -112,12 +113,15 @@ class Sesion extends BaseController
             if( $socio ){
                 $socio->valida_modelo();
 
+                $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
+
+                $db->query( "do f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+                $db->query( "do f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+
                 foreach( MODELOS as $m ){
-                    $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
                     $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
                 }
 
-                $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
                 $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
 
                 if( strlen( $socio->data->clabe ) == 18 ){
@@ -248,11 +252,10 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
-
-            $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-            $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
             $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
+
+            $db->query( "do f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "do f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
             
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
             $usuario->update_verificacion();
