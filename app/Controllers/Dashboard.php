@@ -1205,9 +1205,9 @@ class Dashboard extends BaseController
         $pat = $pat->historial->modelos->{ $modelo }->reset;
         $aa  = $socio->historial->modelos->{ $modelo }->reset;
 
-        $ico_pad = " <i class=\"fa fa-".( $pad > $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
-        $ico_pat = " <i class=\"fa fa-".( $pat > $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
-        $ico_hij = " <i class=\"fa fa-".( $hij >= $aa ? "caret-up text-green" : "caret-down text-red" )."\"></i>"; 
+        $ico_pad = " <i class=\"fa fa-".( $pad > $aa ? "warning text-red" : "check text-green" )."\"></i>"; 
+        $ico_pat = " <i class=\"fa fa-".( $pat > $aa ? "warning text-red" : "check text-green" )."\"></i>"; 
+        $ico_hij = " <i class=\"fa fa-".( $hij < $aa ? "warning text-red" : "check text-green" )."\"></i>"; 
 
         echo "
         
