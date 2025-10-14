@@ -1943,6 +1943,6 @@ isset($data->avatar->updated ), $data->avatar->updated
                 order by fecha asc
                 limit 1";
 
-        return $db->query( $sql )->getRow()->fecha;
+        return $db->query( $sql )->getRow()->fecha ?? null;
     }    
 }

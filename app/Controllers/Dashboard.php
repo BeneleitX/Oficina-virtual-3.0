@@ -1229,7 +1229,7 @@ class Dashboard extends BaseController
 
                 <tr>
                     <td nowrap>Arranque hijos</td>
-                    <td class=\"fw-bold\" nowrap>".fecha( $socio->fecha_arranque_hijos( $modelo ) )."</td>
+                    <td class=\"fw-bold\" nowrap>".( $fah = $socio->fecha_arranque_hijos( $modelo ) ? fecha( $fah ) : "" )."</td>
                 </tr>
             </table>
 
