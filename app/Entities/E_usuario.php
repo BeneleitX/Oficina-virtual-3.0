@@ -582,8 +582,11 @@ class E_usuario extends Entity
      */
     public function avatar( int $size = 40, string $id = null, $commmas = null ): string 
     {
+        $url = base_url();
+        $url = "https://app.beneleit.mx/";
+
         if( $this->data->avatar->activo !== null ){
-            return "<img ".($id ?? "")." class='rounded-circle' style='width:{$size}px; height: {$size}px;' src='".base_url()."data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}'>";
+            return "<img ".($id ?? "")." class='rounded-circle' style='width:{$size}px; height: {$size}px;' src='{$url}data/{$this->id}/avatar/{$this->data->avatar->imagenes[ $this->data->avatar->activo ]}'>";
         }
 
         return "<div class='emoji'><div style='border-radius:50%; width:{$size}px;height:{$size}px;font-size:".($size/2)."px;line-height:".( $size / 2 )."px; padding-top:20%' class='text-teal bg-gray-400'>".$this->iniciales()."</div></div>";
