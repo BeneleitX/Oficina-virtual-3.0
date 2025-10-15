@@ -187,7 +187,7 @@ class Sesion extends BaseController
             $usuario = model( "UsuarioModel" )->find( $datax[ "socio_id" ] );
 
             $usuario->valida_modelo();
-            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
+            $db->query( "select f_get_estatus(  {$usuario->id}, 0 )" );
 
             // Password corrompido, debe generar uno nuevo
 
@@ -255,10 +255,10 @@ class Sesion extends BaseController
                     ->withInput();
             }
 
-            $db->query( "do f_get_estatus(  {$usuario->id}, 0 )" );
+            $db->query( "select f_get_estatus(  {$usuario->id}, 0 )" );
 
-            $db->query( "do f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-            $db->query( "do f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "select f_update_PTS( {$usuario->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
+            $db->query( "select f_update_PTS( {$usuario->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
             
             $usuario = model( "UsuarioModel" )->find( $usuario->id );
             $usuario->update_verificacion();
