@@ -363,7 +363,7 @@ class Dashboard extends BaseController
         if( $socio->curp     != $r[ "curp" ]     ){ $cambios[] = [ "curp", $socio->curp,     $r[ "curp" ] ]; $socio->curp     = $r[ "curp" ];     } 
 
         $rr = explode( "-", $r[ "fechanac" ] );
-        $fechanac = checkdate( $rr[ 1 ],  $rr[ 2 ], $rr[ 0 ] ) ? $r[ "fechanac" ] : null;
+        $fechanac = sizeof( $rr ) == 3 && checkdate( $rr[ 1 ],  $rr[ 2 ], $rr[ 0 ] ) ? $r[ "fechanac" ] : null;
 
         if( $socio->fechanac != $r[ "fechanac" ] ){ 
             $cambios[] = [ "fechanac", $socio->fechanac, $r[ "fechanac" ] ]; 
