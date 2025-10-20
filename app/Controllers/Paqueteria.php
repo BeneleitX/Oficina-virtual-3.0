@@ -51,7 +51,7 @@ class Paqueteria extends BaseController
         $this->data[ "paqueteria" ] = model( "MetodoentregaModel" )->find( $paqueteria );
         $this->data[ "titulo"  ] = "Envíos por paquetería <span class=\"badge bg-teal\">".$this->data[ "paqueteria"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "paqueteria"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
 
-        load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "paqueteria" ][ "modelo_codigo" ]}'");
+        load_catalogo( "productos", "substring(estatus_codigo,1,3) >= 140 AND modelo_codigo = '{$this->data[ "paqueteria" ][ "modelo_codigo" ]}'");
 
       /*   $this->data[ "stock" ] = [];
         foreach( $this->data[ "almacen" ][ "productos" ] as $p ){

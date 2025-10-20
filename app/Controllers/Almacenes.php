@@ -88,7 +88,7 @@ class Almacenes extends BaseController
 
         $this->data[ "titulo"  ] = "Administración de almacen <span class=\"badge bg-teal\">".$this->data[ "almacen"  ][ "nombre" ]."</span> <span class=\"badge bg-marine\">".( MODELOS[ $this->data[ "almacen"  ][ "modelo_codigo" ] ][ "nombre" ])."</span>";
 
-        load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "almacen" ][ "modelo_codigo" ]}'");
+        load_catalogo( "productos", "substring(estatus_codigo,1,3) >= 140 AND modelo_codigo = '{$this->data[ "almacen" ][ "modelo_codigo" ]}'");
 
         $db = db_connect();
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
@@ -391,7 +391,7 @@ class Almacenes extends BaseController
         $this->data[ "titulo"  ] = "Transferencias entre almacenes";
         $this->data[ "modelo"  ] = $modelo;
 
-        load_catalogo( "productos", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
+        load_catalogo( "productos", "substring(estatus_codigo,1,3) >= 140 AND modelo_codigo = '{$modelo}'");
         load_catalogo( "almacenes", "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$modelo}'");
 
         echo template( "almacenes/transferencias", $this->data );
