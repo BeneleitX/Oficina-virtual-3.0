@@ -85,6 +85,7 @@ class Periodos extends BaseController
 
         $sql .= ") AND modelo_codigo = '{$this->data[ "periodo" ][ "modelo_codigo" ]}'";
 
+
         $this->data[ "pagos" ] = model( "PagoModel" )->where( $sql )->findAll();
 
         $this->data[ "t" ] = [
@@ -94,11 +95,21 @@ class Periodos extends BaseController
             "extras"    => []
         ];
 
+        $socios = [];
+
         foreach( $this->data[ "pagos" ] as $p ){
 
             if( $p[ "data" ][ "periodos" ][ "creacion" ] <= $this->data[ "periodo" ][ "codigo" ] ){
 
-                $p[ "s" ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
+                // cargamos datos de socio
+                if( !isset( $socios[ $p[ "usuario_id" ] ] ) ){
+                    $socios[ $p[ "usuario_id" ] ] = model( "usuarioModel" )->find( $p[ "usuario_id" ] );
+                    $socios[ $p[ "usuario_id" ] ]->v = $socios[ $p[ "usuario_id" ] ]->get_verificacion( $modelo[ "codigo" ] );
+                }
+                
+                $p[ "s" ] = $socios[ $p[ "usuario_id" ] ];
+
+                $verificado = $socios[ $p[ "usuario_id" ] ]->v->estatus;
 
                 if( $modelo[ "codigo" ] == "50-INVERSION" ){
                     $target = isset( $p[ "clabe" ] ) ? strlen( $p[ "clabe" ] ) == 34 : false;
@@ -108,7 +119,7 @@ class Periodos extends BaseController
                 }
 
                 // previos
-                if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $p[ "s" ]->verificado->estatus && $target ){
+                if( $p[ "data" ][ "periodos" ][ "creacion" ] < $this->data[ "periodo" ][ "codigo" ] && $verificado ){
                     $this->data[ "t" ][ "previos" ][] = $p;
                 }
 
@@ -117,14 +128,12 @@ class Periodos extends BaseController
                     $p[ "data" ][ "periodos" ][ "creacion" ] == $this->data[ "periodo" ][ "codigo" ] && 
                     ( 
                         ( 
-                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 300 && 
-                            $p[ "s" ]->verificado->estatus && 
-                            $target 
-                        ) OR 
+                            substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) <= 300 && $verificado
+                        ) 
+                        OR 
                         ( 
                             substr( $this->data[ "periodo" ][ "estatus_codigo" ], 0, 3 ) > 300 && 
-                            $p[ "data" ][ "periodos" ][ "deposito" ] == 
-                            $this->data[ "periodo" ][ "codigo" ] 
+                            $p[ "data" ][ "periodos" ][ "deposito" ] == $this->data[ "periodo" ][ "codigo" ] 
                         ) 
                     ) 
                 ){
@@ -136,7 +145,7 @@ class Periodos extends BaseController
                     $this->data[ "t" ][ "siguiente" ][] = $p;
                 }
                 else{
-                    if( $p[ "s" ]->verificado->estatus && $target ){
+                    if( $verificado ){
                         $this->data[ "t" ][ "extras" ][] = $p;
                     }
                 }            
