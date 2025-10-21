@@ -48,6 +48,7 @@ class Dashboard extends BaseController
 
         if( 
             !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
+            !$this->data[ "usuario" ]->permiso( "43-CONSULTA" ) AND 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) 
         ){
 
@@ -1140,6 +1141,7 @@ class Dashboard extends BaseController
 
         if( 
             !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) AND
+            !$this->data[ "usuario" ]->permiso( "43-CONSULTA" ) AND
             !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
             return redirect()->to( "no_permiso" ); 
         }

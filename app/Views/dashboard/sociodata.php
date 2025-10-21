@@ -19,24 +19,26 @@
     </form>
 </div>
 
+        <?php if( $usuario->permiso( "43-CONSULTA" ) ){ echo "<div class=\"col-4 col-lg-8\">&nbsp;</div>"; } else { ?>
+            <div class="col-4 col-lg-2">
+                <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
+            </div>
 
-        <div class="col-3 col-lg-2">
-            <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
-        </div>
-
-        <div class="col-3 col-lg-2">
-            <button class="btn btn-warning w-100" onclick="$( '#resetpass' ).modal( 'show' );"><i class="fa fa-key"></i> Reset password</button>
-        </div>
-        <div class="col-3 col-lg-2">
-            <a href="<?php echo base_url( "update_estatus/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</a>
-        </div>
-        <div class="col-3 col-lg-2">
-            <a href="<?php echo base_url( "oauth/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</a>
-        </div>
-        <div class="col-3 col-lg-2">
-            <a href="<?php echo base_url( "estadistica/".urlencode( base64_encode( $socio->password_original() ) )."/10-NUTRICION" ); ?>" class="btn btn-info2 w-100"><i class="fa fa-arrow-trend-up"></i> Estadística</a>
-        </div>
-
+            <div class="col-4 col-lg-2">
+                <button class="btn btn-warning w-100" onclick="$( '#resetpass' ).modal( 'show' );"><i class="fa fa-key"></i> Reset password</button>
+            </div>
+            <div class="col-4 col-lg-2">
+                <a href="<?php echo base_url( "update_estatus/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-info w-100"><i class="fa fa-diagram-project"></i> Update estatus</a>
+            </div>
+            <div class="col-4 col-lg-2">
+                <a href="<?php echo base_url( "oauth/".urlencode( base64_encode( $socio->password_original() ) ) ); ?>" class="btn btn-success w-100"><i class="fa fa-user"></i> Login a OV</a>
+            </div>
+            <?php } ?>
+            
+            <div class="col-4 col-lg-2">
+                <a href="<?php echo base_url( "estadistica/".urlencode( base64_encode( $socio->password_original() ) )."/10-NUTRICION" ); ?>" class="btn btn-info2 w-100"><i class="fa fa-arrow-trend-up"></i> Estadística</a>
+            </div>
+    
 
 </div>
 
@@ -340,7 +342,11 @@ if( $socio ){
                             <th>&nbsp;</th>
                             <?php 
                             foreach( MODELOS AS $m ){
-                                echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
+
+                                if( !$usuario->permiso( "43-CONSULTA" ) || $m[ "codigo" ] == "10-NUTRICION" ){                                
+                                    echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
+                                }
+
                             }
                             ?>
                         </tr>
@@ -356,8 +362,10 @@ if( $socio ){
                             foreach( $filas as $m => $f ){
                                 echo "\n<tr>";
 
-                                foreach( $f as $v ){
-                                    echo $v;
+                                foreach( $f as $k => $v ){
+                                    if( !$usuario->permiso( "43-CONSULTA" ) || $k < 2 ){
+                                        echo $v;
+                                    }
                                 }
 
                                 echo "</tr>";
