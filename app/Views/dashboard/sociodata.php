@@ -19,7 +19,7 @@
     </form>
 </div>
 
-        <?php if( $usuario->permiso( "43-CONSULTA" ) ){ echo "<div class=\"col-4 col-lg-8\">&nbsp;</div>"; } else { ?>
+        <?php if( !$usuario->permiso( "32-EDICION" ) ){ echo "<div class=\"col-4 col-lg-8\">&nbsp;</div>"; } else { ?>
             <div class="col-4 col-lg-2">
                 <button class="btn btn-danger w-100" <?php echo in_array( "00-BLOQUEADO", $socio->rol_codigos ) ? "disabled" : "id=\"activa_editar\""; ?> ><i class="fa fa-warning text-mustard"></i> Editar</button>
             </div>
@@ -343,7 +343,7 @@ if( $socio ){
                             <?php 
                             foreach( MODELOS AS $m ){
 
-                                if( !$usuario->permiso( "43-CONSULTA" ) || $m[ "codigo" ] == "10-NUTRICION" ){                                
+                                if( $usuario->permiso( "32-EDICION" ) || $m[ "codigo" ] == "10-NUTRICION" ){                                
                                     echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
                                 }
 
@@ -363,7 +363,7 @@ if( $socio ){
                                 echo "\n<tr>";
 
                                 foreach( $f as $k => $v ){
-                                    if( !$usuario->permiso( "43-CONSULTA" ) || $k < 2 ){
+                                    if( $usuario->permiso( "32-EDICION" ) || $k < 2 ){
                                         echo $v;
                                     }
                                 }
