@@ -5,7 +5,7 @@
         <?php 
 
         $rango     = model( "RangoModel" )->find( $usuario->data->rango );
-        $new_rango = model( "RangoModel" )->find( $checks[ date( "Ym" ) ][ "nuevo" ] );
+        $new_rango = model( "RangoModel" )->find( $checks[ "nuevo" ] );
 
         ?>
         
@@ -29,7 +29,7 @@
 
         <?php
 
-        $ingresos_mes = $checks[ date( "Ym" ) ][ "ingresos" ]; // $total[ "10-NUTRICION" ][ 0 ];
+        $ingresos_mes = $checks[ "ingresos" ]; // $total[ "10-NUTRICION" ][ 0 ];
 
         $porc_rango = $new_rango[ "cantidades" ][ 0 ] > 0 ? ceil( $ingresos_mes * 100 / $new_rango[ "cantidades" ][ 0 ] ) : 0;
 
