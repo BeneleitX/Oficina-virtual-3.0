@@ -15,7 +15,7 @@
         if( $usuario->id > 0 ){
             $data = (array)$usuario->data;
 
-            if( $data && sizeof( $data[ "splash" ] )  > 0 ){
+            if( $data && sizeof( $data[ "splash" ] ) > 0 && !$usuario->es_admin() ){
                 // shuffle( $data[ "splash" ] );
                 $splash = array_shift( $data[ "splash" ] );
                 $splash->tipo = strtolower( $splash->tipo );
