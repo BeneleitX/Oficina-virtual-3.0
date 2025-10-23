@@ -620,7 +620,12 @@ class Reportes extends BaseController
     public function update_calificaciones()
     {
         // recuperar variables POST
+
+        extract( $this->request->getPost() );
+
         // crear consultas a base de datos
+
+        
         // procesar datos
         // mostrar datos
         // generar gráfica

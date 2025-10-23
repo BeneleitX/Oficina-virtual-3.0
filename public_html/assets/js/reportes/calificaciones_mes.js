@@ -7,7 +7,7 @@ $(document).ready(function(){
 
         if( modelo.length ){
             $( '.alert-warning.py-2' ).hide();
-            $( 'select.sel, input.sel, #lista_promos' ).removeClass( 'd-none' );
+            $( 'select.sel, input.sel, #lista_calificaciones' ).removeClass( 'd-none' );
 
             $( '.calificaciones' ).each( function(){
                 $( this ).css( 'display', modelo == $( this ).attr( 'modelo' ) || $( this ).attr( 'value' ) == 'TODOS' ? 'block' : 'none' );
@@ -18,7 +18,7 @@ $(document).ready(function(){
         }
         else{
             $( '.alert-warning.py-2' ).show();
-            $( 'select.sel, input.sel, #lista_promos' ).addClass( 'd-none' );
+            $( 'select.sel, input.sel, #lista_calificaciones' ).addClass( 'd-none' );
 
             $( '#submit_button, #reload_button' ).prop( 'disabled', true );
         }
