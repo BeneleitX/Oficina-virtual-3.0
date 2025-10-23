@@ -13,7 +13,7 @@
                 <?php
                 foreach( MODELOS as $m ){
                     if( !$usuario->permiso( "43-CONSULTA", true ) || $m[ "codigo" ] == "10-NUTRICION" ){
-                        echo "\n<option ".( $usuario->permiso( "43-CONSULTA", true ) ? "selected" : "" )." value=\"{$m[ "codigo" ]}\">".mb_strtoupper( $m[ "nombre" ] )."</option>";
+                        echo "\n<option value=\"{$m[ "codigo" ]}\">".mb_strtoupper( $m[ "nombre" ] )."</option>";
                     }
                 }
                 ?>
@@ -22,23 +22,18 @@
     </div>
 
     <div class="row mb-3">
-        <legend class="col-form-label col-sm-4">Fecha de venta inicial</legend>
+        <legend class="col-form-label col-sm-4">Mes</legend>
         <div class="col-sm-8">
-            <input class="form-control" style="display:inline; width: auto" type="date" value="<?php echo date( "Y-m-d" ); ?>" name="f_inicia"> 
-        </div>
-    </div>
-    <div class="row mb-3">
-        <legend class="col-form-label col-sm-4">Fecha de venta final</legend>
-        <div class="col-sm-8">
-            <input class="form-control" style="display:inline; width: auto" type="date" value="<?php echo date( "Y-m-d" ); ?>" name="f_final"> 
+            <input class="form-control" style="display:inline; width: auto" type="month" value="<?php echo date( "Y-m" ); ?>" name="f_mes"> 
         </div>
     </div>
 
 
     <div class="row mb-3">
         <legend class="col-form-label col-sm-4">Socios nuevos</legend>
+        
         <div class="col-sm-8">
-            <select class="sel form-select" name="c_primercompra" >
+            <select class="form-select" name="c_primercompra" >
                 <option value="TODOS" selected>TODOS</option>
                 <option value="1">SI, SOLO LOS QUE ESTAN EN SU PRIMER MES</option>
                 <option value="0">NO, SOLO LOS QUE VIENEN ACTIVOS DE MESES ANTERIORES</option>
@@ -48,21 +43,24 @@
 
     <div class="row mb-3">
         <legend class="col-form-label col-sm-4">Calificaciones</legend>
-        <div class="col-sm-8"><div class="row" id="lista_promos">
+        <div class="col-sm-8">
+            <div class="alert alert-warning py-2 mb-0">Elige una empresa</div>    
+            <div class="row d-none" id="lista_calificaciones">
             <?php
             foreach( CALIFICACIONES as $c ){
                 if(substr( $c[ "estatus_codigo" ], 0, 3 ) > 200 )
                 echo "\n
-
-    <div class=\"col-md-6 form-check form-switch\">
-        <input modelo=\"{$c[ "modelo_codigo" ]}\" class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"switch_{$c[ "codigo" ]}\" name=\"d_promociones[{$c[ "codigo" ]}]\" value=\"{$c[ "codigo" ]}\" checked>
-        <label class=\"form-check-label\" for=\"switch_{$c[ "codigo" ]}\">{$c[ "descripcion" ]}</label>
-    </div>";
+                    <div class=\"col-md-6 form-check form-switch calificaciones\" modelo=\"{$c[ "modelo_codigo" ]}\">
+                        <input class=\"form-check-input\" type=\"checkbox\"  modelo=\"{$c[ "modelo_codigo" ]}\" role=\"switch\" id=\"switch_{$c[ "codigo" ]}\" name=\"d_promociones[{$c[ "codigo" ]}]\" value=\"{$c[ "codigo" ]}\" checked>
+                        <label class=\"form-check-label\" for=\"switch_{$c[ "codigo" ]}\">{$c[ "descripcion" ]}</label>
+                    </div>";
             }
             ?>
         </div></div>
     </div>
 
+    <button type="button" id="reload_button" class="btn btn-secondary" disabled><i class="fa fa-refresh"></i> Actualizar datos</button>
     <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
 
 </div></div>
+<div id="data"></div>

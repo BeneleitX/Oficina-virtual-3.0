@@ -142,6 +142,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
     $routes->get( "reportes/venta_producto",            "Reportes::venta_producto" );
     $routes->post( "excel_venta_producto",              "Reportes::excel_venta_producto" ); 
+    $routes->post( "update_calificaciones",             "Reportes::update_calificaciones" ); 
+    $routes->post( "excel_calificaciones",              "Reportes::excel_calificaciones" ); 
 
     $routes->get( "recompensas",                        "Recompensas::detalle" );     
     $routes->get( "admin_recompensas",                  "Recompensas::admin_recompensas" );     

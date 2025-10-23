@@ -5,7 +5,7 @@
     <div class="col-lg-6">
 
     <div class="row mb-3">
-        <label class="col-sm-4 col-form-label">Modelo de negocio</label>
+        <label class="col-sm-4 col-form-label">Empresa</label>
         <div class="col-sm-8">
             <select class="form-select" name="d_modelo">
                 <option value="">...</option>

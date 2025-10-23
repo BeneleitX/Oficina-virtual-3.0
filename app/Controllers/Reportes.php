@@ -386,7 +386,7 @@ class Reportes extends BaseController
             $row++;
             $s->EXTRAS = json_decode( $s->EXTRAS );
             switch( $s->METODO_PAGO ){
-                case "21-GETNET": $operacion = $s->EXTRAS->auth; break;
+                case "21-GETNET": $operacion = $s->EXTRAS->auth ?? ""; break;
                 default: $operacion = ""; break;
             }
 
@@ -609,11 +609,27 @@ class Reportes extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Reportes: Calificaciones NUTRICIÓN";
+        $this->data[ "titulo" ] = "Reportes: Calificaciones por mes";
 
-        $sql = "";
+        $sql = "estatus_codigo = '201-ACTIVO'";
         load_catalogo( "calificaciones", $sql );
         
         echo template( "reportes/calificaciones_mes", $this->data );
+    }
+
+    public function update_calificaciones()
+    {
+        // recuperar variables POST
+        // crear consultas a base de datos
+        // procesar datos
+        // mostrar datos
+        // generar gráfica
+        // devolver HTML
+
+        echo "
+            <div class=\"card mt-4\">
+            x
+            </div>
+        ";
     }
 }
