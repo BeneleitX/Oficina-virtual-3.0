@@ -1474,12 +1474,12 @@ class E_usuario extends Entity
     {
         $a = json_decode( json_encode( $this->data->checks ?? [] ), 1);
 
-        if( !isset( $a[ date("Ym") ] ) ){
+    //    if( !isset( $a[ date("Ym") ] ) ){
             $db = db_connect();
             $sql = "SELECT f_checks_rango( {$this->id}, '{$modelo}' ) as checks;";
             $check = $db->query( $sql )->getRowArray();
             $a = json_decode( $check[ "checks" ], 1 );
-        }
+    //    }
         
         return $a;
     }

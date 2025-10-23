@@ -133,6 +133,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "abre_periodo",                      "Periodos::abre_periodo" ); 
 
     $routes->get( "reportes",                           "Reportes::menu" );
+    $routes->get( "reportes/calificaciones_mes",        "Reportes::calificaciones_mes" );
     $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
     $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
     $routes->get( "reportes/ingresos_por_empresa",      "Reportes::ingresos_por_empresa" );

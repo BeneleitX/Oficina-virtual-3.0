@@ -375,6 +375,8 @@ if( $socio ){
                     </table>
                 </div>
                 
+
+                <?php if( $usuario->permiso( "32-EDICION" ) ){ ?>
                 <style>
                     #tabla_bitacora th, #tabla_bitacora td:not(:nth-child(6)){
                         white-space: nowrap;
@@ -410,6 +412,8 @@ if( $socio ){
                         ?>
                     </tbody>
                 </table>   
+
+            <?php } ?>
     <div class="modal" tabindex="-1" id="resetpass">
         <div class="modal-dialog">
             <div class="modal-content" style="position_relative; overflow:hidden">

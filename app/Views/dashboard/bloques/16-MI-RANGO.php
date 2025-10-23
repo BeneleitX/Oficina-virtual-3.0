@@ -12,15 +12,17 @@
         <div class="col-6 small text-center" style="padding-top:10px;"><p class="mb-0 px-0"><img src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png"; ?>" style="" class="img-fluid"></p><p class="mt-2"><span class="fs-5 badge bg-<?php echo $rango[ "color" ]; ?>"><?php echo $rango[ "nombre" ]; ?></span><br><span class="badge bg-gray-300 text-marine"><?php echo "$".number_format( $rango[ "cantidades" ][ 0 ], 2 )." - "."$".number_format( $rango[ "cantidades" ][ 1 ], 2 ); ?></span></p></div>
         
         <div class="col-6 small text-center" style="padding-top:15px;">
-        <p class="mt-3">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.png"; ?>" style="width:60px; opacity:.4" class="mb-1"><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span><br><span class="badge bg-gray-300 text-marine"><?php echo "$".number_format( $new_rango[ "cantidades" ][ 0 ], 2 )." - "."$".number_format( $new_rango[ "cantidades" ][ 1 ], 2 ); ?></span></p><p class="m-0">Para obtenerlo debes mantener la meta por 3 meses consecutivos o llevar una calificación PREMIERE durante 3 meses consecutivos al momento de alcanzarla</p><p class="m-0 fs-3">
+        <p class="mt-3">Siguiente rango:<br><img src="<?php echo base_url()."assets/img/rangos/{$new_rango[ "codigo" ]}.png"; ?>" style="width:60px; opacity:.4" class="mb-1"><br><span style="opacity:.4;font-size:13px" class="badge bg-<?php echo $new_rango[ "color" ]; ?>"><?php echo $new_rango[ "nombre" ] ?></span><br><span class="badge bg-gray-300 text-marine"><?php echo "$".number_format( $new_rango[ "cantidades" ][ 0 ], 2 )." - "."$".number_format( $new_rango[ "cantidades" ][ 1 ], 2 ); ?></span></p><p class="m-0">Para obtenerlo debes generar comisiones por la cantidad del rango<br><strong>($<?php echo number_format( $new_rango[ "cantidades" ][ 0 ], 2 ); ?>)</strong></p><p class="m-0 fs-3">
 
         <?php 
+        /*
             $keys = array_keys($checks);
             unset( $checks[ $keys[ 0 ] ] );
         
             foreach( $checks as $ch ){
                 echo "\n<i class=\"fa fa-square-".( $ch[ "check" ] ? "check" : "xmark" )." text-".( $ch[ "check" ] ? "teal" : "gray-300" )."\"></i>";
             }
+        */
         ?>
 
         </p></div>
@@ -28,6 +30,7 @@
         <?php
 
         $ingresos_mes = $checks[ date( "Ym" ) ][ "ingresos" ]; // $total[ "10-NUTRICION" ][ 0 ];
+
         $porc_rango = $new_rango[ "cantidades" ][ 0 ] > 0 ? ceil( $ingresos_mes * 100 / $new_rango[ "cantidades" ][ 0 ] ) : 0;
 
         ?>
@@ -44,7 +47,7 @@
     <tr>
         <td class="col-4 rounded p-2 text-center bg-gray-<?php echo $ingresos_mes ? "300" : "100"; ?>">$<?php echo number_format( $ingresos_mes, 2); ?></td>
         <td class="col-4 rounded p-2 text-center bg-gray-<?php echo $new_rango[ "cantidades" ][ 0 ] ? "300" : "100"; ?>">$<?php echo number_format( $new_rango[ "cantidades" ][ 0 ], 2); ?></td>
-        <td class="col-4 rounded p-2 text-center bg-gray-<?php echo ( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes ) ? "300" : "100"; ?>">$<?php echo number_format( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes, 2); ?></td>
+        <td class="col-4 rounded p-2 text-center bg-gray-<?php echo ( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes ) ? "300" : "100"; ?>">$<?php echo number_format( $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes < 0 ? 0 : $new_rango[ "cantidades" ][ 0 ] - $ingresos_mes, 2); ?></td>
     </tr>
 </table>
 

@@ -34,7 +34,13 @@
             "icono" => "spray-can-sparkles",
             "texto" => "Venta por producto",
             "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN", "36-REPORTES" ]
-        ] 
+        ],
+        [
+            "url" => base_url( "reportes/calificaciones_mes" ),
+            "icono" => "user-tag",
+            "texto" => "Calificaciones",
+            "permisos" => [ "40-ADMIN", "36-REPORTES" ]
+        ]  
     ];
 
 

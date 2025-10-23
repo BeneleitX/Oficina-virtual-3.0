@@ -600,4 +600,20 @@ class Reportes extends BaseController
     }     
     
     
+    public function calificaciones_mes(){
+        if( !(
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Reportes: Calificaciones NUTRICIÓN";
+
+        $sql = "";
+        load_catalogo( "calificaciones", $sql );
+        
+        echo template( "reportes/calificaciones_mes", $this->data );
+    }
 }
