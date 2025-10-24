@@ -38,7 +38,7 @@
         [
             "url" => base_url( "reportes/calificaciones_mes" ),
             "icono" => "user-tag",
-            "texto" => "Calificaciones",
+            "texto" => "Calificaciones en el mes",
             "permisos" => [ "40-ADMIN", "36-REPORTES" ]
         ]  
     ];

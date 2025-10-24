@@ -99,6 +99,6 @@ $(document).ready(function(){
         });  
     });
 
-      $( '[name=d_modelo]' ).val( '10-NUTRICION' ).trigger( 'change' );
-      $( '#reload_button' ).click();
+    //  $( '[name=d_modelo]' ).val( '10-NUTRICION' ).trigger( 'change' );
+    //  $( '#reload_button' ).click();
 });
