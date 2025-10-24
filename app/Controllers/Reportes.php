@@ -629,6 +629,12 @@ class Reportes extends BaseController
         
         // crear consultas a base de datos
 
+        switch( $c_primercompra ){
+            case "1": $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' == '510-NUEVO-CALIFICADO' "; break;
+            case "0": $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' != '510-NUEVO-CALIFICADO' "; break;
+            default:  $where = ""; break;
+        }
+
         $sql = "SELECT 
                     u.id as socio, 
                     sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
@@ -646,6 +652,9 @@ class Reportes extends BaseController
                         ) ) promos
                         where m.codigo = '{$modelo}'
                     ) temp
+
+                    {$where}
+
                     group by u.id, temp.promo
                     having puntos > 0
                     order by puntos";
