@@ -718,7 +718,7 @@ class Reportes extends BaseController
             foreach( $socios as $u ){
                 $s = model( "UsuarioModel" )->find( $u );
 
-                if( substr( $s->data->estatus->modelos->{ $modelo }, 0, 3 ) < 300 ){
+                if( substr( $s->data->estatus->modelos->{ $modelo }, 0, 3 ) < 300 OR ( substr( $calificacion, 0, 1 ) == "0" AND substr( $s->data->estatus->modelos->{ $modelo }, 0, 3 ) > 400 ) ){
 
                     $s->getPrimerCompra( $modelo );
 
@@ -733,7 +733,7 @@ class Reportes extends BaseController
                 $link  = base_url()."sociodata/".urlencode( base64_encode( $s->password_original() ) );
                 $html .= "<tr>
                             <td>".$s->id( $modelo )."</td>
-                            <td>".$s->avatar()." ".$s->nombre( 2 )."</td>
+                            <td>".$s->avatar(24)." ".$s->nombre( 2 )."</td>
                             <td>{$s->telefono}</td>
                             <td>{$s->curp}</td>
                             <td>{$s->correo}</td>
