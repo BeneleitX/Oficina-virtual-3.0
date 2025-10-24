@@ -718,6 +718,18 @@ class Reportes extends BaseController
             foreach( $socios as $u ){
                 $s = model( "UsuarioModel" )->find( $u );
 
+                if( substr( $s->data->estatus->modelos->{ $modelo }, 0, 3 ) < 300 ){
+
+                    $s->getPrimerCompra( $modelo );
+
+                    $db->query( "call p_update_primercompra( {$s->id}, '{$modelo}' );" );
+                    $db->query( "select f_update_PTS( {$s->id}, '{$modelo}', '".date( 'Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
+                    $db->query( "select f_update_PTS( {$s->id}, '{$modelo}', '".date( "Ym" )."' )" );  
+                    $db->query( "call p_update_padre( {$s->id}, '{$modelo}' );" );
+                }
+                
+                $db->query( "select f_get_estatus(  {$s->id}, 0 )" );
+
                 $link  = base_url()."sociodata/".urlencode( base64_encode( $s->password_original() ) );
                 $html .= "<tr>
                             <td>".$s->id( $modelo )."</td>

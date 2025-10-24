@@ -125,8 +125,8 @@ class Dashboard extends BaseController
 
             $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
 
-            $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( 'Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
-            $db->query( "do f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
+            $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( 'Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
+            $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
             
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
@@ -138,8 +138,8 @@ class Dashboard extends BaseController
             echo $sql."<br>";
         }
         
-        $db->query( "do f_get_estatus(  {$socio->id}, 0 )" );
-        $db->query( "do f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
+        $db->query( "select f_get_estatus(  {$socio->id}, 0 )" );
+        $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
         
         
