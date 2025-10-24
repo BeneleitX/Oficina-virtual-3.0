@@ -30,6 +30,7 @@ $(document).ready(function(){
             c_primercompra = $( '[name=c_primercompra]' ).val(),
             calificaciones = [];
 
+        $( '#data' ).html( loader );
         btn.addClass( 'disabled' ).html( '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...' );
 
         $( '#lista_calificaciones input[type=checkbox]' ).each( function(){
@@ -52,7 +53,17 @@ $(document).ready(function(){
             type: 'POST',
             success: function( data ){
                 $( '#data' ).html( data );
-                btn.removeClass( 'disabled' ).html( '<i class="fa fa-refresh"></i> Actualizar dato' );
+                btn.removeClass( 'disabled' ).html( '<i class="fa fa-refresh"></i> Actualizar datos' );
+
+               /*  new DataTable('.resultados', {
+                    pageLength: 50
+                }); */
+             
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    container: 'body',
+                    html: true,
+                    placement : 'top'
+                });  
             }
         });
     });

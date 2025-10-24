@@ -611,11 +611,12 @@ class Reportes extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Reportes: Calificaciones por mes";
 
-        $sql = "estatus_codigo = '201-ACTIVO'";
+        $sql = "estatus_codigo = '201-ACTIVO' AND codigo not like '%--%'";
         load_catalogo( "calificaciones", $sql );
         
         echo template( "reportes/calificaciones_mes", $this->data );
     }
+
 
     public function update_calificaciones()
     {
@@ -623,18 +624,110 @@ class Reportes extends BaseController
 
         extract( $this->request->getPost() );
 
+        $sql = "estatus_codigo = '201-ACTIVO'";
+        load_catalogo( "calificaciones", $sql );
+        
         // crear consultas a base de datos
 
+        $sql = "SELECT 
+                    u.id as socio, 
+                    sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
+                    from t_usuarios u
+                    join t_pedidos p 
+                        on p.usuario_id = u.id 
+                        and p.modelo_codigo = '{$modelo}' 
+                        and p.fechas->>'$.califica' between '2025-10-01' and '2025-10-31',
+                    (
+                        select promo
+                        from
+                        t_modelos m, 
+                        JSON_TABLE( m.settings->>'$.promocion_base', '$[*]' COLUMNS (
+                            promo VARCHAR(40)  PATH '$'
+                        ) ) promos
+                        where m.codigo = '{$modelo}'
+                    ) temp
+                    group by u.id, temp.promo
+                    having puntos > 0
+                    order by puntos";
         
         // procesar datos
+
+        $db     = db_connect();
+        $result = $db->query( $sql );
+        $datos  = [];
+
+        foreach( $result->getResult() as $d ){
+            
+            switch( true ){
+                case $d->puntos >= 9:  $calificacion = "71-E";  break;
+                case $d->puntos >= 6:  $calificacion = "61-M";  break;
+                case $d->puntos >= 3:  $calificacion = "51-B";  break;
+                case $d->puntos >  0:  $calificacion = "01-C";  break;
+                default:    dd($d->socio);           $calificacion = "01---"; break;
+            }
+
+            if( in_array( $calificacion, $calificaciones ) ){
+                if( !isset( $datos[ $calificacion ] ) ){
+                    $datos[ $calificacion ] = [];
+                }
+
+                $datos[ $calificacion ][] = $d->socio;
+            }
+        }
+
         // mostrar datos
+
+        $k = 0;
+        $html = "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
+
+        foreach( $datos as $calificacion => $socios ){
+            $c = CALIFICACIONES[ $calificacion ];
+
+            $html .= "\n<li class=\"nav-item\" role=\"presentation\">
+                    <button class=\"nav-link ".( $k++ ? "x" : "" )."active\" id=\"tab-{$calificacion}\" data-bs-toggle=\"tab\" data-bs-target=\"#tab-{$calificacion}-panel\" type=\"button\" role=\"tab\" aria-controls=\"tab-{$calificacion}-panel\" aria-selected=\"true\"><h1 class=\"px-5 pb-0\">".sizeof( $socios )."</h1>{$c[ "descripcion" ]}</button>
+                </li>";
+        }
+        $html .= "</ul><div class=\"tab-content\" id=\"myTabContent\">";
+
+        $k = 0;
+
+        foreach( $datos as $calificacion => $socios ){
+            $html .= "\n<div class=\"tab-pane fade ".( $k ? "x" : "" )."show ".( $k++ ? "x" : "" )."active\" id=\"tab-{$calificacion}-panel\" role=\"tabpanel\" aria-labelledby=\"tab-{$calificacion}\" tabindex=\"0\"><div class=\"card tab-body\">";
+            
+            // tabla con socios
+            
+            $html .= "<table class=\"table table-striped resultados\"><thead><tr>
+                        <td>Socio</td>
+                        <td>Nombre</td>
+                        <td>CURP</td>
+                        <td>Teléfono</td>
+                        <td>Correo</td>
+                        <td></td>
+                    </tr></thead><tbody>";
+            
+
+            foreach( $socios as $u ){
+                $s = model( "UsuarioModel" )->find( $u );
+
+                $link  = base_url()."sociodata/".urlencode( base64_encode( $s->password_original() ) );
+                $html .= "<tr>
+                            <td>".$s->id( $modelo )."</td>
+                            <td>".$s->avatar()." ".$s->nombre( 2 )."</td>
+                            <td>{$s->telefono}</td>
+                            <td>{$s->curp}</td>
+                            <td>{$s->correo}</td>
+                            <td class=\"text-end\"><a class=\"btn btn-sm btn-primary\" href=\"{$link}\"><i class=\"fa fa-magnifying-glass\"></i></a></td>
+                        </tr>";
+            }
+
+            $html .= "</tbody></table></div></div>";
+        }
+
+        $html .= "</div>";
+
         // generar gráfica
         // devolver HTML
 
-        echo "
-            <div class=\"card mt-4\">
-            x
-            </div>
-        ";
+        echo $html;
     }
 }

@@ -126,6 +126,11 @@ a.menu-opcion:not(:first-child).selected{
     height:150px !important;
 }
 
+.tab-body{
+    border-top: none;
+    border-radius: 0 5px 5px 5px;
+    border-color: var(--bs-teal);
+}
 
 .div_error{
     margin-top:5px;

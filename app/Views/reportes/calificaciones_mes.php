@@ -1,3 +1,7 @@
+<link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
+<script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
+
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "reportes" ); ?>"><i class="fa fa-undo"></i> Regresar a reportes</a></p>
 
@@ -60,7 +64,7 @@
     </div>
 
     <button type="button" id="reload_button" class="btn btn-secondary" disabled><i class="fa fa-refresh"></i> Actualizar datos</button>
-    <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
+    <button type="button" id="submit_button" class="d-none btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
 
 </div></div>
-<div id="data"></div>
+<div id="data" class="my-5"></div>
