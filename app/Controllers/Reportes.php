@@ -630,9 +630,9 @@ class Reportes extends BaseController
         // crear consultas a base de datos
 
         switch( $c_primercompra ){
-            case "1": $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' == '510-NUEVO-CALIFICADO' "; break;
-            case "0": $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' != '510-NUEVO-CALIFICADO' "; break;
-            default:  $where = ""; break;
+            case 1  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' = '510-NUEVO-CALIFICADO' "; break;
+            case 0  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' != '510-NUEVO-CALIFICADO' "; break;
+            default : $where = ""; break;
         }
 
         $sql = "SELECT 
