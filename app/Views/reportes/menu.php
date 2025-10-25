@@ -5,10 +5,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a administración</a></p>
 
-<table class="table table-striped" id="tabla_reportes">
-    <thead><tr><th>Reportes disponibles:</th></tr></thead>
-    <tbody>
-
+<div class="row">
     <?php
     $reportes = [
         [
@@ -54,9 +51,11 @@
             }
         }
 
-        echo "\n<tr><td>".( $permiso ? "<a class=\"d-block\" href=\"{$r[ "url" ]}\"><i class=\"fa fa-{$r[ "icono" ]}\"></i>" : "<i class=\"fa fa-lock text-red\"></i>" )." {$r[ "texto" ]}".( $permiso ? "</a>" : "" )."</td></tr>";
+        if( $permiso ){
+
+            echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-primary col-12\"  href=\"".base_url( $r[ "url" ] )."\"><i class=\"fa fa-{$r[ "icono" ]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$r[ "texto" ]}</p></a></div>";
+        }
     }
     ?>
 
-</tbody>
-</table>
+</div>

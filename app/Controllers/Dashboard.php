@@ -15,6 +15,9 @@ class Dashboard extends BaseController
         
         $this->data[ "usuario" ]->valida_modelo();
 
+        // update profundidad
+        $this->data[ "usuario" ]->update_profundidad();
+
         $sql = "estatus_codigo = '201-ACTIVO'";
         $this->data[ "bloques" ] = model( "BloqueModel" )->where( $sql , null, false )->orderBy('columna', 'asc')->orderBy('orden', 'asc')->findAll();
         

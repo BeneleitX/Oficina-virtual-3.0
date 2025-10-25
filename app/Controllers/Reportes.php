@@ -620,6 +620,13 @@ class Reportes extends BaseController
 
     public function update_calificaciones()
     {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
         // recuperar variables POST
 
         extract( $this->request->getPost() );
@@ -635,6 +642,9 @@ class Reportes extends BaseController
             default : $where = ""; break;
         }
 
+        $f_i = $f_mes."-01";
+        $f_t = date( "Y-m-t", strtotime( $f_i ) );
+
         $sql = "SELECT 
                     u.id as socio, 
                     sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
@@ -642,7 +652,7 @@ class Reportes extends BaseController
                     join t_pedidos p 
                         on p.usuario_id = u.id 
                         and p.modelo_codigo = '{$modelo}' 
-                        and p.fechas->>'$.califica' between '2025-10-01' and '2025-10-31',
+                        and p.fechas->>'$.califica' between '{$f_i}' and '{$f_t}',
                     (
                         select promo
                         from
@@ -672,7 +682,7 @@ class Reportes extends BaseController
                 case $d->puntos >= 6:  $calificacion = "61-M";  break;
                 case $d->puntos >= 3:  $calificacion = "51-B";  break;
                 case $d->puntos >  0:  $calificacion = "01-C";  break;
-                default:    dd($d->socio);           $calificacion = "01---"; break;
+                default:               $calificacion = "01---"; break;
             }
 
             if( in_array( $calificacion, $calificaciones ) ){
@@ -751,4 +761,136 @@ class Reportes extends BaseController
 
         echo $html;
     }
+
+    public function excel_calificaciones()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+                
+        $db = db_connect();
+
+        extract( $this->request->getPost() );
+
+        $sql = "estatus_codigo = '201-ACTIVO'";
+        load_catalogo( "calificaciones", $sql );
+        
+        // crear consultas a base de datos
+
+        switch( $c_primercompra ){
+            case 1  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' = '510-NUEVO-CALIFICADO' "; break;
+            case 0  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' != '510-NUEVO-CALIFICADO' "; break;
+            default : $where = ""; break;
+        }
+
+        $f_i = $f_mes."-01";
+        $f_t = date( "Y-m-t", strtotime( $f_i ) );
+
+        $sql = "SELECT 
+                    u.id as socio, 
+                    sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
+                    from t_usuarios u
+                    join t_pedidos p 
+                        on p.usuario_id = u.id 
+                        and p.modelo_codigo = '{$modelo}' 
+                        and p.fechas->>'$.califica' between '{$f_i}' and '{$f_t}',
+                    (
+                        select promo
+                        from
+                        t_modelos m, 
+                        JSON_TABLE( m.settings->>'$.promocion_base', '$[*]' COLUMNS (
+                            promo VARCHAR(40)  PATH '$'
+                        ) ) promos
+                        where m.codigo = '{$modelo}'
+                    ) temp
+
+                    {$where}
+
+                    group by u.id, temp.promo
+                    having puntos > 0
+                    order by puntos";
+        
+        // procesar datos
+
+        $result    = $db->query( $sql );
+        $data      = [];
+        $sheetData = [];
+        
+        foreach( $result->getResult() as $d ){
+            
+            switch( true ){
+                case $d->puntos >= 9:  $calificacion = "71-E";  break;
+                case $d->puntos >= 6:  $calificacion = "61-M";  break;
+                case $d->puntos >= 3:  $calificacion = "51-B";  break;
+                case $d->puntos >  0:  $calificacion = "01-C";  break;
+                default:               $calificacion = "01---"; break;
+            }
+
+            if( in_array( $calificacion, $calificaciones ) ){
+                if( !isset( $datos[ $calificacion ] ) ){
+                    $datos[ $calificacion ] = [];
+                }
+
+                $datos[ $calificacion ][] = $d->socio;
+            }
+        }
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = [];
+
+        $datos = array_reverse( $datos );
+
+        foreach( $datos as $calificacion => $socios ){
+            $c = CALIFICACIONES[ $calificacion ];
+
+            $d = [
+                [ "SOCIO", "NOMBRE", "CURP", "TELEFONO", "CORREO" ]
+            ];
+
+            foreach( $socios as $u ){
+                $s = model( "UsuarioModel" )->find( $u );
+
+                $d[] = [ $s->id, $s->nombre( 2, false, true ), $s->telefono, $s->curp, $s->correo ];
+            }
+
+            $sheetData[ $calificacion ] = $d;
+
+            $worksheet[ $calificacion ] = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, $c[ "descripcion" ] );
+            $mySpreadsheet->addSheet( $worksheet[ $calificacion ], 0 );            
+        }
+        
+        foreach( $sheetData as $k => $s ){
+            $row = 0;
+            foreach( $s as $bloque ){
+                $col = 0;
+                $row++;
+                foreach( $bloque as $dato){
+                    $worksheet[ $k ]->setCellValue( chr(65 + $col++).$row, $dato );
+                }
+            }
+
+            $worksheet[ $k ]->getStyle( "A" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet[ $k ]->getStyle( "C:D" )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet[ $k ]->getStyle( "A1:E1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+            $worksheet[ $k ]->getStyle( "A1:E1" )->getFont()->getColor()->setARGB('ffffff');            
+
+            foreach( $worksheet[ $k ]->getColumnIterator() as $column ){
+                $worksheet[ $k ]->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+            }
+
+        }
+
+
+        $path = "data/excel/reporte_calificaciones";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/Calificaciones_".substr( $modelo, 3 )."_{$f_mes}_".time().".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }         
 }

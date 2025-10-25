@@ -288,10 +288,7 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
-            // update profundidad
 
-            if( $this->data[ "usuario" ]->id )
-                $this->data[ "usuario" ]->update_profundidad();
             
             // $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
@@ -583,11 +580,34 @@ class Sesion extends BaseController
                     "texto" => "Se confirmó la solicitud de retiro" ] ); 
             }
             else{
+                // BITACORA Cancela solicitud de retiro
+                bitacora( 105, $this->data[ "usuario" ]->id, [ 
+                    "socio"  => $usuario->id,
+                    "retiro" => $retiro
+                ] );
+                    
+                $retiro[ "estatus_codigo" ] = "150-CANCELADO";
+                model( "RetiroModel" )->save( $retiro );
+
                 return redirect()->to( "capital" )->with( "msg", [ 
                     "clase" => "danger", 
                     "icono" => "warning", 
                     "texto" => "El retiro no corresponde al mes actual" ] ); 
             }
+        }
+        else{
+            // BITACORA Cancela solicitud de retiro
+            bitacora( 106, $this->data[ "usuario" ]->id, [ 
+                "socio"  => $usuario->id,
+                "retiro" => $retiro,
+                "hash"   => $hash,
+                "pass"   => $pass
+            ] );
+                
+            return redirect()->to( "capital" )->with( "msg", [ 
+                "clase" => "danger", 
+                "icono" => "warning", 
+                "texto" => "Hubo un problema al confirmar el retiro" ] ); 
         }
 
         $this->session->set( "usuario", $usuario->id );

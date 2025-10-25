@@ -16,7 +16,7 @@
 
                 <?php
                 foreach( MODELOS as $m ){
-                    if( !$usuario->permiso( "43-CONSULTA", true ) || $m[ "codigo" ] == "10-NUTRICION" ){
+                    if( !$usuario->permiso( "43-CONSULTA", true ) || in_array( $m[ "codigo" ], [ "10-NUTRICION", "20-TELEFONIA" ] ) ){
                         echo "\n<option value=\"{$m[ "codigo" ]}\">".mb_strtoupper( $m[ "nombre" ] )."</option>";
                     }
                 }
@@ -64,7 +64,7 @@
     </div>
 
     <button type="button" id="reload_button" class="btn btn-secondary" disabled><i class="fa fa-refresh"></i> Actualizar datos</button>
-    <button type="button" id="submit_button" class="d-none btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
+    <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
 
 </div></div>
 <div id="data" class="my-5"></div>

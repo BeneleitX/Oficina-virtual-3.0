@@ -481,11 +481,7 @@ class Periodos extends BaseController
 
         $pagos = $db->query( $sql )->getResultArray();
 
-        $sheetData = [ 
-            0 => [ [ "PAGO", "CODIGO SAT", "CONCEPTO FACTURA", "id", "SOCIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "DESC. BONIF. P-P BENELEIT", "NETO", "IMPORTE", "SUBTOTAL", "IVA", "RET 1.25%", "TOTAL", "DESCRIPCIÓN" ] ],
-            1 => [ [ "PAGO", "ID", "BENEFICIARIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "SUBTOTAL", "IMPORTE", "RET DE IVA 10.66%", "IVA 16%", "TOTAL", "DESCRIPCIÓN", "CONCEPTO DE FACTURA" ] ],
-            2 => [ [ "PAGO", "ID", "SOCIO", "CLABE", "REF NUMÉRICA", "REF ALFANUMÉRICA", "BANCO", "SUBTOTAL", "ISR", "TOTAL", "DESCRIPCIÓN" ] ] 
-        ];
+
 
         foreach( $pagos as $pago ){
             
