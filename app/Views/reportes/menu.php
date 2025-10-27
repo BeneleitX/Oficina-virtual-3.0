@@ -53,7 +53,7 @@
 
         if( $permiso ){
 
-            echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-primary col-12\"  href=\"".base_url( $r[ "url" ] )."\"><i class=\"fa fa-{$r[ "icono" ]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$r[ "texto" ]}</p></a></div>";
+            echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-secondary col-12\"  href=\"".$r[ "url" ]."\"><i class=\"fa fa-{$r[ "icono" ]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$r[ "texto" ]}</p></a></div>";
         }
     }
     ?>

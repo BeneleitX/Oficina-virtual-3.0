@@ -545,13 +545,7 @@ class Reportes extends BaseController
             order by p.metodoentrega_codigo, prod.codigo";
         
         
-        
-        
-        
             die($sql);
-        
-        
-        
         
         
             $result = $db->query( $sql );
