@@ -162,13 +162,10 @@ if( $socio ){
                         "PTS"   => [ "<th>Puntos en el mes</th>" ],
                         "ESTATUS" => [ "<th>Estatus".( $usuario->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
                         
-
                         "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
 
-                                                "SALDO"   => [ "<th>Saldo a favor</th>" ],
-
+                        "SALDO"   => [ "<th>Saldo a favor</th>" ],
                         "PRIMERA" => [ "<th>Primer compra</th>" ],
-
                         "ULTIMA"  => [ "<th>Ultima compra</th>" ],
                         "VERIFICACION" => [ "<th>Cuenta verificada</th>" ],
                     ];
@@ -220,7 +217,7 @@ if( $socio ){
 
                         $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong> ".( $usuario->permiso( "40-ADMIN" ) ? "<button class=\"btn btn-link btn-sm\" onclick=\"check_fechas( {$socio->id}, '{$m[ 'codigo' ]}' )\" data-bs-toggle=\"tooltip\" title=\"Revisar si las fechas de arranque son válidas\"><i class=\"fa fa-magnifying-glass text-light-green\"></i></button>" : "" )."</p></td>";
 
-                        $cant = $socio->data->saldo->{$m[ "codigo" ]}->estatus ? ( $socio->data->saldo->{$m[ "codigo" ]}->cantidad ?? 0 ) : 0;
+                        $cant = $socio->saldo( $m[ "codigo" ] );
 
                         $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
 
