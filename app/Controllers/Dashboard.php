@@ -1324,10 +1324,8 @@ class Dashboard extends BaseController
         $db  = db_connect();
         $socios = $db->query( "select id from t_usuarios where estatus_codigo = '201-ACTIVO'" );
 
-        foreach( MODELOS as $m ){
-            foreach( $socios->getResult() as $socio ){
-                $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
-            }
+        foreach( $socios->getResult() as $socio ){
+            $db->query( "call p_update_primercompra( {$socio->id}, '10-NUTRICION' );" );
         }
     }
 }
