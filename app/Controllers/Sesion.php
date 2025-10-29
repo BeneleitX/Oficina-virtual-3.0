@@ -295,7 +295,7 @@ class Sesion extends BaseController
 
             foreach( MODELOS as $m ){
                 $db->query( " CALL p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
-                $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                $db->query( "call p_update_primercompra( {$usuario->id}, '{$m[ "codigo" ]}' );" );
             }
 
             // activa modo admin para staff que trenga permiso de ver cuentas de socios
