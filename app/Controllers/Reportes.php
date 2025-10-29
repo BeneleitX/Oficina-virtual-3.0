@@ -480,6 +480,7 @@ class Reportes extends BaseController
         }
                 
         $db       = db_connect();
+        
         $modelo   = $this->request->getPost( "modelo" );
         $estatus  = $this->request->getPost( "estatus");
         $promos   = $this->request->getPost( "promos");
@@ -491,103 +492,100 @@ class Reportes extends BaseController
 
         $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $mySpreadsheet->removeSheetByIndex(0);
-        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, $estatus );
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "PRODUCTOS" );
         $mySpreadsheet->addSheet( $worksheet, 0 );
 
         $row = 1;
         $d   = [];
         $e   = [];
-        $worksheet->setCellValue( "A1", "MES" );
-        $worksheet->setCellValue( "B1", "FECHA PAGO" );
-        $worksheet->setCellValue( "C1", "METODO PAGO" );
-        $worksheet->setCellValue( "D1", "FECHA ENTREGA" );
-        $worksheet->setCellValue( "E1", "METODO ENTREGA" );
-        $worksheet->setCellValue( "F1", "DETALLE ENTREGA" );
-        $worksheet->setCellValue( "G1", "ESTATUS" );
-        $worksheet->setCellValue( "H1", "SOCIO" );
-        $worksheet->setCellValue( "I1", "NOMBRE" );
-        $worksheet->setCellValue( "J1", "CELULAR" );
-        $worksheet->setCellValue( "K1", "PRODUCTOS" );
-        $worksheet->setCellValue( "L1", "PRIMER COMPRA" );
-        $worksheet->setCellValue( "M1", "SUB TOTAL" );
-        $worksheet->setCellValue( "N1", "GASTOS ENTREGA" );
-        $worksheet->setCellValue( "O1", "COMISION BANCO" );
-        $worksheet->setCellValue( "P1", "TOTAL" );
+        $worksheet->setCellValue( "A1", "PRODUCTO" );
+
+        foreach( $promos as $p => $v ){
+            $worksheet->setCellValue( chr( ord( "A" ) + $p + 1 ) . "1", substr( $v, 4 ) );
+        }
+
+        $worksheet->setCellValue( chr( ord( "A" ) + $p + 2 ) . "1", "TOTAL" );
 
         switch( $estatus ){
             case "TODOS": $estatus = "substring( p.estatus_codigo,1,3) > 400"; break;
             case "400":   $estatus = "substring( p.estatus_codigo,1,3) between 400 AND 500"; break;
             case "500":   $estatus = "substring( p.estatus_codigo,1,3) > 500"; break;
         }
-        $sql = "SELECT 
-	        prod.data->>'$.nombre' as producto,
-            ";
-        
-        foreach( $promos as $p ){
-            $sql .= "\nsum( CAST(JSON_UNQUOTE(JSON_EXTRACT(p.promociones, CONCAT( '$.\"{$p}\".productos.\"', prod.codigo, '\".cantidad' ))) AS UNSIGNED) ) AS '".substr( $p, 4 )."',";
-        }
 
-        $sql .= "\np.metodoentrega_codigo as entrega
+        $db->query( "DROP TEMPORARY TABLE IF EXISTS t_reporte_productos;" );
 
-            FROM t_pedidos p
-            JOIN t_productos prod on prod.modelo_codigo = @modelo and substring( prod.estatus_codigo,1,3) > 200
-                
-            WHERE 
-            {$estatus}
+        $sql = "SELECT codigo, data->>'$.nombre' as nombre from t_productos where modelo_codigo = '{$modelo}' and substring( estatus_codigo,1,3) > 120;";
 
-            ".( $m_entrega != 'TODOS' ? "and p.metodoentrega_codigo = '{$m_entrega}'" : "" )."
-            ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
+        $productos = $db->query( $sql );
 
-            and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
+        $sql = "
+        CREATE TEMPORARY TABLE t_reporte_productos AS
+        SELECT 
+            JSON_UNQUOTE(JSON_EXTRACT(j1.promocion, '$')) AS promocion,
+            JSON_UNQUOTE(j2.producto) AS producto,
+            sum( CAST(JSON_EXTRACT(p.promociones, CONCAT('$.', j1.promocion, '.productos.', j2.producto, '.cantidad')) AS UNSIGNED) ) AS cantidad
+        FROM t_pedidos p
+        JOIN JSON_TABLE(
+        JSON_KEYS(p.promociones),
+        \"$[*]\" COLUMNS (promocion JSON PATH \"$\")
+        ) AS j1
+
+        JOIN JSON_TABLE(
+        JSON_KEYS(JSON_EXTRACT(p.promociones, CONCAT('$.\"', JSON_UNQUOTE(JSON_EXTRACT(j1.promocion, '$')), '\".productos'))),
+        \"$[*]\" COLUMNS (producto JSON PATH \"$\")
+        ) AS j2
+
+        where {$estatus}
             and p.modelo_codigo = '{$modelo}'
+            ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
+            ".( $m_entrega != 'TODOS' ? "and p.metodoentrega_codigo = '{$m_entrega}'" : "" )."
+            and substring( p.estatus_codigo,1,3) > 400
+            and p.fechas->>'$.pagado' between '{$f_inicio}' and '{$f_final}' 
 
-            group by prod.codigo, p.metodoentrega_codigo 
-            order by p.metodoentrega_codigo, prod.codigo";
-        
-        
-            die($sql);
-        
-        
-            $result = $db->query( $sql );
+        group by promocion, producto";
 
-        foreach( $result->getResult() as $s ){
-            $row++;
-            $worksheet->setCellValue( "A".( $row ),  $s->REFERENCIA);
-            $worksheet->setCellValue( "B".( $row ),  $s->FECHA_PAGO);
-            $worksheet->setCellValue( "C".( $row ),  substr( $s->METODO_PAGO, 3 ) );
-            $worksheet->setCellValue( "D".( $row ),  $s->FECHA_ENTREGA);
-            $worksheet->setCellValue( "E".( $row ),  substr( $s->METODO_ENTREGA, 3 ) );
-            $worksheet->setCellValue( "F".( $row ),  $s->METODO_ENTREGA == "00-ALMACEN" ? substr( $s->ALMACEN, 4 ) : ( $s->GUIA ?? "" ) );
-            $worksheet->setCellValue( "G".( $row ),  strtoupper( ESTATUS[ $s->ESTATUS ][ "descripcion" ] ) );
-            $worksheet->setCellValue( "H".( $row ),  $s->SOCIO);
-            $worksheet->setCellValue( "I".( $row ),  $s->NOMBRE);
-            $worksheet->setCellValue( "J".( $row ),  $s->CELULAR);
-            $worksheet->setCellValue( "K".( $row ),  $s->PRODUCTOS);
-            $worksheet->setCellValue( "L".( $row ),  $s->PRIMER_COMPRA);
-            $worksheet->setCellValue( "M".( $row ),  $s->SUBTOTAL_PRODUCTOS);
-            $worksheet->setCellValue( "N".( $row ),  $s->COMISION_ENTREGA);
-            $worksheet->setCellValue( "O".( $row ),  $s->COMISION_METODOPAGO);
-            $worksheet->setCellValue( "P".( $row ),  $s->SUBTOTAL_PRODUCTOS + $s->COMISION_ENTREGA + $s->COMISION_METODOPAGO);
-            
+        $db->query( $sql );
+
+        $sql = "select * from t_reporte_productos;";
+
+        $resultado = $db->query( $sql );
+
+        foreach( $resultado->getResult() as $s ){
+            $data[ $s->producto ][ $s->promocion ] = $s->cantidad;
         }
 
-        $worksheet->getStyle( "A1:P1" )->getFont()->getColor()->setARGB('ffffff');
-        $worksheet->getStyle( "A1:P1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        foreach( $productos->getResult() as $p ){
+            $producto   = $p->codigo;
+            $cantidades = $data[ $producto ] ?? [];
+            $row++;
+            $worksheet->setCellValue( "A".( $row ),  $p->nombre );
 
-        $worksheet->getStyle( "M:P" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
-        $worksheet->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
+            foreach( $promos as $p => $v ){
+                $worksheet->setCellValue( chr( ord( "A" ) + $p + 1 ) . $row, $cantidades[ $v ] ?? 0 );
+            }
+            $suma = array_sum( $cantidades );
+            $worksheet->setCellValue( chr( ord( "A" ) + $p + 2 ) . $row,  strlen($suma) ? $suma : 0 );
+        }
+
+        $worksheet->getStyle( "A1:".chr( ord( "A" ) + $p + 2 ) ."1" )->getFont()->getColor()->setARGB('ffffff');
+        
+        $worksheet->getStyle( "A1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('47c24c');
+
+        $worksheet->getStyle( "B1:".chr( ord( "A" ) + $p + 2 ) ."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+
+        $worksheet->getStyle( chr( ord( "A" ) + $p + 2 ) ."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('47c24c');
+
+
+        $worksheet->getStyle( chr( ord( "A" ) + $p + 2 ) )->getNumberFormat()->setFormatCode( "#" );
 
         foreach( $worksheet->getColumnIterator() as $column ){
             $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
         }
 
-
-        $worksheet->freezePane('B2');
-
         $path = "data/excel/venta_producto";
         if( !is_dir( $path ) ) mkdir( $path, 0755, true );
 
-        echo $file = $path."/Producto_".substr( $modelo, 3 )."_del_{$f_inicio}_al_{$f_final}_".time().".xlsx";
+        echo $file = $path."/Productos_".substr( $modelo, 3 )."_del_{$f_inicio}_al_{$f_final}_".time().".xlsx";
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
@@ -630,9 +628,15 @@ class Reportes extends BaseController
         
         // crear consultas a base de datos
 
-        switch( $c_primercompra ){
+        /*         switch( $c_primercompra ){
             case 1  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' = '510-NUEVO-CALIFICADO' "; break;
             case 0  : $where = " where u.data->>'$.estatus.modelos.\"{$modelo}\"' != '510-NUEVO-CALIFICADO' "; break;
+            default : $where = ""; break;
+        } */
+
+        switch( $c_primercompra ){
+            case 1  : $where = " where p.data->>'$.primercompra' = 1 "; break;
+            case 0  : $where = " where p.data->>'$.primercompra' != 1 "; break;
             default : $where = ""; break;
         }
 
@@ -644,9 +648,10 @@ class Reportes extends BaseController
                     sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
                     from t_usuarios u
                     join t_pedidos p 
-                        on p.usuario_id = u.id 
+                        on p.usuario_id = u.id
+                        and substring( p.estatus_codigo,1,3) > 400 
                         and p.modelo_codigo = '{$modelo}' 
-                        and p.fechas->>'$.califica' between '{$f_i}' and '{$f_t}',
+                        and p.fechas->>'$.pagado' between '{$f_i}' and '{$f_t}',
                     (
                         select promo
                         from
@@ -656,11 +661,9 @@ class Reportes extends BaseController
                         ) ) promos
                         where m.codigo = '{$modelo}'
                     ) temp
-
                     {$where}
-
                     group by u.id, temp.promo
-                    having puntos > 0
+                   
                     order by puntos";
         
         // procesar datos
@@ -675,8 +678,7 @@ class Reportes extends BaseController
                 case $d->puntos >= 9:  $calificacion = "71-E";  break;
                 case $d->puntos >= 6:  $calificacion = "61-M";  break;
                 case $d->puntos >= 3:  $calificacion = "51-B";  break;
-                case $d->puntos >  0:  $calificacion = "01-C";  break;
-                default:               $calificacion = "01---"; break;
+                default:               $calificacion = "01-C"; break;
             }
 
             if( in_array( $calificacion, $calificaciones ) ){
@@ -789,8 +791,9 @@ class Reportes extends BaseController
                     from t_usuarios u
                     join t_pedidos p 
                         on p.usuario_id = u.id 
+                        and substring( p.estatus_codigo,1,3) > 400
                         and p.modelo_codigo = '{$modelo}' 
-                        and p.fechas->>'$.califica' between '{$f_i}' and '{$f_t}',
+                        and p.fechas->>'$.pagado' between '{$f_i}' and '{$f_t}',
                     (
                         select promo
                         from
@@ -804,7 +807,7 @@ class Reportes extends BaseController
                     {$where}
 
                     group by u.id, temp.promo
-                    having puntos > 0
+                    
                     order by puntos";
         
         // procesar datos
@@ -819,8 +822,7 @@ class Reportes extends BaseController
                 case $d->puntos >= 9:  $calificacion = "71-E";  break;
                 case $d->puntos >= 6:  $calificacion = "61-M";  break;
                 case $d->puntos >= 3:  $calificacion = "51-B";  break;
-                case $d->puntos >  0:  $calificacion = "01-C";  break;
-                default:               $calificacion = "01---"; break;
+                default:               $calificacion = "01-C"; break;
             }
 
             if( in_array( $calificacion, $calificaciones ) ){
