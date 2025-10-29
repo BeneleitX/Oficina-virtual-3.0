@@ -1322,11 +1322,14 @@ class Dashboard extends BaseController
     public function temp234()
     {
         $db  = db_connect();
+        $m = "20-TELEFONIA";
         $socios = $db->query( "select id from t_usuarios where estatus_codigo = '201-ACTIVO'" );
 
         foreach( $socios->getResult() as $socio ){
-            $db->query( "call p_update_primercompra( {$socio->id}, '10-NUTRICION' );" );
+            $db->query( "call p_update_primercompra( {$socio->id}, '{$m}' );" );
         }
+
+        echo $m;
     }
 }
 
