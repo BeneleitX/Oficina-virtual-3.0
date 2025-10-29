@@ -1318,4 +1318,18 @@ class Dashboard extends BaseController
         $ruta = urlencode( base64_encode( $socio->password_original() ) );
         return redirect()->to( "sociodata/{$ruta}" );
     }
+
+    public function temp234()
+    {
+        $db  = db_connect();
+        $socios = $db->query( "select id from t_usuarios where estatus_codigo = '201-ACTIVO'" );
+
+        foreach( MODELOS as $m ){
+            foreach( $socios->getResult() as $socio ){
+                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+            }
+        }
+    }
 }
+
+
