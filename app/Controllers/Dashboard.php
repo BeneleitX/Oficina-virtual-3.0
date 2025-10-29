@@ -1326,7 +1326,7 @@ class Dashboard extends BaseController
 
         foreach( MODELOS as $m ){
             foreach( $socios->getResult() as $socio ){
-                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
             }
         }
     }
