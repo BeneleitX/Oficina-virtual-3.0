@@ -118,11 +118,12 @@ class Sesion extends BaseController
                 $sql = "select f_update_PTS( {$socio->id}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
                 $db->query( $sql );  
                 
-                 $sql = "select f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
+                $sql = "select f_update_PTS( {$socio->id}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
                 $db->query( $sql );  
 
                 foreach( MODELOS as $m ){
                     $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                    $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
                 }
 
                 $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' )" );
@@ -294,6 +295,7 @@ class Sesion extends BaseController
 
             foreach( MODELOS as $m ){
                 $db->query( " CALL p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
+                $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
             }
 
             // activa modo admin para staff que trenga permiso de ver cuentas de socios
