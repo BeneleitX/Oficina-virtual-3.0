@@ -1322,7 +1322,7 @@ class Dashboard extends BaseController
     public function temp234()
     {
         $db  = db_connect();
-        $m = "30-ALIMENTOS";
+        $m = "40-GASOLINAS";
         $socios = $db->query( "select id from t_usuarios where estatus_codigo = '201-ACTIVO'" );
 
         foreach( $socios->getResult() as $socio ){
