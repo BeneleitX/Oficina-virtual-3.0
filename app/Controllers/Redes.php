@@ -181,4 +181,98 @@ class Redes extends BaseController
 
         echo $html;
     }
+
+
+    /**
+     * Muestra la estructura de downline de un usuario
+     *
+     * @param string $modelo Codigo del modelo a mostrar. Si no se da, se muestra el modelo principal
+     */
+    public function listado( $modelo = null ){
+        if( !$modelo ){
+            $modelo = getModeloPrincipal();
+        }
+
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+        $this->data[ "modelo" ] = $modelo;
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Red";
+
+        echo template( "redes/listado", $this->data );
+    }
+
+
+    /**
+     * Retrieves and outputs the list structure in JSON format for a given socio and modelo.
+     *
+     * This function extracts the socio ID and modelo from the POST request data,
+     * fetches the socio using the socio ID, and then retrieves the list structure
+     * for the specified modelo in JSON format from the socio object.
+     */
+    public function listadoJSON(){
+        extract( $this->request->getPost() );
+
+        $socio = model( "UsuarioModel" )->find( $socio );
+        $downline = json_decode( $socio->getDownlineJSON( $modelo ) );
+        $tabla = [];
+
+        foreach( $downline as $d ){
+            if( $d->avatar ){
+                $avatar = "<img class=\"rounded-circle\" style=\"width:36px; height: 36px;\" src=\"".base_url()."uploads/usuarios/{$d->avatar}\" alt=\"\">";
+            }
+            else{
+                $avatar = "<div class=\"emoji\"><div style=\"border-radius:50%; width:36px;height:36px;font-size:12.5px;line-height:12.5px; padding-top:20%\" class=\"text-teal bg-gray-400\">{$d->iniciales}</div></div>";
+            }
+
+            $estatus = ESTATUS[ $d->estatus ];
+
+            $object = [
+                "id" => $d->id,
+                "id_html" => "<h5><span class=\"badge bg-{$estatus[ "color" ]}\">{$d->id}</span></h5>",
+                "nombre" => $avatar." ".$d->nombre
+            ];
+
+            if( $d->padre != 0 ){
+                $object[ "parentId" ] = $d->padre;
+            }
+
+            $tabla[] = $object;
+        }
+
+        echo json_encode( $tabla );
+    }
+
+        /* 
+
+        {
+            "id": 162901,
+            "nivel": 0,
+            "padre": 0,
+            "rango": "100-SOCIO",
+            "avatar": "162901_1743113752.jpg",
+            "nombre": "AMADA MEJIA SANCHEZ",
+            "estatus": "520-CALIFICADO-ACTUAL",
+            "registro": "2025-02-18 11:26:35",
+            "iniciales": "AM",
+            "antiguedad": 8,
+            "verificado": 1,
+            "profundidad": null,
+            "patrocinador": 0,
+            "calificaciones": [
+                "51-B",
+                "51-B"
+            ]
+        }
+
+        {
+            id: 3,
+            priority: 3,
+            from: 'reacttreetable@simple.com',
+            subject: 'It is a long established fact that a reader will be distracted',
+            sentDate: '01/01/2019',
+            parentId: 1
+        },
+        */  
+
+
 }

@@ -1,4 +1,4 @@
-    
+<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/tree-table.css">
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
 
 <div class="row">
@@ -6,8 +6,8 @@
 	<?php echo pills( "red", $modelo ); ?>
 	</div>
 	<div class="col-md-3 mt-3 text-end">
-
-		<a type="button" href="<?php echo base_url( "listado/".$modelo ); ?>" class="btn btn-warning"><i class="fa fa-table-list"></i> Vista de tabla/directorio</a>
+<a type="button" href="<?php echo base_url( "red/".$modelo ); ?>" class="btn btn-warning"><i class="fa fa-sitemap"></i> Vista en gráfico de red</a>
+		
 		
 		<div class="btn-group d-none" role="group" aria-label="Button group with nested dropdown">
 
@@ -93,14 +93,29 @@
 	</div>
 </div>
 
-
-<div id="downline">
-	<p class="my-5 text-center">
+	<p class="my-5 text-center lloader">
 		<i style="font-size:100px" class="fa-solid fa-circle-notch fa-spin"></i>
 		<br><br>
 		En redes extensas este proceso puede durar varios segundos, te pedimos paciencia
 	</p>
+
+
+<div class="row">
+    <div class="col-12 col-md-6">
+<div class="tree-table-wrap card" style="display:none;overflow:hidden">
+  <table class="tree-table">
+    <thead>
+      <tr class="bg-gray-400">
+        <td class="bg-gray-400 px-3 py-2"><h5 class="text-marine m-0">Socio</h5></td>
+        <td class="bg-gray-400 px-3 py-2"><h5 class="text-marine m-0">Nombre</h5></td>
+      </tr>
+    </thead>
+    <tbody id="table-tree">
+    </tbody>
+  </table>
 </div>
+</div></div>
+
 
 <script src= "<?php echo base_url() ?>/assets/js/d3.js"></script>
 
@@ -117,14 +132,4 @@
 		m_2 = <?php echo date('Ym', strtotime( date('Y-m').'-01'. ' -2 month' ) ); ?>;
 </script>
 
-<script src="<?php echo base_url(); ?>assets/js/redes/modelos/<?php echo $modelo; ?>.js" type="text/javascript"></script>
-
-<div class="modal" tabindex="-1" id="modal_userdata">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-body">
-			</div>
-		</div>
-	</div>
-</div>
 
