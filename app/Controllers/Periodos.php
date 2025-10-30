@@ -157,6 +157,8 @@ class Periodos extends BaseController
             }            
         }
 
+        $this->data[ "modelo" ] = $modelo;
+
         echo template( "periodos/detalle", $this->data );
     }
 
@@ -178,9 +180,30 @@ class Periodos extends BaseController
         /**********************************/
 
         $db = db_connect();
+
+        $data = json_decode( $db->query( "select valor from t_variables where codigo = 'avance_corte'" )->getRow()->valor );
+
+        if( $data->periodo != $this->request->getPost( "periodo" ) && ( $data->porcentaje_pagos != 100 || $data->porcentaje_comisiones != 100 ) ){
+            $periodo = model( "PeriodoModel" )->find( $data->periodo );
+            $autor   = model( "UsuarioModel" )->find( $data->autor );
+
+            return json_encode( [ 
+                "error" => "<span class=\"text-marine mb-5\">No es posible realizar el corte en este momento<br>ya que hay otro proceso de corte en curso para el periodo de <span class=\"badge bg-".MODELOS[ $periodo[ "modelo_codigo" ]][ "settings" ][ "color" ]." text-white\"><i class=\"fa fa-".MODELOS[ $periodo[ "modelo_codigo" ]][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $periodo[ "modelo_codigo" ]][ "nombre" ]."</span> <span class=\"badge bg-teal\">".periodo( $periodo[ "codigo" ])."</span><br><br>
+                
+                <div class=\"progress bg-gray-200 mb-3\" role=\"progressbar\" aria-label=\"Animated striped example\" aria-valuenow=\"{$data->porcentaje_comisiones}\" aria-valuemin=\"0\" aria-valuemax=\"100\">
+                    <div class=\"progress-bar ".( $data->porcentaje_comisiones != 100 ? "bg-red progress-bar-striped progress-bar-animated" : "bg-teal progress-bar-striped" )."\" style=\"width: {$data->porcentaje_comisiones}%\">{$data->porcentaje_comisiones}%</div>
+                </div>
+                <div class=\"progress bg-gray-200 mb-3\" role=\"progressbar\" aria-label=\"Animated striped example\" aria-valuenow=\"{$data->porcentaje_pagos}\" aria-valuemin=\"0\" aria-valuemax=\"100\">
+                    <div class=\"progress-bar bg-red progress-bar-striped progress-bar-animated\" style=\"width: {$data->porcentaje_pagos}%\">{$data->porcentaje_pagos}%</div>
+                </div>                
+                
+                ejecutado desde otro dispositivo por el usuario:<br>".$autor->id( null, "marine" )." ".$autor->nombre( 2 )."</span>"
+            ] );
+        }
         
         $sql = "UPDATE t_variables 
                 SET valor = json_object(
+                    'autor', ".$this->data[ "usuario" ]->id.",
                     'periodo', '".$this->request->getPost( "periodo" )."',
                     'pedidos', 0,
                     'pagos', 0,
@@ -208,6 +231,7 @@ class Periodos extends BaseController
 
         $db->query( "CALL p_avance_corte( json_object( 'periodo', '".$this->request->getPost( "periodo" )."',
                     'pedidos', 0,
+                    'autor', ".$this->data[ "usuario" ]->id.",
                     'pagos', 0,
                     'socios', 0,
                     'comisiones', 0,
@@ -219,7 +243,7 @@ class Periodos extends BaseController
                     'porcentaje_pagos', 0 ) );
                 " );
 
-        return json_encode( [ "pedidos" => $pedidos ] );
+        return json_encode( [ "error" => null, "pedidos" => $pedidos ] );
     }
 
 

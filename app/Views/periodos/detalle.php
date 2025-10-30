@@ -157,7 +157,7 @@ foreach( $t[ "siguiente" ] as $g ){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
+                <h5 class="modal-title" id="add_rolLabel"><i class="i-factura"></i> Corte del periodo <span class="badge bg-<?php echo $modelo[ "settings" ][ "color" ]; ?>"><i class="fa fa-<?php echo $modelo[ "settings" ][ "icono" ]; ?>"></i> <?php echo $modelo[ "nombre" ]; ?></span> <span class="badge bg-marine"><?php echo periodo( $periodo[ "codigo" ] ); ?></span> <span class="periodo_codigo"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="periodo_detalle">

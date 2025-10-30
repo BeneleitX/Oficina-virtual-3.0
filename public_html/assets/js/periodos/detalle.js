@@ -8,7 +8,7 @@ function lanza_corte(){
     $( '#dato_isr' ).text( '' );
     $( '#dato_total' ).text( '' );
     $( '#dato_bolsa' ).text( '' );
-    $( '.icon_gira' ).addClass( 'fa fa-repeat text-red' ).removeClass( 'far fa-spin fa-check text-teal fa-triangle-exclamation text-mustard' );
+    $( '.icon_gira' ).addClass( 'fa fa-repeat text-red' ).removeClass( 'far fa-spin fa-check text-teal fa-warning text-mustard' );
     $( '.corte_aviso' ).removeClass( 'text-teal text-mustard' ).addClass( 'text-red' ).text( 'El proceso puede durar varios ' + ( modelo == '20-TELEFONIA' ? 'minutos' : 'segundos') );
     $( '.pe1' ).show();
     $( '.pe2' ).hide();
@@ -157,8 +157,9 @@ $(document).ready(function(){
 
 
     $( '#corte_start' ).on( 'click', function(){
-        $( '.icon_gira' ).removeClass( 'text-red' ).addClass( 'fa-spin text-mustard' );
+        $( '.icon_gira' ).removeClass( 'fa-warning text-red' ).addClass( 'fa-repeat fa-spin text-mustard' );
 
+        $( '.corte_aviso' ).empty();
         $( '.pe1' ).hide();
         $( '.pe2' ).show();
 
@@ -170,11 +171,22 @@ $(document).ready(function(){
             dataType: "json",
             async: true,
 			data: { periodo: periodo, [csrf_token] : csrf_hash },
-            success: function(r){ console.log(r);
-                pedidos = r.pedidos;
+            success: function(r){ 
+                               
+                console.log(r);
 
-                getStatus(pedidos);        
-                do_corte( pedidos );                
+                if( r.error != null ){
+                    $( '.icon_gira' ).removeClass( 'fa-spin fa fa-repeat text-mustard' ).addClass( 'fa fa-warning text-red' );
+                    $( '.corte_aviso' ).removeClass( 'text-red' ).addClass( 'text-mustard' ).html( r.error );
+                    $( '.pe2' ).hide();
+                    $( '.pe1' ).show();
+                }
+                else{
+                    pedidos = r.pedidos;
+
+                    getStatus(pedidos);        
+                    do_corte( pedidos );                
+                }
             }
 		});
 
