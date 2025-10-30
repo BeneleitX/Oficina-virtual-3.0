@@ -3,7 +3,7 @@
 
 <div class="row">
 	<div class="col-md-9">
-	<?php echo pills( "red", $modelo ); ?>
+	<?php echo pills( "listado", $modelo ); ?>
 	</div>
 	<div class="col-md-3 mt-3 text-end">
 <a type="button" href="<?php echo base_url( "red/".$modelo ); ?>" class="btn btn-warning"><i class="fa fa-sitemap"></i> Vista en gráfico de red</a>
