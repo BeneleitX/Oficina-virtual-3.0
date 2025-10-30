@@ -218,7 +218,7 @@ class Redes extends BaseController
 
         foreach( $downline as $d ){
             if( $d->avatar ){
-                $avatar = "<img class=\"rounded-circle\" style=\"width:36px; height: 36px;\" src=\"".base_url()."uploads/usuarios/{$d->avatar}\" alt=\"\">";
+                $avatar = "<img class=\"rounded-circle\" style=\"width:36px; height: 36px;\" src=\"".base_url()."data/{$d->id}/avatar/{$d->avatar}\" alt=\"\">";
             }
             else{
                 $avatar = "<div class=\"emoji\"><div style=\"border-radius:50%; width:36px;height:36px;font-size:12.5px;line-height:12.5px; padding-top:20%\" class=\"text-teal bg-gray-400\">{$d->iniciales}</div></div>";
