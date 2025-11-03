@@ -560,6 +560,10 @@
                                 <?php 
                                 if( $modelo == "10-NUTRICION" ){
                                     if( $pagado ){
+                                        if( !isset( $pedido[ "data" ][ "enviogratis" ] ) ){
+                                            $pedido[ "data" ][ "enviogratis" ] = 0;
+                                        }
+
                                         if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
                                             echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>OCTUBRE</strong></span>";
                                         }
