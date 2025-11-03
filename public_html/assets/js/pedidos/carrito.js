@@ -109,7 +109,7 @@ function update_puntos( promocion, pesaje = false ){
                 if( pesaje ){
                     pedido.data.peso += ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
                     pedido.data.productos += parseInt( cantidad );
-                    console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
+                    // console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
                 }
             });
         }
@@ -479,43 +479,57 @@ function update_pedido( flag = null ){
 
     es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'PAQUETERIA' : false;
     puntos = Math.floor( pedido.suma[ "010-DISTRIBUIDOR" ] / 3 );
-    
+    puntos = pedido.suma[ "010-DISTRIBUIDOR" ];
+    pedido.data.enviogratis = 0;
+   
    
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
 
-    if( puntos < 2 ){
-        $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
-        $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
-    }
-
-    else if( puntos == 2 ){
-        pedido.data.comisionentrega = 0;
-
-        $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
-        $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
-
-        if( pedido.metodoentrega_codigo == '10-PAQUETERIA' ||pedido.metodoentrega_codigo == '12-EXPRESS' ){
-            pedido.metodoentrega_codigo = '10-PAQUETERIA';    
-
-
-            $( '#me-12-EXPRESS' ).prop( 'checked', false );
-            $( '#me-10-PAQUETERIA' ).prop( 'checked', true );
+    if( pedidos_gratis == 0 ){
+        if( puntos < 6 ){
+            $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
+            $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
         }
-    }
 
-    else if( puntos > 2 ){
-        pedido.data.comisionentrega = 0;
+        else if( puntos >= 6 && puntos < 9 ){
+            pedido.data.comisionentrega = 0;
+            pedido.data.enviogratis = 1;
 
-        $( '[for=me-10-PAQUETERIA]' ).addClass( 'd-none' );
-        $( '[for=me-12-EXPRESS]' ).removeClass( 'd-none' );
+            $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
+            $( '[for=me-10-PAQUETERIA]' ).removeClass( 'd-none' );
 
-        if( pedido.metodoentrega_codigo == '12-EXPRESS' || pedido.metodoentrega_codigo == '10-PAQUETERIA' ){
-            pedido.metodoentrega_codigo = '12-EXPRESS';  
-            
-            $( '#me-12-EXPRESS' ).prop( 'checked', true );
-            $( '#me-10-PAQUETERIA' ).prop( 'checked', false );
+            if( pedido.metodoentrega_codigo == '10-PAQUETERIA' ||pedido.metodoentrega_codigo == '12-EXPRESS' ){
+                pedido.metodoentrega_codigo = '10-PAQUETERIA';    
 
+
+                $( '#me-12-EXPRESS' ).prop( 'checked', false );
+                $( '#me-10-PAQUETERIA' ).prop( 'checked', true );
+            }
         }
+
+        else if( puntos >= 9 ){
+            pedido.data.comisionentrega = 0;
+            pedido.data.enviogratis = 1;
+
+            $( '[for=me-10-PAQUETERIA]' ).addClass( 'd-none' );
+            $( '[for=me-12-EXPRESS]' ).removeClass( 'd-none' );
+
+            if( pedido.metodoentrega_codigo == '12-EXPRESS' || pedido.metodoentrega_codigo == '10-PAQUETERIA' ){
+                pedido.metodoentrega_codigo = '12-EXPRESS';  
+                
+                $( '#me-12-EXPRESS' ).prop( 'checked', true );
+                $( '#me-10-PAQUETERIA' ).prop( 'checked', false );
+
+            }
+        }
+
+        var pctg = ( puntos > 6 ? 6 : puntos ) * 100 / 6;
+
+        $( '#progress_entrega .progress' ).attr( 'aria-valuenow', pctg );
+        $( '#progress_entrega h4' ).css( 'display', pctg == 100 ? 'block' : 'none' );
+        $( '#progress_entrega .progress-bar' ).css( 'width', pctg + '%' ).addClass( pctg == 100 ? 'bg-teal' : 'bg-red' ).removeClass( pctg == 100 ? 'bg-red' : 'bg-teal' );
+
+         console.log( puntos, pedidos_gratis, pctg, pedido.data.enviogratis );
     }
 
     // console.log( puntos, pedido.metodoentrega_codigo, pedido.data.costoxbulto );
@@ -528,7 +542,7 @@ function update_pedido( flag = null ){
 
     porcentaje1 = 100 * pedido.data.peso / pedido.data.pesoxbulto;
     porcentaje2 = 100 * pedido.data.productos / pedido.data.productosxbulto;
-    console.log( pedido.data.peso, pedido.data.pesoxbulto, porcentaje1, pedido.data.productos, pedido.data.productosxbulto, porcentaje2, bultos1, bultos2 );
+    // console.log( pedido.data.peso, pedido.data.pesoxbulto, porcentaje1, pedido.data.productos, pedido.data.productosxbulto, porcentaje2, bultos1, bultos2 );
 
     if( 0 && porcentaje2 > porcentaje1 ){
         $( '#bultos_cantidad' ).html( 'x' + bultos2 + ( pluses ? '<small><br>Envío gratis <span class="badge bg-blue">PLUS</span> x' + pluses + '</small>' : '' ) + ( packs ? '<small><br>Envío gratis <span class="badge bg-light-blue">CHIPS</span> x' + packs + '</small>' : '' ) ); 
@@ -547,7 +561,7 @@ function update_pedido( flag = null ){
 
     for( a = 1; a <= bultos; a++ ){
         p = a < bultos ? 100 : 100 - ( 100 * a - porcentaje) ;
-        $( '#bultos' ).append( '<div class="col-2"><div class="progress border border-mustard bg-white m-0" role="progressbar" aria-valuenow="' + p + '" style="height:12px; border-radius:3px !important"><div class="progress-bar bg-mustard text-white fw-bold" style="width: ' + p + '%; border-radius:3px !important">' + a + '</div></div></div>' );
+        $( '#bultos' ).append( '<div class="col-2"><div class="progress border border-mustard bg-white m-0" role="progressbar" aria-valuenow="' + p + '" style="height:12px; border-radius:1px !important"><div class="progress-bar bg-mustard text-white fw-bold" style="width: ' + p + '%; border-radius:1px !important">' + a + '</div></div></div>' );
     } 
 
     revisa_stock();

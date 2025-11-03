@@ -919,6 +919,7 @@ function nuevo_pedido( $modelo )
         "data" => [
             "peso" => 0,
             "primercompra" => 0,
+            "enviogratis" => 0,
             "sat" => [
                 "cfd" => null,
                 "fecha" => null,

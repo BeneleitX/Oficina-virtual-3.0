@@ -175,11 +175,13 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 
 						<p class="text-center mb-1 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://recarga.beneleit.talentonet.com/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Recarga Express</a></p>
 					</div>
-				</div>
+				</div>		
 			</div>
 		</div>
 	</div>
-		
 </div> 
+<div class="text-center mt-5" style="zoom:0.5">
+<span id="siteseal"><script async type="text/javascript" src="https://seal.godaddy.com/getSealPremium?sealID=SXHRTCqFBcGyLhgSVbyD1lpfJBgTbR4brHwH6uLYrTyiD4N79vq8UKlLcGPk"></script></span>
+</div>
 
 

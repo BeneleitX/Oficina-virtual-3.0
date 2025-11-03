@@ -37,6 +37,8 @@
     </div>
 
     <?php 
+    $pg = $socio->pedidos_gratis( $modelo, date( "Ym" ) );
+
     if( !$pagado && !$bloqueado && !$cancelado ){ 
         ?>
         
@@ -543,7 +545,7 @@
                 <div class="card mb-3" style="overflow:hidden">
                     <table class="table rounded-3 m-0">
                         <tr>
-                            <td valign="middle" class="">Total de productos</td>
+                            <td valign="middle" class="">Subtotal productos</td>
                             
                             <td valign="middle" class="text-end">
                                 <h5 class="m-0 text-teal" total_productos="<?php echo $pedido[ "data" ][ "total" ]; ?>">
@@ -555,7 +557,31 @@
                         <tr class="<?php echo sizeof( METODOSENTREGA ) ? "" : "d-none"; ?>">
                             <td valign="middle" class="">
                                 Gastos de entrega <span id="bultos_cantidad"></span> <br>
-                                <div class="row g-1" id="bultos" style="margin-top:1px"></div>
+                                <div class="row g-1 mb-1" id="bultos" style="margin-top:1px"></div>
+
+<?php 
+if( $modelo == "10-NUTRICION" ){
+    if( $pagado ){
+        if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
+            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>OCTUBRE</strong></span>";
+        }
+    }
+    else{   
+        if( $pg == 0 ){
+        ?>
+            <span class="small mt-4">Entrega sin costo <strong>OCTUBRE</strong></span>
+            <div style="position:relative" id="progress_entrega">
+                <div class="progress" data-bs-html="true" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height:6px; border-radius:10px">
+                    <div class="progress-bar bg-red progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                </div>
+                <h4 style="position:absolute; top:-15px; right: -25px; display:none"><i class="fa fa-circle-check text-teal"></i></h4>
+            </div>
+        <?php 
+        }
+    } 
+} 
+?>
+
                             </td>
                             
                             <td valign="middle" class="text-end">
@@ -1534,6 +1560,7 @@ foreach( $productos as $p ){
         pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
         tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
         pagado 		    = <?php echo $pagado; ?>,
+        pedidos_gratis  = <?php echo $pg;  ?>,
         total_pedido    = <?php echo $tt2; ?>,
         bloqueado 	    = <?php echo $bloqueado; ?>,
         cancelado 	    = <?php echo $cancelado; ?>,

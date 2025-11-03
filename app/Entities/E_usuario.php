@@ -689,6 +689,29 @@ class E_usuario extends Entity
     }
 
 
+    public function pedidos_gratis( $modelo, $mes )
+    {
+        $db  = db_connect();
+
+        switch( $modelo ){
+            case "10-NUTRICION" : 
+                        
+                $sql = "select count(*) as pedidos_gratis 
+                        from t_pedidos 
+                        where usuario_id = {$this->id} 
+                        and modelo_codigo = '{$modelo}' 
+                        and substring( estatus_codigo, 1, 3 ) > 400 
+                        and date_format( fechas->>'$.pagado', '%Y%m' ) = '{$mes}'
+                        and data->>'$.enviogratis' = 1";
+
+                return $db->query( $sql )->getRow()->pedidos_gratis;
+
+            default : 
+                return 0;
+        }
+    }
+
+
     /**
      * Busca si el usuario tiene un pedido pendiente (con estatus entre 300 y 400) para el modelo especificado.
      * Si lo encuentra, regresa el id del pedido, de lo contrario regresa null.
