@@ -536,9 +536,7 @@
             <?php 
         } 
 
-
-
-?>
+        ?>
 
         <div class="row">
             <div class="col-lg-6">
@@ -559,28 +557,28 @@
                                 Gastos de entrega <span id="bultos_cantidad"></span> <br>
                                 <div class="row g-1 mb-1" id="bultos" style="margin-top:1px"></div>
 
-<?php 
-if( $modelo == "10-NUTRICION" ){
-    if( $pagado ){
-        if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
-            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>OCTUBRE</strong></span>";
-        }
-    }
-    else{   
-        if( $pg == 0 ){
-        ?>
-            <span class="small mt-4">Entrega sin costo <strong>OCTUBRE</strong></span>
-            <div style="position:relative" id="progress_entrega">
-                <div class="progress" data-bs-html="true" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height:6px; border-radius:10px">
-                    <div class="progress-bar bg-red progress-bar-striped progress-bar-animated" style="width: 0%"></div>
-                </div>
-                <h4 style="position:absolute; top:-15px; right: -25px; display:none"><i class="fa fa-circle-check text-teal"></i></h4>
-            </div>
-        <?php 
-        }
-    } 
-} 
-?>
+                                <?php 
+                                if( $modelo == "10-NUTRICION" ){
+                                    if( $pagado ){
+                                        if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
+                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>OCTUBRE</strong></span>";
+                                        }
+                                    }
+                                    else{   
+                                        if( $pg == 0 ){
+                                        ?>
+                                            <span class="small mt-4">Entrega sin costo <strong>OCTUBRE</strong></span>
+                                            <div style="position:relative" id="progress_entrega">
+                                                <div class="progress" data-bs-html="true" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height:6px; border-radius:10px">
+                                                    <div class="progress-bar bg-red progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                                                </div>
+                                                <h4 style="position:absolute; top:-15px; right: -25px; display:none"><i class="fa fa-circle-check text-teal"></i></h4>
+                                            </div>
+                                        <?php 
+                                        }
+                                    } 
+                                } 
+                                ?>
 
                             </td>
                             
