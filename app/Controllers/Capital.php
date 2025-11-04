@@ -221,12 +221,24 @@ class Capital extends BaseController
                 $k = date( "Ym", strtotime( substr( $k, 0, 4 )."-".substr( $k, 4, 2 )."-01 - 1 month" ) );
 
                 if( $v[ "directos" ] > 11 ){
+                    if( !isset($drangos[ "530-LEYENDA" ][ $k ])){
+                        $drangos[ "530-LEYENDA" ][ $k ] = 0;
+                    }
+
                     $drangos[ "530-LEYENDA" ][ $k ]++;
                 }
                 elseif( $v[ "directos" ] > 7 ){
+                    if( !isset($drangos[ "520-CONQUISTADOR" ][ $k ])){
+                        $drangos[ "520-CONQUISTADOR" ][ $k ] = 0;
+                    }
+
                     $drangos[ "520-CONQUISTADOR" ][ $k ]++;
                 }
                 elseif( $v[ "directos" ] > 3 ){
+                    if( !isset($drangos[ "510-PIONERO" ][ $k ])){
+                        $drangos[ "510-PIONERO" ][ $k ] = 0;
+                    }
+
                     $drangos[ "510-PIONERO" ][ $k ]++;
                 }
             }
