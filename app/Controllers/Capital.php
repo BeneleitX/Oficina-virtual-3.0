@@ -211,7 +211,7 @@ class Capital extends BaseController
             $drangos[ "510-PIONERO" ][ $mes ] = 0;
 
             $date->modify( "- 1 month" );
-        }
+        } 
 
         $errores = [];
         foreach( $historial as $socio ){
