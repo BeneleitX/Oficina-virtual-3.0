@@ -1005,7 +1005,7 @@ class Dashboard extends BaseController
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
-        if( $directos && $existe == 0 && $mes < date( "Y-m-d" ) ){
+        if( $existe == 0 && $mes < date( "Y-m-d" ) ){
             $historial = $usuario->historial;
 
             if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
@@ -1015,7 +1015,7 @@ class Dashboard extends BaseController
                 model( "UsuarioModel" )->save( $usuario );
             }
 
-            if( $bono > 0 ){
+            if( $directos && $bono > 0 ){
                 $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
                 $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
 
