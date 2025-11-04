@@ -1005,7 +1005,7 @@ class Dashboard extends BaseController
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
-        if( $directos >= 4 && $bono > 0 && $existe == 0 && $mes < date( "Y-m-d" ) ){
+        if( $directos && $bono > 0 && $existe == 0 && $mes < date( "Y-m-d" ) ){
 
             $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
             $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
