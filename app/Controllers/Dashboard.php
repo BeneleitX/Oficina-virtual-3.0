@@ -1005,29 +1005,32 @@ class Dashboard extends BaseController
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
-        if( $directos && $bono > 0 && $existe == 0 && $mes < date( "Y-m-d" ) ){
-
-            $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
-            $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
-
-            $db->query( $sql );
-
+        if( $directos && $existe == 0 && $mes < date( "Y-m-d" ) ){
             $historial = $usuario->historial;
 
             if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
                 $historial->modelos->{"50-INVERSION"}->corte_mensual = new \stdClass();
+
+                $usuario->historial = $historial; 
+                model( "UsuarioModel" )->save( $usuario );
             }
 
-            $historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym", strtotime($mes) )} = [
-                "directos" => $directos,
-                "bolsa"    => $bolsa,
-                "bono"     => $bono
-            ];
-            
-            $usuario->historial = $historial; 
-            model( "UsuarioModel" )->save( $usuario );
-        }
+            if( $bono > 0 ){
+                $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
+                $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
 
+                $db->query( $sql );
+
+                $historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym", strtotime($mes) )} = [
+                    "directos" => $directos,
+                    "bolsa"    => $bolsa,
+                    "bono"     => $bono
+                ];
+
+                $usuario->historial = $historial; 
+                model( "UsuarioModel" )->save( $usuario );
+            }
+        }
     }
 
 
