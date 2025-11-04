@@ -234,7 +234,7 @@ class Capital extends BaseController
 
                     $drangos[ "520-CONQUISTADOR" ][ $k ]++;
                 }
-                elseif( $v[ "directos" ] > 3 ){
+                elseif( $v[ "directos" ] > 3 ){ 
                     if( !isset($drangos[ "510-PIONERO" ][ $k ])){
                         $drangos[ "510-PIONERO" ][ $k ] = 0;
                     }
