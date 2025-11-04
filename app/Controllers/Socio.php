@@ -134,7 +134,7 @@ class Socio extends BaseController
             mkdir( $path, 0755, true );
         }
 
-        if( $_FILES[ "image" ] ){
+        if( $_FILES[ "image" ] ?? false ){
             $fileTmpName = $_FILES[ "image" ][ "tmp_name" ];
             move_uploaded_file( $fileTmpName, $path.$filename );
 
