@@ -807,7 +807,7 @@ class Reportes extends BaseController
         // procesar datos
 
         $result    = $db->query( $sql );
-        $data      = [];
+        $datos     = [];
         $sheetData = [];
         
         foreach( $result->getResult() as $d ){
