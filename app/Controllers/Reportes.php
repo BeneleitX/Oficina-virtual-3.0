@@ -193,7 +193,7 @@ class Reportes extends BaseController
         $db = db_connect();
 
         $tabla = "";
-        echo $sql = "SELECT 
+        $sql = "SELECT 
                 p.modelo_codigo as 'EMPRESA',
 
                 count(*) as VENTAS,
@@ -351,7 +351,7 @@ class Reportes extends BaseController
         $sql = "SELECT 
                     p.referencia as REFERENCIA,
                     u.id as SOCIO,
-                    f.extras as EXTRAS,
+                    any_value(f.extras->>'$.auth') as EXTRAS,
                     p.estatus_codigo as ESTATUS,
                     u.telefono as CELULAR,
                     concat( u.data->>'$.nombre', ' ', u.data->>'$.apellidos[ 0 ]', ' ', u.data->>'$.apellidos[ 1 ]' ) as NOMBRE,
@@ -377,16 +377,17 @@ class Reportes extends BaseController
                     ".( $c_primercompra != 'TODOS' ? "and p.data->>'$.primercompra' = {$c_primercompra}" : "" )."
                     and cast( p.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}' 
                     and p.modelo_codigo = '{$modelo}'
-
+                group by p.id
                 order by cast( p.fechas->>'$.pagado' as date ) asc";
+                
+                
 
         $result = $db->query( $sql );
 
         foreach( $result->getResult() as $s ){
             $row++;
-            $s->EXTRAS = json_decode( $s->EXTRAS );
             switch( $s->METODO_PAGO ){
-                case "21-GETNET": $operacion = $s->EXTRAS->auth ?? ""; break;
+                case "21-GETNET": $operacion = $s->EXTRAS ?? ""; break;
                 default: $operacion = ""; break;
             }
 
@@ -411,8 +412,9 @@ class Reportes extends BaseController
             
         }
 
-        $worksheet->getStyle( "A1:P1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "A1:Q1" )->getFont()->getColor()->setARGB('ffffff');
         $worksheet->getStyle( "A1:P1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        $worksheet->getStyle( "Q1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');        
 
         $worksheet->getStyle( "M:P" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
         $worksheet->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
@@ -589,7 +591,8 @@ class Reportes extends BaseController
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
         $writer->save( $file );
-    }     
+    } 
+
     
     
     public function calificaciones_mes(){
@@ -608,6 +611,7 @@ class Reportes extends BaseController
         
         echo template( "reportes/calificaciones_mes", $this->data );
     }
+
 
 
     public function update_calificaciones()
@@ -751,6 +755,8 @@ class Reportes extends BaseController
 
         echo $html;
     }
+
+
 
     public function excel_calificaciones()
     {
