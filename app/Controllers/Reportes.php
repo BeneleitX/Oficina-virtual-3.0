@@ -204,7 +204,7 @@ class Reportes extends BaseController
 
                 FROM t_pedidos p 
                 WHERE SUBSTRING( p.estatus_codigo,1,3) > 400
-                AND p.fechas->>'$.pagado' BETWEEN '".$this->request->getPost( "inicia" )."' AND '".$this->request->getPost( "termina")."' 
+                AND cast( p.fechas->>'$.pagado' as date ) BETWEEN '".$this->request->getPost( "inicia" )."' AND '".$this->request->getPost( "termina")."' 
                 GROUP BY p.modelo_codigo";
 
         $datos = $db->query( $sql )->getResultArray();
@@ -391,6 +391,7 @@ class Reportes extends BaseController
                 default: $operacion = ""; break;
             }
 
+            // $worksheet->setCellValue( "Z1",  $sql);
 
             $worksheet->setCellValue( "A".( $row ),  $s->REFERENCIA);
             $worksheet->setCellValue( "B".( $row ),  $s->FECHA_PAGO);

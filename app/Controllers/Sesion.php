@@ -66,9 +66,10 @@ class Sesion extends BaseController
             } 
         }
 
-        $INTENTOS  = 5;   // maximop de intentos
-        $CASTIGO   = 120;  //segundos de bloqueo
-        $BLOQUEAIP = 100; // intentos en el mes para bloquear la IP permanentemente
+        $INTENTOS   = 5;   // maximop de intentos
+        $INTERVALO  = 3;   // segundos entre intentos
+        $CASTIGO    = 120;  //segundos de bloqueo
+        $BLOQUEAIP  = 100; // intentos en el mes para bloquear la IP permanentemente
 
         // Si hubo un intento fallido, se deben esperar 5 segundos para reintentar
         // a los 5 intentos fallidos la cuenta se bloquea un minuto
@@ -81,7 +82,7 @@ class Sesion extends BaseController
         else{
             $this->session->set( "tryset", session( "tryset" ) + 1 );
         }
-         if( session( "login" ) + 5 > time() ){
+         if( session( "login" ) + $INTERVALO > time() ){
             return redirect()
             ->back()
             ->with( "errors", [ "socio_id" => "{$icono } Haga click de nuevo en el botón de ingresar, por favor" ] )
@@ -105,7 +106,7 @@ class Sesion extends BaseController
         $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
         // SI es un login automático de switch de admin
-        if( $socio > 0 ){
+        if( $socio && strlen( $socio ) ){
    
             $request = base64_decode( urldecode( $socio ) );
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
