@@ -137,6 +137,7 @@ class Sesion extends BaseController
                 $this->session->set( "usuario", $socio->id );
             
                 return redirect()->to( "inicio" );
+                dd($socio);
             }
 
             return redirect()->to( "logout" );
@@ -564,12 +565,14 @@ class Sesion extends BaseController
         // de confirmación, aplicamos el cambio 
 
         if( $pass == $usuario->password_original() && $retiro[ "estatus_codigo" ] == "165-ESPERANDO-CODIGO" ){
+    
+            $this->session->set( "usuario", $usuario->id );
 
             if( $retiro[ "fechas" ][ "mes" ] == date( "Ym" ) ){
 
 
                 // BITACORA Confirma solicitud de retiro
-                bitacora( 100, $this->data[ "usuario" ]->id, [ 
+                bitacora( 100, $usuario->id, [ 
                     "socio"  => $usuario->id,
                     "retiro" => $retiro
                 ] );
@@ -584,7 +587,7 @@ class Sesion extends BaseController
             }
             else{
                 // BITACORA Cancela solicitud de retiro
-                bitacora( 105, $this->data[ "usuario" ]->id, [ 
+                bitacora( 105, $usuario->id, [ 
                     "socio"  => $usuario->id,
                     "retiro" => $retiro
                 ] );
@@ -600,7 +603,7 @@ class Sesion extends BaseController
         }
         else{
             // BITACORA Cancela solicitud de retiro
-            bitacora( 106, $this->data[ "usuario" ]->id, [ 
+            bitacora( 106, $usuario->id, [ 
                 "socio"  => $usuario->id,
                 "retiro" => $retiro,
                 "hash"   => $hash,
@@ -613,7 +616,6 @@ class Sesion extends BaseController
                 "texto" => "Hubo un problema al confirmar el retiro" ] ); 
         }
 
-        $this->session->set( "usuario", $usuario->id );
         
         return redirect()->to( "capital" );
     }
