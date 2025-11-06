@@ -860,12 +860,18 @@ class Dashboard extends BaseController
             }
         }
 
-        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym", strtotime( date( "Y-m-d" ) ." - 1 month") )} ) ){
-            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m-01", strtotime( date( "Y-m-d" ) ." - 1 month" ) ) );
+        $mx = date( "Ym",     strtotime( date( "Y-m-01" ) ." - 1 month" ) );
+        $mt = date( "Y-m-01", strtotime( date( "Y-m-01" ) ." - 1 month" ) );
+
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) ){
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, $mt );
         }
-        
-        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym" )} ) ){
-            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, date( "Y-m-01" ) );
+
+        $mx = date( "Ym" );
+        $mt = date( "Y-m-01" );
+
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) ){
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, $mt );
         }
 
         echo "<img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $semilla, 2);
@@ -1000,12 +1006,12 @@ class Dashboard extends BaseController
         }
 
         $db  = db_connect();
-
-        $sql   = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
+        $sql = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
-        if( $existe == 0 && $mes < date( "Y-m-d" ) ){
+        
+        if( $existe == 0 && date( "Ym", strtotime($mes) ) == date( "Ym" ) ){
             $historial = $usuario->historial;
 
             if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
@@ -1015,7 +1021,9 @@ class Dashboard extends BaseController
                 model( "UsuarioModel" )->save( $usuario );
             }
 
-            if( $directos && $bono > 0 ){
+
+            if( $directos && $bolsa > 0 ){
+
                 $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
                 $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
 
