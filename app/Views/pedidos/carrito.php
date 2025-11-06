@@ -560,18 +560,23 @@
                                 <?php 
                                 if( $modelo == "10-NUTRICION" ){
                                     if( $pagado ){
+
+                                        $mesenvio = strtoupper( mes( date( "m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) ) );
                                         if( !isset( $pedido[ "data" ][ "enviogratis" ] ) ){
                                             $pedido[ "data" ][ "enviogratis" ] = 0;
                                         }
 
                                         if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
-                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>OCTUBRE</strong></span>";
+                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong><?php echo $mesenvio; ?></strong></span>";
                                         }
                                     }
                                     else{   
+
+                                        $mesenvio = strtoupper( mes( date( "m" ) ) );
+
                                         if( $pg == 0 ){
                                         ?>
-                                            <span class="small mt-4">Entrega sin costo <strong>OCTUBRE</strong></span>
+                                            <span class="small mt-4">Entrega sin costo <strong><?php echo $mesenvio; ?></strong></span>
                                             <div style="position:relative" id="progress_entrega">
                                                 <div class="progress" data-bs-html="true" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height:6px; border-radius:10px">
                                                     <div class="progress-bar bg-red progress-bar-striped progress-bar-animated" style="width: 0%"></div>

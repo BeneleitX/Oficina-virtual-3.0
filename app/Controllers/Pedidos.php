@@ -170,7 +170,7 @@ class Pedidos extends BaseController
             $this->data[ "link" ]  = str_replace( "%", "___", urlencode( base64_encode( $this->data[ "pedido" ][ "id" ] ) ) );
             $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "pedido" ][ "usuario_id" ] );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $this->data[ "pedido" ][ "modelo_codigo" ] );
-
+            
             $this->data[ "domicilios" ] = $this->data[ "socio" ]->getDomicilios( false, true);
 
             $sql = "modelo_codigo = '{$modelo}' OR data->'$.universal' = true";
