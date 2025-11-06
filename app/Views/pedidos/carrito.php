@@ -567,7 +567,7 @@
                                         }
 
                                         if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
-                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong><?php echo $mesenvio; ?></strong></span>";
+                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>{$mesenvio}</strong></span>";
                                         }
                                         
                                     }
@@ -580,7 +580,7 @@
                                         }
 
                                         if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
-                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong><?php echo $mesenvio; ?></strong></span>";
+                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong>{$mesenvio}</strong></span>";
                                         }
                                     }
                                     else{   
