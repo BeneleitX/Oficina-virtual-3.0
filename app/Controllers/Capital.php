@@ -70,6 +70,14 @@ class Capital extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Capital24";
 
+        $db  = db_connect();
+        $sql = "UPDATE t_retiros 
+                set estatus_codigo = '124-VENCIDO' 
+                where estatus_codigo = '165-ESPERANDO-CODIGO' 
+                and fechas->>'$.mes' < date_format( now(), '%Y%m' )";
+
+        $db->query( $sql );
+
         echo template( "capital/dashboard", $this->data );
     }
 

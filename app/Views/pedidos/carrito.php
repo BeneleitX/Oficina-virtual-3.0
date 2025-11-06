@@ -559,7 +559,20 @@
 
                                 <?php 
                                 if( $modelo == "10-NUTRICION" ){
-                                    if( $pagado ){
+                                    if( $bloqueado ){
+
+                                        $mesenvio = strtoupper( mes( date( "m" ) ) );
+                                        if( !isset( $pedido[ "data" ][ "enviogratis" ] ) ){
+                                            $pedido[ "data" ][ "enviogratis" ] = 0;
+                                        }
+
+                                        if( $pedido[ "data" ][ "enviogratis" ] == 1 ){
+                                            echo "<span class=\"badge bg-white border border-teal text-teal\">Entrega sin costo <strong><?php echo $mesenvio; ?></strong></span>";
+                                        }
+                                        
+                                    }
+                                        
+                                    elseif( $pagado ){
 
                                         $mesenvio = strtoupper( mes( date( "m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) ) );
                                         if( !isset( $pedido[ "data" ][ "enviogratis" ] ) ){
