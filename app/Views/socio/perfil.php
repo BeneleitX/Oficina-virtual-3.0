@@ -7,6 +7,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 
 <h4 class="mt-1 mb-3"><?php echo $titulo; ?>  <span class="iconify rounded-1" data-width="24" data-icon="flag:<?php echo strtolower( $usuario->data->ubicacion->origen ); ?>-4x3"></span></h4>
 
+<?php /* 
 		<a href="javascript:$( '#verificacion').modal( 'show' )" data-bs-toggle="tooltip" title="Click para ver detalles de verificación" class="col-12">
 		
 			<div class="progress bg-white mb-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="<?php echo $socio->verificado->porcentaje; ?>" aria-valuemin="0" aria-valuemax="100">
@@ -14,6 +15,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 			</div>
 			
 		</a>
+*/ ?>
 
 <div class="card mb-4">
 	<div class="card-body">
@@ -508,6 +510,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 </div>
 <?php } ?>
 
+<?php /* 
 <div class="modal" tabindex="-1" id="verificacion">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -546,6 +549,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 		</div>
 	</div>
 </div>
+*/ ?>
 
 
 <div class="modal" tabindex="-1" id="beneficiario">
