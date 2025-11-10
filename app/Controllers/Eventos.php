@@ -68,7 +68,7 @@ class Eventos extends BaseController
                 FROM t_pedidos p,
                     JSON_TABLE(p.promociones, '$.\"{$codigo}\".productos.*.cantidad' COLUMNS (qt INTEGER PATH '$')) t
                 WHERE
-                    p.usuario_id > 100 AND 
+                    -- p.usuario_id > 100 AND 
                     JSON_EXTRACT( p.PTS, '$.\"{$codigo}\"' ) > 0 AND SUBSTRING( p.estatus_codigo,1,3) > 400
                 group by p.usuario_id
                 ORDER BY fecha, p.usuario_id";

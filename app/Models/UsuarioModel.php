@@ -10,7 +10,7 @@ class UsuarioModel extends Model
     protected $primaryKey = "id";
 
     protected $useAutoIncrement = true;
-    protected $extras = [ "verificado" => "f_es_verificado" ];
+   //  protected $extras = [ "verificado" => "f_get_verificacion" ];
 
     protected $returnType     = \App\Entities\E_usuario::class;
     protected $useSoftDeletes = false;

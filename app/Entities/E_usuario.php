@@ -117,6 +117,7 @@ class E_usuario extends Entity
         $update = 0;
 
         foreach( MODELOS as $m ){
+            $this->verificado = $this->get_verificacion( $m[ "codigo" ] );
 
             if( $m[ "settings" ][ "efectivo" ] ){
 
@@ -145,7 +146,6 @@ class E_usuario extends Entity
                         "cantidad" => 0.00,
                         "estatus"  => 0
                     ];
-
                     
                     $data->estatus->modelos->{$m[ "codigo"]} = ( $this->verificado->estatus ?? null ) ? "220-NUEVO-VERIFICADO" : "210-NUEVO"; 
                     
@@ -450,6 +450,10 @@ class E_usuario extends Entity
     {
         if( $modelo ){
 
+            // $this->verificado =  = [ "verificado" => "f_get_verificacion" ];
+
+            $this->verificado = $this->get_verificacion( $modelo );
+
             $m_0 = date('Ym');
             $m_1 = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
@@ -494,10 +498,10 @@ class E_usuario extends Entity
                 ."<div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">"
                 .( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" )
                 .id( $this->id, 6 )."</span>".
-                ( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" );
+                ( $verificado ? " <span class=\"small\">".$this->verified( $modelo )."</span>" : "" );
         }
         elseif( $clase ){
-            return "<span style=\"position:relative\" class=\"badge bg-{$clase}\" ".( $verificado ? "data-bs-custom-class=\"tooltip-".( $this->verificado->estatus ? "teal" : "red" )."\" data-bs-toggle=\"tooltip\" title=\"Socio ".( $this->verificado->estatus ? "" : "no" )." verificado\"" : "" ).">".id( $this->id, 6 ).( $verificado ? " <span class=\"small\">".$this->verified()."</span>" : "" )."</span>";
+            return "<span style=\"position:relative\" class=\"badge bg-{$clase}\">".id( $this->id, 6 )."</span>";
         }
 
         return id( $this->id, 6 );
@@ -529,9 +533,10 @@ class E_usuario extends Entity
      * @return string HTML string containing the icon element.
      */
 
-    public function verified()
+    public function verified( $modelo = null )
     {
-        return "<i class=\"far fa-circle-".( $this->verificado->estatus ? "check text-teal" : "xmark text-red" )."\"></i>";
+
+        return $modelo ? "<i class=\"far fa-circle-".( $this->verificado->estatus ? "check text-teal" : "xmark text-red" )."\"></i>" : "";
     }
 
 
