@@ -531,6 +531,9 @@ function update_pedido( flag = null ){
 
          console.log( puntos, pedidos_gratis, pctg, pedido.data.enviogratis );
     }
+    else{
+        $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );
+    }
 
     // console.log( puntos, pedido.metodoentrega_codigo, pedido.data.costoxbulto );
 
