@@ -484,6 +484,13 @@ class E_usuario extends Entity
                     $calificacion = CALIFICACIONES[ $calificaciones[ $m_0 ] ][ "descripcion" ];                    
             }
 
+            $pendientes = "";
+            foreach( $this->verificado->puntos as $p => $e ){
+                if( $e == false ){
+                    $pendientes .= "<span class='badge bg-red m-1'>{$p}</span>";
+                }
+            }
+
             return 
                 "<span data-bs-toggle=\"tooltip\" data-bs-html=\"true\" title=\"<p class='mt-3'>"
                 .$this->avatar(150, false, true)
@@ -493,7 +500,7 @@ class E_usuario extends Entity
                 ."</span></h3><p class='m-0'>".$this->nombre( 2 )
                 ."</p><span class='badge w-100 bg-".( $this->verificado->estatus ? "teal" : "red" )."'>Socio "
                 .( $this->verificado->estatus ? "" : "no" )
-                ." verificado</span><span class='badge w-100 bg-".$estatus[ "color" ]
+                ." verificado</span>{$pendientes}<span class='badge w-100 bg-".$estatus[ "color" ]
                 ."'>{$estatus[ "descripcion" ]}</span>"
                 ."<div class='py-1'>{$calificacion}</div>\" class=\"badge bg-".$estatus[ "color" ]."\">"
                 .( $modelo ? "<i class=\"fa fa-".$modelo[ "settings" ][ "icono" ]."\"></i> " : "" )
