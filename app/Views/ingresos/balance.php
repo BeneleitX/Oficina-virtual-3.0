@@ -138,7 +138,7 @@ while( $hoy <= $periodo[ "termina" ] ){
 
                                     <td nowrap>".$socios[ $c->usuario_id ]->avatar( 24 )." ".$socios[ $c->usuario_id ]->id( $modelo )."<span class=\"d-none d-lg-inline\"> ".$socios[ $c->usuario_id ]->nombre( 2 )."</span></td>
 
-                                    <td width=\"20%\" class=\"text-center\">{$c->fecha}</td>
+                                    <td width=\"20%\" class=\"text-center\"><span class=\"d-none\">{$c->fecha}</span>".fecha( $c->fecha )."</td>
 
                                     <td width=\"10%\" class=\"text-start\"><strong>{$c->nivel}</strong> ".($c->compresion ? "<span class=\"badge border border-red text-red\">C<span class=\" d-none d-lg-inline\">ompresion</span></span>" : "")."</td>
 

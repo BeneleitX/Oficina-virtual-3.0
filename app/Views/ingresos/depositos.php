@@ -68,7 +68,7 @@
                         <td><span class=\"d-none\">{$pago["estatus"]}</span>".estatus( $pago["estatus"] )."</td>
                         <td>{$pago["clabe"]} ".( $pago["menor"] > 0 ? "<small><span class=\"badge bg-pink\">MENOR</span></small>" : "" )."</td>
                         <td class=\"text-center\">{$pago["folio"]}</td>
-                        <td>".( $pago[ "fecha" ] )."</td>
+                        <td><span class=\"d-none\">{$pago["fecha"]}</span>".fecha( substr( $pago[ "fecha" ], 0, 10 ) )."</td>
                         <td class=\"text-end\"><button onclick=\"detalle_pago( {$pago["folio"]}, '".periodo( $pago["periodo" ] )."' )\" class=\"btn btn-sm btn-warning\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
                     </tr>
                 ";

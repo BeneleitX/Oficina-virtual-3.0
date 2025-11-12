@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<p class="mb-5"><a href="<?php echo base_url( "periodos/".$periodo[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a periodos</a></p>
+<p class="mb-5"><a class="btn btn-sm btn-light" href="<?php echo base_url( "periodos/".$periodo[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a periodos</a></p>
 
 <?php
 
@@ -248,6 +248,18 @@ foreach( $t[ "siguiente" ] as $g ){
             <div class="modal-body" id="periodo_detalle">
                 <div class="text-center">
                     <p style="font-size:100px" class="m-0 p-0 text-center"><i class=" text-marine fa fa-hand-holding-dollar"></i></p>
+
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-7 text-start">
+                                <strong><i class="fa fa-warning"></i> Las comisiones del periodo se registrarán como pagadas en esta fecha:</strong>
+                            </div>
+                            <div class="col-5 text-end">
+                                <input type="date" id="fecha_pago" class="form-control" value="<?php echo date( "Y-m-d" ); ?>"/>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="alert alert-danger">Esta acción no puede deshacerse.<br>Recuerda que para hacer un corte, es necesario que todos los periodos anteriores esten marcados como pagados.</div>
                     <p><div class="mt-4 mb-3"><button class="btn btn-secondary" id="marca_pagado">Click para marcar como pagado</button></div></p>
                 </div>

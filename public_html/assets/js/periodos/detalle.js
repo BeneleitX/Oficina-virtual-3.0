@@ -114,10 +114,11 @@ $(document).ready(function(){
 
 
     $( '#marca_pagado' ).on( 'click', function(){
+        var fp = $( '#fecha_pago' ).val();
 
 		$.ajax({
 			url: base_url + 'marca_pagado',
-			data: { periodo: periodo, [csrf_token] : csrf_hash },
+			data: { periodo: periodo, fp : fp,  [csrf_token] : csrf_hash },
 			type: 'POST',
 			success: function(){
                 // reload

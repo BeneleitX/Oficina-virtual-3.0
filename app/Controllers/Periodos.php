@@ -385,7 +385,7 @@ class Periodos extends BaseController
 
             $sql = "UPDATE t_pagos p
                     SET p.estatus_codigo  = '420-PAGADO',
-                    p.data = json_set( p.data, '$.fechapago', now() )
+                    p.data = json_set( p.data, '$.fechapago', '{$fp}' )
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
                     AND p.estatus_codigo  = '330-EN-ESPERA' 
                     AND p.data->>'$.periodos.deposito' = '{$periodo[ "codigo" ]}'";
@@ -407,8 +407,13 @@ class Periodos extends BaseController
 
             // BITACORA marca periodo como pagado
             bitacora( 47, $this->data[ "usuario" ]->id, [
-                "periodo" => $periodo[ "codigo" ]
+                "periodo"   => $periodo[ "codigo" ],
+                "fechapago" => $fp
             ] );
+
+            $data = $periodo[ "data" ];
+            $data[ "fechapago" ] = $fp;
+            $periodo[ "data" ] = $data;
 
             $periodo[ "estatus_codigo" ] = "422-PERIODO-PAGADO";
             
