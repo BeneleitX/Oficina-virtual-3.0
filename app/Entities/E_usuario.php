@@ -1788,6 +1788,10 @@ class E_usuario extends Entity
     public function getRangoInversion( $directos )
     {
 
+                
+        if( in_array( $this->id, [ 164925, 164924, 164923, 164914] ) ){
+            $directos = 12;
+        }
         // Identificar rango corresponidente
 
         foreach( RANGOS as $r ){
