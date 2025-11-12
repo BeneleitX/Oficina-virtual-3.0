@@ -410,7 +410,7 @@ function update_pedido( flag = null ){
         total_productos_pedido += cuenta_productos;
     });
 
-    pedido.data.peso = pedido.data.peso == false ? 0 : parseInt( pedido.data.peso );
+    pedido.data.peso = pedido.data.peso == false || modelo == '90-SEMILLERO' ? 0 : parseInt( pedido.data.peso );
     total_productos_pedido = pedido.data.productos ;
 
     // update bultos
@@ -463,7 +463,7 @@ function update_pedido( flag = null ){
         } */
     }
 
-    if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' ){
+    if( ( !pedido.data.peso && pedido.data.productos > 0 ) || modelo == '50-INVERSION' || modelo == '90-SEMILLERO' ){
         $( '.metodosentrega, .me_respuesta' ).hide();
         if( pedido.data.productos > 0 ) $( '#no_costo' ).show();
     }
@@ -478,11 +478,9 @@ function update_pedido( flag = null ){
     // Costo de envío segun calificación del socio
 
     es_paqueteria = pedido.metodoentrega_codigo ? pedido.metodoentrega_codigo.substring( 3 ) == 'PAQUETERIA' : false;
-    puntos = Math.floor( pedido.suma[ "010-DISTRIBUIDOR" ] / 3 );
+
     puntos = pedido.suma[ "010-DISTRIBUIDOR" ];
     pedido.data.enviogratis = 0;
-   
-   
     pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
 
     if( pedidos_gratis == 0 ){
@@ -529,7 +527,7 @@ function update_pedido( flag = null ){
         $( '#progress_entrega h4' ).css( 'display', pctg == 100 ? 'block' : 'none' );
         $( '#progress_entrega .progress-bar' ).css( 'width', pctg + '%' ).addClass( pctg == 100 ? 'bg-teal' : 'bg-red' ).removeClass( pctg == 100 ? 'bg-red' : 'bg-teal' );
 
-         console.log( puntos, pedidos_gratis, pctg, pedido.data.enviogratis );
+        // console.log( puntos, pedidos_gratis, pctg, pedido.data.enviogratis );
     }
     else{
         $( '[for=me-12-EXPRESS]' ).addClass( 'd-none' );

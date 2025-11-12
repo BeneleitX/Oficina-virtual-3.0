@@ -8,9 +8,7 @@
 
         <?php 
 
-        $router = \Config\Services::router();
-        $_method = $router->methodName();
-        $_controller = explode("\\", $router->controllerName()); 
+
 
         if( $usuario->id > 0 ){
             $data = (array)$usuario->data;

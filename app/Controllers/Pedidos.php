@@ -29,7 +29,7 @@ class Pedidos extends BaseController
         
         load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
         load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
-        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
+        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
 
         if( $this->data[ "usuario" ] === null ){
             return redirect()->to( "logout" );
@@ -111,6 +111,7 @@ class Pedidos extends BaseController
         $this->data[ "navbar" ] = true;
 
         $this->data[ "update_productos" ] = $this->session->getFlashdata( "update_productos" ) ? 1 : 0;
+        $activo = "estatus_codigo = '201-ACTIVO'";
 
         // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
@@ -173,7 +174,8 @@ class Pedidos extends BaseController
             
             $this->data[ "domicilios" ] = $this->data[ "socio" ]->getDomicilios( false, true);
 
-            $sql = "modelo_codigo = '{$modelo}' OR data->'$.universal' = true";
+            $sql = ( MODELOS[ $modelo ][ "settings" ][ "global" ] ?? false ) ? $activo : "modelo_codigo = '{$modelo}'";
+
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
     
             $this->data[ "enproceso" ] = substr( $this->data[ "pedido" ][ "estatus_codigo" ], 0, 3 ) == 250 && ( $this->data[ "pedido" ][ "usuario_id" ] != $this->data[ "usuario" ]->id ) ? 1 : 0;
@@ -186,8 +188,8 @@ class Pedidos extends BaseController
         // Entrar directo a URl tienda (sin referencia, pedido en proceso)
         else{
             $modelo = $data;
-            $activo = "estatus_codigo = '201-ACTIVO'";
-            $sql    = "{$activo} AND ( modelo_codigo = '{$modelo}' OR data->'$.universal' = true )";
+            
+            $sql    = "{$activo}".( ( MODELOS[ $modelo ][ "settings" ][ "global" ] ?? false ) ? "" : " AND modelo_codigo = '{$modelo}'" );
 
             $this->data[ "socio" ]     = $this->data[ "usuario" ];
             $this->data[ "domicilios" ] = $this->data[ "socio" ]->getDomicilios();
@@ -200,7 +202,7 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
+            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -304,7 +306,7 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
+            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
             load_catalogo( "metodosentrega", "{$activo} AND ( modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' ) )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'", "stocks" );
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -818,13 +820,12 @@ class Pedidos extends BaseController
             if( !$this->data[ "pedido" ][ "metodoentrega_codigo" ] ){ 
                 switch ($this->data[ "pedido" ][ "modelo_codigo" ]) {
                     case "10-NUTRICION":
+                    case "50-INVERSION":
+                    case "90-SEMILLERO":
                         $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "90-NO-ENTREGA";
                         break;
                     case "40-GASOLINAS":
                         $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "15-GAS";
-                        break;
-                    case "50-INVERSION":
-                        $this->data[ "pedido" ][ "metodoentrega_codigo" ] = "90-NO-ENTREGA";
                         break;
                 }
             }

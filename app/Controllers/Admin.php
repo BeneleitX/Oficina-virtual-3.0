@@ -206,7 +206,7 @@ class Admin extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Promoción ";
 
-        $sql = "estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$this->data[ "promocion" ][ "modelo_codigo" ]}'";
+        $sql = "estatus_codigo = '201-ACTIVO' ".( ( MODELOS[ $this->data[ "promocion" ][ "modelo_codigo" ] ][ "settings" ][ "global" ] ?? false ) ? "" : " AND modelo_codigo = '{$this->data[ "promocion" ][ "modelo_codigo" ]}'" );
         $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
         echo template( "admin/promo_detalle", $this->data );

@@ -326,6 +326,10 @@ class E_usuario extends Entity
         } 
 
         if( !$m ){
+            if( !isset( $this->historial->modelos->{$modelo} ) ){
+                $this->valida_modelo();
+            }
+
             foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
                 if( $promos )
                 foreach( $promos as $promo => $pts ){

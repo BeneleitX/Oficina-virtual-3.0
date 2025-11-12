@@ -90,9 +90,15 @@ abstract class BaseController extends Controller
             }
         }
         
+
+        $router = \Config\Services::router();
+
+        $this->data[ "_method" ] = $router->methodName();
+        $this->data[ "_controller" ] = explode("\\", $router->controllerName()); 
+
         if( !defined( "MESES" ) ) define( "MESES", $meses );
 
-        load_catalogo( "modelos", session( "usuario" ) != 55 ? "estatus_codigo = '201-ACTIVO'" : "" );
+        load_catalogo( "modelos", !in_array( $this->data[ "_controller" ][ 3 ], [ "Pedidos", "Admin" ] ) && $this->data[ "_method" ] != "promociones" ? "estatus_codigo = '201-ACTIVO'" : "" );
         load_catalogo( "estatus" );
         load_catalogo( "rangos" );
         load_catalogo( "variables" );

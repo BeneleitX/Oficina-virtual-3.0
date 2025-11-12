@@ -173,31 +173,33 @@ class Dashboard extends BaseController
         $usr  = model( "UsuarioModel" )->find( $this->request->getPost( "n_socio" ) );
         
         foreach( MODELOS as $m ){
-            $pat  = model( "UsuarioModel" )->find( $pats[ $m[ "codigo" ] ] );
+            if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
+                $pat  = model( "UsuarioModel" )->find( $pats[ $m[ "codigo" ] ] );
 
-            if( $pat ){
-                $pat2 = $pat;
-                $pat2->valida_modelo();
+                if( $pat ){
+                    $pat2 = $pat;
+                    $pat2->valida_modelo();
 
-                $f_pat = $pat2->get_reset( $m[ "codigo" ] );
-                $f_usr = $usr->get_reset( $m[ "codigo" ] );
+                    $f_pat = $pat2->get_reset( $m[ "codigo" ] );
+                    $f_usr = $usr->get_reset( $m[ "codigo" ] );
 
-                while( substr( $pat2->data->estatus->modelos->{$m[ "codigo" ]}, 0, 3 ) < 200 || $f_pat > $f_usr ){
-                    $patx = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
+                    while( substr( $pat2->data->estatus->modelos->{$m[ "codigo" ]}, 0, 3 ) < 200 || $f_pat > $f_usr ){
+                        $patx = model( "UsuarioModel" )->find( $pat2->redes->modelos->{$m[ "codigo" ]}->padre );
 
-                    if( $patx ){
-                        $pat2 = $patx;
-                        $pat2->valida_modelo();
+                        if( $patx ){
+                            $pat2 = $patx;
+                            $pat2->valida_modelo();
 
-                        $f_pat = $pat2->get_reset( $m[ "codigo" ] );
+                            $f_pat = $pat2->get_reset( $m[ "codigo" ] );
+                        }
                     }
-                }
 
-                $html .= "<td class=\"text-center\" width=\"20%\"><div class=\"py-3\">".$pat2->avatar(80)."</div><h5 class=\"mb-1\">".$pat2->id( $m[ "codigo" ], null, false )."</h5><span class=\"small text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td>";
-                
-            }
-            else{
-                $html .= "<td class=\"text-center\"><h3 class=\"text-red\">El socio no existe</h3></td>";
+                    $html .= "<td class=\"text-center\" width=\"20%\"><div class=\"py-3\">".$pat2->avatar(80)."</div><h5 class=\"mb-1\">".$pat2->id( $m[ "codigo" ], null, false )."</h5><span class=\"small text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td>";
+                    
+                }
+                else{
+                    $html .= "<td class=\"text-center\"><h3 class=\"text-red\">El socio no existe</h3></td>";
+                }
             }
         }
         
@@ -226,21 +228,23 @@ class Dashboard extends BaseController
             $db = db_connect();
 
             foreach( MODELOS as $m ){
-                $patrocinador = $patrocinadores[ $m[ "codigo" ] ];
+                if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
+                    $patrocinador = $patrocinadores[ $m[ "codigo" ] ];
 
-                $redes = $socio->redes;
-                $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
-                $redes->modelos->{$m[ "codigo" ]}->padre = $patrocinador;
-                $socio->redes = $redes;
-                
-                model( "UsuarioModel" )->save( $socio );
+                    $redes = $socio->redes;
+                    $redes->modelos->{$m[ "codigo" ]}->patrocinador = $patrocinador;
+                    $redes->modelos->{$m[ "codigo" ]}->padre = $patrocinador;
+                    $socio->redes = $redes;
+                    
+                    model( "UsuarioModel" )->save( $socio );
 
-                // BITACORA Cambio de patrocinador
-                bitacora( 84, $this->data[ "usuario" ]->id, [ 
-                    "socio"        => $socio->id,
-                    "patrocinador" => $patrocinador,
-                    "modelo"       => $m[ "codigo" ]
-                ] );
+                    // BITACORA Cambio de patrocinador
+                    bitacora( 84, $this->data[ "usuario" ]->id, [ 
+                        "socio"        => $socio->id,
+                        "patrocinador" => $patrocinador,
+                        "modelo"       => $m[ "codigo" ]
+                    ] );
+                }
             }
 
             foreach( MODELOS as $m ){

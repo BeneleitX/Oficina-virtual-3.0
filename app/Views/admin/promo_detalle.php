@@ -3,7 +3,7 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo."<span class=\"badge bg-{$promocion[ "settings" ][ "clase" ]}\">{$promocion[ "settings" ][ "siglas" ]}</span> <span class=\"badge bg-".MODELOS[ $promocion[ "modelo_codigo" ] ][ "settings" ][ "color" ]."\">".MODELOS[ $promocion[ "modelo_codigo" ] ][ "nombre" ]."</span> ".$promocion[ "settings" ][ "nombre" ]; ?></h4>
-<p><a href="<?php echo base_url( "promociones/".$promocion[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a lista de promociones de <?php echo MODELOS[ $promocion[ "modelo_codigo" ] ][ "nombre" ]; ?></a></p>
+<p><a class="btn btn-sm btn-light" href="<?php echo base_url( "promociones/".$promocion[ "modelo_codigo" ] ); ?>"><i class="fa fa-undo"></i> Regresar a lista de promociones de <?php echo MODELOS[ $promocion[ "modelo_codigo" ] ][ "nombre" ]; ?></a></p>
 
 <div class="alert alert-info">
     <div class="row">

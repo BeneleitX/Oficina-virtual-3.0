@@ -5,7 +5,7 @@
 
 <img style="position:absolute; right:20px; top:30px; width:120px" src="<?php echo base_url(); ?>assets/img/logo_color.png">
 <h4 class="mt-1"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "usuarios" ); ?>"><i class="fa fa-undo"></i> Regresar a búsqueda de usuarios</a></p>
+<p><a class="btn btn-sm btn-light" href="<?php echo base_url( "usuarios" ); ?>"><i class="fa fa-undo"></i> Regresar a búsqueda de usuarios</a></p>
 
 <div class="row mb-4">
 
@@ -171,146 +171,148 @@ if( $socio ){
                     ];
 
                     foreach( MODELOS as $m ){
-                        $v = $socio->get_verificacion( $m[ "codigo" ] );
+                        if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
+                            $v = $socio->get_verificacion( $m[ "codigo" ] );
 
-                        $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "check text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
+                            $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "check text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
 
-                        foreach( $v->puntos as $p => $e ){
+                            foreach( $v->puntos as $p => $e ){
 
-                                $filas[ "VERIFICACION" ][] .= "<li class=\"text-start text-".( $e ? "teal" : "red" )."\">".VARIABLES[ "verificaciones" ][ "valor" ][ $p ][ "descripcion" ]."</li>";
-                        } 
+                                    $filas[ "VERIFICACION" ][] .= "<li class=\"text-start text-".( $e ? "teal" : "red" )."\">".VARIABLES[ "verificaciones" ][ "valor" ][ $p ][ "descripcion" ]."</li>";
+                            } 
 
-                        $filas[ "VERIFICACION" ][] .= "<ul></td>";
+                            $filas[ "VERIFICACION" ][] .= "<ul></td>";
 
-                        if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){                            
+                            if( $socio->redes->modelos->{$m[ "codigo" ]}->padre == null ){                            
+                                
+                                $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
+                                $socio = model( "UsuarioModel" )->find( $socio->id );    
+                            }
+
+                            $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre );
                             
-                            $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
-                            $socio = model( "UsuarioModel" )->find( $socio->id );    
-                        }
+                            if( $p = $pedidos[ $m[ "codigo" ] ] ?? null ){
+                            
+                                $pr = $socio->getPrimerCompra( $m[  "codigo" ] );
 
-                        $pat = model( "UsuarioModel" )->find( $socio->redes->modelos->{$m[ "codigo" ]}->padre );
+                                if($pr){
+                                    $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
+
+                                    $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
+
+                                }
+                                else{
+                                    $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>"; 
+                                }
                         
-                        if( $p = $pedidos[ $m[ "codigo" ] ] ?? null ){
-                           
-                            $pr = $socio->getPrimerCompra( $m[  "codigo" ] );
-
-                            if($pr){
-                                $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
-
-                                $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
-
+                                $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2 small\"><strong>".fecha( $p[1] )."</strong></p><span class=\"small\">".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</span></td>";
                             }
                             else{
-                                $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>"; 
+                                $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>";
+                                $filas[ "ULTIMA" ][] = "<td></td>";
                             }
-                       
-                            $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2 small\"><strong>".fecha( $p[1] )."</strong></p><span class=\"small\">".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</span></td>";
-                        }
-                        else{
-                            $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>";
-                            $filas[ "ULTIMA" ][] = "<td></td>";
-                        }
 
-                        $filas[ "UPLINE" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><small>".$pat->nombre(1)."</small><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\" data-bs-toggle=\"tooltip\" data-bs-title=\"El patrocinador no puede tener una fecha de inicio de operaciones posterior a la del socio\"></i>" : "" )."</td>";
+                            $filas[ "UPLINE" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><small>".$pat->nombre(1)."</small><h5 class=\"m-0\"><a href=\"".base_url()."sociodata/".urlencode( base64_encode( $pat->password_original() ) )."\">".$pat->id( $m[ "codigo" ] )."</a></h5><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $pat->get_reset( $m[ "codigo" ] ) )."</strong></p>".( $socio->get_reset( $m[ "codigo" ] ) < $pat->get_reset( $m[ "codigo" ] ) ? "<i class=\"fa fa-warning text-red\" data-bs-toggle=\"tooltip\" data-bs-title=\"El patrocinador no puede tener una fecha de inicio de operaciones posterior a la del socio\"></i>" : "" )."</td>";
 
-                        $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
+                            $codigo = $socio->data->estatus->modelos->{$m[ "codigo" ]};
 
-                        $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong> ".( $usuario->permiso( "40-ADMIN" ) ? "<button class=\"btn btn-link btn-sm\" onclick=\"check_fechas( {$socio->id}, '{$m[ 'codigo' ]}' )\" data-bs-toggle=\"tooltip\" title=\"Revisar si las fechas de arranque son válidas\"><i class=\"fa fa-magnifying-glass text-light-green\"></i></button>" : "" )."</p></td>";
+                            $filas[ "ESTATUS" ][] = "\n<td class=\"text-center\" valign=\"bottom\"><span class=\"text-".ESTATUS[ $codigo ][ "color" ]."\">".ESTATUS[ $codigo ][ "descripcion" ]."</span><p style=\"\" class=\"m-0\"><span style=\"word-wrap: break-word; white-space:normal\" class=\"badge w-100 bg-".ESTATUS[ $codigo ][ "color" ]."\">{$codigo}</span></p><p class=\"small mt-3\">Fecha de arranque<br><strong>".fecha( $socio->get_reset( $m[ "codigo" ] ) )."</strong> ".( $usuario->permiso( "40-ADMIN" ) ? "<button class=\"btn btn-link btn-sm\" onclick=\"check_fechas( {$socio->id}, '{$m[ 'codigo' ]}' )\" data-bs-toggle=\"tooltip\" title=\"Revisar si las fechas de arranque son válidas\"><i class=\"fa fa-magnifying-glass text-light-green\"></i></button>" : "" )."</p></td>";
 
-                        $cant = $socio->saldo( $m[ "codigo" ] );
+                            $cant = $socio->saldo( $m[ "codigo" ] );
 
-                        $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
+                            $filas[ "SALDO" ][] = "\n<td class=\"text-center\"><span class=\"text-".( $cant > 0 ? "teal" : "gray-600" )."\">{$m[ "settings" ][ "moneda" ]}$".number_format( $cant , 2 )."</span></td>";
 
 
-                        $cal     = "";
-                        $mascara = date( "Y-m" )."-01";
+                            $cal     = "";
+                            $mascara = date( "Y-m" )."-01";
 
-                        $m_0 = date( "Ym" );
-                        $m_1 = date( "Ym", strtotime( $mascara." -1 month" ) );
-                        $m_2 = date( "Ym", strtotime( $mascara." -2 month" ) );
+                            $m_0 = date( "Ym" );
+                            $m_1 = date( "Ym", strtotime( $mascara." -1 month" ) );
+                            $m_2 = date( "Ym", strtotime( $mascara." -2 month" ) );
 
-                        $t_0 = strtoupper( mes( date( "m" ) ) )." ".date( "Y" );
-                        $t_1 = strtoupper( mes( date( "m", strtotime( $mascara. " -1 month" ) ) ) )." ".date( "Y", strtotime( $mascara. " -1 month" ) );
-                        $t_2 = strtoupper( mes( date( "m", strtotime( $mascara. " -2 month" ) ) ) )." ".date( "Y", strtotime( $mascara. ' -2 month' ) );
+                            $t_0 = strtoupper( mes( date( "m" ) ) )." ".date( "Y" );
+                            $t_1 = strtoupper( mes( date( "m", strtotime( $mascara. " -1 month" ) ) ) )." ".date( "Y", strtotime( $mascara. " -1 month" ) );
+                            $t_2 = strtoupper( mes( date( "m", strtotime( $mascara. " -2 month" ) ) ) )." ".date( "Y", strtotime( $mascara. ' -2 month' ) );
 
-                        $estatus = ESTATUS[ $socio->data->estatus->modelos->{$m[ "codigo" ]} ];
+                            $estatus = ESTATUS[ $socio->data->estatus->modelos->{$m[ "codigo" ]} ];
 
-                        $sql = "select 
-                            f_get_calificacion( {$socio->id}, '{$m_2}', '{$m[ "codigo" ]}' ) as 'm_2', 
-                            f_get_calificacion( {$socio->id}, '{$m_1}', '{$m[ "codigo" ]}' ) as 'm_1', 
-                            f_get_calificacion( {$socio->id}, '{$m_0}', '{$m[ "codigo" ]}' ) as 'm_0'";
-                        
-                        $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
+                            $sql = "select 
+                                f_get_calificacion( {$socio->id}, '{$m_2}', '{$m[ "codigo" ]}' ) as 'm_2', 
+                                f_get_calificacion( {$socio->id}, '{$m_1}', '{$m[ "codigo" ]}' ) as 'm_1', 
+                                f_get_calificacion( {$socio->id}, '{$m_0}', '{$m[ "codigo" ]}' ) as 'm_0'";
+                            
+                            $cx[ $m["codigo" ] ] = $db->query($sql)->getRowArray();
 
-                        $cal = "<div class=\"input-group input-group-sm border border-gray-400 m-0\" data-bs-toggle=\"tooltip\" title=\"\">";
+                            $cal = "<div class=\"input-group input-group-sm border border-gray-400 m-0\" data-bs-toggle=\"tooltip\" title=\"\">";
 
-                        switch( $m["codigo"] ){
-                            case "10-NUTRICION": 
+                            switch( $m["codigo"] ){
+                                case "10-NUTRICION": 
 
-                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "gray-300" : "gray-100" )."); border:none\">
-                                
-                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
-                                
-                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"border-left:1px solid #fff !important; font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
-                                break;
+                                    $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) > 50 ? "gray-300" : "gray-100" )."); border:none\">
+                                    
+                                    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) > 0 ? "teal" : "gray-500" )."\" style=\"background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+                                    
+                                    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] )."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) > 0 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 1 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"border-left:1px solid #fff !important; font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                    break;
 
-                            case "20-TELEFONIA": 
+                                case "20-TELEFONIA": 
 
-                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
-                                break; 
+                                    $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                    break; 
 
-                            case "30-ALIMENTOS": 
-                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+                                case "30-ALIMENTOS": 
+                                    $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_2}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_2" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_2" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_2" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
 
-                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+                                    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_1" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "teal" : "gray-500" )."\" style=\"border-right:2px solid #fff !important; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
 
-                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
-                                break;
+                                    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\" disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? substr( $cx[ $m["codigo" ] ][ "m_0" ], 3, 2 ) : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                    break;
 
-                            case "40-GASOLINAS": 
-                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
+                                case "40-GASOLINAS": 
+                                    $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_1}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_1" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_1" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">
 
-                                <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
-                                break;
+                                    <input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                    break;
 
-                            case "50-INVERSION": 
-                                $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
-                                break;                
-                        }
-
-                        $cal .= "</div>";
-
-                        $filas[ "CALIFICACION" ][] = "\n<td class=\"text-center\">{$cal}</td>";
-
-                        $k = 0;
-                        $pts = "";
-
-                        $sql = "SELECT * FROM t_promociones where estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$m[ "codigo" ]}'";
-
-                        $promos = $db->query( $sql )->getResultArray();
-                        $socio->PTS = $socio->getCalificaciones( $m[ "codigo" ] );
-
-                        foreach( $promos as $p ){
-                            $p[ "settings" ] = json_decode( $p[ "settings" ], true );
-
-                            if( isset( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
-                                $k++;
-
-                                $pts .=  "\n<div class=\"pts text-white bg-white\">
-                                            <div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div>
-                                            <div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div>
-                                        </div>";
+                                case "50-INVERSION": 
+                                    $cal .= "<input data-bs-toggle=\"tooltip\" title=\"<span class='small'>{$t_0}</span><br>".( CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ])."\"disabled type=\"text\" value=\"".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ?  CALIFICACIONES[ $cx[ $m["codigo" ] ][ "m_0" ] ][ "descripcion" ] : "" )."\" class=\"form-control py-1 px-0 text-center text-{$estatus[ "color" ]}\" style=\"font-weight:700; background:var(--bs-".( intval( substr( $cx[ $m["codigo" ] ][ "m_0" ], 0, 2 ) ) >= 10 ? "gray-300" : "gray-100" )."); border:none\">";
+                                    break;                
                             }
-                        }
 
-                        if( !$k ){
-                            $pts = "\n<div class=\"pts text-white bg-white\">
-                                <div class=\"pts-titulo bg-gray-400\">PTS</div>
-                                <div class=\"pts-numero bg-gray-400\">0</div>
-                            </div>";
-                        }
+                            $cal .= "</div>";
 
-                        $filas[ "PTS" ][] = "<td class=\"text-center pre_puntajes\" style=\"zoom:0.7\">{$pts}</td>";
+                            $filas[ "CALIFICACION" ][] = "\n<td class=\"text-center\">{$cal}</td>";
+
+                            $k = 0;
+                            $pts = "";
+
+                            $sql = "SELECT * FROM t_promociones where estatus_codigo = '201-ACTIVO' AND modelo_codigo = '{$m[ "codigo" ]}'";
+
+                            $promos = $db->query( $sql )->getResultArray();
+                            $socio->PTS = $socio->getCalificaciones( $m[ "codigo" ] );
+
+                            foreach( $promos as $p ){
+                                $p[ "settings" ] = json_decode( $p[ "settings" ], true );
+
+                                if( isset( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) and intval( $socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ] ) > 0 ){
+                                    $k++;
+
+                                    $pts .=  "\n<div class=\"pts text-white bg-white\">
+                                                <div class=\"pts-titulo bg-{$p[ "settings" ][ "clase" ]}\">{$p[ "settings" ][ "siglas" ]}</div>
+                                                <div class=\"pts-numero bg-{$p[ "settings" ][ "clase" ]}\">{$socio->PTS[ $p[ "codigo" ] ][ "meses" ][ date( "Ym" ) ]}</div>
+                                            </div>";
+                                }
+                            }
+
+                            if( !$k ){
+                                $pts = "\n<div class=\"pts text-white bg-white\">
+                                    <div class=\"pts-titulo bg-gray-400\">PTS</div>
+                                    <div class=\"pts-numero bg-gray-400\">0</div>
+                                </div>";
+                            }
+
+                            $filas[ "PTS" ][] = "<td class=\"text-center pre_puntajes\" style=\"zoom:0.7\">{$pts}</td>";
+                        }
                     }
                 ?>
 
@@ -340,7 +342,7 @@ if( $socio ){
                             <?php 
                             foreach( MODELOS AS $m ){
 
-                                if( $usuario->permiso( "32-EDICION" ) || $m[ "codigo" ] == "10-NUTRICION" ){                                
+                                if( ( $usuario->permiso( "32-EDICION" ) || $m[ "codigo" ] == "10-NUTRICION" ) && substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
                                     echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
                                 }
 
@@ -511,31 +513,33 @@ if( $socio ){
                             <?php 
 
                             foreach( MODELOS as $m ){
-                                echo "\n
-                                    <td width=\"20%\" class=\"text-center px-1\">
-                                        <div class=\"card\"><div class=\" px-1 card-body text-center\">
-                                            <div class=\"form-check form-switch text-center\" style=\"padding-left: 0; zoom: 1.5\">
-                                            <input modelo=\"{$m[ "codigo" ]}\" name=\"modelos[{$m[ "codigo" ]}]\" value=\"1\" class=\"form-check-input bg-red\" type=\"checkbox\" role=\"switch\" id=\"switch_{$m[ "codigo" ]}\" style=\"clear: both; margin-left: auto; float:none\" ".( $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ? "" : "checked" )."><label class=\"form-check-label\" for=\"switch_{$m[ "codigo" ]}\"></label></div>";
+                                if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){ 
+                                    echo "\n
+                                        <td width=\"20%\" class=\"text-center px-1\">
+                                            <div class=\"card\"><div class=\" px-1 card-body text-center\">
+                                                <div class=\"form-check form-switch text-center\" style=\"padding-left: 0; zoom: 1.5\">
+                                                <input modelo=\"{$m[ "codigo" ]}\" name=\"modelos[{$m[ "codigo" ]}]\" value=\"1\" class=\"form-check-input bg-red\" type=\"checkbox\" role=\"switch\" id=\"switch_{$m[ "codigo" ]}\" style=\"clear: both; margin-left: auto; float:none\" ".( $socio->data->estatus->modelos->{$m[ "codigo" ]} == "110-ELIMINADO" ? "" : "checked" )."><label class=\"form-check-label\" for=\"switch_{$m[ "codigo" ]}\"></label></div>";
 
-                                echo "\n
-                                            <span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></div></div>";
+                                    echo "\n
+                                                <span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></div></div>";
 
- 
-                                echo "\n<small>Califica permanente</small><br><select name=\"calificaciones[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" class=\"select_permanentes small form-select form-select-sm\">";
+    
+                                    echo "\n<small>Califica permanente</small><br><select name=\"calificaciones[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" class=\"select_permanentes small form-select form-select-sm\">";
 
-                                foreach( CALIFICACIONES as $c ){
-                                    if( $c[ "modelo_codigo" ] == $m[ "codigo" ] ){
-                                        echo "\n<option value=\"{$c[ "codigo" ]}\" ".( ( $socio->data->permanentes->{$m[ "codigo" ]} ?? "" ) == $c[ "codigo" ] ? "selected" : "" ).">{$c[ "descripcion" ]}</option>";
+                                    foreach( CALIFICACIONES as $c ){
+                                        if( $c[ "modelo_codigo" ] == $m[ "codigo" ] ){
+                                            echo "\n<option value=\"{$c[ "codigo" ]}\" ".( ( $socio->data->permanentes->{$m[ "codigo" ]} ?? "" ) == $c[ "codigo" ] ? "selected" : "" ).">{$c[ "descripcion" ]}</option>";
+                                        }
                                     }
+
+                                                
+                                    echo "\n</select>";
+
+
+                                    echo "\n        
+                                        </td>
+                                    ";
                                 }
-
-                                            
-                                echo "\n</select>";
-
-
-                                echo "\n        
-                                    </td>
-                                ";
                             }
                         ?></tr>
                         </table>
@@ -584,7 +588,9 @@ if( $socio ){
                         <table><tr>
                             <?php 
                             foreach( MODELOS as $m ){
-                                echo "\n<td class=\"px-3\"><input class=\"form-control text-center pat\" name=\"patrocinador[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" value=\"".$socio->patrocinador( $m[ "codigo" ] )."\"></td>";
+                                if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
+                                    echo "\n<td class=\"px-3\"><input class=\"form-control text-center pat\" name=\"patrocinador[{$m[ "codigo" ]}]\" modelo=\"{$m[ "codigo" ]}\" value=\"".$socio->patrocinador( $m[ "codigo" ] )."\"></td>";
+                                }
                             }
                             ?>
                         </tr></table>

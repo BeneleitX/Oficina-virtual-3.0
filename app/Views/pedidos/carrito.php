@@ -11,11 +11,11 @@
 </p>
 
 <div class="row">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-8 mb-3">
     
         <?php 
         if( !$pagado && !$bloqueado && !$cancelado ){ 
-            echo "\n<ul class=\"nav nav-pills my-4\">";
+            /* echo "\n<ul class=\"nav nav-pills my-4\">";
             
             foreach( MODELOS as $m ){
                 if( $m[ "settings" ][ "efectivo" ] ){
@@ -27,7 +27,9 @@
                 }
             }
             
-            echo "</ul>";
+            echo "</ul>"; */
+
+            echo pills( "tienda", $modelo );
         }
         ?>
 
@@ -42,7 +44,7 @@
     if( !$pagado && !$bloqueado && !$cancelado ){ 
         ?>
         
-        <div class="col-md-6 mb-3 pt-4 text-end">
+        <div class="col-md-4 mb-3 pt-4 text-end">
             <p>
                 <button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
             </p>
