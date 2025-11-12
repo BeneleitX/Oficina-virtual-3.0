@@ -996,6 +996,10 @@ class Dashboard extends BaseController
             }
         }
 
+        if( in_array( $usuario->id, [ 164925, 164924, 164923, 164914] ) ){
+            $directos = 12;
+        }
+
         if( $directos >= 12 ){
             $bono = 1;
         }
