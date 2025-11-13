@@ -256,7 +256,6 @@ class Bancos extends BaseController
             $respuesta[ "pagos" ][ $refe ][ "comision" ]  = $p[ "data" ][ "comisionbanco" ] ?? null;
 
             if( $p ){
-
                 $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "modelo" ] = $p[ "modelo_codigo" ];
 
                 $k = substr( $p[ "modelo_codigo" ], 0, 1 );
@@ -289,6 +288,8 @@ class Bancos extends BaseController
                         "cantidad" => $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "cantidad" ],
                         "extras" => $respuesta[ "pagos" ][ $p[ "referencia" ] ]
                     ] );
+
+                    $respuesta[ "pagos" ][ $p[ "referencia" ] ][ "referencia_html" ] = referencia( $p );
 
                     if( $p[ "data" ][ "productos" ] > 0 ){
 
