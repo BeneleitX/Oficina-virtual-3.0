@@ -7,9 +7,9 @@
     foreach( $eventos->getResultArray() as $e ){
         $a = model( "PromocionModel")->find( $e[ "codigo" ] );
 
-        echo "\n<div class=\"row mt-4\"><div class=\"col-lg-4\"><a href=\"evento/{$a[ "codigo" ]}\">
+        echo "\n<div class=\"row mt-4\"><div class=\"col-lg-4\"><a href=\"".base_url()."evento/{$a[ "codigo" ]}".( $e[ "evento" ] ? "/{$e[ "evento" ]}" : "" )."\">
                     <img class=\"rounded img-fluid\" src=\"".base_url()."assets/img/promociones/{$a[ "codigo" ]}.png\">
-        </a></div><div class=\"col-lg-2 text-center\"><h1 class=\"m-0\">{$e[ "participantes" ]}</h1>Participantes</div></div>";
+        </a></div><div class=\"col-lg-2 text-center\"><h1 class=\"mb-0 mt-3\">".( $e["x" ] ? $e[ "participantes" ] : 0 )."</h1>Participantes</div></div>";
     }
 ?>
 

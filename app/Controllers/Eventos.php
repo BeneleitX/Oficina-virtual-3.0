@@ -28,11 +28,12 @@ class Eventos extends BaseController
 
         $db = db_connect();
 
-        $sql = "SELECT p.codigo, count(*) as participantes
+        $sql = "SELECT p.codigo, count(*) as participantes, sum(e.id) as x,
+                json_unquote( json_extract( json_keys( e.promociones->>'$.\"910-EVENTOS\".productos' ), '$[0]' ) ) as evento
                 from t_promociones p
-                join t_pedidos e on jSON_EXTRACT( e.PTS, concat( '$.\"', p.codigo, '\"' ) ) > 0 AND SUBSTRING( e.estatus_codigo,1,3) > 400
-                where p.settings->>'$.evento' = 'true' 
-                group by p.codigo
+                left join t_pedidos e on jSON_EXTRACT( e.PTS, concat( '$.\"', p.codigo, '\"' ) ) > 0 AND SUBSTRING( e.estatus_codigo,1,3) > 400
+                where p.settings->>'$.evento' = 'true' or p.codigo = '910-EVENTOS'
+                group by p.codigo, evento
                 order by p.estatus_codigo desc";
 
         $this->data[ "navbar" ]  = true;
@@ -49,7 +50,7 @@ class Eventos extends BaseController
      * @param string $codigo Codigo del evento
      * @return void
      */
-    public function detalle( $codigo )
+    public function detalle( $codigo, $producto = null )
     {
         if( !(
             $this->data[ "usuario" ]->permiso( "35-SEMILLERO" ) ||
@@ -60,18 +61,59 @@ class Eventos extends BaseController
 
         $db = db_connect();
 
-        $sql = "SELECT 
-                    p.usuario_id as usuario, 
-                    any_value( p.fechas->>'$.pagado' ) AS fecha, 
-                    any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
-                    SUM(t.qt)-1 as productos 
-                FROM t_pedidos p,
-                    JSON_TABLE(p.promociones, '$.\"{$codigo}\".productos.*.cantidad' COLUMNS (qt INTEGER PATH '$')) t
-                WHERE
-                    -- p.usuario_id > 100 AND 
-                    JSON_EXTRACT( p.PTS, '$.\"{$codigo}\"' ) > 0 AND SUBSTRING( p.estatus_codigo,1,3) > 400
-                group by p.usuario_id
-                ORDER BY fecha, p.usuario_id";
+        if( $producto == null ){           
+            $sql = "SELECT 
+                        p.usuario_id as usuario, 
+                        any_value( p.fechas->>'$.pagado' ) AS fecha, 
+                        any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
+                        SUM(t.qt)-1 as productos 
+                    FROM t_pedidos p,
+                        JSON_TABLE(p.promociones, '$.\"{$codigo}\".productos.*.cantidad' COLUMNS (qt INTEGER PATH '$')) t
+                    WHERE
+                        -- p.usuario_id > 100 AND 
+                        JSON_EXTRACT( p.PTS, '$.\"{$codigo}\"' ) > 0 AND SUBSTRING( p.estatus_codigo,1,3) > 400
+                    group by p.usuario_id
+                    ORDER BY fecha, p.usuario_id";
+
+        }
+        else {
+            $sql = "SELECT
+                        e.id,
+                        e.modelo_codigo,
+                        e.usuario_id as usuario,
+                        e.fechas->>'$.pagado' as fecha,
+                        e.data->>'$.total' as pago,
+                        SUM(prod.cantidad)-1 AS productos
+
+                    FROM
+                        t_pedidos e,
+                        JSON_TABLE(
+                            e.promociones,
+                            '$.*'
+                            COLUMNS (
+                                clave FOR ORDINALITY,  
+                                productos JSON PATH '$.productos'
+                            )
+                        ) AS promo,
+                        JSON_TABLE(
+                            promo.productos,
+                            '$.*'
+                            COLUMNS (
+                                nombre VARCHAR(255) PATH '$.nombre',
+                                precio DECIMAL(10,2) PATH '$.precio',
+                                comisionable DECIMAL(10,2) PATH '$.comisionable',
+                                cantidad INT PATH '$.cantidad'
+                            )
+                        ) AS prod
+                        join t_productos r on r.data->>'$.nombre' = prod.nombre
+
+                    where 
+                    e.promociones->>'$.\"910-EVENTOS\".productos.\"{$producto}\".cantidad' = 1
+                    AND SUBSTRING( e.estatus_codigo,1,3) > 400 
+
+                    group by e.id
+                    order by fecha, e.usuario_id";
+        }
 
         $this->data[ "evento" ] = model( "PromocionModel" )->find( $codigo );
         $this->data[ "socios" ] = $db->query( $sql )->getResultArray();
