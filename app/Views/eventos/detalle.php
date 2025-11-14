@@ -39,6 +39,9 @@
             $u = model( "UsuarioModel" )->find( $s[ "usuario" ] );
 
             switch( $s[ "productos" ] ){
+                case 8:  $regalo = "blue"; break;
+                case 7:  $regalo = "light-blue"; break;
+                case 6:  $regalo = "teal"; break;
                 case 5:  $regalo = "green"; break;
                 case 4:  $regalo = "lime"; break;
                 case 3:  $regalo = "yellow"; break;
