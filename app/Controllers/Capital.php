@@ -1424,10 +1424,10 @@ class Capital extends BaseController
         extract( $this->request->getPost() );
         $db  = db_connect();
 
-        switch( $d_tipoinversion ){
-            case "TODOS": $estatus = "substring( p.estatus_codigo,1,3) > 400"; break;
-            case "400":   $estatus = "substring( p.estatus_codigo,1,3) between 400 AND 500"; break;
-            case "500":   $estatus = "substring( p.estatus_codigo,1,3) > 500"; break;
+        $tipo = "";
+
+        if( $d_tipoinversion  != "TODOS" ){
+            $tipo = "AND r.data->>'$.porcentaje' = '{$d_tipoinversion}' ";
         }
 
         $sql = "SELECT 
@@ -1454,6 +1454,7 @@ class Capital extends BaseController
 
         where cast( i.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}'
         and substring( p.estatus_codigo,1,3) > 400
+        {$tipo}
         and substring( i.estatus_codigo,1,3) > 600";
 
         $inversiones  = $db->query( $sql );
