@@ -25,7 +25,7 @@
                 <?php
 
                 foreach( PRODUCTOS as $promo ){
-                    echo "\n<option value=\"{$promo["codigo"]}\">".mb_strtoupper( $promo["data"][ "nombre" ] )."</option>";
+                    echo "\n<option value=\"{$promo["data"][ "porcentaje"]}\">".mb_strtoupper( $promo["data"][ "nombre" ] )."</option>";
                 }
                 ?>
             </select>

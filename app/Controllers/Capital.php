@@ -1424,6 +1424,12 @@ class Capital extends BaseController
         extract( $this->request->getPost() );
         $db  = db_connect();
 
+        switch( $d_tipoinversion ){
+            case "TODOS": $estatus = "substring( p.estatus_codigo,1,3) > 400"; break;
+            case "400":   $estatus = "substring( p.estatus_codigo,1,3) between 400 AND 500"; break;
+            case "500":   $estatus = "substring( p.estatus_codigo,1,3) > 500"; break;
+        }
+
         $sql = "SELECT 
             i.id as ID_INVERSION,
             u.id as SOCIO,
@@ -1483,7 +1489,8 @@ class Capital extends BaseController
 
             $row++;
             $col  = 0;
-            
+          
+
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->ID_INVERSION );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->SOCIO );
             $worksheet->setCellValue( chr(65 + $col++).$row, $r->NOMBRE );
