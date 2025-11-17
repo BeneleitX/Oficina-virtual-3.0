@@ -766,8 +766,8 @@ class Capital extends BaseController
                 $imagenes = [
                 ];
 
-                $u = $this->data[ "usuario" ];
-                $a = [ $u->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
+                $r = $this->data[ "usuario" ];
+                $a = [ $r->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
                 $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
                 $subject = "Solicitud de retiro ".strip_tags( id( $r[ "id" ], 5 ) );
@@ -1395,4 +1395,132 @@ class Capital extends BaseController
 
         return $html;
     }
+
+    public function reporte_inversiones()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $this->data[ "navbar" ]    = true;
+        $this->data[ "titulo" ]    = "Listado de Inversiones";
+        load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500 and estatus_codigo = '201-ACTIVO'" );
+
+        echo template( "capital/reporte_inversiones", $this->data );
+    }
+
+    
+
+    public function excel_reporte_inversiones()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        extract( $this->request->getPost() );
+        $db  = db_connect();
+
+        $sql = "SELECT 
+            i.id as ID_INVERSION,
+            u.id as SOCIO,
+            concat_ws( ' ', u.data->>'$.nombre', u.data->>'$.apellidos[0]', u.data->>'$.apellidos[1]') as NOMBRE,
+            u.data->>'$.ubicacion.origen' as PAIS,
+            u.telefono as CELULAR,
+            IFNULL( u.data->>'$.wallet', '--' ) as WALLET_COMISIONES,
+            p.referencia as PEDIDO,
+            i.cantidad as USDT,
+            r.data->>'$.porcentaje' as PORCENTAJE,
+            cast( i.fechas->>'$.pagado' as date ) as FECHA_PAGO,
+            cast( i.fechas->>'$.inversion' as date ) as INICIO_RENDIMIENTOS,
+            i.extras->>'$.TxHash' as TXHASH_TRON,
+            i.extras->>'$.wallets.from' as TXHASH_ORIGEN,
+            i.extras->>'$.wallets.to' as TXHASH_DESTINO,
+            p.data->>'$.primercompra' as PRIMERA_INVERSION
+
+        from t_inversiones i
+        join t_pedidos p on p.id = i.pedido_id
+        join t_usuarios u on u.id = i.usuario_id
+        join t_productos r on r.codigo = i.producto_codigo
+
+        where cast( i.fechas->>'$.pagado' as date ) between '{$f_inicio}' and '{$f_final}'
+        and substring( p.estatus_codigo,1,3) > 400
+        and substring( i.estatus_codigo,1,3) > 600";
+
+        $inversiones  = $db->query( $sql );
+        $db   = db_connect();
+        $data = [];
+
+        $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $mySpreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($mySpreadsheet, "INVERSIONES");
+        $mySpreadsheet->addSheet( $worksheet, 0 );
+
+        $col = 0;
+        $e = [];
+        $worksheet->setCellValue( chr(65 + $col++)."1", "ID_INVERSION" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "SOCIO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "NOMBRE" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "PAIS" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "CELULAR" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "WALLET_COMISIONES" ); 
+        $worksheet->setCellValue( chr(65 + $col++)."1", "PEDIDO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "USDT" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "PORCENTAJE" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "FECHA_PAGO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "INICIO_RENDIMIENTOS" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TXHASH_TRON" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TXHASH_ORIGEN" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "TXHASH_DESTINO" );
+        $worksheet->setCellValue( chr(65 + $col++)."1", "PRIMERA_INVERSION" );
+
+        $row = 1;
+
+        foreach( $inversiones->getResult() as $r ){
+
+            $row++;
+            $col  = 0;
+            
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->ID_INVERSION );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->SOCIO );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->NOMBRE );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->PAIS );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->CELULAR );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->WALLET_COMISIONES );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->PEDIDO );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->USDT );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->PORCENTAJE );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->FECHA_PAGO );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->INICIO_RENDIMIENTOS );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->TXHASH_TRON );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->TXHASH_ORIGEN );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->TXHASH_DESTINO );
+            $worksheet->setCellValue( chr(65 + $col++).$row, $r->PRIMERA_INVERSION );
+        }
+
+        $col--;
+
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFont()->getColor()->setARGB('ffffff');
+        $worksheet->getStyle( "H2:H".$row )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "A1:".chr(65 + $col)."1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+
+        $col--;
+        $worksheet->getStyle( "H1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');
+        $worksheet->getStyle( "H2:H".$row )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('c1ebd7');
+
+        foreach( $worksheet->getColumnIterator() as $column ){
+            $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        $path = "data/excel/inversiones";
+        if( !is_dir( $path ) ) mkdir( $path, 0755, true );
+
+        echo $file = $path."/Inversiones_del_{$f_inicio}_al_{$f_final}_".time().".xlsx";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($mySpreadsheet);
+        $writer->save( $file );
+    }    
 }

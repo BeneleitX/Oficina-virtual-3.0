@@ -25,6 +25,9 @@
                     <div class="col-6">
                         <a href="<?php echo base_url( "bono_liderazgo" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Rangos</a>
                     </div>
+                    <div class="col-6">
+                        <a href="<?php echo base_url( "reporte_inversiones" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Inversiones</a>
+                    </div>
 
                     <div class="col-6">
                         <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>

@@ -269,8 +269,10 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "entrega_retiros/(:num)",             "Capital::entrega_retiros/$1" );
     $routes->get( "rangos_inversion",                   "Capital::rangos_inversion" ); 
     $routes->get( "bono_liderazgo",                     "Capital::bono_liderazgo" ); 
+    $routes->get( "reporte_inversiones",                "Capital::reporte_inversiones" ); 
     $routes->get( "bono_liderazgo/(:num)",              "Capital::bono_liderazgo/$1" ); 
     $routes->post( "excel_retiros",                     "Capital::excel_retiros" );
+    $routes->post( "excel_reporte_inversiones",         "Capital::excel_reporte_inversiones" );
     $routes->post( "excel_rangos",                      "Capital::excel_rangos" );
     $routes->post( "quick_data",                        "Capital::quick_data" ); 
     $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
