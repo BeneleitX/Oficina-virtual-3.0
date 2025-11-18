@@ -766,8 +766,8 @@ class Capital extends BaseController
                 $imagenes = [
                 ];
 
-                $r = $this->data[ "usuario" ];
-                $a = [ $r->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
+                $u = $this->data[ "usuario" ];
+                $a = [ $u->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
                 $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
                 $subject = "Solicitud de retiro ".strip_tags( id( $r[ "id" ], 5 ) );
