@@ -94,6 +94,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pagoyenvio/(:any)",                  "Pedidos::pagoyenvio/$1" ); 
     $routes->get( "compra_demo/(:num)/(:any)/(:num)",   "Pedidos::compra_demo/$1/$2/$3" );
     $routes->get( "beneleit_movil",                     "Pedidos::beneleit_movil" ); 
+    $routes->get( "pedidos",                            "pedidos::busqueda" );
+    $routes->get( "pedidos/(:any)",                     "pedidos::busqueda/$1" );
+    $routes->post( "pedidos",                           "pedidos::busqueda" );
     $routes->post( "checkout",                          "Pedidos::checkout" ); 
     $routes->post( "reparte",                           "Pedidos::reparte" ); 
     $routes->post( "cancela_pedido",                    "Pedidos::cancela_pedido" ); 
@@ -107,6 +110,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "carga_csf_pedido",                  "Pedidos::carga_csf" );
     $routes->post( "txhash",                            "Pedidos::txhash" );
     $routes->post( "modifica_productos",                "Pedidos::modifica_productos" );
+
 
     $routes->get( "eventos",                            "Eventos::listado" );
     $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
@@ -143,7 +147,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "reportes/pedidos_diarios",           "Reportes::pedidos_diarios" );
     $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
     $routes->get( "reportes/venta_producto",            "Reportes::venta_producto" );
-    $routes->get( "excel_venta_producto",              "Reportes::excel_venta_producto" ); 
+    $routes->get( "excel_venta_producto",               "Reportes::excel_venta_producto" ); 
     $routes->post( "excel_venta_producto",              "Reportes::excel_venta_producto" ); 
     $routes->post( "update_calificaciones",             "Reportes::update_calificaciones" ); 
     $routes->post( "excel_calificaciones",              "Reportes::excel_calificaciones" ); 

@@ -161,9 +161,22 @@ class Pedidos extends BaseController
                 $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
                 $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
                 $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
+                $this->data[ "usuario" ]->permiso( "32-EDICION-P" ) ||
                 $this->data[ "usuario" ]->permiso( "40-ADMIN" )
             ) ){
                 return template( "pedidos/no_permiso", $this->data );
+            }
+            else{
+                // Si es personal de almac n, actualizar productos
+
+                if( !$staff && $this->data[ "usuario" ]->id !=intval(  $this->data[ "pedido" ][ "usuario_id" ] )  ){
+
+                    // BITACORA Consulta de pedido
+
+                    bitacora( 108, $this->data[ "usuario" ]->id, [ 
+                        "pedido"   => $this->data[ "pedido" ][ "id" ]
+                    ] );       
+                }
             }
             
             /**********************************/
@@ -1287,6 +1300,11 @@ class Pedidos extends BaseController
      */
     public function modifica_productos()
     {
+        if( !$this->data[ "usuario" ]->permiso( "28-INGRESA" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
         $pedido  = model( "PedidoModel" )->find( $this->request->getPost( "pedido" ) );
         $request = $this->request->getPost( "productos" );
         $modelo  = $pedido[ "modelo_codigo" ];
@@ -1392,6 +1410,92 @@ class Pedidos extends BaseController
             "icono" => "check", 
             "texto" => "Se han actualizado los productos del pedido" ] ); 
     }
+
+    // ******************* BUSQUEDA *********************
+
+
+    /**
+     * Buscar usuarios en la base de datos con permiso de edici n.
+     *
+     * Muestra una lista de usuarios que coinciden con el criterio de b squeda.
+     *
+     * Permite buscar por id, nombre, apellido, tel fono, correo, CLABE interbancaria o CURP.
+     *
+     * @param null $request
+     * @return void
+     */
+    public function busqueda( $request = null ){
+    
+        if( !$this->data[ "usuario" ]->permiso( "32-EDICION-P" ) AND 
+            !$this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $this->data[ "saved" ]  = false;
+        $this->data[ "query" ]  = null;
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Pedidos en sistema BENELEIT";
+
+        /********** POST *************/
+
+        extract( $this->request->getPost() );
+        
+        if( isset( $query ) ){
+            $query = strtolower( trim( $query ) );
+
+            $this->data[ "query" ]   = $query;            
+            $sql = "substring( estatus_codigo, 1, 3 ) > 400 AND referencia like '%{$query}'";
+    
+            $this->data[ "pedidos" ]  = model( "PedidoModel" )->where( $sql )->limit( 10 )->findAll();
+        }
+        else{
+            $this->data[ "pedidos" ] = null;
+
+            $sql = "SELECT 
+                        x.s as s,
+                        max( x.f )  as f
+
+                    from ( 
+                        SELECT 
+                            d.variables->>'$.pedido' AS s, 
+                            d.fecha as f
+                        FROM t_bitacoras d 
+                        WHERE d.accion_id  = 108 
+                        AND d.usuario_id = {$this->data[ "usuario" ]->id} 
+                    ) x
+
+                    group by x.s
+                    order by f desc
+
+                    limit 10";
+                
+            $pedidos = [];
+
+            $db = db_connect();
+            $this->data[ "bitacoras" ] = $db->query( $sql )->getResultArray();
+
+            foreach( $this->data[ "bitacoras" ] as $b ){
+                $pedidos[] = $b[ "s" ];
+            }
+            
+            if( sizeof( $pedidos ) ){
+                $pedidos = model( "PedidoModel" )->find( $pedidos );
+            }
+
+             $this->data[ "historial" ] = [];
+
+            foreach( $pedidos as $b ){
+                $this->data[ "historial" ][ $b[ "id" ] ] = $b;
+            }
+
+            //$this->data[ "historial" ] = model( "UsuarioModel" )->distinct()->select( 't_usuarios.id' )->join( "t_bitacoras", "t_bitacoras.accion_id = 50 AND t_bitacoras.usuario_id = ".$this->data[ "usuario" ]->id )->where( "json_extract( t_bitacoras.variables , '$.socio' ) = t_usuarios.id" )->orderby( "t_bitacoras.fecha", "desc" )->findAll( 25 );
+        }
+
+        /*****************************/
+
+        echo template( "pedidos/busqueda", $this->data );
+    }    
+
 }
 
 

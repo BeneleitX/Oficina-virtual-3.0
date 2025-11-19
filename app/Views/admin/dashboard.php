@@ -8,7 +8,7 @@ $menu = [
     [ "success", "variables", "gears", "Variables de entorno", sizeof( VARIABLES ), [] ],
     [ "warning", "roles", "user-shield", "Roles de usuario", sizeof( $roles ), ["40-ADMIN"] ],
     [ "success", "usuarios", "users", "Usuarios", $usuarios, ["32-EDICION", "40-ADMIN"] ],
-    [ "secondary", "pedidodata", "shopping-cart", "Pedidos", 0, ["20-ALMACEN", "25-PAQUETERIA", "32-EDICION", "30-SOPORTE", "40-ADMIN"] ],
+    [ "secondary", "pedidos", "shopping-cart", "Pedidos", 0, ["20-ALMACEN", "25-PAQUETERIA", "32-EDICION", "32-EDICION-P", "30-SOPORTE", "40-ADMIN"] ],
     [ "success", "valida_credenciales", "address-card", "Valida credenciales", sizeof( $credenciales ), [ "30-SOPORTE", "34-VALIDACION", "40-ADMIN" ] ],
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ), ["40-ADMIN"] ],
     [ "success", "rangos/".getModeloPrincipal(), "gem", "Rangos", sizeof( $rangos ), ["26-RANGOS", "40-ADMIN"] ],

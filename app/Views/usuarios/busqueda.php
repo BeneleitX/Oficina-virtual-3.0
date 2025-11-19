@@ -10,7 +10,7 @@
 <div class="alert alert-info mb-4">
     <div class="row">
         <div class="col-lg-4">
-            <ul">
+            <ul  class="mb-0">
                 <li>Escribe el dato a buscar en la información del socio</li>
                 <li>Usar palabras de mínimo 3 caracteres</li>
                 <li>El sistema buscará automáticamente en números de socio, nombres y apellidos, teléfono, correo electrónico, CLABE interbancaria o CURP</li>
@@ -75,7 +75,7 @@
                 $queries = [];
                 
                 foreach( $bitacoras as $b ){
-                    $h = $historial[ $b[ "socio" ] ];
+                    $h = $historial[ $b[ "s" ] ];
                     echo "\n<tr>
                                 <td>".marca( $queries, $h->id() )."</td>
                                 <td>".$h->avatar( 24 )." ".marca( $queries, $h->nombre( 2 ), "upper" )."</td>

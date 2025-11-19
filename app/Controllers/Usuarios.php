@@ -10,6 +10,16 @@ class Usuarios extends BaseController
     }
 
 
+    /**
+     * Buscar usuarios en la base de datos con permiso de edici n.
+     *
+     * Muestra una lista de usuarios que coinciden con el criterio de b squeda.
+     *
+     * Permite buscar por id, nombre, apellido, tel fono, correo, CLABE interbancaria o CURP.
+     *
+     * @param null $request
+     * @return void
+     */
     public function busqueda( $request = null ){
     
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
@@ -53,16 +63,30 @@ class Usuarios extends BaseController
         else{
             $this->data[ "socios" ] = null;
 
-            $sql = "SELECT fecha, JSON_EXTRACT( d.variables, '$.socio' ) AS socio FROM t_bitacoras d
-                WHERE accion_id IN (50) AND usuario_id = {$this->data[ "usuario" ]->id} 
-                ORDER BY fecha desc limit 10";
+            $sql = "SELECT 
+                        x.s as s,
+                        cast( max( x.f ) as date ) as f
+
+                    from ( 
+                        SELECT 
+                            d.variables->'$.socio' AS s, 
+                            d.fecha as f
+                        FROM t_bitacoras d 
+                        WHERE d.accion_id  = 50 
+                        AND d.usuario_id = {$this->data[ "usuario" ]->id} 
+                    ) x
+
+                    group by x.s
+                    order by f desc
+
+                    limit 10";
                 
             $socios = [];
             $db = db_connect();
             $this->data[ "bitacoras" ] = $db->query( $sql )->getResultArray();
 
             foreach( $this->data[ "bitacoras" ] as $b ){
-                $socios[] = $b[ "socio" ];
+                $socios[] = $b[ "s" ];
             }
             
             if( sizeof( $socios ) ){
@@ -82,6 +106,19 @@ class Usuarios extends BaseController
     }
 
     
+    /**
+     * Reset password of a user.
+     *
+     * If the user does not have permission for edition (32-EDICION) and administration (40-ADMIN), redirect to "no_permiso".
+     *
+     * Reset password of the user with ID given in POST parameter "socio".
+     *
+     * Save the new password in DB.
+     *
+     * Create a new bitacora entry with the new password.
+     *
+     * Display the "sesion/reset" template with the new password data.
+     */
     public function reset_password(){
         
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) AND 
@@ -107,6 +144,16 @@ class Usuarios extends BaseController
     }
 
 
+    /**
+     * Actualiza los estatus de un socio en cada unidad de negocio.
+     * 
+     * Se llama desde el dashboard de un socio, y se encarga de actualizar
+     * los estatus de un socio en cada unidad de negocio.
+     * 
+     * @param string $request El password del socio, en formato base64.
+     * 
+     * @return void
+     */
     public function update_estatus( $request ){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
@@ -140,6 +187,13 @@ class Usuarios extends BaseController
     }
 
 
+    /**
+     * Actualiza los datos del socio, actualizando tanto el usuario como sus datos.
+     * 
+     * Si el usuario no tiene permiso de edici n, se redirige a "no_permiso".
+     * 
+     * @return void
+     */
     public function update_sociodata(){
 
         if( !$this->data[ "usuario" ]->permiso( "32-EDICION" ) ){
