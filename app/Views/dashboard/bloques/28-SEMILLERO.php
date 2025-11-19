@@ -1,1 +1,3 @@
-<a href="<?php echo base_url(); ?>tienda/10-NUTRICION"><img src="<?php echo base_url(); ?>assets/img/promociones/101-SEMILLERO-16.png?1" class="img-fluid"></a>
+<a href="<?php echo base_url(); ?>tienda/90-SEMILLERO"><img src="<?php echo base_url(); ?>assets/img/promociones/101-SEMILLERO-17.png?1" class="img-fluid"></a>
+
+
