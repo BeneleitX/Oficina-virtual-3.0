@@ -94,9 +94,9 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pagoyenvio/(:any)",                  "Pedidos::pagoyenvio/$1" ); 
     $routes->get( "compra_demo/(:num)/(:any)/(:num)",   "Pedidos::compra_demo/$1/$2/$3" );
     $routes->get( "beneleit_movil",                     "Pedidos::beneleit_movil" ); 
-    $routes->get( "pedidos",                            "pedidos::busqueda" );
-    $routes->get( "pedidos/(:any)",                     "pedidos::busqueda/$1" );
-    $routes->post( "pedidos",                           "pedidos::busqueda" );
+    $routes->get( "pedidos",                            "Pedidos::busqueda" );
+    $routes->get( "pedidos/(:any)",                     "Pedidos::busqueda/$1" );
+    $routes->post( "pedidos",                           "Pedidos::busqueda" );
     $routes->post( "checkout",                          "Pedidos::checkout" );  
     $routes->post( "reparte",                           "Pedidos::reparte" ); 
     $routes->post( "cancela_pedido",                    "Pedidos::cancela_pedido" ); 
