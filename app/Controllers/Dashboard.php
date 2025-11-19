@@ -28,7 +28,7 @@ class Dashboard extends BaseController
 
 
     public function sociodata( $request = null ){
-
+        
         $db = db_connect();
         $query = trim( $this->request->getPost( "search_id" ) ) ?? false;
 

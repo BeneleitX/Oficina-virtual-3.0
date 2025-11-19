@@ -51,7 +51,6 @@ class Admin extends BaseController
         $this->data[ "almacenes" ]    = $db->query( "select count(*) as conteo from t_almacenes where estatus_codigo = '201-ACTIVO'" )->getRow()->conteo;
         $this->data[ "rangos" ]       = model( "RangoModel" )->findAll();
         $this->data[ "productos" ]    = model( "ProductoModel" )->where( $sql , null, false )->findAll();
-        $this->data[ "usuarios" ]     = $db->query( "select count(id) as uss from t_usuarios" )->getRow()->uss;
         $this->data[ "eventos" ]      = $db->query( "select count(*) as uss from t_promociones where substring(estatus_codigo , 1, 3 ) > 200 and settings->>'$.evento' = 'true'" )->getRow()->uss;
         $this->data[ "roles" ]        = model( "RolModel" )->findAll();
         $this->data[ "periodos" ]     = model( "PeriodoModel" )->where( "substring(estatus_codigo , 1, 3 ) > 200 and inicia > '2024-08-06' " , null, false )->findAll();

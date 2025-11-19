@@ -1,4 +1,30 @@
-<h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4>
+<div class="row mb-3">
+    <div class="col-6"><h4 class="mt-1 mb-3"><?php echo $titulo; ?></h4></div>
+    <div class="col-6 col-md-4 offset-md-2 col-lg-3 offset-lg-3 col-xl-2 offset-xl-4 text-end">
+
+                       <?php
+                    if( 
+                        $usuario->permiso( "32-EDICION" ) || 
+                        $usuario->permiso( "32-EDICION-P" ) || 
+                        $usuario->permiso( "40-ADMIN" ) 
+                    ){
+                    ?>
+                    <form action="<?php echo base_url( "sociodata" ); ?>" method="post" class="m-0">
+                        <?php echo csrf_field(); ?>
+                        <div class="input-group xinput-group-sm">
+                            <input type="text" name="search_id" value="" placeholder="SOCIO O PEDIDO" class="form-control">
+                            <span class="input-group-text bg-purple border-0 px-3"><i class="fa fa-magnifying-glass"></i></span>                           
+                        </div>
+                    </form>        
+                    <?php
+                    }     
+                    ?>               
+ 
+
+    </div>
+</div>        
+        
+        
 
 <div class="row">
 
@@ -7,7 +33,7 @@
 $menu = [
     [ "success", "variables", "gears", "Variables de entorno", sizeof( VARIABLES ), [] ],
     [ "warning", "roles", "user-shield", "Roles de usuario", sizeof( $roles ), ["40-ADMIN"] ],
-    [ "success", "usuarios", "users", "Usuarios", $usuarios, ["32-EDICION", "40-ADMIN"] ],
+    [ "success", "usuarios", "users", "Usuarios", 0, ["32-EDICION", "40-ADMIN"] ],
     [ "success", "pedidos", "shopping-cart", "Pedidos", 0, ["20-ALMACEN", "25-PAQUETERIA", "32-EDICION", "32-EDICION-P", "30-SOPORTE", "40-ADMIN"] ],
     [ "success", "valida_credenciales", "address-card", "Valida credenciales", sizeof( $credenciales ), [ "30-SOPORTE", "34-VALIDACION", "40-ADMIN" ] ],
     [ "success", "promociones/".getModeloPrincipal(), "basket-shopping", "Promociones", sizeof( $promociones ), ["40-ADMIN"] ],

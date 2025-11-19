@@ -13,6 +13,7 @@
                     <?php
                     if( 
                         $usuario->permiso( "32-EDICION" ) || 
+                        $usuario->permiso( "32-EDICION-P" ) || 
                         $usuario->permiso( "40-ADMIN" ) 
                     ){
                     ?>
