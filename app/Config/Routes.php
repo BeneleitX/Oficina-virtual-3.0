@@ -97,7 +97,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "pedidos",                            "pedidos::busqueda" );
     $routes->get( "pedidos/(:any)",                     "pedidos::busqueda/$1" );
     $routes->post( "pedidos",                           "pedidos::busqueda" );
-    $routes->post( "checkout",                          "Pedidos::checkout" ); 
+    $routes->post( "checkout",                          "Pedidos::checkout" );  
     $routes->post( "reparte",                           "Pedidos::reparte" ); 
     $routes->post( "cancela_pedido",                    "Pedidos::cancela_pedido" ); 
     $routes->post( "cambia_fecha",                      "Pedidos::cambia_fecha" ); 
