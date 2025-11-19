@@ -13,7 +13,7 @@
                         <?php echo csrf_field(); ?>
                         <div class="input-group xinput-group-sm">
                             <input type="text" name="search_id" value="" placeholder="SOCIO O PEDIDO" class="form-control">
-                            <span class="input-group-text bg-purple border-0 px-3"><i class="fa fa-magnifying-glass"></i></span>                           
+                            <button class="input-group-text bg-purple border-0 px-3" type="submit"><i class="fa fa-magnifying-glass"></i></button>                           
                         </div>
                     </form>        
                     <?php
