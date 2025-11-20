@@ -20,7 +20,7 @@ $inscrito = $db->query( $sql )->getRow()->inscrito;
 
 <?php if( $inscrito ){ ?>
 <div class="bg-black p-2">
-    <h5 class="text-center text-white"><i class="fa fa-check text-circle-teal"></i> ¡Ya estas inscrito!</h5>
+    <h5 class="text-center text-white"><i class="fa fa-circle-check text-teal"></i> ¡Ya estas inscrito!</h5>
 </div>
 <?php } ?>
 
