@@ -306,11 +306,12 @@ class E_usuario extends Entity
             load_catalogo( "promociones", "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
         }
 
+        if( !isset( $this->historial->modelos->{$modelo} ) ){
+            $this->valida_modelo();
+        }
+
         foreach( PROMOCIONES as $promo ){
 
-            if( !isset( $this->historial->modelos->{$modelo} ) ){
-                $this->valida_modelo();
-            }
 
             if( $m ){
                 if( isset( $this->historial->modelos->{$modelo}->calificaciones->{$m}->{$promo[ "codigo" ]} ) ){
@@ -326,10 +327,6 @@ class E_usuario extends Entity
         } 
 
         if( !$m ){
-            if( !isset( $this->historial->modelos->{$modelo} ) ){
-                $this->valida_modelo();
-            }
-
             foreach( $this->historial->modelos->{$modelo}->calificaciones as $mes => $promos ){
                 if( $promos )
                 foreach( $promos as $promo => $pts ){
