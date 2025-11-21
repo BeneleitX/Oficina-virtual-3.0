@@ -136,6 +136,14 @@ function cambia_cantidad( promocion, producto ){
         }
     }
 
+    // si es kit
+
+    if( cat_promociones[ promocion ].settings.kit = 'true' ){
+        $.each( pedido.promociones[ promocion ].productos, function( p, data ){
+            $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + p + '] input.cantidad' ).val( campo.val() );
+        });
+    }
+
     // revisar minimos
     if( cat_promociones[ promocion ].formulas.minimo !== undefined && campo.val() < cat_promociones[ promocion ].formulas.minimo ){
         campo.val( cat_promociones[ promocion ].formulas.minimo );
@@ -145,7 +153,7 @@ function cambia_cantidad( promocion, producto ){
 }
 
 
-function update_costos(){
+function xupdate_costos(){
 
     pedido.data.total     = 0;
     pedido.data.productos = 0;
@@ -156,6 +164,7 @@ function update_costos(){
 
         var tag = $( this ), 
             cuenta_productos   = 0,
+            primer_producto    = 0,
             total_promo        = 0,
             total_comisionable = 0,
             promocion          = tag.attr( 'promocion' );
@@ -181,6 +190,11 @@ function update_costos(){
                     orden    = parseInt( $( this ).attr( 'orden' ) );
 
                 cuenta_productos += parseInt( cantidad );
+
+                if( primer_producto == 0 ){
+                    primer_producto = parseInt( cantidad );
+                }
+
                 //console.log( promocion, producto, cantidad)
                 if( cantidad ){
                     pedido.promociones[ promocion ][ 'productos' ][ producto ] = { 
@@ -200,9 +214,17 @@ function update_costos(){
                 }
             });
         }
-
+        
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
-            total_promo = (cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
+
+            if( cat_promociones[ promocion ].settings.kit == 'true' ){
+                console.log( primer_producto);
+                total_promo = primer_producto == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) * primer_producto;
+            }
+            else{
+                total_promo = cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
+            }
+            
         }
 
         pedido.data.total += total_promo;
@@ -276,6 +298,7 @@ function update_pedido( flag = null ){
         var tag = $( this ), 
             cuenta_productos   = 0,
             total_promo        = 0,
+            primer_producto    = 0,
             total_comisionable = 0,
             promocion          = tag.attr( 'promocion' ),
             disponible         = 0;
@@ -325,6 +348,10 @@ function update_pedido( flag = null ){
                     orden    = parseInt( $( this ).attr( 'orden' ) );
 
                 cuenta_productos += parseInt( cantidad );
+
+                if( primer_producto == 0 ){
+                    primer_producto = parseInt( cantidad );
+                }                
                 
                 if( disponible > 0 && cuenta_productos > 0 ){
                     while( cantidad && disponible < cuenta_productos ){
@@ -362,7 +389,13 @@ function update_pedido( flag = null ){
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
             // pedido.PTS[ promocion ] = cuenta_productos ? 1 : 0;
-            total_promo = (cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
+
+            if( cat_promociones[ promocion ].settings.kit == 'true' ){
+                total_promo = primer_producto == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) * primer_producto;
+            }
+            else{
+                total_promo = cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
+            }
         }
 
         pedido.data.total += total_promo;
@@ -705,31 +738,54 @@ function update_pedido( flag = null ){
 }
 
 
+function agrega_kit( promocion ){
+
+    $.each( cat_promociones[ promocion ].productos.precarga, function( p, data ){
+        agrega_producto( data, promocion );
+    });
+}
+
+
 function show_modal_productos( promocion ){
-    $( '#modal_productos div[producto]' ).attr( 'activo', 'false' ).hide();
-    $( '#busca_producto' ).val( '' );
 
-    $( '#modal_productos div[producto]' ).each( function(){
-        var producto = $( this ).attr( 'producto' );
+    // Kit de boenvenida
 
-        if( cat_promociones[ promocion ].productos.elegibles !== undefined && cat_promociones[ promocion ].productos.elegibles.includes( producto ) ){
-            $( this ).attr( 'activo', 'true' ).show();
-        }
-    } ); 
-
-    if( promocion == '010-DISTRIBUIDOR' ){
-        $( '#modal_productos .puntos' ).show();
+    if( cat_promociones[ promocion ].settings.kit == 'true' ){
+        agrega_kit( promocion );
     }
     else{
-        $( '#modal_productos .puntos' ).hide();
+        $( '#modal_productos div[producto]' ).attr( 'activo', 'false' ).hide();
+        $( '#busca_producto' ).val( '' );
+
+        $( '#modal_productos div[producto]' ).each( function(){
+            var producto = $( this ).attr( 'producto' );
+
+            if( cat_promociones[ promocion ].productos.elegibles !== undefined && cat_promociones[ promocion ].productos.elegibles.includes( producto ) ){
+                $( this ).attr( 'activo', 'true' ).show();
+            }
+        } ); 
+
+        if( promocion == '010-DISTRIBUIDOR' ){
+            $( '#modal_productos .puntos' ).show();
+        }
+        else{
+            $( '#modal_productos .puntos' ).hide();
+        }
+        
+        $( '#modal_productos' ).attr( 'promocion', promocion ).modal( 'show' );
     }
-    
-    $( '#modal_productos' ).attr( 'promocion', promocion ).modal( 'show' );
 }
 
 
 function borra_producto( promocion, producto ){
-    $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + producto + ']' ).remove();
+    if( cat_promociones[ promocion ].settings.kit == 'true' ){
+        $.each( pedido.promociones[ promocion ].productos, function( p, data ){
+            $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + p + ']' ).remove();
+        });
+    }
+    else{
+        $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + producto + ']' ).remove();
+    }
 
     update_pedido( "borra producto" );
 }
@@ -771,10 +827,17 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
                         eval( cat_promociones[ promocion ].formulas.precio )
         );  
 
-//        precio = ( cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) );
+        html_composed = '<tr orden="' + orden + '" producto="' + producto + '">' + 
+                        
+                        '<td valign="top"><a href="javascript:lightbox( \'' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png\' );" class="lightbox_trigger"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></a></td>' + 
+                        
+                        '<td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? 'd-none ' : '' ) + 'col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td>' + 
+                        
+                        '<td valign="top" class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' ) ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td>' + 
+                        
+                        '<td valign="top" class="text-end text-primary" nowrap><div class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'd-none' : '' )+'"><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5></div>' + ( pagado || bloqueado|| cancelado || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? '' : '<p class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'mt-4' : 'mt-0' )+' mb-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>'
 
-        $( '.card[promocion=' + promocion + '] table[productos]' ).append('<tr orden="' + orden + '" producto="' + producto + '"><td valign="top"><a href="javascript:lightbox( \'' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png\' );" class="lightbox_trigger"><img src="' + base_url + 'assets/img/productos/' + ( cat_productos[ producto ][ 'data' ][ 'avatar' ] ? cat_productos[ producto ][ 'codigo' ] : 'NO-IMAGEN') + '.png" style=\"width:70px; height:70px; border-radius:5px\"></a></td><td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="' + ( modelo == '50-INVERSION' ? 'd-none ' : '' ) + 'col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td><td valign="top" class="' + ( modelo == '50-INVERSION' ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td><td valign="top" class="text-end text-primary" nowrap><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5>' + ( ( pagado || bloqueado|| cancelado ) ? '' : '<p class="m-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>');
-
+        $( '.card[promocion=' + promocion + '] table[productos]' ).append( html_composed );
         $( '.card[promocion=' + promocion + ']' ).show();
     }
         

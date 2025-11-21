@@ -42,7 +42,12 @@
 
                 foreach( $p[ "PTS" ] as $tipo => $cantidad ){
                     if( $cantidad ){
-                        $PTS .= "<span class=\"badge bg-".(PROMOCIONES[ $tipo ][ "settings" ][ "clase" ])."\">".(PROMOCIONES[ $tipo ][ "settings" ][ "siglas" ])."</span> ";
+                        if( $tipo == "010-DISTRIBUIDOR" ){
+                            $PTS .= "<span class=\"badge bg-".(PROMOCIONES[ $tipo ][ "settings" ][ "clase" ])."\" style=\"border-radius: 0.375rem 0 0 0.375rem;  padding-right: 0.2rem\">".(PROMOCIONES[ $tipo ][ "settings" ][ "siglas" ])."</span><span style=\"border-radius: 0 0.375rem 0.375rem 0; padding: 0.13rem 0.35rem 0.13rem 0.2rem\" class=\"badge bg-white border border-teal text-teal\">{$cantidad}</span> ";
+                        }
+                        else{
+                            $PTS .= "<span class=\"badge bg-".(PROMOCIONES[ $tipo ][ "settings" ][ "clase" ])."\">".(PROMOCIONES[ $tipo ][ "settings" ][ "siglas" ])."</span> ";
+                        }
                     }
                 }
 

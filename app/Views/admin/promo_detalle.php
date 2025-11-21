@@ -66,7 +66,7 @@
             "cyan",
             "light-blue",
             "blue",
-            "gray-600",
+            "gray-500",
             "brown",
         ];
 
@@ -157,7 +157,20 @@
                 <p>Activa esta opción si la promoción debe llenarse automáticamente con los productos precargados. El socio no podrá quitar o agregar productos.</p>
             </div>
         </div>
-    </div>        
+    </div>  
+    
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card border-teal">
+            <div class="card-body">
+            <div class="form-check form-switch">
+                <input name="n_kit" class="form-check-input" type="checkbox" role="switch" <?php echo isset( $promocion[ "settings" ][ "kit" ] ) && $promocion[ "settings" ][ "kit" ] == "true" ? "checked" : ""; ?>>
+                    <h5 class="text-teal">Kit</h5>
+                </div>                
+                
+                <p>Activa esta opción si la promoción es un kit grupal con productos y cloosto definido.</p>
+            </div>
+        </div>
+    </div>      
 </div>
 
 <h5>Productos elegibles</h5>
