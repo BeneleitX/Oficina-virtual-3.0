@@ -138,7 +138,7 @@ function cambia_cantidad( promocion, producto ){
 
     // si es kit
 
-    if( cat_promociones[ promocion ].settings.kit = 'true' ){
+    if( cat_promociones[ promocion ].settings.kit == 'true' ){
         $.each( pedido.promociones[ promocion ].productos, function( p, data ){
             $( '.card[promocion="' + promocion + '"] table[productos] > tr[producto=' + p + '] input.cantidad' ).val( campo.val() );
         });
