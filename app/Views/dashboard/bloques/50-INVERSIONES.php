@@ -4,11 +4,21 @@ $saldo = $usuario->saldo( "50-INVERSION", true );
 
 if( $saldo ){ 
 
-    $registro = substr( $usuario->historial->registro, 0, 10 ); 
-    $fecha    = $registro > "2025-03-01" ? $registro : "2025-03-01";
+    if( !isset( $usuario->historial->vigencia ) ){
+        $registro = substr( $usuario->historial->registro, 0, 10 ); 
+        $fecha    = $registro > "2025-03-01" ? $registro : "2025-03-01";
 
-    $fecha = date( "Y-m-d", strtotime( $fecha ." + 6 months - 1 day" ) );
+        $fecha = endCycle( $fecha, 6 ); // date( "Y-m-d", strtotime( $fecha ." + 6 months - 1 day" ) );
 
+        $historial = $usuario->historial;
+        $historial->vigencia = $fecha;
+        $usuario->historial = $historial;
+
+        model( "UsuarioModel" )->save( $usuario );
+    }
+
+    $fecha = $usuario->historial->vigencia;
+    
     // saldo vencido
     if( $fecha < date( "Y-m-d" ) ){
         
