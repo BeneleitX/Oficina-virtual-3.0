@@ -135,7 +135,8 @@ class Registro extends BaseController
                 "validacion"    => null,
                 "modelos"       => [],
                 "rangos"        => [],
-                "reset"         => $fecha
+                "reset"         => $fecha,
+                "vigencia"      => endCycle( $fecha, 6 )
             ]            
         ];
     

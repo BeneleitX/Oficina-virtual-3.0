@@ -1988,4 +1988,5 @@ isset($data->avatar->updated ), $data->avatar->updated
 
         return $db->query( $sql )->getRow()->fecha ?? null;
     }    
+
 }
