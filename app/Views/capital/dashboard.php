@@ -204,6 +204,8 @@ if( sizeof( $inversiones ) ){
         $nueve_finalizada = $p->data->porcentaje == 9 && $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] <= date( "Ym" );
         $aviso_semilla = aviso_semilla( $i, $p );
 
+        $v = $usuario->get_verificacion( "50-NIVERSION" );
+
         echo "\n
             <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
                 <div class=\"card-header\">
@@ -306,12 +308,16 @@ if( sizeof( $inversiones ) ){
                                     
 
                                     <ul class=\"dropdown-menu\">
+                                    ".( $v->estatus ? "
+
                                     ".( !$retiros_pendientes ? "
                                         <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de rendimientos</a></li>
                                       
                                     " : "" ).( !$semilla_pendientes ? "
                                         <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de capital semilla</a></li>
                                     " : "" )."
+
+                                        " : "<li><span class=\"dropdown-item text-red\"><i class=\"fa fa-warning\"></i> Necesitas verificar tu cuenta para realizar retiros</span></li>" )."
                                     </ul>
                                 </div>
                                 
