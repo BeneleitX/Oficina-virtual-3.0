@@ -919,9 +919,9 @@ class Capital extends BaseController
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
         $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
 
-        $ms = genera_meses( $pedido, $i[ 0 ][ "id" ], $p );
-        $i[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
-        $i[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+         $ms = genera_meses( $pedido, $i[ 0 ][ "id" ], $p );
+         $i[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
+         $i[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
         // model( "InversionModel" )->save( $i );
 
         $this->data[ "i" ] = $i[ 0 ];

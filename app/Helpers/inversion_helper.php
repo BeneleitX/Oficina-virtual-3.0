@@ -57,7 +57,7 @@ function get_semilla_retirada( $i ){
             where i.id != o.id
             and i.producto_codigo = o.producto_codigo
             and i.estatus_codigo = '625-ACTIVA'
-            and i.extras->>'$.semilla_retirada' is not null
+            and i.extras->>'$.semilla_retirada' > 0
             and i.usuario_id = o.usuario_id
             and i.fechas->>'$.cierre' > cast( now() as date )";
   
@@ -133,7 +133,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         
         $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
 
-        if( $semilla_retirada || ( $a ? $meses[ $a - 1 ][ "r_semilla" ] : false ) ){
+        if( $semilla_retirada > 0 || ( $a ? $meses[ $a - 1 ][ "r_semilla" ] : false ) ){
             // si hay retiro de semilla en el mes $pedido[ "data" ][ "total" ] != $a_semilla )
             $factor = 2;
         }
