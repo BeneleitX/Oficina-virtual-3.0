@@ -59,7 +59,8 @@ function get_semilla_retirada( $i ){
             and i.estatus_codigo = '625-ACTIVA'
             and i.extras->>'$.semilla_retirada' > 0
             and i.usuario_id = o.usuario_id
-            and i.fechas->>'$.cierre' > cast( now() as date )";
+            and i.fechas->>'$.cierre' > cast( now() as date )
+            and i.id != 536";
   
     return $db->query( $sql )->getRow()->semilla_retirada;    
 }
