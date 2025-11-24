@@ -712,7 +712,7 @@ class Capital extends BaseController
             floatval( $this->request->getPost( "custom" ) ), 
         ];
 
-        if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] ){
+        if( $this->data[ "usuario" ]->id == $i[ "usuario_id" ] || $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
 
             // generar retiro
 
@@ -738,17 +738,21 @@ class Capital extends BaseController
             ];
 
             $where  = "inversion_id = {$i[ "id" ]} and substring( estatus_codigo, 1, 3 ) > 200 and json_unquote( json_extract( fechas, '$.mes' ) ) = '{$this->request->getPost( "mes_apply" )}' and tipo in ( ".( $t == "semilla" ? "'STOTAL', 'SPARCIAL'" : "'TOTAL', 'PARCIAL', 'MENSUAL'" )." )";
+
             $existe = model( "RetiroModel" )->where( $where )->find();
 
             if( !$existe ){
+
                 model( "RetiroModel" )->save( $retiro_add );
                 $r = model( "RetiroModel" )->find( model( "RetiroModel" )->insertID() );
 
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-                $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
-                model( "InversionModel" )->save( $i );
+        
+                $ms = genera_meses( $pedido, $i[ "id" ], $p );
+                $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+                $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
 
-                // redirect para refresh
+                model( "InversionModel" )->save( $i );
 
                 // BITACORA Crea solicitud de retiro
                 bitacora( 86, $this->data[ "usuario" ]->id, [ 
@@ -759,51 +763,72 @@ class Capital extends BaseController
                     "cantidad"  => $retiro[ $tipo -1 ],
                     "requested" => $this->request->getPost()
                 ] );
+
+                if( $this->request->getPost( "mes_apply" ) == date( "Ym" ) ){
+
+                    // ENVIAR CORREO
+
+                    $imagenes = [
+                    ];
+
+                    $u = model( "UsuarioModel" )->find( $i[ "usuario_id" ] );
+                    $a = [ $u->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
+                    $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
+
+                    $subject = "Solicitud de retiro ".strip_tags( id( $r[ "id" ], 5 ) );
+                    $message = "
+                        
+                        <p>¡Hola ".$u->nombre()."! </p>
+                        <p>Hemos recibido tu solicitud de retiro de CAPITAL24. Por favor verifica que todos los datos sean correctos. Para confirmar la solicitud haz click en el botón o el enlace. Una vez confirmada se enviará para ser procesada durante <strong>los primeros tres días hábiles del próximo mes</strong>.</p>
+
+                        <table align=\"center\" border=\"1\" cellpadding=\"10\" style=\"border-collapse:collapse\">
+                            <tr><td>Socio</td><td>".id( $u->id, 7 )."</td></tr>
+                            <tr><td>Inversión</td><td>".id( $i[ "id" ], 6 )."</td></tr>
+                            <tr><td>TxHash</td><td>{$i[ "extras" ][ "TxHash" ]}</td></tr>
+                            <tr><td>Fecha de solicitud</td><td>".fecha( $r[ "fechas" ][ "creacion" ] )."</td></tr>
+                            <tr><td>Folio</td><td>".id( $r[ "id" ], 5 )."</td></tr>
+                            <tr><td>Tipo de retiro</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ?  substr( $r[ "tipo" ], 1 )." CAPITAL SEMILLA" : $r[ "tipo" ]." RENDIMIENTOS" )."</td></tr>
+                            <tr><td>Cantidad solicitada</td><td>$".number_format( $r[ "cantidad" ], 2 )."</td></tr>
+                            <tr><td>Penalización</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ? "$".number_format( $r[ "cantidad" ] - $r[ "deposito" ], 2 )." (25%)" : "$0.00" )."</td></tr>
+                            <tr><td>Cantidad a depositar</td><td>$".number_format( $r[ "deposito" ], 2 )."</td></tr>
+                            <tr><td>Wallet TRON USDT destino</td><td>{$u->data->wallet}</td></tr>
+                        </table>
+
+                        <p style=\"word-wrap: break-word; text-align:center\">
+                            <a href=\"{$url}\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:400px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">Confirmar solicitud</span></a>
+                            <br><br>
+                            <p class=\"small text-center\"><a href=\"{$url}\">{$url}</a></p>
+                        </p>
                 
+                    ";
+                    if( ENVIRONMENT != 'development' ){
+                        $respuesta = envia_correo( $u, $subject, $message, $imagenes );
+                    }
 
-                // ENVIAR CORREO
+                    // redirect para refresh
 
-                $imagenes = [
-                ];
+                    return redirect()->to( "capital" )->with( "msg", [ 
+                        "clase" => "success", 
+                        "icono" => "check", 
+                        "texto" => "Se generó solicitud de retiro" ] );   
+                    }
 
-                $u = $this->data[ "usuario" ];
-                $a = [ $u->password_original().$i[ "extras" ][ "TxHash" ], $r[ "id" ] ];
-                $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
+                // si es por admin a meses anteriores
+                else{
+                    // BITACORA Confirma solicitud de retiro
+                    bitacora( 100, $this->data[ "usuario" ]->id, [ 
+                        "socio"  => $i[ "usuario_id" ],
+                        "retiro" => $r[ "id" ]
+                    ] );
+                        
+                    $r[ "estatus_codigo" ] = "255-PENDIENTE";
+                    model( "RetiroModel" )->save( $r );
 
-                $subject = "Solicitud de retiro ".strip_tags( id( $r[ "id" ], 5 ) );
-                $message = "
-                    
-                    <p>¡Hola ".$u->nombre()."! </p>
-                    <p>Hemos recibido tu solicitud de retiro de CAPITAL24. Por favor verifica que todos los datos sean correctos. Para confirmar la solicitud haz click en el botón o el enlace. Una vez confirmada se enviará para ser procesada durante <strong>los primeros tres días hábiles del próximo mes</strong>.</p>
-
-                    <table align=\"center\" border=\"1\" cellpadding=\"10\" style=\"border-collapse:collapse\">
-                        <tr><td>Socio</td><td>".id( $u->id, 7 )."</td></tr>
-                        <tr><td>Inversión</td><td>".id( $i[ "id" ], 6 )."</td></tr>
-                        <tr><td>TxHash</td><td>{$i[ "extras" ][ "TxHash" ]}</td></tr>
-                        <tr><td>Fecha de solicitud</td><td>".fecha( $r[ "fechas" ][ "creacion" ] )."</td></tr>
-                        <tr><td>Folio</td><td>".id( $r[ "id" ], 5 )."</td></tr>
-                        <tr><td>Tipo de retiro</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ?  substr( $r[ "tipo" ], 1 )." CAPITAL SEMILLA" : $r[ "tipo" ]." RENDIMIENTOS" )."</td></tr>
-                        <tr><td>Cantidad solicitada</td><td>$".number_format( $r[ "cantidad" ], 2 )."</td></tr>
-                        <tr><td>Penalización</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ? "$".number_format( $r[ "cantidad" ] - $r[ "deposito" ], 2 )." (25%)" : "$0.00" )."</td></tr>
-                        <tr><td>Cantidad a depositar</td><td>$".number_format( $r[ "deposito" ], 2 )."</td></tr>
-                        <tr><td>Wallet TRON USDT destino</td><td>{$u->data->wallet}</td></tr>
-                    </table>
-
-                    <p style=\"word-wrap: break-word; text-align:center\">
-                        <a href=\"{$url}\"><span style=\"background:#1a2542; text-align:center; padding:15px 0; width:400px; display:inline-block; color:#fff; border-radius:5px; font-size:30px;font-weight:bold\">Confirmar solicitud</span></a>
-                        <br><br>
-                        <p class=\"small text-center\"><a href=\"{$url}\">{$url}</a></p>
-                    </p>
-              
-                ";
-                if( ENVIRONMENT != 'development' ){
-                    $respuesta = envia_correo( $u, $subject, $message, $imagenes );
+                    return redirect()->to( "capital" )->with( "msg", [ 
+                        "clase" => "success", 
+                        "icono" => "check", 
+                        "texto" => "Se procesó el retiro retroactivo" ] );                         
                 }
-
-                return redirect()->to( "capital" )->with( "msg", [ 
-                    "clase" => "success", 
-                    "icono" => "check", 
-                    "texto" => "Se generó solicitud de retiro" ] );   
             }
             else{
                 return redirect()->to( "capital" )->with( "msg", [ 
@@ -839,7 +864,11 @@ class Capital extends BaseController
 
             $i = model( "InversionModel" )->find( $retiro[ "inversion_id" ] );
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+
+            $ms = genera_meses( $pedido, $i[ "id" ] );
+            $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+            $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+
             model( "InversionModel" )->save( $i );
             
             // BITACORA Cancela retiro
@@ -890,21 +919,23 @@ class Capital extends BaseController
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
         $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
 
-        // $i[ 0 ][ "extras" ][ "meses" ] = genera_meses( $pedido , $i[ 0 ][ "id" ], $p );
+        $ms = genera_meses( $pedido, $i[ 0 ][ "id" ], $p );
+        $i[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
+        $i[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+        // model( "InversionModel" )->save( $i );
 
         $this->data[ "i" ] = $i[ 0 ];
 
-        if( $this->data[ "usuario" ]->id != intval(  $this->data[ "i" ][ "usuario_id" ] ) && !(
+        if( $this->data[ "usuario" ]->id != intval( $this->data[ "i" ][ "usuario_id" ] ) && !(
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
-            $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return template( "pedidos/no_permiso", $this->data );
+            return template( "capital", $this->data );
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Detalle de inversión Capital24";
+        $this->data[ "titulo" ] = "Detalle de inversión Capital24 <span>".referencia( $pedido )."</span>";
 
         echo template( "capital/detalle", $this->data );
     }
@@ -1395,6 +1426,7 @@ class Capital extends BaseController
 
         return $html;
     }
+
 
     public function reporte_inversiones()
     {

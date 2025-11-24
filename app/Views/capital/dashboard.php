@@ -38,7 +38,11 @@ if( sizeof( $inversiones ) ){
 
         if(1|| !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-            $i[ "extras" ][ "meses" ]   = genera_meses( $pedido, $i[ "id" ], $p );
+
+            $ms = genera_meses( $pedido, $i[ "id" ], $p );
+            
+            $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+            $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
             $i[ "extras" ][ "refresh" ] = date( "Y-m-d" );
 
             model( "InversionModel" )->save( $i );

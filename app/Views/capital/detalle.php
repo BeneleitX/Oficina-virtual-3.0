@@ -14,7 +14,10 @@ $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );
 
 if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+
+    $ms = genera_meses( $pedido, $i[ "id" ], $p );
+    $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+    $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
 
     model( "InversionModel" )->save( $i );
 }

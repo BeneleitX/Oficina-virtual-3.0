@@ -574,7 +574,7 @@ class Sesion extends BaseController
                 // BITACORA Confirma solicitud de retiro
                 bitacora( 100, $usuario->id, [ 
                     "socio"  => $usuario->id,
-                    "retiro" => $retiro
+                    "retiro" => $retiro[ "id" ]
                 ] );
                     
                 $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
@@ -589,7 +589,7 @@ class Sesion extends BaseController
                 // BITACORA Cancela solicitud de retiro
                 bitacora( 105, $usuario->id, [ 
                     "socio"  => $usuario->id,
-                    "retiro" => $retiro
+                    "retiro" => $retiro[ "id" ]
                 ] );
                     
                 $retiro[ "estatus_codigo" ] = "150-CANCELADO";
@@ -605,7 +605,7 @@ class Sesion extends BaseController
             // BITACORA Cancela solicitud de retiro
             bitacora( 106, $usuario->id, [ 
                 "socio"  => $usuario->id,
-                "retiro" => $retiro,
+                "retiro" => $retiro[ "id" ],
                 "hash"   => $hash,
                 "pass"   => $pass
             ] );

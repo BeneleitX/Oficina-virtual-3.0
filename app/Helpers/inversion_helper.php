@@ -46,6 +46,25 @@ function get_fecha_dias( $inicia, $termina = null ){
 }
 
 
+function get_semilla_retirada( $i ){
+    $db = db_connect();
+
+    
+    $sql = "SELECT
+            count(*) as semilla_retirada
+            from t_inversiones i
+            join t_inversiones o on o.id = {$i}
+            where i.id != o.id
+            and i.producto_codigo = o.producto_codigo
+            and i.estatus_codigo = '625-ACTIVA'
+            and i.extras->>'$.semilla_retirada' is not null
+            and i.usuario_id = o.usuario_id
+            and i.fechas->>'$.cierre' > cast( now() as date )";
+  
+    return $db->query( $sql )->getRow()->semilla_retirada;    
+}
+
+
 function genera_meses( $pedido, $i, $producto = null ){
 
     if( !$producto ){
@@ -54,9 +73,10 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     // calculamos fecha de inicio de inversion
     $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+    $semilla_retirada = get_semilla_retirada( $i );
 
     // Buscamos retiros aplicados a rendimiento
-    $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND inversion_id = {$i}" )->findAll();
+    $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND json_unquote( json_extract( fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' AND usuario_id = {$pedido[ "usuario_id" ]}" )->findAll();
 
     // seleccionamos la fecha para el mes CERO (entre fecha pago y fecha inversion)
     // si caen en el mismo mes:  m_c = mes 0
@@ -72,6 +92,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     $meses  = [];
     $factor = 1;
+    $i_semilla = 0;
 
     for( $a = 0; $a < 25; $a++ ){
         if( $a ){
@@ -81,16 +102,27 @@ function genera_meses( $pedido, $i, $producto = null ){
  
         $retiros_mes = 0;
         $c_semilla   = 0;
+        $r_semilla   = false;
 
         foreach( $rts as $rt ){
-            if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){
+            if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){ 
+                if( $rt[ "inversion_id" ] == $i ){
                 
-                if( in_array( $rt[ "tipo" ], [ "TOTAL", "PARCIAL", "MENSUAL" ]) ){
-                    $retiros_mes += $rt[ "cantidad" ];
+                    if( in_array( $rt[ "tipo" ], [ "TOTAL", "PARCIAL", "MENSUAL" ]) ){
+                        $retiros_mes += $rt[ "cantidad" ];
+                    }
+                    elseif( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
+                        $c_semilla += $rt[ "cantidad" ];
+                    }
                 }
-                elseif( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
-                    $c_semilla += $rt[ "cantidad" ];
-                }
+
+                if( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
+                    $r_semilla = true;
+
+                    if( $i_semilla == false ){
+                        $i_semilla = intval( $date->format( "Ym" ) );
+                    }
+                }                
             }
         }
 
@@ -101,7 +133,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         
         $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
 
-        if( $pedido[ "data" ][ "total" ] != $a_semilla ){
+        if( $semilla_retirada || ( $a ? $meses[ $a - 1 ][ "r_semilla" ] : false ) ){
+            // si hay retiro de semilla en el mes $pedido[ "data" ][ "total" ] != $a_semilla )
             $factor = 2;
         }
 
@@ -142,6 +175,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             "semilla"         => $a_semilla,
             "c_semilla"       => $c_semilla,
             "compuesto"       => $compuesto,
+            "r_semilla"       => $r_semilla,
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
             "retiros"         => $retiros_mes,
@@ -152,7 +186,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         ];
     }
 
-    return $meses;
+    return [ $meses, $i_semilla ];
 }
 
 
@@ -249,7 +283,11 @@ function balance_inversion( $i, $fecha = null ){
 
     if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 ){
         $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-        $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+
+        $ms = genera_meses( $pedido, $i[ "id" ] );
+        $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+        $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+
         model( "InversionModel" )->save( $i );
     }
 
@@ -331,7 +369,11 @@ function crea_retiro_final( $i ){
 
     $p      = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ] );
+
+    $ms = genera_meses( $pedido, $i[ "id" ] );
+    $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+    $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+
     model( "InversionModel" )->save( $i );
 
     $bt   = balance_inversion( $i, date( "Ym", strtotime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ]." + 1 day" ) ) );
@@ -356,7 +398,11 @@ function crea_retiro_final( $i ){
     // actualizar meses de inversión
 
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
-    $i[ "extras" ][ "meses" ] = genera_meses( $pedido, $i[ "id" ], $p );
+
+    $ms = genera_meses( $pedido, $i[ "id" ], $p );
+    $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+    $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+    
     model( "InversionModel" )->save( $i );
 
     return $i;

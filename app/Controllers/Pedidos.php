@@ -1258,7 +1258,10 @@ class Pedidos extends BaseController
                 ]; 
 
                 $respuesta[ "success" ] = $inversion;
-                $inversion[ "extras" ][ "meses" ] = genera_meses( $pedido, $inversion[ "id" ], $producto );
+
+                $ms = genera_meses( $pedido, $inversion[ "id" ], $producto );
+                $inversion[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
+                $inversion[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
 
                 $respuesta[ "success" ][ "fecha_1" ] = fecha( $pedido[ "fechas" ][ "pagado" ] );
                 $respuesta[ "success" ][ "fecha_2" ] = fecha( $f_i );
