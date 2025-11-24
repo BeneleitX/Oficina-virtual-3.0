@@ -1259,14 +1259,16 @@ class Pedidos extends BaseController
 
                 $respuesta[ "success" ] = $inversion;
 
+                model( "InversionModel" )->save( $inversion );   
+
                 $ms = genera_meses( $pedido, $inversion[ "id" ], $producto );
                 $inversion[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
                 $inversion[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
 
+                model( "InversionModel" )->save( $inversion );   
+
                 $respuesta[ "success" ][ "fecha_1" ] = fecha( $pedido[ "fechas" ][ "pagado" ] );
                 $respuesta[ "success" ][ "fecha_2" ] = fecha( $f_i );
-
-                model( "InversionModel" )->save( $inversion );   
             }
             else{
                 $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Cantidad transferida insuficiente</h5>La transferencia por $".number_format( $cantidad, 2 )." ha sido registrada en el sistema, sin embargo<br>no es suficiente para cubrir el monto requerido<br>de la compra por $".number_format( $total, 2 )."<br><strong>Saldo pendiente: $".number_format( $total - $cantidad, 2 )."</strong>";

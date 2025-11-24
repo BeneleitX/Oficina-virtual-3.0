@@ -70,6 +70,14 @@ function ask_semilla( inversion ){
         mes         = i.attr( 'mes' );
 
     $( '#semilla_3' ).val( '' );
+
+    if( aviso_semilla ){
+        $( '#aviso_semilla' ).show();
+    }
+    else{
+        $( '#aviso_semilla' ).hide();
+    }
+
     $( '[name=inversion_id]' ).val( inversion );
     $( '#semilla_2' ).val( parseFloat( semilla ) );
     $( '[name=opciones_semilla]' ).prop( 'checked', false );

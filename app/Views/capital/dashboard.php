@@ -40,7 +40,7 @@ if( sizeof( $inversiones ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
             $ms = genera_meses( $pedido, $i[ "id" ], $p );
-            
+
             $i[ "extras" ][ "meses" ] = $ms[ 0 ];
             $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
             $i[ "extras" ][ "refresh" ] = date( "Y-m-d" );
@@ -202,9 +202,10 @@ if( sizeof( $inversiones ) ){
         }
 
         $nueve_finalizada = $p->data->porcentaje == 9 && $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] <= date( "Ym" );
+        $aviso_semilla = aviso_semilla( $i, $p );
 
         echo "\n
-            <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
+            <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
                 <div class=\"card-header\">
                     <div class=\"row\">
                         <div class=\"col-2 col-lg-1\">
@@ -306,9 +307,10 @@ if( sizeof( $inversiones ) ){
 
                                     <ul class=\"dropdown-menu\">
                                     ".( !$retiros_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-teal\"></i> Retiro de rendimientos</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de rendimientos</a></li>
+                                      
                                     " : "" ).( !$semilla_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-red\"></i> Retiro de capital semilla</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de capital semilla</a></li>
                                     " : "" )."
                                     </ul>
                                 </div>
@@ -498,11 +500,12 @@ if( sizeof( $inversiones ) ){
                                 </div>
                             </div>
 
-                            <div class="alert alert-danger py-2">
-                                <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de rendimiento será reducido a la mitad.</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
-                            </div>
-
-                        <?php } else { ?>
+                                <div class="alert alert-danger py-2" id="aviso_semilla">
+                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de rendimiento será reducido a la mitad.</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
+                                </div>
+                                <?php 
+                            } 
+                            else { ?>
                             <div class="alert alert-danger mb-0">
                             No puedes programar retiros en este momento. No existe una dirección (wallet) para recepción de transferencias. Registrala en tu <a href="<?php echo base_url(); ?>perfil">perfil de usuario</a>.
                             </div>
@@ -570,3 +573,8 @@ if( sizeof( $inversiones ) ){
 		</div>
 	</div>
 </div>
+
+
+<script>
+    var aviso_semilla = <?php echo $aviso_semilla; ?>;
+</script>

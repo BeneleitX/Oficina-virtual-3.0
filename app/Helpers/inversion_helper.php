@@ -2,8 +2,21 @@
 
 
 
-function calcula_semilla( $i ){
-    return $i[ "cantidad" ];
+function aviso_semilla( $i, $p ){
+    
+    
+    if( $p->data->porcentaje < 9 ){
+
+        // para las inversiones al 9% liberar el capital semilla a los 24 meses
+        $fecha = $i[ "extras" ][ "meses" ][ 12 ][ "termina" ];
+    }
+    else{
+
+        // para las inversiones al 3% o 6% liberar el capital semilla a los 12 meses
+        $fecha = $i[ "extras" ][ "meses" ][ 24 ][ "termina" ];
+    }
+    
+    return date( "Ym" ) >= date( "Ym", strtotime( $fecha ) ) ? 0 : 1;
 }
 
 
@@ -74,7 +87,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     // calculamos fecha de inicio de inversion
     $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
-    $semilla_retirada = get_semilla_retirada( $i );
+    $semilla_retirada = $i ? get_semilla_retirada( $i ) : 0;
 
     // Buscamos retiros aplicados a rendimiento
     $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND json_unquote( json_extract( fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' AND usuario_id = {$pedido[ "usuario_id" ]}" )->findAll();
