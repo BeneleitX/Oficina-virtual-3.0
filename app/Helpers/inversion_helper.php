@@ -61,13 +61,15 @@ function get_fecha_dias( $inicia, $termina = null ){
 
 function get_semilla_retirada( $i ){
     $db = db_connect();
-
     
     $sql = "SELECT
             count(*) as semilla_retirada
             from t_inversiones i
             join t_inversiones o on o.id = {$i}
+            join t_pedidos p on p.id = i.pedido_id
             where i.id != o.id
+            and substring( p.estatus_codigo,1,3) > 400
+            and date_format( i.fechas->>'$.inversion', '%Y%m' ) < date_format( o.fechas->>'$.inversion', '%Y%m' )
             and i.producto_codigo = o.producto_codigo
             and i.estatus_codigo = '625-ACTIVA'
             and i.extras->>'$.semilla_retirada' > 0
@@ -88,9 +90,20 @@ function genera_meses( $pedido, $i, $producto = null ){
     // calculamos fecha de inicio de inversion
     $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
     $semilla_retirada = $i ? get_semilla_retirada( $i ) : 0;
-
+    // dd($semilla_retirada);
     // Buscamos retiros aplicados a rendimiento
-    $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND json_unquote( json_extract( fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' AND usuario_id = {$pedido[ "usuario_id" ]}" )->findAll();
+    // $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND json_unquote( json_extract( fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' AND usuario_id = {$pedido[ "usuario_id" ]}" )->findAll();
+
+    $sql = "SELECT r.*
+        from t_retiros r
+        join t_inversiones i on i.id = r.inversion_id
+        where SUBSTRING( r.estatus_codigo, 1, 3 ) > 200 
+        AND json_unquote( json_extract( r.fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' 
+        AND r.usuario_id = {$pedido[ "usuario_id" ]} 
+        and i.producto_codigo = '{$producto->codigo}'";
+
+    $db  = db_connect();
+    $rts = $db->query( $sql )->getResultArray();
 
     // seleccionamos la fecha para el mes CERO (entre fecha pago y fecha inversion)
     // si caen en el mismo mes:  m_c = mes 0
@@ -119,6 +132,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         $r_semilla   = false;
 
         foreach( $rts as $rt ){
+            $rt[ "fechas" ] = json_decode( $rt[ "fechas" ], true );
+
             if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){ 
                 if( $rt[ "inversion_id" ] == $i ){
                 

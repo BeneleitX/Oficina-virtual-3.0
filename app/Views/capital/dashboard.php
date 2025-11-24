@@ -36,7 +36,7 @@ if( sizeof( $inversiones ) ){
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-        if(1|| !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
+        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
             $ms = genera_meses( $pedido, $i[ "id" ], $p );
@@ -213,7 +213,7 @@ if( sizeof( $inversiones ) ){
                         </div>
                         <div class=\"col-10 col-lg-2 pt-2\">
                             <h5 class=\"m-0 text-{$p->data->color}\">{$p->data->nombre}</h5>
-                            ".estatus( $i[ "estatus_codigo" ] )."
+                            <span class=\"badge bg-gray-500\">{$i[ "id" ]}</span> ".estatus( $i[ "estatus_codigo" ] )."
                         </div>
 
                         <div class=\"col-lg-4 text-center\">
@@ -576,5 +576,5 @@ if( sizeof( $inversiones ) ){
 
 
 <script>
-    var aviso_semilla = <?php echo $aviso_semilla; ?>;
+    var aviso_semilla = <?php echo $aviso_semilla ?? 1; ?>;
 </script>
