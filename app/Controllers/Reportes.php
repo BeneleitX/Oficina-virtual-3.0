@@ -634,8 +634,8 @@ class Reportes extends BaseController
         // crear consultas a base de datos
 
         switch( $c_primercompra ){
-            case 1  : $where = " where p.data->>'$.primercompra' = 1 "; break;
-            case 0  : $where = " where p.data->>'$.primercompra' != 1 "; break;
+            case 1  : $where = " having primercompra = 1 "; break;
+            case 0  : $where = " having primercompra = 0 "; break;
             default : $where = ""; break;
         }
 
@@ -644,6 +644,8 @@ class Reportes extends BaseController
 
         $sql = "SELECT 
                     u.id as socio, 
+                    count( * ) as pedidos,
+                    sum( p.data->>'$.primercompra' ) as primercompra,
                     sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
                     from t_usuarios u
                     join t_pedidos p 
@@ -660,8 +662,8 @@ class Reportes extends BaseController
                         ) ) promos
                         where m.codigo = '{$modelo}'
                     ) temp
-                    {$where}
                     group by u.id, temp.promo
+                    {$where}
                    
                     order by puntos";
         
@@ -778,8 +780,8 @@ class Reportes extends BaseController
         // crear consultas a base de datos
 
         switch( $c_primercompra ){
-            case 1  : $where = " where p.data->>'$.primercompra' = 1 "; break;
-            case 0  : $where = " where p.data->>'$.primercompra' != 1 "; break;
+            case 1  : $where = " having primercompra = 1 "; break;
+            case 0  : $where = " having primercompra = 0 "; break;
             default : $where = ""; break;
         }
 
@@ -788,6 +790,8 @@ class Reportes extends BaseController
 
         $sql = "SELECT 
                     u.id as socio, 
+                    count( * ) as pedidos,
+                    sum( p.data->>'$.primercompra' ) as primercompra,                    
                     sum( json_extract( p.PTS, concat( '$.\"', temp.promo, '\"' ) ) ) as puntos
                     from t_usuarios u
                     join t_pedidos p 
@@ -805,10 +809,10 @@ class Reportes extends BaseController
                         where m.codigo = '{$modelo}'
                     ) temp
 
-                    {$where}
+                  
 
                     group by u.id, temp.promo
-                    
+                      {$where}
                     order by puntos";
         
         // procesar datos
