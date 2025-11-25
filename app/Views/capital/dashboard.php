@@ -208,7 +208,7 @@ if( sizeof( $inversiones ) ){
         $nueve_finalizada = $p->data->porcentaje == 9 && $i[ "extras" ][ "meses" ][ 24 ][ "Ym" ] <= date( "Ym" );
         $aviso_semilla = aviso_semilla( $i, $p );
 
-        $v = $usuario->get_verificacion( "50-NIVERSION" );
+        $v = $usuario->get_verificacion( "50-INVERSION" );
 
         echo "\n
             <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
