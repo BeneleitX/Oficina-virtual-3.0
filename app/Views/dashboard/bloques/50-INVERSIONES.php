@@ -85,6 +85,7 @@ if( $saldo ){
                 $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
     
                 model( "InversionModel" )->save( $i );
+                
             }
 
             $bt = balance_inversion( $i );

@@ -580,6 +580,15 @@ class Sesion extends BaseController
                 $retiro[ "estatus_codigo" ] = "255-PENDIENTE";
                 model( "RetiroModel" )->save( $retiro );
 
+                $i = model( "InversionModel" )->find( $retiro[ "inversion_id" ] );
+                $p = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
+        
+                $ms = genera_meses( $p, $i[ "id" ] );
+                $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+                $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+
+                model( "InversionModel" )->save( $i );
+
                 return redirect()->to( "capital" )->with( "msg", [ 
                     "clase" => "success", 
                     "icono" => "check", 

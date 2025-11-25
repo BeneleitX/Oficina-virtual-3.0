@@ -1259,7 +1259,9 @@ class Pedidos extends BaseController
 
                 $respuesta[ "success" ] = $inversion;
 
-                model( "InversionModel" )->save( $inversion );   
+                $inv = new \App\Models\InversionModel(); 
+                $inv->insert( $inversion );
+                $inversion[ "id" ] = $inv->getInsertID();
 
                 $ms = genera_meses( $pedido, $inversion[ "id" ], $producto );
                 $inversion[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];

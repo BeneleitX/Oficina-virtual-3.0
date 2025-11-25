@@ -36,6 +36,10 @@ if( sizeof( $inversiones ) ){
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
+/*         if( $f_i < "2025-03-01" ){
+            $f_i = "2025-03-01";
+        } */
+
         if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
@@ -49,7 +53,7 @@ if( sizeof( $inversiones ) ){
         }
 
         $date1 = new DateTime( $f_i );
-        $date2 = new DateTime( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] );
+        $date2 = new DateTime( $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -1 ][ "termina" ] );
         $interval = $date1->diff( $date2 );
         $total_dias = $interval->days + 1;
 
@@ -87,7 +91,7 @@ if( sizeof( $inversiones ) ){
             $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
         }
 
-        $mes_actual = 24;
+        $mes_actual  = sizeof( $i[ "extras" ][ "meses" ] );
         $meses       = [];
         $semilla     = [];
         $compuesto   = [];
@@ -95,7 +99,7 @@ if( sizeof( $inversiones ) ){
         $r = 0;
         $h = 0;
 
-        for( $a = 0; $a < 25; $a++ ){
+        for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
 
             if( $m[ "Ym" ] < date( "Ym" ) ){
@@ -223,7 +227,7 @@ if( sizeof( $inversiones ) ){
                         </div>
 
                         <div class=\"col-lg-5\">
-                            <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual )." de 24</p>
+                            <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual )." de ".sizeof( $i[ "extras" ][ "meses" ] )."</p>
                             <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
                                 <div class=\"progress-bar bg-".( $porc_bono == 100 ? "gray-500" : "teal" )."\" style=\"width: {$porc_bono}%\">".( $porc_bono == 100 ? "INVERSIÓN FINALIZADA" : $porc_bono."%" )."</div>
                             </div>                                  
@@ -250,11 +254,11 @@ if( sizeof( $inversiones ) ){
                                         </tr>
                                         <tr>
                                             <td>Cierre de inversión</td>
-                                            <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
+                                            <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -1 ][ "termina" ] )."</td>
                                         </tr>
                                         <tr>
                                             <td>Periodo de inversión</td>
-                                            <td class=\"text-end\">24 meses</td>
+                                            <td class=\"text-end\">".sizeof( $i[ "extras" ][ "meses" ] )." meses</td>
                                         </tr>                                        
                                         <tr>
                                             <td>Rendimiento mensual</td>
@@ -308,7 +312,7 @@ if( sizeof( $inversiones ) ){
                                     
 
                                     <ul class=\"dropdown-menu\">
-                                    ".( $v->estatus ? "
+                                    ".( $v->estatus || session( "admin" ) ? "
 
                                     ".( !$retiros_pendientes ? "
                                         <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de rendimientos</a></li>

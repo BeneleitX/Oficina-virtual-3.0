@@ -2,21 +2,24 @@
 
 
 
-function aviso_semilla( $i, $p ){
+function aviso_semilla( $i, $p, $mes = null ){
     
+    if( !$mes ){
+        $mes = date( "Ym" );
+    }
     
     if( $p->data->porcentaje < 9 ){
 
-        // para las inversiones al 9% liberar el capital semilla a los 24 meses
-        $fecha = $i[ "extras" ][ "meses" ][ 12 ][ "termina" ];
+        // para las inversiones al 3% o 6% liberar el capital semilla a los 12 meses
+        $fecha = $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -12 ][ "termina" ];
     }
     else{
 
-        // para las inversiones al 3% o 6% liberar el capital semilla a los 12 meses
-        $fecha = $i[ "extras" ][ "meses" ][ 24 ][ "termina" ];
+        // para las inversiones al 9% liberar el capital semilla a los 24 meses
+        $fecha = $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -1 ][ "termina" ];
     }
     
-    return date( "Ym" ) >= date( "Ym", strtotime( $fecha ) ) ? 0 : 1;
+    return $mes >= date( "Ym", strtotime( $fecha ) ) ? 0 : 1;
 }
 
 
@@ -60,6 +63,8 @@ function get_fecha_dias( $inicia, $termina = null ){
 
 
 function get_semilla_retirada( $i ){
+    return 0;
+
     $db = db_connect();
     
     $sql = "SELECT
@@ -69,10 +74,9 @@ function get_semilla_retirada( $i ){
             join t_pedidos p on p.id = i.pedido_id
             where i.id != o.id
             and substring( p.estatus_codigo,1,3) > 400
-            and date_format( i.fechas->>'$.inversion', '%Y%m' ) < date_format( o.fechas->>'$.inversion', '%Y%m' )
+            and i.extras->>'$.semilla_retirada' between 1 and date_format( o.fechas->>'$.inversion', '%Y%m' )
             and i.producto_codigo = o.producto_codigo
             and i.estatus_codigo = '625-ACTIVA'
-            and i.extras->>'$.semilla_retirada' > 0
             and i.usuario_id = o.usuario_id
             and i.fechas->>'$.cierre' > cast( now() as date )
             and i.id != 536";
@@ -100,7 +104,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         where SUBSTRING( r.estatus_codigo, 1, 3 ) > 200 
         AND json_unquote( json_extract( r.fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' 
         AND r.usuario_id = {$pedido[ "usuario_id" ]} 
-        and i.producto_codigo = '{$producto->codigo}'";
+        and i.producto_codigo = '{$producto->codigo}'
+        AND substring( i.estatus_codigo,1,3) > 200";
 
     $db  = db_connect();
     $rts = $db->query( $sql )->getResultArray();
@@ -117,11 +122,28 @@ function genera_meses( $pedido, $i, $producto = null ){
         $date = new \DateTime( $f_i );
     }
 
-    $meses  = [];
-    $factor = 1;
+    $date_temp = $date;
+    $previos = 0;
+
+    while( $date_temp->format( "Ym" ) < 202503 ){
+        
+        $date_temp->modify( "first day of this month" );
+        $date_temp->modify( "+ 1 month" );
+        $previos++;
+    }
+
+    $meses     = [];
+    $factor    = 1;
     $i_semilla = 0;
 
-    for( $a = 0; $a < 25; $a++ ){
+    if( date( "d", strtotime( $f_i ) ) == 1 ){
+        $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
+    }
+    else{
+        $date = new \DateTime( $f_i );
+    }
+
+    for( $a = 0; $a < ( 25 + $previos ); $a++ ){
         if( $a ){
             $date->modify( "first day of this month" );
             $date->modify( "+ 1 month" );

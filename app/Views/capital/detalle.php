@@ -8,6 +8,7 @@
 <div id="chart"></div>
 
 <?php
+$cuentameses = sizeof( $i[ "extras" ][ "meses" ] );
 
 $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
@@ -23,7 +24,7 @@ if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
 }
 
 $date1 = new DateTime( $f_i );
-$date2 = new DateTime( $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] )-1 ][ "termina" ] );
+$date2 = new DateTime( $i[ "extras" ][ "meses" ][ $cuentameses -1 ][ "termina" ] );
 $interval = $date1->diff( $date2 );
 $total_dias = $interval->days + 1;
 
@@ -45,7 +46,9 @@ else{
     $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
 }
 
-$mes_actual = 24;
+
+
+$mes_actual  = $cuentameses;
 $meses       = [];
 $semilla     = [];
 $compuesto   = [];
@@ -56,7 +59,7 @@ $tablas = [];
 $r      = 0;
 $h      = 0;
 
-for( $a = 0; $a < 25 ; $a++ ){
+for( $a = 0; $a < $cuentameses  ; $a++ ){
     // inicializamos tabla desglose de mes
 
     $m = $i[ "extras" ][ "meses" ][ $a ];
@@ -106,7 +109,7 @@ for( $a = 0; $a < 25 ; $a++ ){
 
 
 //        if( $m[ "Ym" ] == date( "Ym" ) && $m[ "rendimiento_mes" ] != $r ){
-        if( $m[ "Ym" ] == date( "Ym" ) || ( $m[ "Ym" ] > date( "Ym" ) && $a == 24 ) ){
+        if( $m[ "Ym" ] == date( "Ym" ) || ( $m[ "Ym" ] > date( "Ym" ) && $a == $cuentameses  ) ){
 
             $tablas[ $a ]  = "\n<tr>
             <td class=\"".( $m[ "Ym" ] == date( "Ym" ) ? " fw-bold " : "" )."text-center\">{$a}</td>
@@ -173,7 +176,7 @@ echo "\n
                 </div>
 
                 <div class=\"col-lg-5\">
-                    <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual)." de 24</p>
+                    <p class=\"text-center text-marine mt-1 mb-0 fw-bold \">Día {$transcurridos} de {$total_dias} / Mes ".($mes_actual)." de ".$cuentameses ."</p>
                     <div class=\"progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height:24px; border-radius:10px\">
                         <div class=\"progress-bar bg-".( $porc_bono == 100 ? "gray-500" : "teal" )."\" style=\"width: {$porc_bono}%\">".( $porc_bono == 100 ? "INVERSIÓN FINALIZADA" : $porc_bono."%" )."</div>
                     </div>                                  
@@ -198,11 +201,11 @@ echo "\n
                         </tr>
                         <tr>
                             <td>Cierre de inversión</td>
-                            <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] )."</td>
+                            <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ $cuentameses -1 ][ "termina" ] )."</td>
                         </tr>
                         <tr>
                             <td>Periodo de inversión</td>
-                            <td class=\"text-end\">24 meses</td>
+                            <td class=\"text-end\">".$cuentameses ." meses</td>
                         </tr>
                         <tr>
                             <td>Rendimiento mensual</td>

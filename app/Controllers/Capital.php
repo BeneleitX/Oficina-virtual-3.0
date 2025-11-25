@@ -718,7 +718,7 @@ class Capital extends BaseController
 
             $descuento = 0;
 
-            if( $t == "semilla" ){
+            if( $t == "semilla" && aviso_semilla( $i, $p, $this->request->getPost( "mes_apply" ) ) ){
                 $descuento = floor( 100 * ( $retiro[ $tipo -1 ] * 25 / 100 ) ) / 100;
             }
 
@@ -733,7 +733,8 @@ class Capital extends BaseController
                 "fechas"         => [
                     "creacion"       => date( "Y-m-d" ),
                     "mes"            => $this->request->getPost( "mes_apply" ),
-                    "deposito"       => null
+                    "deposito"       => null,
+                    "descuento"      => $descuento
                 ]
             ];
 
@@ -820,7 +821,13 @@ class Capital extends BaseController
                         "socio"  => $i[ "usuario_id" ],
                         "retiro" => $r[ "id" ]
                     ] );
-                        
+
+                    $ms = genera_meses( $pedido, $i[ "id" ], $p );
+                    $i[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
+                    $i[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+
+                    model( "InversionModel" )->save( $i );   
+
                     $r[ "estatus_codigo" ] = "255-PENDIENTE";
                     model( "RetiroModel" )->save( $r );
 
