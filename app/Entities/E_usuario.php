@@ -1144,16 +1144,16 @@ class E_usuario extends Entity
     public function update_profundidad()
     {
         if( ( $this->historial->modelos->{"10-NUTRICION"}->update_profundidad ?? "1979-01-01" ) < date( "Y-m-d" ) ){
-            $db = db_connect();
-            $sql = "select f_update_nivel( {$this->id}, '10-NUTRICION', ".date( "Ym" ).")";
-            $db->query( $sql );
-
             $h = $this->historial;
             $h->modelos->{"10-NUTRICION"}->update_profundidad = date( "Y-m-d" );
             $this->historial = $h;
 
             model( "UsuarioModel" )->save( $this );
-        }
+
+            $db = db_connect();
+            $sql = "select f_update_nivel( {$this->id}, '10-NUTRICION', ".date( "Ym" ).")";
+            $db->query( $sql );
+        }   
     }
 
 
