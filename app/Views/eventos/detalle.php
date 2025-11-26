@@ -27,6 +27,7 @@
             <th>Nombre</th>
             <th>Teléfono</th>
             <th>Estatus</th>
+            <th>Pedido</th>
             <th>Pago</th>
             <th>Regalos</th>
             <th>Fecha</th>
@@ -50,11 +51,17 @@
                 default:  $regalo = "red"; break;
             }
 
+            $pk = [
+                "referencia" => $s[ "referencia" ],
+                "modelo_codigo" => "90-SEMILLERO"
+            ];
+
             echo "\n<tr>
                         <td>".$u->id( null, "marine" )."</td>
                         <td>".$u->avatar( 24 )." ".$u->nombre( 2 )."</td>
                         <td>{$u->telefono}</td>
                         <td>".estatus( $u->estatus_codigo )."</td>
+                        <td>".referencia( $pk )."</td>
                         <td><strong>$".number_format( $s[ "pago" ], 2 )."</strong></td>
                         <td class=\"text-center\"><i class=\"fa fa-gift text-{$regalo}\"></i> {$s[ "productos" ]}</td>
                         <td><span class=\"d-none\">{$s[ "fecha" ]}</span> ".fecha( $s[ "fecha" ] )."</td>                        

@@ -98,7 +98,7 @@ abstract class BaseController extends Controller
 
         if( !defined( "MESES" ) ) define( "MESES", $meses );
 
-        load_catalogo( "modelos", !in_array( $this->data[ "_controller" ][ 3 ], [ "Pedidos", "Admin", "Bancos" ] ) && $this->data[ "_method" ] != "promociones" ? "estatus_codigo = '201-ACTIVO'" : "" );
+        load_catalogo( "modelos", !in_array( $this->data[ "_controller" ][ 3 ], [ "Pedidos", "Admin", "Bancos", "Eventos" ] ) && $this->data[ "_method" ] != "promociones" ? "estatus_codigo = '201-ACTIVO'" : "" );
         load_catalogo( "estatus" );
         load_catalogo( "rangos" );
         load_catalogo( "variables" );

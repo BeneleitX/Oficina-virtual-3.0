@@ -64,6 +64,7 @@ class Eventos extends BaseController
         if( $producto == null ){           
             $sql = "SELECT 
                         p.usuario_id as usuario, 
+                        p.referencia,
                         any_value( p.fechas->>'$.pagado' ) AS fecha, 
                         any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                         SUM(t.qt)-1 as productos 
@@ -81,6 +82,7 @@ class Eventos extends BaseController
                         e.id,
                         e.modelo_codigo,
                         e.usuario_id as usuario,
+                        e.referencia,
                         e.fechas->>'$.pagado' as fecha,
                         e.data->>'$.total' as pago,
                         SUM(prod.cantidad)-1 AS productos
@@ -151,18 +153,20 @@ class Eventos extends BaseController
         $worksheet->setCellValue( "B1", "NOMBRE" );
         $worksheet->setCellValue( "C1", "TELEFONO" );
         $worksheet->setCellValue( "D1", "CORREO" );
-        $worksheet->setCellValue( "E1", "FECHA" );
-        $worksheet->setCellValue( "F1", "PAGO" );
-        $worksheet->setCellValue( "G1", "REGALOS" );
+        $worksheet->setCellValue( "E1", "REFERENCIA" );
+        $worksheet->setCellValue( "F1", "FECHA" );
+        $worksheet->setCellValue( "G1", "PAGO" );
+        $worksheet->setCellValue( "H1", "REGALOS" );
 
-        $worksheet->setCellValue( "H1", "N" );
-        $worksheet->setCellValue( "I1", "T" );
-        $worksheet->setCellValue( "J1", "A" );
-        $worksheet->setCellValue( "K1", "G" );
-        $worksheet->setCellValue( "L1", "I" );
+        $worksheet->setCellValue( "I1", "N" );
+        $worksheet->setCellValue( "J1", "T" );
+        $worksheet->setCellValue( "K1", "A" );
+        $worksheet->setCellValue( "L1", "G" );
+        $worksheet->setCellValue( "M1", "I" );
 
         $sql = "SELECT 
                     p.usuario_id as usuario, 
+                    p.referencia as referencia,
                     any_value( p.fechas->>'$.pagado' ) AS fecha, 
                     any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                     SUM(t.qt)-1 as productos 
@@ -185,21 +189,22 @@ class Eventos extends BaseController
             $worksheet->setCellValue( "B".( $row ),  $u->nombre( 2, false, true ) );
             $worksheet->setCellValue( "C".( $row ),  $u->telefono );
             $worksheet->setCellValue( "D".( $row ),  $u->correo );
-            $worksheet->setCellValue( "E".( $row ),  $s[ "fecha" ] );
-            $worksheet->setCellValue( "F".( $row ),  $s[ "pago" ] );
-            $worksheet->setCellValue( "G".( $row ),  $s[ "productos" ] );
+            $worksheet->setCellValue( "E".( $row ),  $s[ "referencia" ] );
+            $worksheet->setCellValue( "F".( $row ),  $s[ "fecha" ] );
+            $worksheet->setCellValue( "G".( $row ),  $s[ "pago" ] );
+            $worksheet->setCellValue( "H".( $row ),  $s[ "productos" ] );
 
-            $worksheet->setCellValue( "H".( $row ),  substr( $u->data->estatus->modelos->{"10-NUTRICION"}, 0, 3 ) > 300 ? "A" : "" );
-            $worksheet->setCellValue( "I".( $row ),  substr( $u->data->estatus->modelos->{"20-TELEFONIA"}, 0, 3 ) > 300 ? "A" : "" );
-            $worksheet->setCellValue( "J".( $row ),  substr( $u->data->estatus->modelos->{"30-ALIMENTOS"}, 0, 3 ) > 300 ? "A" : "" );
-            $worksheet->setCellValue( "K".( $row ),  substr( $u->data->estatus->modelos->{"40-GASOLINAS"}, 0, 3 ) > 300 ? "A" : "" );
-            $worksheet->setCellValue( "L".( $row ),  substr( $u->data->estatus->modelos->{"50-INVERSION"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "I".( $row ),  substr( $u->data->estatus->modelos->{"10-NUTRICION"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "J".( $row ),  substr( $u->data->estatus->modelos->{"20-TELEFONIA"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "K".( $row ),  substr( $u->data->estatus->modelos->{"30-ALIMENTOS"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "L".( $row ),  substr( $u->data->estatus->modelos->{"40-GASOLINAS"}, 0, 3 ) > 300 ? "A" : "" );
+            $worksheet->setCellValue( "M".( $row ),  substr( $u->data->estatus->modelos->{"50-INVERSION"}, 0, 3 ) > 300 ? "A" : "" );
 
         }
 
         $worksheet->getStyle( "A1:L1" )->getFont()->getColor()->setARGB('ffffff');
-        $worksheet->getStyle( "A1:G1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
-        $worksheet->getStyle( "H1:L1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('47c24c');
+        $worksheet->getStyle( "A1:H1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
+        $worksheet->getStyle( "I1:M1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('47c24c');
 
         foreach( $worksheet->getColumnIterator() as $column ){
             $worksheet->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
