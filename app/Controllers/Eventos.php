@@ -64,7 +64,7 @@ class Eventos extends BaseController
         if( $producto == null ){           
             $sql = "SELECT 
                         p.usuario_id as usuario, 
-                        p.referencia,
+                        any_value( p.referencia ) as referencia,
                         any_value( p.fechas->>'$.pagado' ) AS fecha, 
                         any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                         SUM(t.qt)-1 as productos 
@@ -166,7 +166,7 @@ class Eventos extends BaseController
 
         $sql = "SELECT 
                     p.usuario_id as usuario, 
-                    p.referencia as referencia,
+                    any_value( p.referencia ) as referencia,
                     any_value( p.fechas->>'$.pagado' ) AS fecha, 
                     any_value( p.promociones->>'$.\"{$codigo}\".precio' ) as pago,
                     SUM(t.qt)-1 as productos 
