@@ -1378,7 +1378,7 @@ class Capital extends BaseController
     {
         $mes   = $this->request->getPost( "mes" );
         $fecha = date( "Y-m-d", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
-        $cant  = $this->request->getPost( "cantidad" );
+        $cant  = intval( $this->request->getPost( "cantidad" ) );
 
         $db  = db_connect();
         $sql = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
