@@ -341,7 +341,7 @@ class Periodos extends BaseController
                     WHERE p.modelo_codigo = '{$periodo[ "modelo_codigo" ]}' 
                     AND p.estatus_codigo  = '250-EN-PROCESO' 
                     AND p.data->>'$.periodos.creacion' <= '{$periodo[ "codigo" ]}' 
-                    AND JSON_EXTRACT( f_es_verificado( u.id ), '$.estatus' ) 
+                    AND JSON_EXTRACT( f_get_verificacion( u.id, '{$periodo[ "modelo_codigo" ]}' ), '$.estatus' ) = 1 
                     and p.clabe is not null
                     AND length( p.clabe ) = IF( '{$periodo[ "modelo_codigo" ]}' = '50-INVERSION', 34, 18 )";
 
