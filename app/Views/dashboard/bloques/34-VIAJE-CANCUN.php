@@ -98,11 +98,11 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
 <div class="row">
     <div class="col-6 pt-2 text-center">
         <div id="chart1"></div>
-        <p style="margin-top: -10px"><span class="border border-gray-600 badge text-gray-600"><?php echo "{$compras} de 20"; ?></span></p>
+        <p style="margin-top: -10px"><span class="border border-gray-600 badge text-gray-600"><?php echo ( $compras > 20 ? 20 : $compras )." de 20"; ?></span></p>
     </div>
     <div class="col-6 pt-2 text-center">
         <div id="chart2"></div>
-        <p style="margin-top: -10px"><span class="border border-gray-600 badge text-gray-600"><?php echo "{$compras} de 32"; ?></span></p>
+        <p style="margin-top: -10px"><span class="border border-gray-600 badge text-gray-600"><?php echo ( $compras > 32 ? 32 : $compras )." de 32"; ?></span></p>
     </div>
 </div>
 <p class="text-center"><a href="javascript:updateCompras();" id="btn_compras" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Actualizar conteo</a></p>
