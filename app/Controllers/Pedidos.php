@@ -1263,6 +1263,10 @@ class Pedidos extends BaseController
                 $inv->insert( $inversion );
                 $inversion[ "id" ] = $inv->getInsertID();
 
+
+                // Envía correos a su upline avisando de una nueva inversión
+                correos_notificacion( $inversion );
+
                 $ms = genera_meses( $pedido, $inversion[ "id" ], $producto );
                 $inversion[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
                 $inversion[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
