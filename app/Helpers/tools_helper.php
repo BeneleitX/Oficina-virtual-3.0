@@ -879,24 +879,29 @@ function correos_notificacion( $inversion )
     $upline = json_decode( $db->query( $sql )->getRow()->upline );
 
     foreach( $upline as $up ){
+        if( $up->nivel > 0 && $up->nivel < 5 ){
+            
+            $usuario = model( "UsuarioModel" )->find( $up->id );
 
-        $usuario = model( "UsuarioModel" )->find( $up->id );
-        $imagenes = [
-            "inversion" => "assets/img/inversion.jpg",
-            "menu" => "assets/img/menu.png"
-        ];
+            if( !in_array( "42-PERMANENTE", (array)$usuario->rol_codigos ) ){
+                $imagenes = [
+                    "inversion" => "assets/img/inversion.jpg",
+                    "menu" => "assets/img/menu.png"
+                ];
 
-        $subject = "¡Nueva inversión en tu red!";
-        $message = "
-            <img src=\"%%inversion%%\" width=\"100%\" alt=\"inversion\">
-            <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva inversión en <strong>Capital24</strong>, por lo que el volumen de capital semilla de tu red se ha incrementado.</p>
+                $subject = "¡Nueva inversión en tu red!";
+                $message = "
+                    <img src=\"%%inversion%%\" width=\"100%\" alt=\"inversion\">
+                    <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva inversión en <strong>Capital24</strong>, por lo que el volumen de capital semilla de tu red se ha incrementado.</p>
 
-            <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $inversion[ "cantidad" ], 2 )."</span></p>
+                    <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $inversion[ "cantidad" ], 2 )."</span></p>
 
-            <p style=\"text-align:center\">De parte de todo el equipo Beneleit:<br><strong>¡Felicidades!</strong></p>
-            <p><a href=\"".base_url()."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Ir ahora a mi oficina virtual</a></p>";
+                    <p style=\"text-align:center\">De parte de todo el equipo Beneleit:<br><strong>¡Felicidades!</strong></p>
+                    <p><a href=\"".base_url()."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Ir ahora a mi oficina virtual</a></p>";
 
-        envia_correo( $usuario, $subject, $message, $imagenes );
+                envia_correo( $usuario, $subject, $message, $imagenes );
+            }
+        }
     }
 }
 

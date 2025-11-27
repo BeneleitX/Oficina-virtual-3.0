@@ -128,4 +128,3 @@
     var modelo = '<?php echo $modelo ?>', 
         socio = <?php echo $socio->id ?>;
 </script>
-
