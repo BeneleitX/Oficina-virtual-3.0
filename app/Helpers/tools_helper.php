@@ -858,7 +858,7 @@ function correos_notificacion( $inversion )
 
     // obtener upline
     $db  = db_connect();
-    $sql = "SELECT f_get_upline( {$inversion[ "usuario_id" ]}, '50-INVERSION', 0, ".date( "Ym" )." ) as upline;";
+    $sql = "SELECT f_get_upline( {$inversion[ "usuario_id" ]}, '50-INVERSION', 0, '".date( "Y-m-d" )."' ) as upline;";
 
     /*
     activos -> null
