@@ -129,10 +129,3 @@
         socio = <?php echo $socio->id ?>;
 </script>
 
-
-<?php
-if (ENVIRONMENT === 'development') {
-echo correos_notificacion( 2329 );
-}
-
-?>
