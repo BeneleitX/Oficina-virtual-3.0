@@ -1140,6 +1140,43 @@ class E_usuario extends Entity
         return $pedido;
     }
 
+
+    public function getComprasViaje()
+    {
+        $db = db_connect();
+        $sql = "SELECT f_get_compras( {$this->id}, 6 ) as compras";
+
+        return $db->query( $sql )->getRow()->compras;
+    }
+
+
+
+    public function getNuevosSocios( $minima, $inicia, $termina )
+    {
+        $db = db_connect();
+        $sql = "SELECT
+                    p.usuario_id, 
+                    sum( p.PTS->>'$.\"010-DISTRIBUIDOR\"' ) as puntos,
+                    sum( p.data->>'$.primercompra' ) as primercompra,
+                    JSON_EXTRACT( f_get_verificacion( p.usuario_id, '10-NUTRICION' ), '$.estatus' ) as verificado
+                from t_pedidos p
+                join t_usuarios u on u.id = p.usuario_id
+                where p.modelo_codigo = '10-NUTRICION'
+                and substring( p.estatus_codigo, 1, 3 ) > 400
+                and cast( p.fechas->>'$.califica' as date ) between '{$inicia}' and '{$termina}' 
+                and u.redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}
+                group by p.usuario_id
+                having puntos >= {$minima} and primercompra > 0
+                order by verificado desc";
+
+        $socios = [];
+        foreach( $db->query( $sql )->getResult() as $r ){
+                $socios[ $r->usuario_id ] = $r->verificado;
+        }
+
+        return $socios;
+    }
+
     
     public function update_profundidad()
     {

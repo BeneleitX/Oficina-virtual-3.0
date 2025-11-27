@@ -1081,6 +1081,13 @@ class Dashboard extends BaseController
         }
     }
 
+
+    public function update_compras_cancun()
+    {
+        $this->data[ "usuario" ]->getComprasViaje();
+        return true;
+    }
+
     
     public function reset_password(){
         

@@ -71,6 +71,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "reset_wallet",                      "Dashboard::reset_wallet" );
     $routes->post( "load_fechas",                       "Dashboard::load_fechas" );
     $routes->post( "update_arranque",                   "Dashboard::update_arranque" );
+    $routes->post( "update_compras_cancun",             "Dashboard::update_compras_cancun" );
 
     $routes->get( "indicadores",                        "Indicadores::inicio" );
     $routes->get( "indicadores/(:any)/(:num)",          "Indicadores::inicio/$1/$2" );

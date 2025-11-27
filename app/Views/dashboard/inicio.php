@@ -1,4 +1,5 @@
 <script src="https://core.beneleit.talentonet.com/static/beneleit/beneleit.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <div class="row">
     <div class="col-lg-8 col-sm-6">
@@ -56,7 +57,7 @@
         }
 
         if( $mostrar ){
-            $html = "\n<div class=\"card my-4\" style=\"overflow:hidden\">";
+            $html = "\n<div class=\"card my-4\" xstyle=\"overflow:hidden\">";
 
             switch( $b[ "codigo" ] ){
                 case "30-INGRESOS-SEMANA" : 
@@ -77,7 +78,7 @@
                     break;
             }
 
-            $html .= "<div style=\"cursor:pointer\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
+            $html .= "<div style=\"cursor:pointer; position:relative\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
 
 
             $html .= "<div id=\"div_{$b[ "codigo" ]}\" class=\"accordion-collapse collapse ".( ( $usuario->data->layout->{$b[ "codigo" ]} ?? true ) == "true" ? "show" : "" )."\"><a ";

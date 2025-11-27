@@ -17,7 +17,23 @@ function save_layout( bloque ){
 }
 
 
+function updateCompras(){
+    var btn = $( '#btn_compras' );
+    btn.html( loader + ' Actualizando...' ).prop( 'disabled', true );
 
+    $.ajax({
+        url: base_url + "update_compras_cancun", 
+        type: "POST",
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: { 
+            [csrf_token] : csrf_hash
+        },
+        success: function( result ){
+           // btn.html( '<i class="fa fa-refresh"></i> Actualizar conteo' ).prop( 'disabled', false );
+            location.reload();
+        }
+    });
+}
 
 $(document).ready(function(){
 

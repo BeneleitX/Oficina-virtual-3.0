@@ -1,4 +1,4 @@
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 
 <a href="<?php echo base_url( "recompensas" ); ?>">
 <div class="card-body p-0">
