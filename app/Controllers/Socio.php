@@ -861,7 +861,7 @@ class Socio extends BaseController
 
         $validation = service( "validation" );
         $validation->setRules( [
-            "rfc" => "required|max_length[15]"
+            "rfc" => "required|min_length[13]|max_length[14]"
         ] );
 
         // Si hay errores de validación automática, regresar a formulario

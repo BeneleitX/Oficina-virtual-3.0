@@ -51,23 +51,46 @@ if( !$socio->data->verificacion->correo ){ ?>
 				</div>
 
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-4">
 						<label>Correo electrónico</label>
 
-<div class="input-group mb-3">
+<div class=" mb-3">
   <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->correo; ?>">
   <a data-bs-toggle="tooltip" title="Correo electrónico <?php echo $socio->data->verificacion->correo ? "verificado" : "sin verificar. Click aquí para enviar mensaje de verificación ahora"; ?>" class="btn d-none btn-<?php echo $socio->data->verificacion->correo ? "success" : "danger"; ?>" href="<?php echo base_url( "valida_correo" ); ?>" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->correo ? "check" : "xmark"; ?>"></i></a>
 </div>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-4">
 						<label>Teléfono</label>
 
-<div class="input-group mb-3">
+<div class=" mb-3">
   <input type="text" disabled class="form-control" aria-describedby="button-addon2" value="<?php echo $socio->telefono; ?>">
   <button data-bs-toggle="tooltip" title="Teléfono <?php echo $socio->data->verificacion->telefono ? "verificado" : "sin verificar"; ?>" class="btn d-none btn-<?php echo $socio->data->verificacion->telefono ? "success" : "danger"; ?>" type="button" id="button-addon2"><i class="fa fa-<?php echo $socio->data->verificacion->telefono ? "check" : "xmark"; ?>"></i></button>
 </div>
 
 					</div>
+
+					<div class="col-md-4">
+							<label>R.F.C.</label>
+			<form method="post" action="<?php echo base_url( "guarda_rfc" ); ?>">
+				<?php echo csrf_field() ?>
+				<table class="m-0">
+					<tr>
+					
+						<td>
+							<input name="rfc" id="rfc" style="font-weight:bold" <?php echo session( "errors.rfc" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.rfc" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.rfc" ) ? old( "rfc" ) : $socio->data->sat->rfc ?? ""; ?>">
+							<p class="small text-red"><?php echo session( "errors.rfc" ); ?></p>
+						</td>
+						<td class="pt-0 ps-3" nowrap><h5><a class="btn btn-warning" href="javascript:edita_rfc()" data-bs-toggle="tooltip" title="Click para editar tu RFC"><i class="fa fa-edit"></i></a></h5></td>
+					</tr>
+				</table>
+
+				<div id="nota_rfc" style="<?php echo session( "errors.rfc" ) ? "" : "display:none"; ?>" class="mt-3">
+					<h5>Actualizar R.F.C.</h5>
+					<p>Proporciona tu RFC, verifica que sea correcto. Al terminar haz click en el botón:</p>						
+					<button type="submit" class="btn btn-primary mb-3"><i class="fa fa-save"></i> Guardar cambios</button>
+				</div>
+			</form>					</div>
+
 				</div>
 			</div>
 		</div>
@@ -336,7 +359,10 @@ if( !$socio->data->verificacion->correo ){ ?>
             <div class="card-header"><h5 class="mb-0">Declaración de impuestos</h5></div>
             <div class="card-body">	
 
-			<div class="alert alert-warning mb-0">
+
+
+
+			<div class="alert alert-warning my-3">
 				<table><tr><td>
 					<input id="check_sat" type="checkbox" style="transform: scale(3); margin:0 15px" <?php if( $socio->data->sat->estatus == 0) echo "checked"; ?> <?php if( 0 && $socio->data->sat->csf ?? false ) echo "disabled"; ?>>
 				</td><td style="padding-left:10px" <?php if( 0 && $socio->data->sat->csf ) echo "class=\"text-gray-500\""; ?>> <strong>SI,</strong> estoy de acuerdo en que BENELEIT se haga cargo de la declaración de impuestos generados por los ingresos residuales obtenidos a mi nombre. 
@@ -344,28 +370,10 @@ if( !$socio->data->verificacion->correo ){ ?>
 			</div>
 			<div id="sube_csf" <?php if( $socio->data->sat->estatus == 0) echo "style=\"display:none\""; ?>>
 
-			<form method="post" action="<?php echo base_url( "guarda_rfc" ); ?>">
-						<?php echo csrf_field() ?>
-						<table class="m-0">
-							<tr>
-								<td width="30%" class="text-end">R.F.C.</td>
-								<td style="width:100%; padding: 15px 0 0 20px;">
-									<input name="rfc" id="rfc" style="font-weight:bold" <?php echo session( "errors.rfc" ) ? "" : "disabled"; ?> class="form-control m-0 text-center  <?php echo session( "errors.rfc" ) ? "is-invalid" : ""; ?>" value="<?php echo session( "errors.rfc" ) ? old( "rfc" ) : $socio->data->sat->rfc ?? ""; ?>">
-									<p class="small text-red"><?php echo session( "errors.rfc" ); ?></p>
-								</td>
-								<td class="pt-1 ps-3" nowrap><h5><a href="javascript:edita_rfc()" data-bs-toggle="tooltip" title="Click para editar tu RFC"><i class="fa fa-edit"></i></a></h5></td>
-							</tr>
-						</table>
 
-						<div id="nota_rfc" style="<?php echo session( "errors.rfc" ) ? "" : "display:none"; ?>" class="mt-3">
-							<h5>Actualizar R.F.C.</h5>
-							<p>Proporciona tu RFC a 13 dígitos. Al terminar haz click en el botón.</p>						
-							<button type="submit" class="btn btn-primary mb-3"><i class="fa fa-save"></i> Guardar cambios</button>
-						</div>
-					</form>
 
 					<div class="alert alert-<?php echo !$socio->data->sat->csf ? "danger" : "success"; ?> m-0">
-						<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente marca de nuevo la casilla.</p>
+						<p><i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Al desmarcar la casilla del parrafo anterior, estas aceptando la responsabilidad de tu propia declaración obligatoria de impuestos ante el SAT. Para completar la activación de esta opción, debes proporcionarnos tu Constancia de Situación Fiscal reciente. Para cancelar la opción y aceptar que BENELEIT se haga cargo, simplemente marca de nuevo la casilla.</p>
 
 						<?php if( $socio->data->sat->csf ){ ?>
 							<table><tr>
