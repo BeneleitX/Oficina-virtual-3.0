@@ -1905,11 +1905,7 @@ class E_usuario extends Entity
 
         // verificación 
         $data->verificaciones->{"FOTO"} = isset( $data->avatar->updated ) && $data->avatar->updated > 0;
-/* dd(
-isset( $data->avatar->updated ) && $data->avatar->updated > 0,
-isset($data->avatar->updated ), $data->avatar->updated
 
-); */
         // verificación CSF        
         $data->verificaciones->{"CSF"} = $data->sat->csf != null;
 
@@ -1926,7 +1922,7 @@ isset($data->avatar->updated ), $data->avatar->updated
         $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ?? "" ) == 19;        
 
         // verificación CELULAR     
-        $data->verificaciones->{"CELULAR"} = strlen( $this->telefono ) > 8;    
+        $data->verificaciones->{"CELULAR"} = strlen( $this->telefono ) > ( $this->data->ubicacio->code == "MX" ? 10 : 7 );    
 
         // verificación EMAIL      
         $data->verificaciones->{"EMAIL"} = filter_var( $this->correo, FILTER_VALIDATE_EMAIL ) != false;
