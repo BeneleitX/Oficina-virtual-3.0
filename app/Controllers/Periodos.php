@@ -494,7 +494,7 @@ class Periodos extends BaseController
                     p.clabe, 
                     p.data as p_data, 
                     u.data as u_data, 
-                    f_get_verificacion( u.id, '{$periodo[ "modelo_codigo" ]}', '$.estatus' ) AS verificado, 
+                    JSON_EXTRACT( f_get_verificacion( u.id, '{$periodo[ "modelo_codigo" ]}' ), '$.estatus' ) AS verificado, 
                     -- f_es_verificado( u.id) AS verificado, 
                     b.nombre as banco
                 FROM t_pagos p 
