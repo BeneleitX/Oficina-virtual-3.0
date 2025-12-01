@@ -1922,7 +1922,7 @@ class E_usuario extends Entity
         $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ?? "" ) == 19;        
 
         // verificación CELULAR     
-        $data->verificaciones->{"CELULAR"} = strlen( $this->telefono ) > ( $this->data->ubicacion->code == "MX" ? 9 : 7 );    
+        $data->verificaciones->{"CELULAR"} = ( $this->data->ubicacion->code ?? "" ) != "MX" ? strlen( $this->telefono ) > 7 : strlen( $this->telefono ) == 10;
 
         // verificación EMAIL      
         $data->verificaciones->{"EMAIL"} = filter_var( $this->correo, FILTER_VALIDATE_EMAIL ) != false;
