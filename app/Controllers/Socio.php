@@ -322,7 +322,7 @@ class Socio extends BaseController
 
         // validar que no exista ya un socio activo con esa misma CLABE
         
-        if( $db->query( "select count(*) as existe from t_usuarios where estatus_codigo = '201-ACTIVO' and data->>'$.clabe' = '{$clabe}' ")->getRow()->existe ){
+        if( $db->query( "select count(*) as existe from t_usuarios where id != {$socio->id} and estatus_codigo = '201-ACTIVO' and data->>'$.clabe' = '{$clabe}' ")->getRow()->existe ){
             // BITACORA Error al agregar CLABE
             bitacora( 38, $socio->id, [ 
                 "clabe"   => $clabe,
