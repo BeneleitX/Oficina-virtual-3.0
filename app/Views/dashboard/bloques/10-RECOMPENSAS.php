@@ -10,6 +10,11 @@
 
         // Se declaran arrays porque se buscan multiples datos, por ahora dejaremos solo uno
         $porcentaje = $r && $r[ "estrellas" ] > 0 ? intval( $total_estrellas * 100 / ( $r[ "estrellas" ] ) ) : 0;
+
+    if( $porcentaje > 100){
+        $porcentaje = 100;
+    }
+
         $serie = $r[ "estrellas" ] ?? 0;
         $label = $r[ "nombre" ] ?? '???';
 
@@ -48,6 +53,11 @@
         <div class="col-7 pt-2" id="chart" style="position:relative"><div style="position:absolute; width:100%; text-align:center; top:10px"><?php echo $porcentaje."% <i class=\"fa fa-star text-amber\"></i> {$total_estrellas} de {$r[ "estrellas" ]}"; ?></div></div>
         
         <div class="col-5 small text-center" style="padding-top:40px; padding-right:25px"><p class="m-0 px-0"><img class="mb-1" src="<?php echo base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png"; ?>" style="width:60px"><br><span class="badge bg-<?php echo $rango[ "color" ]; ?>" style="font-size:13px"><?php echo $rango[ "nombre" ]; ?></span></p><p>La recompensa <?php echo $r[ "nombre" ]; ?> requiere como mínimo el rango de <?php echo $rango[ "nombre" ]; ?></p><p><?php echo estatus( substr( $usuario->data->rango, 0, 2 ) < substr( $rango[ "codigo" ], 0, 2)  ? "155-NO-ALCANZADO" : "225-ALCANZADO" ) ?></p></div>
+
+        <?php if( $porcentaje == 100 ){
+            echo "<h4 class=\"text-center\">¡Alcanzaste tu recompensa!</h4>";
+        } ?>
+        <p class="text-center">Has click aquí para ver los detalles de tus recompensas</p>
 
         <p class="text-center m-0"><?php echo "Día {$resta} de {$total}"; ?></p>
         <div class="px-3 mb-3">

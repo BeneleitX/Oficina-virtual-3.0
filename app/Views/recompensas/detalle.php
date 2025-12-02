@@ -202,6 +202,9 @@ foreach( $ciclos as $k => $c ){
                     
     echo "           </div>
                 </div>
+
+<table class=\"mb-3\" style=\"opacity:0.5\"><tr><td class=\"text-end\"><img src=\"".base_url()."assets/img/desliza.png\" width=\"60\"></td><td style=\"width:100%\" class=\"fw-bold\">Arrastra las recompensas para ordenarlas.<br>La recompensa de la izquierda será tu prioridad y aparecerá en tu página de inicio</td></tr></table>
+
             </div>";
 }
 ?>
@@ -227,7 +230,7 @@ foreach( $ciclos as $k => $c ){
                 }
 
                 $socios[ $c->usuario_id ] = model( "UsuarioModel" )->find( $c->usuario_id );
-                echo "\n<tr\">
+                echo "\n<tr>
                     <td width=\"10%\" class=\"text-center\"><span class=\"badge bg-marine\">{$c->referencia}</span></td>
                     <td width=\"20%\" class=\"text-center\">".date( "d-m-Y", strtotime( $c->fecha ) )."</td>
                     
