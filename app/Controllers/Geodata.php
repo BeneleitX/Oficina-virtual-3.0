@@ -78,9 +78,9 @@ class Geodata extends BaseController
             case "venta_almacen":
                 $sql = "SELECT 
                         substring( a.codigo, 5 ) as codigo,
-                        a.nombre,
-                        a.settings->>'$.coordenadas.lat' as lat,
-                        a.settings->>'$.coordenadas.lon' as lon,
+                        any_value( a.nombre ) as nombre,
+                        any_value( a.settings->>'$.coordenadas.lat' ) as lat,
+                        any_value( a.settings->>'$.coordenadas.lon' ) as lon,
                         IFNULL( sum( p.data->>'$.total' ), 0 ) as venta,
                         count(*) as pedidos
                         from t_almacenes a 
