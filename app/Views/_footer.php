@@ -102,11 +102,8 @@
                 <?php if( isset( $usuario ) ) echo "usuario_id = {$usuario->id},"; ?>
                 <?php if( isset( $socio ) ) echo "socio_id = {$socio->id},"; ?>
                 meses      = [<?php echo implode( ",", MESES ); ?>],
-                loader     = '<i class="fa-solid fa-circle-notch fa-spin"></i>',
-                Moneda     = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                });
+                loader     = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+                
 
             <?php if( session( "msg" ) !== null ) echo "$(document).ready(function(){ ".alertas( session('msg') )." });"; ?>
 

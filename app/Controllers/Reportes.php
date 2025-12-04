@@ -417,7 +417,7 @@ class Reportes extends BaseController
         $worksheet->getStyle( "A1:P1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('192b5a');
         $worksheet->getStyle( "Q1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('009779');        
 
-        $worksheet->getStyle( "M:P" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
+        $worksheet->getStyle( "M:Q" )->getNumberFormat()->setFormatCode( "$#,##0.00" );
         $worksheet->getStyle( "F" )->getNumberFormat()->setFormatCode( "#" );
 
         foreach( $worksheet->getColumnIterator() as $column ){

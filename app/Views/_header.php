@@ -26,6 +26,12 @@
         <script src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
         <script src="<?php echo base_url(); ?>assets/js/fontawesome.js"></script>
 
+        <script>
+            const Moneda     = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                });
+        </script>
     </head>
     
     <body class="bg-<?php echo $fondo; ?>">

@@ -73,7 +73,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "update_arranque",                   "Dashboard::update_arranque" );
     $routes->post( "update_compras_cancun",             "Dashboard::update_compras_cancun" );
 
-    $routes->get( "geodata",                            "Geodata::inicio" );
+    $routes->get( "geodata",                            "Geodata::mapa" );
+    $routes->post( "geodata",                           "Geodata::mapa" );
 
     $routes->get( "indicadores",                        "Indicadores::inicio" );
     $routes->get( "indicadores/(:any)/(:num)",          "Indicadores::inicio/$1/$2" );
