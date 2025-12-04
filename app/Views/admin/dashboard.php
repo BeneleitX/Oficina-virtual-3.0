@@ -65,7 +65,7 @@ $menu = [
     [ "danger",  "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN", "31-GASOLINA"] ],
     [ "info", "inversiones", "arrow-trend-up", "Capital24", $hash ,["40-ADMIN", "31-GASOLINA"] ],
     [ "success", "verificaciones", "person-circle-check", "Verificaciones", 0 ,["40-ADMIN"] ],
-    [ "success", "geodata", "earth-americas", "Distribución", 0 ,["40-ADMIN"] ],
+    [ "success", "geodata", "earth-americas", "Mapa de ventas", 0 ,["40-ADMIN"] ],
 ];
 
 foreach( $menu as $opcion ){
