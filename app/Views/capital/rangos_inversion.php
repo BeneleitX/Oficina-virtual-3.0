@@ -63,30 +63,41 @@
 
 if( isset( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
     foreach( $usuario->historial->modelos->{"50-INVERSION"}->corte_mensual as $mes => $data ){
-        $rango = $usuario->getRangoInversion( $data->directos );
 
         $y = substr( $mes, 0, 4 );
         $m = substr( $mes, 4, 2 );
 
         $fecha = date( "Y-m-d", strtotime( "{$y}-{$m}-01 - 1 month" ) );
 
-        echo "\n<tr mes=\"{$mes}\" cantidad=\"{$data->bolsa}\">
-                <td valign=\"middle\"><h5 class=\"mt-2 mb-0\">".strtoupper( fecha( $fecha, "mes" ) )."</h5></td>
-                <td valign=\"middle\">{$data->directos}</td>
-                <td valign=\"middle\" nowrap class=\"p-0\">
-                    <h5 class=\"m-0\"><table class=\"m-0\"><tr>
-                        <td valign=\"middle\"><img src=\"".base_url()."assets/img/rangos/".$rango[ "codigo" ].".png\" style=\"width:60px\" alt=\"\"></td>
-                        <td valign=\"middle\"><span class=\"badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></td>
-                    </tr></table>
-                    </h5>
-                </td>
+        if( is_object( $data ) ){
+            $rango = $usuario->getRangoInversion( $data->directos );
 
-                <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa, 2 )."</td>
-                <td valign=\"middle\"><strong>{$data->bono}%</strong></td>
-                <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa * $data->bono / 100, 2 )."</td>
-            
-                <td valign=\"middle\" class=\"text-end\"><button type=\"button\" class=\"btn btn-secondary btn-sm\" onclick=\"detalle_bono( '{$mes}' )\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
-            </tr>";
+
+            echo "\n<tr mes=\"{$mes}\" cantidad=\"{$data->bolsa}\">
+                    <td valign=\"middle\"><h5 class=\"mt-2 mb-0\">".strtoupper( fecha( $fecha, "mes" ) )."</h5></td>
+                    <td valign=\"middle\">{$data->directos}</td>
+                    <td valign=\"middle\" nowrap class=\"p-0\">
+                        <h5 class=\"m-0\"><table class=\"m-0\"><tr>
+                            <td valign=\"middle\"><img src=\"".base_url()."assets/img/rangos/".$rango[ "codigo" ].".png\" style=\"width:60px\" alt=\"\"></td>
+                            <td valign=\"middle\"><span class=\"badge bg-{$rango[ "color" ]}\">{$rango[ "nombre" ]}</span></td>
+                        </tr></table>
+                        </h5>
+                    </td>
+
+                    <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa, 2 )."</td>
+                    <td valign=\"middle\"><strong>{$data->bono}%</strong></td>
+                    <td valign=\"middle\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:18px\"> $".number_format( $data->bolsa * $data->bono / 100, 2 )."</td>
+                
+                    <td valign=\"middle\" class=\"text-end\"><button type=\"button\" class=\"btn btn-secondary btn-sm\" onclick=\"detalle_bono( '{$mes}' )\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</button></td>
+                </tr>";
+        }
+        else{
+            echo "\n<tr mes=\"{$mes}\">
+                    <td valign=\"middle\" colspan=\"7\">
+                        <p class=\"mt-2 mb-0 text-center fw-bold text-red\">Hay un problema con tu información de ".strtoupper( fecha( $fecha, "mes" ) )."</p>
+                    </td>
+                </tr>";
+        }
     }
 }
 

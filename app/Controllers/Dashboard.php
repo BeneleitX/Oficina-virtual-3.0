@@ -848,9 +848,38 @@ class Dashboard extends BaseController
      */
     public function bolsa_inversiones()
     {
-        $mes = date( "Ym", strtotime( date( "Ym" )."-01 + 1 month" ) );
 
         $db      = db_connect();
+
+        $mes = date( "Ym", strtotime( date( "Ym" )."-01 + 1 month" ) );
+        $mx  = date( "Ym",     strtotime( date( "Y-m-01" ) ." - 1 month" ) );
+        $mt  = date( "Y-m-01", strtotime( date( "Y-m-01" ) ." - 1 month" ) );
+
+        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) || !is_object( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) ){
+
+            $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, ".date( "Ym" )." )";
+            $ps      = $db->query( $sql )->getResult();
+            $semilla = 0;
+
+            foreach( $ps as $socio ){
+                if( substr( $socio->estatus, 0, 3 ) > 300 && $socio->nivel > 0 ){
+                    $semilla += $socio->semilla;
+                    
+                }
+                else{
+                }
+
+                if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
+                }
+            }
+
+            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, $mt );
+        }
+
+        $mes = date( "Ym", strtotime( date( "Ym" )."-01 + 1 month" ) );
+        $mx  = date( "Ym" );
+        $mt  = date( "Y-m-01" );
+
         $sql     = "call p_get_inversiones( {$this->data[ "usuario" ]->id}, {$mes} )";
         $ps      = $db->query( $sql )->getResult();
         $semilla = 0;
@@ -866,16 +895,6 @@ class Dashboard extends BaseController
             if( $socio->nivel == 1 && substr( $socio->estatus, 0, 3 ) > 300 && $socio->semilla > 0 ){
             }
         }
-
-        $mx = date( "Ym",     strtotime( date( "Y-m-01" ) ." - 1 month" ) );
-        $mt = date( "Y-m-01", strtotime( date( "Y-m-01" ) ." - 1 month" ) );
-
-        if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) ){
-            $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, $mt );
-        }
-
-        $mx = date( "Ym" );
-        $mt = date( "Y-m-01" );
 
         if( !isset( $this->data[ "usuario" ]->historial->modelos->{"50-INVERSION"}->corte_mensual->{$mx} ) ){
             $this->revisa_bono_liderazgo( $this->data[ "usuario" ], $ps, $mt );
@@ -990,12 +1009,13 @@ class Dashboard extends BaseController
                 $socio->semilla > 0 && 
                 substr( $socio->estatus, 0, 3 ) > 300 && 
                 $mes > $socio->activacion
+
             ){
                 if( $socio->nivel == 1 ){
                     $directos++;
                 }
 
-                $bolsa += $socio->semilla;        
+                $bolsa += $socio->semilla;    
             }
         }
 
@@ -1017,12 +1037,12 @@ class Dashboard extends BaseController
         }
 
         $db  = db_connect();
-        $sql = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and substring( estatus_codigo,1,3 ) > 200 and fecha = '{$mes}'";
+        $sql = "select count(*) as cuenta from t_comisiones where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
 
         $existe = $db->query( $sql )->getRow()->cuenta;
 
         
-        if( $existe == 0 && date( "Ym", strtotime($mes) ) == date( "Ym" ) ){
+        if(/*  $existe == 0 &&  */date( "Ym", strtotime($mes) ) >= date( "Ym", strtotime( date( "Y-m-01" )." - 1 month" ) ) ){
             $historial = $usuario->historial;
 
             if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
@@ -1034,6 +1054,13 @@ class Dashboard extends BaseController
 
 
             if( $directos && $bolsa > 0 ){
+
+                if( $existe ){
+                    echo "borrar ({$bolsa})";
+                    $sql   = "UPDATE t_comisiones set estatus_codigo = '110-ELIMINADO' where usuario_id = {$usuario->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
+
+                    $db->query( $sql );
+                }
 
                 $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
                 $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$usuario->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";

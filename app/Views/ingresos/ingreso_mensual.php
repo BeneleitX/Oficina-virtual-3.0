@@ -61,7 +61,7 @@ while( $mes >= date( "Ym", strtotime( $usuario->historial->registro < '2024-08-0
                                 
 
                                 echo "\n<tr\">
-                                    <td width=\"20%\" nowrap><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}".( $k == "530-LIDERAZGO" ? " <span class=\"badge opacity-50 border border-red text-red bg-white\"><i class=\"fa fa-warning text-red\"></i> Se paga en {$mes_bono}</span>" : "" )."</td>
+                                    <td width=\"20%\" nowrap><span class=\"badge bg-".MODELOS[ $modelo ][ "settings" ][ "color" ]."\"><i class=\"fa fa-".MODELOS[ $modelo ][ "settings" ][ "icono" ]."\"></i> ".MODELOS[ $modelo ][ "nombre" ]."</span> {$esquema}".( $k == "|" ? " <span class=\"badge opacity-50 border border-red text-red bg-white\"><i class=\"fa fa-warning text-red\"></i> Se paga en {$mes_bono}</span>" : "" )."</td>
                                     <td width=\"10%\" class=\"text-end\"><strong>$".number_format( $c, 2 )."</strong></td>
 
                                 </tr>";
