@@ -132,7 +132,9 @@ class Usuarios extends BaseController
         $this->data[ "nuevo" ]  = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
 
         $this->data[ "nuevo" ]->resetPassword();
+        
         model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
+        $this->data[ "socio" ]->update_verificacion();
 
         // BITACORANuevo password
         bitacora( 63, $this->data[ "usuario" ]->id, [ 

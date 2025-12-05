@@ -429,10 +429,10 @@ class Sesion extends BaseController
         }
 
         $this->data[ "nuevo" ]->resetPassword();
+
         model( "UsuarioModel" )->save( $this->data[ "nuevo" ] );
 
         echo template( "sesion/reset", $this->data );
-
     }
 
 

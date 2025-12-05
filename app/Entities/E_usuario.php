@@ -229,6 +229,8 @@ class E_usuario extends Entity
         $historial = $this->historial;
         $historial->reset = date( "Y-m-d H:i:s" );
         $this->historial = $historial;
+
+        $this->update_verificacion();
     }
 
 
@@ -807,7 +809,8 @@ class E_usuario extends Entity
                 FROM t_bitacoras 
                 JOIN t_acciones on t_acciones.id = t_bitacoras.accion_id 
                 WHERE usuario_id = {$this->id} 
-                ORDER BY fecha desc";
+                ORDER BY fecha desc
+                limit 500";
 
         $movimientos = $db->query( $sql );
 
@@ -815,10 +818,19 @@ class E_usuario extends Entity
             $respuesta[] = $m;
             $m->variables = json_decode( $m->variables ); 
 
+            switch( $m->codigo ){
+                case 111:
+                case 112:
+                    $modelo = MODELOS[ $m->variables->modelo ];
+                    $m->variables->modelo_nombre = $modelo[ "nombre" ];
+                break;
+            }
+
+
             foreach($m->variables as $k => $v){
 
                 if(is_string($v)){
-                    $m->string = str_replace( "#{$k}#", $v, $m->string );
+                    $m->string = str_replace( "#{$k}#", "<strong>{$v}</strong>", $m->string );
                 }
             }
         }
@@ -1854,12 +1866,13 @@ class E_usuario extends Entity
         $db  = db_connect();
         $sql = "SELECT 
                 c.cantidad,
+                c.estatus_codigo,
                 c.fecha as fechapago,
                 p.fechas->>'$.pagado' as fechacompra
                 from t_comisiones c
                 join t_pedidos p on p.id = c.pedido_id
                 where c.usuario_id = {$this->id} 
-                and c.estatus_codigo = '255-PENDIENTE' 
+                and c.estatus_codigo in ( '255-PENDIENTE', '112-BOLSA' )
                 and substring( c.esquema_codigo, 1, 1 ) = '".substr( $modelo, 0, 1 )."'
                 and c.periodo_codigo is null
                 and c.fecha >= DATE_ADD( cast( now() as date ), INTERVAL ( 9 - DAYOFWEEK( cast( now() as date ) ) ) DAY )";        
@@ -1877,9 +1890,17 @@ class E_usuario extends Entity
      */
     public function update_verificacion()
     {
+        // obtenemos datos iniciales
+
+        $estatuses = [];
+        foreach( MODELOS as $k => $m ){
+            $estatuses[ $m[ "codigo" ] ] = $this->get_verificacion( $m[ "codigo" ] );
+        }
+
         $db  = db_connect(); 
 
         $data = $this->data;
+
         if( !isset( $data->verificaciones )){
             $data->verificaciones = new \stdClass();
         }
@@ -1929,6 +1950,21 @@ class E_usuario extends Entity
         
         $this->data = $data;
         model( "UsuarioModel" )->save( $this );
+        
+        $tempo = model( "UsuarioModel" )->find( $this->id );
+
+
+        foreach( MODELOS as $k => $m ){
+
+            $estatus = $tempo->get_verificacion( $m[ "codigo" ] );
+            if( $estatuses[ $m[ "codigo" ] ]->estatus != $estatus->estatus ){
+
+                // BITACORA cambio en estatus de verificación
+                bitacora( $estatus->estatus == 1 ? 111 : 112, $this->id, [
+                    "modelo" => $m[ "codigo" ]
+                ] );
+            }
+        }
     }
 
 

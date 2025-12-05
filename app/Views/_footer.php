@@ -72,7 +72,7 @@
                                 <h5 class=\"text-center text-white\"><i class=\"fa fa-warning text-mustard\"></i> ¡Atención!</h5>
                             </div>
                             <div class=\"modal-body text-center fw-bold\">
-                                <p>Tu cuenta tiene password temporal. Es importante que ingreses a tu perfil de socio y lo actualices por uno propio. Esta acción es obligatoria y es necesaria para el cobro de comisiones.</p>
+                                <p>Tu cuenta tiene password temporal. Es importante que ingreses a tu perfil de socio y lo actualices por uno propio.</p><div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> Esta acción es obligatoria y es necesaria para el retiro de rendimientos o cobro de comisiones.</div>
                                 <br>
                                 <p class=\"\"><a href=\"".base_url( "perfil" )."\" class=\"btn btn-lg btn-danger\">Ir ahora a mi perfil</a><br>
                                 <button type=\"button\" class=\"x-none btn bg-secondary\" data-bs-dismiss=\"modal\" ><i class=\"i-cancelar\"></i> En otro momento</button>
