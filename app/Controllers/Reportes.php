@@ -88,6 +88,7 @@ class Reportes extends BaseController
             "50-INVERSION" => [
                 // "130-NUEVO-SUSPENDIDO",
             	"210-NUEVO",
+                "215-NUEVO-SALDO",
             	// "310-NO-CALIFICADO",
             	// "320-NO-CALIFICADO-COMPRA",
             	//"410-CALIFICADO",
