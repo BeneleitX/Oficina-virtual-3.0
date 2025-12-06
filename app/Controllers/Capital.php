@@ -82,6 +82,20 @@ class Capital extends BaseController
     }
 
 
+    /**
+     * Muestra el bono de liderazgo de los socios Capital24.
+     *
+     * Requiere el par metro $mes, que es el mes en formato "YYYYMM".
+     *
+     * Verifica que el usuario logueado tenga permiso de administraci n.
+     *
+     * Redirecciona a la p gina de no permiso si no se cumple la condici n
+     * anterior.
+     *
+     * @param string $mes
+     *
+     * @return void
+     */
     public function bono_liderazgo( $mes = null )
     {
         if( !(
@@ -97,6 +111,33 @@ class Capital extends BaseController
 
         /**********************************/
 
+        $db = db_connect();
+
+        // revisamos que no haya socios pendientes de calcular su bono
+
+        if( $mes < date( "Ym" ) ){
+
+            $mes1 = date( "Ym", strtotime( substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01 - 1 month" ) );
+            $mes0 = $mes;
+
+            $sql = "SELECT u.id as socio
+                    from t_usuarios u 
+                    where substring( u.data->>'$.estatus.modelos.\"50-INVERSION\"',1,3 ) > 400 
+                    and u.historial->'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mes1}\".directos' > 1 
+                    and u.historial->'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mes0}\".directos' is null   ";
+
+            $pendientes = $db->query( $sql );
+
+            foreach( $pendientes->getResult() as $socio ){
+                $u = model( "UsuarioModel" )->find( $socio->socio );
+
+                $sql     = "call p_get_inversiones( {$u->id}, {$mes} )";
+                $ps      = $db->query( $sql )->getResult();
+
+                $u->revisa_bono_liderazgo( $ps, substr( $mes0, 0, 4 )."-".substr( $mes0, 4, 2 )."-01" );
+            }
+        }
+
         $this->data[ "mes" ]    = $mes;
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Bono de liderazgo";
@@ -110,7 +151,6 @@ class Capital extends BaseController
                     u.data->>'$.estatus.modelos.\"50-INVERSION\"' = '520-CALIFICADO-ACTUAL'
                 and u.historial->>'$.modelos.\"50-INVERSION\".corte_mensual.\"{$mesb}\".directos' > 3";
 
-        $db = db_connect();
         $historial = $db->query( $sql )->getResultArray();
 
         $this->data[ "socios" ] = [];

@@ -2058,4 +2058,110 @@ class E_usuario extends Entity
         return $db->query( $sql )->getRow()->fecha ?? null;
     }    
 
+
+        /**
+     * Calculates the leadership bonus for a user based on their direct partners and the seed values.
+     *
+     * This function iterates over a list of partners, checking if they meet certain criteria
+     * related to their level, seed, status, and activation date. It calculates the number of 
+     * direct partners and the total seed value. Based on the number of direct partners, a 
+     * leadership bonus multiplier is determined. It then checks if a commission record already 
+     * exists for the user for the given month, and if not, it inserts a new commission record 
+     * with the calculated bonus. The user's investment history is updated with the details for 
+     * the month.
+     *
+     * @param object $usuario The user object containing user details and history.
+     * @param array $ps A list of partner objects to evaluate.
+     * @param string $mes The month for which the bonus is being calculated, in the format 'YYYY-MM'.
+     */
+    public function revisa_bono_liderazgo( $ps, $mes )
+    {
+        $directos = 0;
+        $bolsa    = 0;
+        
+        foreach( $ps as $socio ){
+            if( 
+                $socio->nivel > 0 &&
+                $socio->semilla > 0 && 
+                substr( $socio->estatus, 0, 3 ) > 300 && 
+                $mes > $socio->activacion
+
+            ){
+                if( $socio->nivel == 1 ){
+                    $directos++;
+                }
+
+                $bolsa += $socio->semilla;    
+            }
+        }
+
+        if( in_array( $this->id, [ 164925, 164924, 164923, 164914] ) ){
+            $directos = 12;
+        }
+
+        if( $directos >= 12 ){
+            $bono = 1;
+        }
+        elseif( $directos >= 8 ){
+            $bono = 0.66;
+        }
+        elseif( $directos >= 4 ){
+            $bono = 0.33;
+        }
+        else{
+            $bono = 0;
+        }
+
+        $db  = db_connect();
+        $sql = "select count(*) as cuenta from t_comisiones where usuario_id = {$this->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
+
+        $existe = $db->query( $sql )->getRow()->cuenta;
+
+        
+      //  if(/*  $existe == 0 &&  */date( "Ym", strtotime($mes) ) >= date( "Ym", strtotime( date( "Y-m-01" )." - 1 month" ) ) ){
+            $historial = $this->historial;
+
+            if( !isset( $historial->modelos->{"50-INVERSION"}->corte_mensual ) ){
+                $historial->modelos->{"50-INVERSION"}->corte_mensual = new \stdClass();
+
+                $this->historial = $historial; 
+                model( "UsuarioModel" )->save( $this );
+            }
+
+            if( $directos && $bolsa > 0 ){
+
+                if( $existe ){
+                    
+                    $sql   = "UPDATE t_comisiones set estatus_codigo = '110-ELIMINADO' where usuario_id = {$this->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
+
+                    $db->query( $sql );
+                }
+
+                $total = floor( $bolsa * $bono / 100 * 100 ) / 100;
+                $sql   = "INSERT INTO t_comisiones VALUES ( NULL, '255-PENDIENTE', NULL, {$this->id}, '530-LIDERAZGO', 0, 0, $total, '{$mes}', NULL)";
+
+                $db->query( $sql );
+
+                $historial->modelos->{"50-INVERSION"}->corte_mensual->{date( "Ym", strtotime($mes) )} = [
+                    "directos" => $directos,
+                    "bolsa"    => $bolsa,
+                    "bono"     => $bono
+                ];
+
+                $this->historial = $historial; 
+                model( "UsuarioModel" )->save( $this );
+
+                // BITACORA registro de bono automatico
+                bitacora( 113, $this->id, [
+                    "mes" => mes( date( "m", strtotime( $mes ) ) ),
+                    "fecha" => $mes,
+                    "registro" => [
+                        "directos" => $directos,
+                        "bolsa"    => $bolsa,
+                        "bono"     => $bono
+                    ]
+                ] );                
+            }
+        //}
+    }
 }
