@@ -17,6 +17,7 @@ class Geodata extends BaseController
 
     public function mapa(){
         if( !(
+            $this->data[ "usuario" ]->permiso( "22-MAPA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
