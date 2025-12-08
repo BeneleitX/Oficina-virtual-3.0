@@ -570,6 +570,34 @@ class Sesion extends BaseController
 
             if( $retiro[ "fechas" ][ "mes" ] == date( "Ym" ) ){
 
+                // Checamos que el retiro no exista ya
+
+                $existe = $db->query( "
+                    SELECT 
+                        count(*) as total
+                    from t_retiros
+                    where usuario_id = {$usuario->id}
+                    and substring( estatus_codigo,1 , 3 ) > 200
+                    and fechas->>'$.mes' = '{$retiro[ "fechas" ][ "mes" ]}'
+                    and id != {$retiro[ "id" ]}
+                " )->getRow()->total;
+
+                if( $existe ){
+                    // BITACORA Cancela solicitud de retiro
+                    bitacora( 105, $usuario->id, [ 
+                        "socio"  => $usuario->id,
+                        "retiro" => $retiro[ "id" ],
+                        "duplicado" => true
+                    ] );
+                        
+                    $retiro[ "estatus_codigo" ] = "150-CANCELADO";
+                    model( "RetiroModel" )->save( $retiro );
+
+                    return redirect()->to( "capital" )->with( "msg", [ 
+                        "clase" => "danger", 
+                        "icono" => "warning", 
+                        "texto" => "Ya existe un retiro de este tipo en el mes. La solicitud ha sido cancelada" ] );                     
+                }
 
                 // BITACORA Confirma solicitud de retiro
                 bitacora( 100, $usuario->id, [ 
