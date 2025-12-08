@@ -24,7 +24,7 @@
             "url" => base_url( "reportes/pedidos_diarios" ),
             "icono" => "shopping-basket",
             "texto" => "Pedidos por empresa",
-            "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN", "36-REPORTES" ]
+            "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN" ]
         ],
         [
             "url" => base_url( "reportes/venta_producto" ),
