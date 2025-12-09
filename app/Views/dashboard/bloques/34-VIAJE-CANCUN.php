@@ -50,7 +50,7 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
             }
 
             echo "\n<td class=\"text-center px-3\" style=\"position:relative\">
-                    ".( $mes == $actual && $puntos < 6 ? "<div style=\"position:absolute; right:37px; top:3px\" class=\"fw-bold text-mustard\">{$puntos}</div>" : "" )."
+                    ".( $mes == $actual && $puntos < 6 ? "<div style=\"position:absolute; right:28px; top:3px; width:20px; text-align;center\" class=\"fw-bold text-mustard\">{$puntos}</div>" : "" )."
                     <i class=\"fa fa-{$icono} text-{$color}\" style=\"font-size:30px\"></i>
                     <br><span class=\"small\">".strtoupper( mes( substr( $mes, 4, 2 ), 3 ) )." ".substr( $mes, 0, 4 )."</span>
                     </td>";
@@ -71,7 +71,7 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
                     
             if( isset( $llaves[ $i ] ) ){
                 $icono = $socios[ $llaves[ $i ] ] == 0 ? "circle-notch fa-spin" : "circle-check";
-                $color = $socios[ $llaves[ $i ] ] == 0 ? "gray-400" : "teal";
+                $color = $socios[ $llaves[ $i ] ] == 0 ? "teal" : "teal";
 
                 echo "\n<td class=\"text-center px-0\" title=\"{$llaves[ $i ]}\" data-bs-toggle=\"tooltip\">";
                 // echo $socios[ $i ]->avatar( 28 );
