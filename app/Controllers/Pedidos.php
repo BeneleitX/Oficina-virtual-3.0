@@ -1189,9 +1189,10 @@ class Pedidos extends BaseController
                     $sql = "INSERT INTO t_comisiones 
                             VALUES ( NULL, '255-PENDIENTE', {$pedido[ "id" ]}, {$pedido[ "usuario_id" ]}, '520-SALDO', 0, 0, ".( $cantidad - $total ).", '{$pedido[ "fechas" ][ "reparte" ]}', NULL )";
 
-                    $db->query( $sql );
+                    // $db->query( $sql );
                     $s->USDT = 0;
                     $s->cantidad = $cantidad - $total;
+                    $s->estatus  = 1;
                 }
                 else{
                     $s->USDT     = 0;
