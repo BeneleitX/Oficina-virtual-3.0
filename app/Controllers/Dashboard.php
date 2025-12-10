@@ -68,6 +68,10 @@ class Dashboard extends BaseController
         $request = base64_decode( urldecode( $request ) );
         $this->data[ "socio" ] = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
 
+        if( !$this->data[ "socio" ] ){
+            return redirect()->to( "usuarios" );
+        }
+
         // Se hace doble consulta para que carque la validación
         $this->data[ "socio" ] = model( "UsuarioModel" )->find( $this->data[ "socio" ]->id );
         $this->data[ "socio" ]->valida_modelo();
