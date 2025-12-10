@@ -1,8 +1,8 @@
 <?php
 $es_bx = intval( substr( $cx[ "10-NUTRICION" ][ "m_0" ], 0, 2 ) ) >= 20;
 
-if( !$es_bx ){
-    echo "<div class=\"m-3 text-center alert alert-light\"><i class=\"fa fa-warning text-red\"></i> Necesitas calificación BIEX en el mes actual para participar en esta promoción</div>";
+if( 0 &&  !$es_bx ){
+    echo "<div class=\"m-3 text-center alert alert-light\"><i class=\"fa fa-warning text-red\"></i> Necesitas calificación de 3 puntos o más para participar en esta promoción</div>";
 }
 ?>
 
@@ -63,7 +63,7 @@ $ganado    = 0;
     </tr>
 </table>
 
-<div class="m-3  text-<?php echo $ganado == 3 ? "success" : "gray-500"; ?> text-center"><?php echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos de regalo" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Completa 3 meses consecutivos con una calificación BIEX"; ?></div>
+<div class="m-3  text-<?php echo $ganado == 3 ? "success" : "gray-500"; ?> text-center"><?php echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Completa 3 meses consecutivos con una calificación BIEX"; ?></div>
         
         <div class="card-body"><table class="w-100"><tr>
 

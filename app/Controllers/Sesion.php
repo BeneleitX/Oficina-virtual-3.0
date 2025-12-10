@@ -571,7 +571,7 @@ class Sesion extends BaseController
             if( $retiro[ "fechas" ][ "mes" ] == date( "Ym" ) ){
 
                 // Checamos que el retiro no exista ya
-
+                $db = db_connect();
                 $existe = $db->query( "
                     SELECT 
                         count(*) as total
