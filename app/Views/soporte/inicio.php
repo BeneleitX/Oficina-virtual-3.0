@@ -23,7 +23,7 @@
 <?php } ?>
 
     <div class="col-lg-4">
-        <div class="card text-center"><a href="https://web.whatsapp.com/send?phone=+522217968774" target="_blank">
+        <div class="card text-center"><a href="https://wa.me/2211998098" target="_blank">
             <p class="my-4"><i class="fab fa-square-whatsapp text-green" style="font-size:100px"></i></p>
             <h5 class="mb-4">3. Comunicate a nuestro call center</h5>
         </a></div>
