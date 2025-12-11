@@ -37,7 +37,7 @@ class Rangos extends BaseController
         $this->data[ "titulo" ] = "Entrega de pines de rango";
         $this->data[ "modelo" ] = $modelo;
 
-        $sql = "modelo_codigo = '{$modelo}' and SUBSTRING( codigo, 2,3 ) > 0";
+        $sql = "modelo_codigo = '{$modelo}' and SUBSTRING( codigo, 2, 3 ) > 0";
         $this->data[ "rangos" ] = model( "RangoModel" )->where( $sql , null, false )->findAll();
 
         $db = db_connect();
@@ -61,7 +61,7 @@ class Rangos extends BaseController
             $this->data[ "socios" ][ $s->rango_codigo ][ "activos" ] = $s->cantidad;
         }
 
-        echo template( "rangos/pines", $this->data );
+        echo template( "rangos/catalogo", $this->data );
     } 
 
 
@@ -111,7 +111,7 @@ class Rangos extends BaseController
             }
             $conteo++;
 
-            $sheetData[] = [  strtoupper( $p[ "rango" ] ),  $p[ "socio" ],  strtoupper( $p[ "nombre" ] ), $p[ "fecha" ], $p[ "foto" ] ? base_url()."data/{$p[ "socio" ]}/avatar/".$p[ "foto" ] : "" ];          
+            $sheetData[] = [  strtoupper( $p[ "rango" ] ),  $p[ "socio" ],  strtoupper( $p[ "nombre" ] ), $p[ "fecha" ] ];          
         }
 
         $mySpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
