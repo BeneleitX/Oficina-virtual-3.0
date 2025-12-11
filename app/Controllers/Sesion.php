@@ -579,7 +579,8 @@ class Sesion extends BaseController
                     where usuario_id = {$usuario->id}
                     and substring( estatus_codigo,1 , 3 ) > 200
                     and fechas->>'$.mes' = '{$retiro[ "fechas" ][ "mes" ]}'
-                    and id != {$retiro[ "id" ]}
+                    and inversion_id = {$retiro[ "inversion_id" ]}
+                    // and id != {$retiro[ "id" ]}
                 " )->getRow()->total;
 
                 if( $existe ){
