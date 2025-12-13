@@ -3,14 +3,21 @@
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
-<p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
+<p><a class="btn btn-light btn-sm" href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a Administración</a></p>
 
 <div class="row">
-    <div class="col-lg-9">
+    <div class="col-lg-6">
         <?php echo pills( "rangos", $modelo ); ?>
     </div>
+
+    <?php if( $modelo == '10-NUTRICION'){ ?>
     <div class="col-lg-3">
-        <button class="btn mt-3 col-12 btn-primary" onclick="excel_pines()"><i class="fa fa-file-excel"></i> Descargar pendientes</button>
+        <a class="btn mt-3 col-12 btn-secondary" href="<?php echo base_url( "rangos/".$modelo ); ?>"><i class="fa fa-gem"></i> Catálogos</a>
+    </div>
+    <?php } ?>
+
+    <div class="col-lg-3">
+        <button class="btn mt-3 col-12 btn-primary" onclick="excel_pines()"><i class="fa fa-file-excel"></i> Descargar Excel</button>
     </div>
 </div>
 
@@ -23,7 +30,7 @@
         $inactivos  = isset( $socios[ $r[ "codigo" ] ][ "inactivos"] ) ? $socios[ $r[ "codigo" ] ][ "inactivos"] : 0;
         $ps = isset( $pendientes[ $r[ "codigo" ] ] ) ? $pendientes[ $r[ "codigo" ] ] : 0;
 
-        echo "\n<div class=\"col-lg-3 col-md-4 col-sm-6\"><a href=\"#\">
+        echo "\n<div class=\"col-lg-3 col-md-4 col-sm-6\"><a href=\"".base_url( "entrega_pines/{$r[ 'codigo' ]}" )."\">
                     <div class=\"card mb-2\" style=\"overflow:hidden; position:relative\">
                         <div style=\"position:absolute; top:20px; right:15px\"><span class=\"badge fs-6 bg-".( $activos ? "marine" : "gray-400" )."\">{$activos}</span></div>
                         <table class=\"bg-white w-100\"><tr>

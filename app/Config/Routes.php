@@ -265,7 +265,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "rangos/(:any)",                      "Rangos::catalogo/$1" ); 
     $routes->get( "pines/(:any)",                       "Rangos::pines/$1" ); 
+    $routes->get( "entrega_pines/(:any)",               "Rangos::entrega_pines/$1" ); 
+    $routes->get( "borra_lugar/(:any)",                 "Rangos::borra_lugar/$1" ); 
     $routes->post( "excel_pines_pendientes",            "Rangos::excel_pines_pendientes" ); 
+    $routes->post( "update_pin",                        "Rangos::update_pin" ); 
+    $routes->post( "agrega_lugar",                      "Rangos::agrega_lugar" ); 
 
     $routes->get( "capital",                            "Capital::dashboard" );
     $routes->get( "capital/(:any)",                     "Capital::dashboard/$1" );

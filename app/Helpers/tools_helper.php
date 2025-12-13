@@ -244,8 +244,10 @@ function limpia_acentos($Texto){
 }
 
 
-function estatus( $codigo, $bn = false ){
-    return "<span class=\"badge rounded-pill bg-".( $bn ? "black" : ESTATUS[ $codigo ][ "color" ] )."\"><i class=\"fa fa-circle\"></i> ".ESTATUS[ $codigo ][ "descripcion" ]."</span>";
+function estatus( $codigo, $bn = false, $html = true ){
+    
+    
+    return $html ? "<span class=\"badge rounded-pill bg-".( $bn ? "black" : ESTATUS[ $codigo ][ "color" ] )."\"><i class=\"fa fa-circle\"></i> ".ESTATUS[ $codigo ][ "descripcion" ]."</span>" : ESTATUS[ $codigo ][ "descripcion" ];
 }
 
 
@@ -903,6 +905,13 @@ function correos_notificacion( $inversion )
             }
         }
     }
+}
+
+
+function rango( $rango )
+{
+    $html = "<div class=\"text-{$rango[ "color" ]} border border-{$rango[ "color" ]} rounded ps-5 pe-3 py-1 bg-white\" style=\"display:inline-block; position:relative;\"><img src=\"".base_url()."assets/img/rangos/{$rango[ "codigo" ]}.png\" style=\"height:2rem; position:absolute; left:10px; top:2px\"> {$rango[ "nombre" ]}</div>";
+    return $html;
 }
 
 
