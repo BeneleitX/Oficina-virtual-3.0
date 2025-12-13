@@ -146,6 +146,12 @@ class Rangos extends BaseController
         extract( $this->request->getPost() );
         $pin = model( "PinModel" )->find( $pin );
 
+        if( $estatus_codigo == "225-ALCANZADO" ){
+            $entrega_fecha = null;
+            $entrega_lugar = null;
+        }
+
+
         // BITACORA update entrega rango
         bitacora( 114, $this->data[ "usuario" ]->id, [
             "pin" => $pin[ "id" ],
