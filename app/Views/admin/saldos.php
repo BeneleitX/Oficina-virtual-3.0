@@ -78,7 +78,7 @@
                             echo "\n<tr modelo=\"{$m[ "codigo" ]}\"><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">
                             
                             <div class=\"form-check form-switch\">
-                                <input class=\"form-check-input\" type=\"checkbox\" value=\"1\" role=\"switch\" estatus name=\"estatus[{$m[ "codigo" ]}]\">
+                                <input class=\"form-check-input\" step=\"0.1\" type=\"checkbox\" value=\"1\" role=\"switch\" estatus name=\"estatus[{$m[ "codigo" ]}]\">
                             </div>
                             
                             </td></tr>";
