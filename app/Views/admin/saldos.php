@@ -122,7 +122,7 @@
                     <table class="table table-striped w-100">
                         <?php
                         foreach( MODELOS as $m ){
-                            echo "\n<tr modelo=\"{$m[ "codigo" ]}\"><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input type=\"number\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">&nbsp;</td></tr>";
+                            echo "\n<tr modelo=\"{$m[ "codigo" ]}\"><td style=\"width:33%\" class=\"py-3\"><span class=\"text-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></td><td style=\"width:33%\"><input step=\"0.1\" type=\"number\" name=\"saldo[{$m[ "codigo" ]}]\" class=\"form-control saldo text-end\"></td><td class=\"text-end py-3\" style=\"width:33%\">&nbsp;</td></tr>";
                         }
                         ?>
                     </table>
