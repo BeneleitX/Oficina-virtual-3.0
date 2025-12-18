@@ -441,7 +441,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 		</div>	
 		
 
-		<div class="card mb-4">
+		<div class="card mb-4 d-none">
             <div class="card-header"><h5 class="mb-0">Números Beneleit Móvil</h5></div>
             <div class="card-body">	
 				<div class="row">
