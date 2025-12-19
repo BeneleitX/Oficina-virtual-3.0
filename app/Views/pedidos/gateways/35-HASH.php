@@ -57,7 +57,7 @@ if( $total < 0 ){
                     <div class="row">
                         <div class="col-lg-6">
                             <table class="w-100 mb-3"><tr>
-                                <td><img src="<?php echo base_url(); ?>assets/img/wallet.png" style="width:150px;margin-right:10px"></td>
+                                <td><img src="<?php echo base_url(); ?>assets/img/wallet.png?<?php echo filemtime( "assets/img/wallet.png" ); ?>" style="width:150px;margin-right:10px"></td>
                                 <td class="w-100">
                                     <div class="card" style="overflow:hidden">
 
