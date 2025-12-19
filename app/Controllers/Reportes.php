@@ -205,6 +205,7 @@ class Reportes extends BaseController
 
                 FROM t_pedidos p 
                 WHERE SUBSTRING( p.estatus_codigo,1,3) > 400
+                AND p.modelo_codigo != '50-INVERSION'
                 AND cast( p.fechas->>'$.pagado' as date ) BETWEEN '".$this->request->getPost( "inicia" )."' AND '".$this->request->getPost( "termina")."' 
                 GROUP BY p.modelo_codigo";
 
