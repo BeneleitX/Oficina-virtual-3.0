@@ -218,31 +218,31 @@ class Reportes extends BaseController
         }
         
         foreach( MODELOS as $m ){        
-            if( isset( $modelos[ $m[ "codigo" ] ] ) ){
-                $modelo = $modelos[ $m[ "codigo" ] ];
-            }
-            else{
-                $modelo = [
-                    "EMPRESA" => $m[ "codigo" ],
-                    "VENTAS" => 0,
-                    "VENTA_PRODUCTO" => 0,
-                    "COMISIONES_BANCO" => 0,
-                    "PAQUETERIA" => 0,
-                    "TOTAL" => 0    
-                ];
-            }
+            if( $m[ "codigo" ] != '50-INVERSION' ){
+                if( isset( $modelos[ $m[ "codigo" ] ] ) ){
+                    $modelo = $modelos[ $m[ "codigo" ] ];
+                }
+                else{
+                    $modelo = [
+                        "EMPRESA" => $m[ "codigo" ],
+                        "VENTAS" => 0,
+                        "VENTA_PRODUCTO" => 0,
+                        "COMISIONES_BANCO" => 0,
+                        "PAQUETERIA" => 0,
+                        "TOTAL" => 0    
+                    ];
+                }
 
-            
-
-            $tabla .= "<tr>";
-            $tabla .= "<td><span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> ".strtoupper( $m[ "nombre" ] )."</span></td>";
-            $tabla .= "<td class=\"small\">".$m[ "settings" ][ "moneda" ]."</td>";
-            $tabla .= "<td class=\"text-center\">".number_format( $modelo[ "VENTAS" ] )."</td>";
-            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "VENTA_PRODUCTO" ], 2 )."</td>";
-            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "COMISIONES_BANCO" ], 2 )."</td>";
-            $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "PAQUETERIA" ], 2 )."</td>";
-            $tabla .= "<td class=\"text-end\"><strong>$".number_format( $modelo[ "TOTAL" ], 2 )."</strong></td>";
-            $tabla .= "</tr>";
+                $tabla .= "<tr>";
+                $tabla .= "<td><span class=\"badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> ".strtoupper( $m[ "nombre" ] )."</span></td>";
+                $tabla .= "<td class=\"small\">".$m[ "settings" ][ "moneda" ]."</td>";
+                $tabla .= "<td class=\"text-center\">".number_format( $modelo[ "VENTAS" ] )."</td>";
+                $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "VENTA_PRODUCTO" ], 2 )."</td>";
+                $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "COMISIONES_BANCO" ], 2 )."</td>";
+                $tabla .= "<td class=\"text-end\">$".number_format( $modelo[ "PAQUETERIA" ], 2 )."</td>";
+                $tabla .= "<td class=\"text-end\"><strong>$".number_format( $modelo[ "TOTAL" ], 2 )."</strong></td>";
+                $tabla .= "</tr>";
+            }
         }
 
         echo $tabla;
