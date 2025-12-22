@@ -107,7 +107,9 @@ function update_puntos( promocion, pesaje = false ){
                 pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
 
                 if( pesaje ){
-                    pedido.data.peso += ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
+                    ka = ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
+                    pedido.data.peso += ka;
+                    // console.log( promocion, pesaje, ka, pedido.data.peso );
                     pedido.data.productos += parseInt( cantidad );
                     // console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
                 }
