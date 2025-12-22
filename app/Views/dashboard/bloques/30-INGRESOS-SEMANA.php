@@ -84,7 +84,7 @@ $porc_bono = ceil( $transcurridos * 100 / ( $total_dias * 24 * 60 ) );
 <script>
 
     var options = {
-        colors: ['var(--bs-teal)', 'var(--bs-cyan)', 'var(--bs-mustard)', 'var(--bs-light-pink)'],
+        colors: ['var(--bs-teal)', 'var(--bs-cyan)', 'var(--bs-mustard)', 'var(--bs-light-pink)', 'var(--bs-purple)'],
         //colors: [<?php echo "'var(--bs-".implode( ")', 'var(--bs-", $colores ).")'"; ?>],
         series: <?php echo json_encode( $data ); ?>,
         chart: {
