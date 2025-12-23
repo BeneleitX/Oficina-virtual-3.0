@@ -88,14 +88,12 @@ function revisa_stock(){
 
 
 function update_puntos( promocion, pesaje = false ){
-    
-    pedido.PTS[ promocion ] = 0;
 
     evento   = $('.card[promocion=' + promocion + ']' ).attr( 'evento') ;
     estatus  = $('.card[promocion=' + promocion + ']' ).attr( 'estatus');
 
     if( evento == 'false' || estatus == 'true' ){
-   
+        
         if( $( '.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).length ){
             $( '.card[promocion=' + promocion + '] > table[productos] > tr[producto]' ).each( function(){
                 var p = $( this ),
@@ -105,16 +103,20 @@ function update_puntos( promocion, pesaje = false ){
                     total    = 0;
 
                 if( promocion == '016-KIT-PESO' ){ 
-                    puntos   = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
-                    total    = Math.round( cantidad * puntos * 10 );
-                    pedido.PTS[ promocion ] = pedido.PTS[ '010-DISTRIBUIDOR' ] = ( ( pedido.PTS[ '010-DISTRIBUIDOR' ] * 10 ) + total ) / 10 ;
+                    puntos = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
+                    total  = Math.floor( cantidad * puntos * 10 ) / 10;
+
+                    pedido.PTS[ promocion ] += total;
+                    pedido.PTS[ '010-DISTRIBUIDOR' ] += total;
                 }
                 else{
-                    puntos   = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1;
-                    total    = Math.round( cantidad * puntos * 10 );
-                    pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
+                    puntos = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1;
+                    total  = Math.floor( cantidad * puntos * 10 ) / 10;
+                    
+                    pedido.PTS[ promocion ] += total;
                 }
 
+                // console.log( producto, cantidad, puntos, total, pedido.PTS[ '016-KIT-PESO' ],pedido.PTS[ '010-DISTRIBUIDOR' ] );
 
                 if( pesaje ){
                     ka = ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
@@ -289,8 +291,12 @@ function update_pedido( flag = null ){
         total_productos_pedido = 0;
 
     $( '.card[promocion]' ).each( function(){
-        update_puntos( $( this ).attr( 'promocion' ), false );
+        pedido.PTS[ $( this ).attr( 'promocion' ) ] = 0;
     });
+
+    $( '.card[promocion]' ).each( function(){
+        update_puntos( $( this ).attr( 'promocion' ), false );
+    });    
 
     $.each( pedido.PTS, function( promocion, puntos ){
 
@@ -395,6 +401,10 @@ function update_pedido( flag = null ){
             });
         }
 
+        $( '.card[promocion]' ).each( function(){
+            pedido.PTS[ promocion ] = 0;
+        });
+
         update_puntos( promocion, true );
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
@@ -444,13 +454,23 @@ function update_pedido( flag = null ){
             $( '.card[promocion=' + promocion + '] .agrega_productos' ).hide();
         }
 
-        if( pedido.PTS[ promocion ] ){
+        /* if( pedido.PTS[ promocion ] ){
             $( '#puntajes' ).append( '<div class="pts text-white bg-white"><div class="pts-titulo bg-' + cat_promociones[ promocion ].settings.clase + '">' + cat_promociones[ promocion ].settings.siglas + '</div><div class="pts-numero bg-' + cat_promociones[ promocion ].settings.clase + '">' + ( Math.round( 10 * pedido.PTS[ promocion ] ) / 10 ) + '</div></div>' );
-        }
+        } */
 
         $( this ).find( '[conteo]' ).html( cuenta_productos + ' productos' + ( disponible > 0 ? ' de ' + disponible + ' disponibles' + ( cat_promociones[ promocion ].settings.paquete == "true" ? ' (Paquete) ' : '') : '' ) );
 
         total_productos_pedido += cuenta_productos;
+    });
+
+
+    $( '.card[promocion]' ).each( function(){
+        var tag = $( this ), 
+            promocion = tag.attr( 'promocion' );
+
+        if( pedido.PTS[ promocion ] ){
+            $( '#puntajes' ).append( '<div class="pts text-white bg-white"><div class="pts-titulo bg-' + cat_promociones[ promocion ].settings.clase + '">' + cat_promociones[ promocion ].settings.siglas + '</div><div class="pts-numero bg-' + cat_promociones[ promocion ].settings.clase + '">' + ( Math.round( 10 * pedido.PTS[ promocion ] ) / 10 ) + '</div></div>' );
+        }
     });
 
     pedido.data.peso = pedido.data.peso == false || modelo == '90-SEMILLERO' ? 0 : parseInt( pedido.data.peso );
