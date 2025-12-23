@@ -159,7 +159,7 @@ if( sizeof( $inversiones ) ){
                 }
                 else{
                      $retiros_pendientes .= "\n<tr class=\"\">
-                        <td style=\"{$br}\">Solicitud de retiro de rendimientos</td>
+                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-sack-dollar text-green\"></i> rendimientos</td>
                         <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
                         <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
                 }
@@ -196,7 +196,7 @@ if( sizeof( $inversiones ) ){
                 }                    
                 else{
                     $semilla_pendientes .= "\n<tr class=\"\">
-                        <td style=\"{$br}\">Solicitud de retiro de capital semilla</td>
+                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-seedling text-red\"></i> capital semilla</td>
                         <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
                         <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
                 }

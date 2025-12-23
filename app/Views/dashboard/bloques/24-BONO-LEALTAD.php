@@ -36,7 +36,7 @@ $ganado    = 0;
         $bx    = 0;
         $print = "";
 
-        while( $a < 3 && $bx++ < 10 ){
+        while( $a < 4 && $bx++ < 10 ){
             $dto->modify('+1 month');
 
             $contador   = 0;

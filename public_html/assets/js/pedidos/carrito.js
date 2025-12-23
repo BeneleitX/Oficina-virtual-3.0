@@ -454,6 +454,8 @@ function update_pedido( flag = null ){
             $( '.card[promocion=' + promocion + '] .agrega_productos' ).hide();
         }
 
+        // Esto se ejecuta abajo, en un ciclo aparte, despues de calcular todos los puntos
+
         /* if( pedido.PTS[ promocion ] ){
             $( '#puntajes' ).append( '<div class="pts text-white bg-white"><div class="pts-titulo bg-' + cat_promociones[ promocion ].settings.clase + '">' + cat_promociones[ promocion ].settings.siglas + '</div><div class="pts-numero bg-' + cat_promociones[ promocion ].settings.clase + '">' + ( Math.round( 10 * pedido.PTS[ promocion ] ) / 10 ) + '</div></div>' );
         } */

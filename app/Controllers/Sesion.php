@@ -560,6 +560,7 @@ class Sesion extends BaseController
         $usuario = model( "UsuarioModel" )->find( $retiro[ "usuario_id" ] );
 
         $pass = substr( $hash[ 0 ], 0, strlen( $usuario->password_original() ));
+        $tipo = substr( $retiro[ "tipo" ], 0, 1 );
         
         // si el usuario coincide con el uid del retiro, y aun no se hace el proceso
         // de confirmación, aplicamos el cambio 
@@ -572,7 +573,8 @@ class Sesion extends BaseController
 
                 // Checamos que el retiro no exista ya
                 $db = db_connect();
-                $existe = $db->query( "
+                
+                $sql = "
                     SELECT 
                         count(*) as total
                     from t_retiros
@@ -580,14 +582,18 @@ class Sesion extends BaseController
                     and substring( estatus_codigo,1 , 3 ) > 200
                     and fechas->>'$.mes' = '{$retiro[ "fechas" ][ "mes" ]}'
                     and inversion_id = {$retiro[ "inversion_id" ]}
+                    and IF( '{$tipo}' = 'S', substring( tipo,1,1) = 'S', substring( tipo,1,1) != 'S')
                     -- and id != {$retiro[ "id" ]}
-                " )->getRow()->total;
+                ";
+
+                $existe = $db->query( $sql )->getRow()->total;
 
                 if( $existe ){
                     // BITACORA Cancela solicitud de retiro
                     bitacora( 105, $usuario->id, [ 
                         "socio"  => $usuario->id,
                         "retiro" => $retiro[ "id" ],
+                        "semilla" => $tipo == "S",
                         "duplicado" => true
                     ] );
                         
@@ -603,6 +609,7 @@ class Sesion extends BaseController
                 // BITACORA Confirma solicitud de retiro
                 bitacora( 100, $usuario->id, [ 
                     "socio"  => $usuario->id,
+                    "semilla" => $tipo == "S",
                     "retiro" => $retiro[ "id" ]
                 ] );
                     
@@ -626,8 +633,9 @@ class Sesion extends BaseController
             else{
                 // BITACORA Cancela solicitud de retiro
                 bitacora( 105, $usuario->id, [ 
-                    "socio"  => $usuario->id,
-                    "retiro" => $retiro[ "id" ]
+                    "socio"   => $usuario->id,
+                    "semilla" => $tipo == "S",
+                    "retiro"  => $retiro[ "id" ]
                 ] );
                     
                 $retiro[ "estatus_codigo" ] = "150-CANCELADO";
@@ -644,6 +652,7 @@ class Sesion extends BaseController
             bitacora( 106, $usuario->id, [ 
                 "socio"  => $usuario->id,
                 "retiro" => $retiro[ "id" ],
+                "semilla" => $tipo == "S",
                 "hash"   => $hash,
                 "pass"   => $pass
             ] );
