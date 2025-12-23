@@ -101,17 +101,25 @@ function update_puntos( promocion, pesaje = false ){
                 var p = $( this ),
                     producto = p.attr( 'producto' ),
                     cantidad = p.find( 'input.cantidad' ).val(),
-                    puntos   = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1,
-                    total    = Math.round( cantidad * puntos * 10 );
+                    puntos   = 0,
+                    total    = 0;
 
-                pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
+                if( promocion == '016-KIT-PESO' ){ 
+                    puntos   = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
+                    total    = Math.round( cantidad * puntos * 10 );
+                    pedido.PTS[ promocion ] = pedido.PTS[ '010-DISTRIBUIDOR' ] = ( ( pedido.PTS[ '010-DISTRIBUIDOR' ] * 10 ) + total ) / 10 ;
+                }
+                else{
+                    puntos   = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1;
+                    total    = Math.round( cantidad * puntos * 10 );
+                    pedido.PTS[ promocion ] = ( ( pedido.PTS[ promocion ] * 10 ) + total ) / 10 ;
+                }
+
 
                 if( pesaje ){
                     ka = ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
                     pedido.data.peso += ka;
-                    // console.log( promocion, pesaje, ka, pedido.data.peso );
                     pedido.data.productos += parseInt( cantidad );
-                    // console.log( 'peso', producto, cantidad, cat_productos[ producto ][ 'data' ].dimensiones.peso, pedido.data.peso );
                 }
             });
         }
