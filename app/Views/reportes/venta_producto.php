@@ -92,7 +92,4 @@
 
 
     <button type="button" id="submit_button" class="btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
-<div class="alert alert-danger mt-3">
-    <i class="fa fa-warning"></i> Este reporte tiene inconsistencias y se está trabajando para corregirlas.
-</div>
 </div></div>
