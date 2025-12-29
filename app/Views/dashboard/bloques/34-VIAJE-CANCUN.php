@@ -70,7 +70,7 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
         for( $i = 0; $i < 8; $i++ ){ 
                     
             if( isset( $llaves[ $i ] ) ){
-                $icono = $socios[ $llaves[ $i ] ] == 0 ? "circle-notch fa-spin" : "circle-check";
+                $icono = $socios[ $llaves[ $i ] ] == 0 ? "circle-check" : "circle-check";
                 $color = $socios[ $llaves[ $i ] ] == 0 ? "teal" : "teal";
 
                 echo "\n<td class=\"text-center px-0\" title=\"{$llaves[ $i ]}\" data-bs-toggle=\"tooltip\">";
