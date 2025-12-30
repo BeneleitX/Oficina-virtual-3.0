@@ -210,6 +210,10 @@ if( sizeof( $inversiones ) ){
 
         $v = $usuario->get_verificacion( "50-INVERSION" );
 
+        if( !isset( $i[ "extras" ][ "meses" ][ $mes_actual ] ) ){
+            $mes_actual = 0;
+        }
+
         echo "\n
             <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
                 <div class=\"card-header\">

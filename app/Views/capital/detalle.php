@@ -159,6 +159,10 @@ for( $a = 0; $a < $cuentameses  ; $a++ ){
 
 $bt = balance_inversion( $i );
 
+if( !isset( $i[ "extras" ][ "meses" ][ $mes_actual ] ) ){
+    $mes_actual = 0;
+}
+
 echo "\n
     <div class=\"card mb-4\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$h}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\">
         <div class=\"card-header\">
