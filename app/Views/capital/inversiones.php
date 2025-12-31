@@ -35,9 +35,6 @@
                     <div class="col-6">
                         <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>
                     </div>
-                    <div class="col-6">
-                        <button class="btn btn-lg mb-3 btn-light w-100 disabled" disabled>&nbsp;</button>
-                    </div>
                 </div>
             </div>
         </div>
