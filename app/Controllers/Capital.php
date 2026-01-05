@@ -1456,7 +1456,7 @@ class Capital extends BaseController
         // validar cantidad
 
         if( $cant != $bolsa ){
-            $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps );
+            $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps, $fecha );
 
 
 /*             $h = $this->data[ "usuario" ]->historial;
