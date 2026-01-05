@@ -22,6 +22,7 @@ $routes->get( "confirma_retiro/(:any)",             "Sesion::confirma_retiro/$1"
 
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
+$routes->get( "registro",                           "Registro::nuevo_formulario" );
 $routes->post( "procesa_registro",                  "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",               "Registro::valida_patrocinador" );
 
@@ -38,7 +39,7 @@ $routes->get( "compresion/(:any)/(:num)/(:num)",    "Tools::compresion/$1/$2/$3"
 $routes->get( "landing/(:any)",                     "A::landing/$1" );
 $routes->get( "landing/test/(:num)",                "A::landing/$1" );
 
-    $routes->get( "estatus/test",                       "Admin::estatus_test" ); 
+$routes->get( "estatus/test",                       "Admin::estatus_test" ); 
 
 
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {

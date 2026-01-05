@@ -1456,12 +1456,14 @@ class Capital extends BaseController
         // validar cantidad
 
         if( $cant != $bolsa ){
+            $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps, $mes);
 
-            $h = $this->data[ "usuario" ]->historial;
+
+/*             $h = $this->data[ "usuario" ]->historial;
             $h->modelos->{"50-INVERSION"}->corte_mensual->{$mes}->bolsa = $bolsa;
             $this->data[ "usuario" ]->historial = $h;
 
-            model( "UsuarioModel" )->save( $this->data[ "usuario" ] );
+            model( "UsuarioModel" )->save( $this->data[ "usuario" ] ); */
 
             // BITACORA Ajuste automatico bolsa capital semilla de red
             bitacora( 95, $this->data[ "usuario" ]->id, [ 

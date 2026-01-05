@@ -132,6 +132,7 @@ if( $saldo ){
         <p class="text-center"><strong>Socios directos activos en primer nivel</strong></p>
         <table class="w-100 m-0"><tr>
             <?php 
+                $f = 0;
 
                 $directos = $usuario->getDirectosActivos( "50-INVERSION" );
                 $a = 0;
@@ -139,8 +140,13 @@ if( $saldo ){
                 foreach( $directos as $d){
                     $u = model( "UsuarioModel" )->find( $d[ "id" ] );
 
+                    if( $f++ == 12){
+                        break;
+                    }
+
                     echo "<td width=\"7%\">".$u->avatar( 21 )."</td>";
                     if( !( ($a++ + 1 ) % 4 ) ){
+                        
                         echo "<td width=\"8%\"> </td>";
                     }
                 }

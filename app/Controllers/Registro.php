@@ -12,6 +12,14 @@ class Registro extends BaseController
         echo template( "registro/formulario", $this->data );
     }
 
+    public function nuevo_formulario()
+    {
+        $this->data[ "navbar" ] = false;
+        $this->data[ "titulo" ] = "Crear cuenta BENELEIT";
+
+        echo template( "registro/nuevo_formulario", $this->data );
+    }
+
 
     // recibe formulariod e registro y valida los datos
     // si todo sale bien, crea el nuevo socio
