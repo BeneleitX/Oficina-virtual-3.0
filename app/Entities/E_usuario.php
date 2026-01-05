@@ -2074,11 +2074,15 @@ class E_usuario extends Entity
      * @param array $ps A list of partner objects to evaluate.
      * @param string $mes The month for which the bonus is being calculated, in the format 'YYYY-MM'.
      */
-    public function revisa_bono_liderazgo( $ps, $mes )
+    public function revisa_bono_liderazgo( $ps, $mes = null )
     {
         $directos = 0;
         $bolsa    = 0;
         
+        if( !$mes){
+            $mes = date( "Y-m-d" );
+        }
+
         foreach( $ps as $socio ){
             if( 
                 $socio->nivel > 0 &&
