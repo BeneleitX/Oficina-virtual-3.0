@@ -6,7 +6,11 @@ $meses = [
     202601 => $usuario->historial->modelos->{"10-NUTRICION"}->calificaciones->{"202601"}->{"010-DISTRIBUIDOR"} ?? 0
 ];
 
-$socios  = $usuario->getNuevosSocios( 3, "2025-10-01", "2026-01-31" );
+$socios  = $usuario->getNuevosSocios( 6, "2025-10-01", "2025-10-31" ) +
+           $usuario->getNuevosSocios( 6, "2025-11-01", "2025-11-30" ) +
+           $usuario->getNuevosSocios( 6, "2025-12-01", "2025-12-31" ) +
+           $usuario->getNuevosSocios( 6, "2026-01-01", "2026-01-31" );
+
 $compras = $usuario->historial->viajecancun ?? 0;
 
 $porcentaje1 = ceil( ( $compras > 20 ? 20 : $compras) * 100 / 20 );
@@ -60,7 +64,7 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
 </table>
 
 <p class="text-center mt-3 mb-1">
-    <small class="fw-bold">Tener <span class="badge border border-gray-600 bg-white text-gray-600">8</span> nuevos socios activos y con cuenta verificada</small>
+    <small class="fw-bold">Tener <span class="badge border border-gray-600 bg-white text-gray-600">8</span> nuevos socios activos MASTER o ELITE</small>
 </p>
 <table align="center" class="w-100">
     <tr><td>&nbsp;</td>
