@@ -127,6 +127,8 @@
 
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
+
+
 <div class="row">
     <div class="col-8 offset-2 col-md-4 offset-md-4 col-lg-4 offset-lg-4 col-xl-2 offset-xl-5" style="padding-top:50px">
         <p class="text-center"><img src="<?php echo base_url(); ?>assets/img/logo_color.png" class="w-50"></p>

@@ -1148,6 +1148,10 @@ class Pedidos extends BaseController
             $cantidad = intval( $cantidad * 100 ) / 100;
             $total    = intval( $total * 100 ) / 100;
     
+            // rasurar cantidad con menos de $100
+
+            $cantidad = ( floor( $cantidad / 100 )) * 100;
+
             // Al no existir antes, la registramos en la base de datos de fondeos
 
             model( "FondeoModel" )->ignore( true )->save( [
