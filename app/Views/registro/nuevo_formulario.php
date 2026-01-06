@@ -1,4 +1,5 @@
 <style>
+
     .select-box {
         position: absolute;
         z-index:100;
@@ -17,7 +18,7 @@
     }
 
     .selected-option {
-        background-color: #eee;
+        background-color: #fff;
         border-radius: .5rem;
         overflow: hidden;
 
@@ -123,140 +124,170 @@
         margin-left: .4rem;
     }
 
+    .wizard {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        font-weight: 300;
+        color: #888;
+        line-height: 30px;
+    }
+
+
+    .f1-steps { overflow: xhidden; position: relative; margin-top: 15px; text-align:center }
+    .f1-progress { position: absolute; top: 28px; left: 0; width: 100%; height: 5px; background: #ccc; }
+    .f1-progress-line { position: absolute; top: 0; left: 0; height: 5px; background: var(--bs-teal); }
+    .f1-step { z-index:0; position: relative; float: left; width: 14.28%; padding: 0 5px; }
+    .f1-step-icon {
+        width: 50px; height: 50px; margin-top: 4px; background: #ccc;
+        font-size: 22px; color: #fff; line-height: 55px;
+        
+        -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%;
+    }
+    .f1-step.activated .f1-step-icon {
+        background: #fff; border: 5px solid var(--bs-teal); color: var(--bs-teal);line-height: 45px;
+    }
+    .f1-step.active .f1-step-icon { background: var(--bs-teal);}
+
+    .f1-step p { color: #ccc; }
+    .f1-step.activated p { color: var(--bs-teal); }
+    .f1-step.active p { color: var(--bs-teal); }
+    .f1 fieldset { display: none; text-align: left; }
+
+    @media (max-width: 767px) {
+        .f1-progress-line { height: 3px; }
+        .f1-progress { position: absolute; top: 18px; left: 0; width: 100%; height: 3px; background: #ddd; }
+
+        .f1-step-icon {
+            display: inline-block; width: 30px; height: 30px; margin-top: 4px; 
+            font-size: 16px; color: #fff; line-height: 32px;
+            -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%;
+        }
+        .f1-step.activated .f1-step-icon {
+            border: 3px solid var(--bs-teal); line-height: 24px;
+        }    
+    }
+
+    #formulario {
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        background:white;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .zflared {
+    position: relative;
+    }
+    .zflared::after {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    transform: scale(0.7) translateZ(0);
+    filter: blur(15px);
+    background: linear-gradient(to left, var(--bs-teal), var(--bs-blue), var(--bs-purple) );
+    background-size: 200% 200%;
+    -webkit-animation: animateGlow 3.25s linear infinite;
+            animation: animateGlow 3.25s linear infinite;
+    }
+
+    @-webkit-keyframes animateGlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+    }
+
+    @keyframes animateGlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+    }
+
 </style>
 
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
-<div class="row">
-    <div class="col-8 offset-2 col-md-4 offset-md-4 col-lg-4 offset-lg-4 col-xl-2 offset-xl-5" style="padding-top:50px">
-        <p class="text-center"><img src="<?php echo base_url(); ?>assets/img/logo_color.png" class="w-50"></p>
-    </div>
-    <h4 class="text-center mb-4"><?php echo $titulo; ?></h4>
-</div>
-        
-<form method="post" action="<?php echo base_url( "procesa_registro" ); ?>" id="procesa_registro">
-    <?php echo csrf_field() ?>
-    <input type="hidden" name="pais" value="">
-    <input type="hidden" name="origen" value="">
-    <input type="hidden" name="code" value="">
+<div class="container wizard">
     <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-3"><div class="card-header"><h5>1. Nombre de nuevo socio</h5>Escribe tu nombre tal como aparece en tu identificación oficial vigente</div><div class="card-body">
+        <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
 
-            <div class="alert alert-danger mb-3">
-                    <i class="fa fa-circle-info"></i> El registro no está disponible para ciudadanos de Estados Unidos de América.
+            <p class="text-center"><img src="<?php echo base_url(); ?>assets/img/logo_color.png" class="w-50 px-4 pt-4 m-0">
+            <br>Registro de nuevo socio</p>
+
+    
+            <div class="f1-steps">
+                <div class="f1-progress">
+                    <div class="f1-progress-line" data-now-value="14.285" style="width: 14.285%;"></div>
                 </div>
 
-                <label>Nombre</label>
-                <input type="text" style="text-transform: uppercase;" class="form-control <?php echo session( "errors.nombre" ) ? "is-invalid" : ""; ?>" name="nombre" value="<?php echo old( "nombre" ); ?>" placeholder="">
-                <p class="small text-red"><?php echo session( "errors.nombre" ); ?></p>
+                <?php
+                foreach( $pasos as $k => $paso ){
+                    $estatus = "";
 
-                <label>Primer apellido</label>
-                <input type="text" style="text-transform: uppercase;" class="form-control <?php echo session( "errors.apellido1" ) ? "is-invalid" : ""; ?>" name="apellido1" value="<?php echo old( "apellido1" ); ?>" placeholder="">
-                <p class="small text-red"><?php echo session( "errors.apellido1" ); ?></p>
-            
-                <label>Segundo apellido</label>
-                <input type="text" style="text-transform: uppercase;" class="form-control <?php echo session( "errors.apellido2" ) ? "is-invalid" : ""; ?>" name="apellido2" value="<?php echo old( "apellido2" ); ?>" placeholder="">
-                <p class="small text-red"><?php echo session( "errors.apellido2" ); ?></p>
+                    if( $paso['inicio'] ?? false ){
+                        $estatus = "active flared";
+                    } 
 
-            </div></div>
-            
-        </div>
-        <div class="col-md-4">
-            <div class="card mb-3"><div class="card-header"><h5>2. Datos de contacto</h5>Es necesario que sean reales y activos para poder enviarte información complementaria a tu registro</div><div class="card-body">
-
-                <label>Correo electrónico</label>
-                <input type="email" class="form-control <?php echo session( "errors.correo" ) ? "is-invalid" : ""; ?>" name="correo" value="<?php echo old( "correo" ); ?>" placeholder="">
-                <p class="small text-red"><?php echo session( "errors.correo" ); ?></p>
-
-                <label>Teléfono</label>
-                <div class="input-group mb-0 w-75">
-                    <div class="selected-option" tipo="telefono"><div></div></div>
-                    <span class="input-group-text bg-gray-400 border-0 text-marine fw-bold" id="codigo"></span>
-                    <input type="text" class="form-control <?php echo session( "errors.celular" ) ? "is-invalid" : ""; ?>" name="celular" value="<?php echo old( "celular" ); ?>" placeholder="" id="celular">
-                </div>
-
-                <div class="select-box" id="telefono">
-                    <div class="options">
-                        <input type="text" class="search-box form-control" placeholder="Buscar por país">
-                        <ol></ol>
-                    </div>
-                </div>
+                    echo "\n<div step=\"{$k}\" class=\"f1-step {$estatus}\" data-bs-toggle=\"tooltip\" title=\"{$paso['titulo']}\"><div class=\"f1-step-icon \"><i class=\"fa {$paso['icono']}\"></i></div></div>";    
+                }
+                ?>
                 
-                <p class="small text-red"><?php echo session( "errors.celular" ); ?></p>
+            </div>
 
-                <div class="alert alert-warning m-0">
-                    <i class="fa fa-circle-info"></i> Selecciona el país de tu línea telefónica y escribe con cuidado tu número, ya que será nuestro medio de contacto contigo.
-                </div>
 
-            </div></div>
+
         </div>
-        <div class="col-md-4">
-            <div class="card mb-3"><div class="card-header"><h5>3. Validación de cuenta</h5>Si no conoces tu CURP puedes consultarlo <a class="" href="https://www.gob.mx/curp/" target="_blank">aquí <img style="width:24px; height: 25px" src="<?php echo base_url(); ?>assets/img/logo_curp.png"></a></div><div class="card-body">
-
-                <label>CURP/DNI <i class="far fa-circle-question text-mustard"></i></label>
-                <input type="text" style="text-transform: uppercase;" class="form-control <?php echo session( "errors.curp" ) ? "is-invalid" : ""; ?>" name="curp" value="<?php echo old( "curp" ); ?>" placeholder="">
-                <p class="small text-red"><?php echo session( "errors.curp" ); ?></p>
-
-
-                <label>Nacionalidad / País de origen</label>
-                <div class="input-group mb-0 w-75">
-                    <div class="selected-option" tipo="nacionalidad"><div></div></div>
-                    <input type="text"  class="form-control <?php echo session( "errors.nacion" ) ? "is-invalid" : ""; ?>" name="nacion" value="<?php echo old( "nacion" ); ?>" placeholder="" id="nacion">
-                </div>
-
-                <div class="select-box" id="nacionalidad">
-                    <div class="options">
-                        <input type="text" class="search-box form-control" placeholder="Buscar por país">
-                        <ol></ol>
-                    </div>
-                </div>
-
-                <p class="small text-red"><?php echo session( "errors.celular" ); ?></p>
-
-                <div class="alert alert-warning my-3">
-                    <i class="fa fa-circle-info"></i> Selecciona tu país de origen. Mas adelante se te solicitará verificar tu cuenta con tu identificación oficial vigente.
-                </div>
-
-                <label data-bs-toggle="tooltip" title="Proporciona el número de socio de tu patrocinador">Patrocinador <i class="far fa-circle-question text-mustard"></i></label>
-                <input type="number" class="form-control <?php echo session( "errors.patrocinador" ) ? "is-invalid" : ""; ?>" name="patrocinador" value="<?php echo old( "patrocinador" ); ?>" placeholder="">
-                <p class="noverifica small text-red"><?php echo session( "errors.patrocinador" ); ?></p>
-
-                <div class=" verificado" xstyle="padding-top: 24px;"></div>
-            </div></div>
-        </div>
-    </div>
-    <button type="submit" id="hidden_submit" class="d-none"></button>
-</form>
-
-<hr class="border-teal">
-<div class="col-6 offset-3 col-md-4 offset-md-4 col-lg-2 offset-lg-5">
-    <p class="mt-3 mb-1 text-end"><button id="submit_login" class="e btn btn-primary rounded-pill col-12">Registrate ahora <i class="fa fa-wand-magic-sparkles"></i></button></p>
-</div>
-
-<p class="text-center mt-3"><a href="<?php echo base_url( "login" ); ?>"><i class="fa fa-undo"></i> Cancelar y regresar</a></p>
-
-<div class="modal" tabindex="-1" id="modal_confirma">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Importante:</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-                <div class="alert alert-danger"><i class="fa fa-warning"></i> Por favor revisa que tus datos y especialmente tu patrocinador sean correctos. recuerda que una vez creada tu cuenta, no podrás modificar el patrocinador.</div>
-
-
-                <div class="verificado" style="zoom:2"></div>
+        
+        <div class="col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+            <h4 class="text-center mb-5 mt-3" id="titulo_paso"></h4>
+            <div id="formulario">
                 
-                <p class="mt-3 mb-1 text-end"><button id="submit_ok" class="e btn btn-primary rounded-pill">Mi patrocinador es correcto, quiero continuar</button></p>
-			</div>
-		</div>
-	</div>
+
+                <div class="paso" step="0">    
+                            <h5>¡Bienvenido a BENELEIT!</h5>
+                            <p>Es importante asegurate en cada paso que la información que proporciones sea correcta, y realizar el registro desde un dispositivo con cámara frontal, ya que más adelante necesitaremos validar tu identidad.</p><p class="fw-bold">Para comenzar el proceso, selecciona tu país de residencia:</p>
+                            <div class="rounded border border-1 p-1" style="width:300px">
+                                <div class="input-group mb-0">
+                                    <div class="selected-option" tipo="nacionalidad"><div></div></div>
+                                    <input type="text" class="form-control border-0 text-teal" name="nacion" value="" placeholder="" id="nacion" readonly>
+                                </div>
+
+                                <div class="select-box" id="nacionalidad">
+                                    <div class="options">
+                                        <input type="text" class="search-box form-control" placeholder="Buscar por país">
+                                        <ol></ol>
+                                    </div>
+                                </div>
+                            </div>
+
+                </div>
+
+                <div class="paso" step="1">    
+                    <label>Datos personales</label>
+                    <div id="datos_personales"></div>
+                </div>
+
+            </div> 
+        </div> 
+    <div class="mt-4 mb-5 text-center">
+        <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
+        <button type="button" class="btn btn-secondary btn-next">Siguiente <i class="fa fa-arrow-right"></i></button>
+        <button type="button" class="btn btn-primary btn-end">Aceptar y finalizar <i class="fa fa-check"></i></button>
+    </div>            
+    
 </div>
 
 
 <script>
-    var country = '<?php echo old( "pais" ) ?? "MX"; ?>',
-        origen  = '<?php echo old( "origen" ) ?? "MX"; ?>';
+    var pasos = <?php echo json_encode( $pasos ); ?>;
 </script>

@@ -15,7 +15,41 @@ class Registro extends BaseController
     public function nuevo_formulario()
     {
         $this->data[ "navbar" ] = false;
-        $this->data[ "titulo" ] = "Crear cuenta BENELEIT";
+        $this->data[ "titulo" ] = "Registro de nuevo socio";
+
+        $this->data[ "pasos" ]  = [
+            [
+                "titulo" => "Ubicación",                
+                "icono"  => "fa-location-dot",
+                "inicio"  => true
+            ],
+            [
+                "titulo" => "Datos personales",
+                "icono"  => "fa-user"
+            ],
+            [
+                "titulo" => "Contacto",
+                "icono"  => "fa-mobile-screen-button"
+            ],
+            [
+                "titulo" => "Identificación",
+                "icono"  => "fa-address-card"
+            ],
+            [
+                "titulo" => "Verificación",
+                "icono"  => "fa-fingerprint"
+            ],
+            [
+                "titulo" => "Modelo de negocio",
+                "icono"  => "fa-diagram-project"                
+            ],
+            [
+                "titulo" => "Términos y condiciones",
+                "icono"  => "fa-gavel",
+                "final" => true
+            ]
+            
+        ];
 
         echo template( "registro/nuevo_formulario", $this->data );
     }

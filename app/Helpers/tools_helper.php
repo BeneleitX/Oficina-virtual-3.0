@@ -518,6 +518,18 @@ function getISR( $cantidad, $y = null, $t = "SEMANAL" ){
 	
     $isr = $db->query( $sql )->getRowArray();
 
+    if( !$isr ){
+
+        $y = date( "Y" ) -1;
+
+        $sql = "SELECT fijo, porcentaje, minimo 
+                FROM t_isr
+                WHERE tipo = '{$t}' and anio = {$y} and {$cantidad} BETWEEN minimo AND maximo";
+        
+        $isr = $db->query( $sql )->getRowArray();
+
+    }
+    
     $excedente = $cantidad - $isr[ "minimo" ];	
     
     $entero = 100 * ( $isr[ "fijo" ] + ( ( $excedente *  $isr[ "porcentaje" ] ) / 100 ) );
