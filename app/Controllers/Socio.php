@@ -765,7 +765,7 @@ class Socio extends BaseController
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
         $json = $this->data["socio"]->data;
-        $json->sat->estatus = $this->request->getPost( "check" ) == "true" ? 0 : 1;
+        $json->sat->estatus = $this->request->getPost( "check" ) == "true" ? 0 : ( ( $json->sat->csf == null || $json->sat->csf == "null" ) ? 1 : 100 );
         $this->data["socio"]->data = $json; 
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );   

@@ -254,7 +254,7 @@
                 
 
                 <div class="paso" step="0">    
-                            <h5>¡Bienvenido a BENELEIT!</h5>
+                            <h5>¡Bienvenido!</h5>
                             <p>Es importante asegurate en cada paso que la información que proporciones sea correcta, y realizar el registro desde un dispositivo con cámara frontal, ya que más adelante necesitaremos validar tu identidad.</p><p class="fw-bold">Para comenzar el proceso, selecciona tu país de residencia:</p>
                             <div class="rounded border border-1 p-1" style="width:300px">
                                 <div class="input-group mb-0">
