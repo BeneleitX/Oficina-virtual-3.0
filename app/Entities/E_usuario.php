@@ -2084,6 +2084,7 @@ class E_usuario extends Entity
         }
 
         foreach( $ps as $socio ){
+            
             if( 
                 $socio->nivel > 0 &&
                 $socio->semilla > 0 && 
@@ -2120,7 +2121,6 @@ class E_usuario extends Entity
         $sql = "select count(*) as cuenta from t_comisiones where usuario_id = {$this->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
 
         $existe = $db->query( $sql )->getRow()->cuenta;
-
         
       //  if(/*  $existe == 0 &&  */date( "Ym", strtotime($mes) ) >= date( "Ym", strtotime( date( "Y-m-01" )." - 1 month" ) ) ){
             $historial = $this->historial;
@@ -2134,6 +2134,7 @@ class E_usuario extends Entity
 
             if( $directos && $bolsa > 0 ){
 
+                // si existe comision con dato equivocado, la broramos
                 if( $existe ){
                     
                     $sql   = "UPDATE t_comisiones set estatus_codigo = '110-ELIMINADO' where usuario_id = {$this->id} and esquema_codigo = '530-LIDERAZGO' and fecha = '{$mes}' && estatus_codigo = '255-PENDIENTE'";
@@ -2164,7 +2165,7 @@ class E_usuario extends Entity
                         "bolsa"    => $bolsa,
                         "bono"     => $bono
                     ]
-                ] );                
+                ] );     
             }
         //}
     }

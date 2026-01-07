@@ -128,6 +128,8 @@ class Capital extends BaseController
 
             $pendientes = $db->query( $sql );
 
+            // evitar que haya socios sin calculo de bono por falta de login
+        
             foreach( $pendientes->getResult() as $socio ){
                 $u = model( "UsuarioModel" )->find( $socio->socio );
 
@@ -1456,24 +1458,7 @@ class Capital extends BaseController
         // validar cantidad
 
         if( $cant != $bolsa && $mes == date( "Ym" ) ){
-
-            $h = $this->data[ "usuario" ]->historial;
-
-            if( !isset( $h->modelos->{"50-INVERSION"}->corte_mensual->{$mes} ) ){
-                $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps, $fecha );
-            }
-         
-            $h->modelos->{"50-INVERSION"}->corte_mensual->{$mes}->bolsa = $bolsa;
-            $this->data[ "usuario" ]->historial = $h;
-
-            model( "UsuarioModel" )->save( $this->data[ "usuario" ] ); 
-
-            // BITACORA Ajuste automatico bolsa capital semilla de red
-            bitacora( 95, $this->data[ "usuario" ]->id, [ 
-                "mes"      => $mes,
-                "anterior" => $cant,
-                "nueva"    => $bolsa
-            ] );                
+            $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps, substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01");     
         }
 
         return $html;
