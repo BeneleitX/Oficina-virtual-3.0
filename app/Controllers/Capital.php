@@ -1457,7 +1457,7 @@ class Capital extends BaseController
 
         // validar cantidad
 
-        if( $cant != $bolsa && $mes != date( "Ym" ) ){
+        if( $cant != $bolsa && $mes == date( "Ym" ) ){
             $this->data[ "usuario" ]->revisa_bono_liderazgo( $ps, substr( $mes, 0, 4 )."-".substr( $mes, 4, 2 )."-01");     
         }
 
