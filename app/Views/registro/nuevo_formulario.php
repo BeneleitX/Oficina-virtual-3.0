@@ -1,3 +1,8 @@
+<!-- Third party dependency bundle -->
+<script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-third.min.js"></script>
+<!-- Library -->
+<script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-biometrics.min.js"></script>
+
 <style>
 
     .select-box {
@@ -136,7 +141,7 @@
     .f1-steps { overflow: xhidden; position: relative; margin-top: 15px; text-align:center }
     .f1-progress { position: absolute; top: 28px; left: 0; width: 100%; height: 5px; background: #ccc; }
     .f1-progress-line { position: absolute; top: 0; left: 0; height: 5px; background: var(--bs-teal); }
-    .f1-step { z-index:0; position: relative; float: left; width: 14.28%; padding: 0 5px; }
+    .f1-step { z-index:0; position: relative; float: left; width: 14.28%; padding: 0 20px; }
     .f1-step-icon {
         width: 50px; height: 50px; margin-top: 4px; background: #ccc;
         font-size: 22px; color: #fff; line-height: 55px;
@@ -156,7 +161,7 @@
     @media (max-width: 767px) {
         .f1-progress-line { height: 3px; }
         .f1-progress { position: absolute; top: 18px; left: 0; width: 100%; height: 3px; background: #ddd; }
-
+        .f1-step { padding: 0 5px; }
         .f1-step-icon {
             display: inline-block; width: 30px; height: 30px; margin-top: 4px; 
             font-size: 16px; color: #fff; line-height: 32px;
@@ -176,41 +181,42 @@
     }
 
     .zflared {
-    position: relative;
+        position: relative;
     }
+
     .zflared::after {
-    position: absolute;
-    content: "";
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: -1;
-    height: 100%;
-    width: 100%;
-    transform: scale(0.7) translateZ(0);
-    filter: blur(15px);
-    background: linear-gradient(to left, var(--bs-teal), var(--bs-blue), var(--bs-purple) );
-    background-size: 200% 200%;
-    -webkit-animation: animateGlow 3.25s linear infinite;
-            animation: animateGlow 3.25s linear infinite;
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        height: 100%;
+        width: 100%;
+        transform: scale(0.7) translateZ(0);
+        filter: blur(15px);
+        background: linear-gradient(to left, var(--bs-teal), var(--bs-blue), var(--bs-purple) );
+        background-size: 200% 200%;
+        -webkit-animation: animateGlow 3.25s linear infinite;
+                animation: animateGlow 3.25s linear infinite;
     }
 
     @-webkit-keyframes animateGlow {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 200% 50%;
-    }
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 200% 50%;
+        }
     }
 
     @keyframes animateGlow {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 200% 50%;
-    }
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 200% 50%;
+        }
     }
 
 </style>
@@ -243,13 +249,13 @@
                 ?>
                 
             </div>
-
-
-
         </div>
         
         <div class="col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-            <h4 class="text-center mb-5 mt-3" id="titulo_paso"></h4>
+            <h4 class="d-none text-center mb-5 mt-3" id="titulo_paso"></h4>
+
+            <input type="hidden" name="origen" value="">
+
             <div id="formulario">
                 
 
@@ -273,8 +279,7 @@
                 </div>
 
                 <div class="paso" step="1">    
-                    <label>Datos personales</label>
-                    <div id="datos_personales"></div>
+                    <div id="id_component"></div>
                 </div>
 
             </div> 
