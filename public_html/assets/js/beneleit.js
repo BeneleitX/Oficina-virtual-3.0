@@ -113,6 +113,72 @@ $(document).ready(function(){
 });
 
 
+function formato_fecha_yyyy_mm_dd( fecha ){
+    var array_fecha = fecha.split("/")
+    return array_fecha[2] + "-" + array_fecha[1] + "-" + array_fecha[0];
+}
+
+
+//Función para validar una CURP
+function curpValida(curp) {
+    var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
+        validado = curp.match(re);
+	
+    if (!validado){  //Coincide con el formato general?
+    	return false;
+    }
+
+    
+    //Validar que coincida el dígito verificador
+    function digitoVerificador(curp17) {
+        //Fuente https://consultas.curp.gob.mx/CurpSP/
+        var diccionario  = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
+            lngSuma      = 0.0,
+            lngDigito    = 0.0;
+        for(var i=0; i<17; i++)
+            lngSuma = lngSuma + diccionario.indexOf(curp17.charAt(i)) * (18 - i);
+        lngDigito = 10 - lngSuma % 10;
+        if (lngDigito == 10) return 0;
+        return lngDigito;
+    }
+  
+    if (validado[2] != digitoVerificador(validado[1])){ 
+    	return false;
+    }
+
+    return true; //Validado
+}
+
+function calcular_edad(fecha){
+    hoy = new Date()
+
+    var array_fecha = fecha.split("-")
+
+    var ano = parseInt(array_fecha[0]);
+    var mes = parseInt(array_fecha[1]);
+    var dia = parseInt(array_fecha[2]);
+
+    var edad=hoy.getUTCFullYear() - ano - 1; //-1 porque no se si ha cumplido años ya este año
+
+    if (hoy.getMonth() + 1 - mes < 0) //+ 1 porque los meses empiezan en 0
+       return edad
+    if (hoy.getMonth() + 1 - mes > 0)
+       return edad+1
+
+    if (hoy.getUTCDate() - dia >= 0)
+       return edad + 1
+
+    return edad
+}
+
+
+function valida_email(email) {
+    // Expresión regular para validar un correo electrónico
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(email);
+}
+
+
 const countries = [
     { name: "Afghanistan", code: "AF", phone: 93 },
     { name: "Aland Islands", code: "AX", phone: 358 },

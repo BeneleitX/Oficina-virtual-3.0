@@ -23,7 +23,7 @@ class Registro extends BaseController
                 "titulo" => "Ubicación",                
                 "icono"  => "fa-location-dot",
                 "inicio"  => true
-            ],
+            ],      
             [
                 "titulo" => "Datos personales",
                 "icono"  => "fa-user"
@@ -32,18 +32,19 @@ class Registro extends BaseController
                 "titulo" => "Contacto",
                 "icono"  => "fa-mobile-screen-button"
             ],
+         /*    
             [
                 "titulo" => "Identificación",
                 "icono"  => "fa-address-card"
-            ],
-            [
-                "titulo" => "Verificación",
-                "icono"  => "fa-fingerprint"
-            ],
+            ],   */          
             [
                 "titulo" => "Modelo de negocio",
                 "icono"  => "fa-diagram-project"                
             ],
+            [
+                "titulo" => "Verificación",
+                "icono"  => "fa-address-card"
+            ],    
             [
                 "titulo" => "Términos y condiciones",
                 "icono"  => "fa-gavel",
@@ -51,6 +52,36 @@ class Registro extends BaseController
             ]
             
         ];
+
+        $response = json_encode( "{}" );
+        /* $curl = curl_init();
+
+        $key = VARIABLES["nubarium"][ "valor" ];
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.sdk.nubarium.com/jwt/v1/generate",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+            CURLOPT_POSTFIELDS => "{\"expireAfter\": 3600}",
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl); */
+
+        $this->data[ "jwt" ] = json_decode( $response );
+        $this->data[ "tempID" ] = uniqid( time().rand( 100, 999 ) );
+        $this->data[ "bar_inicial" ] = 100 / count( $this->data[ "pasos" ] );
+
+     /*    $myfile = fopen("webdictionary.txt", "r") or die("Error: Unable to open file!");
+        echo fread($myfile, filesize("webdictionary.txt"));
+        fclose($myfile); */
+
+        $this->data[ "terminos" ] = file_get_contents( "tyc.txt" );
 
         echo template( "registro/nuevo_formulario", $this->data );
     }
@@ -62,7 +93,11 @@ class Registro extends BaseController
     {
         $data = $this->request->getPost();
 
-         if( $demo > 0 ){
+        if( !isset( $data[ "version" ] ) ){
+            $data[ "version" ] = 1;
+        }
+
+        if( $demo > 0 ){
             $abc  = str_split("ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
             $data = [
                 "nombre"        => random( "nombre" ),
@@ -79,7 +114,7 @@ class Registro extends BaseController
             $ms = explode( " ", $data[ "apellido1" ] );
             $data[ "correo" ] = $ms[ 0 ].rand(10,99999)."@gmail.com";
         }
-        else{
+        elseif( $data[ "version" ] != 2 ){
 
             $validation = service( "validation" );
 
@@ -108,7 +143,7 @@ class Registro extends BaseController
         // Creamos plantilla para crear la nueva entidad usuario
         $fecha  = date( "Y-m-d H:i:s" );
 
-        $fechanac = get_fechanac( $data[ "curp" ] );
+        $fechanac = $data[ "version" ] == 2 ? $data[ "fechanac" ] : get_fechanac( $data[ "curp" ] );
 
         $recibe = [
             "estatus_codigo" => "201-ACTIVO",
@@ -124,8 +159,8 @@ class Registro extends BaseController
                 "verificacion"   => [],
                 "verificaciones" => [],
                 "ubicacion"      => [
-                    "code"          => $data[ "pais" ],
-                    "origen"        => $data[ "origen" ]
+                    "code"          => null,
+                    "origen"        => $data[ "nacionalidad" ]
                 ],
                 "splash" => [
                     [
@@ -133,6 +168,7 @@ class Registro extends BaseController
                         "parametros" => []
                     ]
                 ],
+                "valida_curp"   => $data[ "valida_curp" ],
                 "domicilio"     => null,
                 "tarjeta"       => [
                     "numero"        => "",
@@ -167,8 +203,9 @@ class Registro extends BaseController
                 "checks" => null
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
-            "telefono"      => $data[ "celular" ],
-            "curp"          => $data[ "curp" ],
+            "genero"        => $data[ "sexo" ] == "H" ? "MASCULINO" : "FEMENINO",
+            "telefono"      => $data[ "celular" ] ?? null,
+            "curp"          => $data[ "nacionalidad" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
             "fechanac"      => $fechanac,
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
@@ -343,7 +380,7 @@ class Registro extends BaseController
         $respuesta    = [ "error" => null ];
         $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "id" ) );
 
-        if(!$patrocinador){
+        if( !$patrocinador ){
             $respuesta[ "error" ] = "No existe el patrocinador";
             return json_encode( $respuesta );
         }
@@ -356,6 +393,85 @@ class Registro extends BaseController
         $respuesta[ "nombre" ] = $patrocinador->nombre( 2, true );
         $respuesta[ "avatar" ] = $patrocinador->avatar( $this->request->getPost( "avatar_size" )  );
 
+        return json_encode( $respuesta );
+    }
+
+
+
+    public function valida_pat(){
+        $respuesta    = [ "error" => null ];
+        $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "patrocinador" ) );
+
+        if( !$patrocinador ){
+            $respuesta[ "error" ] = "No existe el patrocinador";
+            return json_encode( $respuesta );
+        }
+
+        if( substr( $patrocinador->estatus_codigo, 0, 3 ) < 200 ){
+            $respuesta[ "error" ] = "El socio no está activo";
+            return json_encode( $respuesta );
+        }
+
+        $respuesta[ "nombre" ] = $patrocinador->avatar( 32 )." ".$patrocinador->nombre( 2, 2 )." ".$patrocinador->bandera();
+
+        return json_encode( $respuesta );
+    }
+
+
+    public function valida_curp(){
+        $respuesta = [ "error" => null ];
+        $curp      = $this->request->getPost( "curp" );
+
+        if( $curp == "SIAA790501HCMLCL05" ){
+            $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"RAZR811012HVZMPB00","nombre":"RAMIRO ALONSO","apellidoPaterno":"RASCON","apellidoMaterno":"ZAPATA","sexo":"HOMBRE","fechaNacimiento":"11/10/1981","paisNacimiento":"MEXICO","estadoNacimiento":"VERACRUZ","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"VERACRUZ","tomo":"","claveMunicipioRegistro":"108","anioReg":"1983","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"MINATITLÁN"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
+        }
+        else{
+            
+            if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200" )->first() ){
+                $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
+                return json_encode( $respuesta );
+            }
+            else{ 
+                $curl = curl_init();
+                $key  = VARIABLES["nubarium"][ "valor" ];
+
+                curl_setopt_array(
+                    $curl, array(
+                        CURLOPT_URL => "https://curp.nubarium.com/renapo/v3/valida_curp",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS =>"{\"curp\": \"{$curp}\"}",
+                        CURLOPT_HTTPHEADER => array(
+                            'Content-Type: application/json'
+                        ),
+                    )
+                );
+
+                $respuesta[ "datos" ] = json_decode( curl_exec( $curl ) );
+    
+                curl_close($curl);
+            }
+        }
+
+        return json_encode( $respuesta );
+    }
+    
+
+    public function valida_correo(){
+        $respuesta = [ "error" => null ];
+        $correo      = $this->request->getPost( "correo" );
+
+        if( model( "UsuarioModel" )->where( "correo = '{$correo}' AND SUBSTRING(estatus_codigo, 1, 3) > 200" )->first() ){
+            $respuesta[ "error" ] = "El correo electrónico que proporcionaste ya está registrado.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
+            return json_encode( $respuesta );
+        }
+    
         return json_encode( $respuesta );
     }
 
@@ -374,4 +490,63 @@ class Registro extends BaseController
 
         return redirect()->to( "login" );
     }
+
+    public function camara( $modo, $tempID ){
+        $this->data[ "navbar" ] = false;
+        $this->data[ "modo" ]  = $modo;
+        $this->data[ "tempID" ]  = $tempID;
+
+        echo template( "registro/camara", $this->data );
+    }
+
+
+    public function camara_shot(){
+
+        $ok = false;
+        $data = json_decode(file_get_contents('php://input'), true);
+        extract($data);
+
+        list($type, $data) = explode(';',  $shot );
+        list( $enc, $data)      = explode(',', $data);
+        $datax = str_replace(' ', '+', $data);
+        $data = base64_decode($datax);
+
+        if( !file_exists( "temp" ) ){
+            mkdir( "temp" );
+        }
+
+        $archivo = "temp/{$tempID}_{$modo}.jpg";
+
+        if( file_put_contents( $archivo, $data) ){
+            $ok = true;
+        }
+
+        if( $modo == "frente" ){
+            $curl = curl_init();
+            $key  = VARIABLES["nubarium"][ "valor" ];
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://ocr.nubarium.com/ocr/v1/obtener_datos_id',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS =>"{ \"id\" : \"{$datax}\" }",
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+        }
+
+        echo json_encode( [ "ok" => $ok, "respuesta" => $response, "base64" => $datax ] );
+    }
 }
+

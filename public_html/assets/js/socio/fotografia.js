@@ -57,7 +57,7 @@ $(document).ready(function(){
                 success: function(data) {
                     window.location.href = base_url + "perfil";
                 }
-              });
+            });
         });
     });
 });    

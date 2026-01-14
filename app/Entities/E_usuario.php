@@ -564,7 +564,7 @@ class E_usuario extends Entity
      */
     public function nombre( $apellidos = 0, $mask = false, $text = false ): string
     {
-        $nombre = ( $text ? "" : "<strong>" ).(  $mask ? mask( $this->data->nombre ) : $this->data->nombre ).( $text ? "" : "</strong>" )." ".( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
+        $nombre = ( $text ? "" : "<strong class=\"fw-bold\">" ).(  $mask == true && $mask != 2 ? mask( $this->data->nombre ) : $this->data->nombre ).( $text ? "" : "</strong>" ).( $mask == 2 ? "" : " " ).( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
         
         return $nombre;
     }
@@ -1966,6 +1966,25 @@ class E_usuario extends Entity
             }
         }
     }
+
+
+/**
+ * Devuelve una bandera segun el pais de origen del usuario
+ * Si el pais de origen es un codigo de dos caracteres, devuelve una bandera
+ * con el icono de la bandera correspondiente. De lo contrario, devuelve
+ * una cadena vacia.
+ * @return string
+ */
+    public function bandera(){
+        $code =  $this->data->ubicacion->origen ?? "";
+
+        if( strlen( $code ) == 2 ){
+            return "<span class=\"iconify rounded-1\" data-width=\"24\" data-icon=\"flag:".strtolower( $this->data->ubicacion->origen )."-4x3\"></span>";
+        }
+
+        return "";
+    }
+
 
 
     public function get_verificacion( $modelo )

@@ -23,8 +23,14 @@ $routes->get( "confirma_retiro/(:any)",             "Sesion::confirma_retiro/$1"
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
 $routes->get( "registro",                           "Registro::nuevo_formulario" );
+$routes->get( "camara/(:any)/(:any)",               "Registro::camara/$1/$2" );
 $routes->post( "procesa_registro",                  "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",               "Registro::valida_patrocinador" );
+$routes->post( "valida_curp",                       "Registro::valida_curp" );
+$routes->post( "valida_correo",                     "Registro::valida_correo" ); 
+$routes->post( "valida_pat",                        "Registro::valida_pat" ); 
+$routes->post( "camara_shot",                       "Registro::camara_shot" ); 
+
 
 $routes->get( "GetnetRedirect",                     "Gateway::GetnetRedirect" );
 $routes->get( "ConektaRedirect",                    "Gateway::ConektaRedirect" );
