@@ -281,9 +281,11 @@
                 <!-- pais y curp -->
                 <div class="paso" step="0">    
                     <h5>¡Bienvenido!</h5>
-                    <p>Es importante asegurate en cada paso que la información que proporciones sea correcta, y realizar el registro desde un dispositivo con cámara frontal, ya que más adelante necesitaremos validar tu identidad.</p><p class="fw-bold mb-1">Para comenzar el proceso, selecciona tu país:</p>
+                    <p>Es importante asegurate en cada paso que la información que proporciones sea correcta, y realizar el registro desde un dispositivo con cámara frontal, ya que más adelante necesitaremos validar tu identidad.</p>
                     <div class="row">
-                        <div class="col-md-6 col-lg-4">
+                        <div class="col-md-6">
+                            <p class="fw-bold mb-1">Para comenzar el proceso, selecciona tu país:</p>
+
                             <div class="campo_nacionalidad rounded border p-0 w-100" style="border: 2px solid var(--bs-border-color);" >
                                 <div class="input-group mb-0">
                                     <div class="selected-option" tipo="nacionalidad"><div></div></div>
@@ -299,12 +301,9 @@
                             </div>
                             <p class="small text-red m-0" id="nacionalidad_error"></p>
                         </div>
-                    </div>
 
-                    <div id="curp_group" class="mt-4 d-none">
-                        <div class="row">
-
-                            <div class="col-md-6 col-lg-6">
+                        <div class="col-md-6 col-lg-6">
+                            <div id="curp_group" class="d-none">
                                 <p class="fw-bold mb-1">Por favor, proporciona tu CURP:</p>
                                
                                 <div class="input-group">
@@ -313,24 +312,20 @@
                                 </div>
                                                                 
                                 <p class="small text-red m-0" id="curp_error"></p>
+                                <div class="mt-3" id="datos_curp">
+                                    <div  id="curp_card" style="display:none">
+                                        <span class="badge fs-5 bg-gray-200 py-2 px-3 text-gray-500"></span>
+                                    </div>
+                                </div>                                      
                             </div>
 
-                            <div class="col-md-6 col-lg-6" id="datos_curp">&nbsp;<br>
-                                <div class="py-2" id="curp_card" style="display:none">
-                                    <span class="badge fs-5 bg-gray-200 py-2 px-3 text-gray-500"></span>
-                                </div>
-                            </div>                            
+                            <div id="dni_group" class="d-none">
+                                <p class="fw-bold mb-1">Número de tu identificación oficial (DNI):</p>
+                                    <input name="dni" id="dni" type="text" class="form-control" maxlength="18" placeholder="" />
+                                    <p class="small text-red m-0" id="dni_error"></p>
+                            </div>  
                         </div>
-                    </div>
-                    <div id="dni_group" class="mt-4 d-none">
-                        <p class="fw-bold mb-1">Por favor, proporciona el número de tu identificación oficial (DNI) exactamente como aparece en tu identificación oficial:</p>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-4">
-                                <input name="dni" id="dni" type="text" class="form-control" maxlength="18" placeholder="" />
-                                <p class="small text-red m-0" id="dni_error"></p>
-                            </div>
-                        </div>
-                    </div>                            
+                    </div>                          
 
                 </div>
 

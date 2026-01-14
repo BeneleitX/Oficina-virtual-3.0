@@ -19,6 +19,13 @@ function update_paso( paso ) {
             }
 
             break;
+        case 4:
+            // datos personales
+            if( request.nacionalidad != 'MX' ) {
+                $( '#valida_ine' ).hide();
+            }
+
+            break;            
     }
 }
 
@@ -142,10 +149,17 @@ function valida_paso( paso ) {
             break;
 
         case 4:
-            if( request.ine_verificado == 0 ){
-                error( 'credencial', 'Identificación oficial no verificada.' );
+            if( request.imagenes.frente == null || request.imagenes.reverso == null ){
+                error( 'credencial', 'No se han cargado las dos imagenes' );
                 avance = false;
             }
+            else if( request.nacionalidad == 'MX' ){
+                if( request.ine_verificado == 0 ){
+                    error( 'credencial', 'Identificación oficial no verificada.' );
+                    avance = false;
+                }
+            }
+
             break;
         case 5:
             if( request.vida_verificado == 0 && request.curp != 'SIAA790501HCMLCL05' ){
