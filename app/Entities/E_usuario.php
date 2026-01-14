@@ -564,7 +564,12 @@ class E_usuario extends Entity
      */
     public function nombre( $apellidos = 0, $mask = false, $text = false ): string
     {
-        $nombre = ( $text ? "" : "<strong class=\"fw-bold\">" ).(  $mask == true && $mask != 2 ? mask( $this->data->nombre ) : $this->data->nombre ).( $text ? "" : "</strong>" ).( $mask == 2 ? "" : " " ).( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
+        $nombre = 
+             ( $text ? "" : "<strong class='fw-bold'>" )
+            .( $mask == true && $mask != 2 ? mask( $this->data->nombre ) : $this->data->nombre )
+            .( $text ? "" : "</strong>" )
+            .( $mask == 2 ? "" : " " )
+            .( $mask ? mask( implode( " ", $this->data->apellidos ) ) : implode( " ", $this->data->apellidos ) );
         
         return $nombre;
     }

@@ -144,6 +144,10 @@ class Registro extends BaseController
 
         $fechanac = $data[ "version" ] == 2 ? $data[ "fechanac" ] : get_fechanac( $data[ "curp" ] );
 
+        if( !isset( $data[ "origen" ] ) ){
+            $data[ "origen" ] = $data[ "nacionalidad" ] ?? null;
+        }
+
         $recibe = [
             "estatus_codigo" => "201-ACTIVO",
             "rol_codigos"    => [ "10-SOCIO" ],
