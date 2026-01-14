@@ -159,7 +159,7 @@ class Registro extends BaseController
                 "verificaciones" => [],
                 "ubicacion"      => [
                     "code"          => null,
-                    "origen"        => $data[ "nacionalidad" ]
+                    "origen"        => $data[ "origen" ]
                 ],
                 "splash" => [
                     [
@@ -167,7 +167,7 @@ class Registro extends BaseController
                         "parametros" => []
                     ]
                 ],
-                "valida_curp"   => $data[ "valida_curp" ],
+                "valida_curp"   => $data[ "valida_curp" ] ?? null,
                 "domicilio"     => null,
                 "tarjeta"       => [
                     "numero"        => "",
@@ -202,9 +202,9 @@ class Registro extends BaseController
                 "checks" => null
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
-            "genero"        => $data[ "sexo" ] == "H" ? "MASCULINO" : "FEMENINO",
+            "genero"        => isset($data[ "sexo" ] ) ? ( $data[ "sexo" ] == "H" ? "MASCULINO" : "FEMENINO" ) : null,
             "telefono"      => $data[ "celular" ] ?? null,
-            "curp"          => $data[ "nacionalidad" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
+            "curp"          => $data[ "origen" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
             "fechanac"      => $fechanac,
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
