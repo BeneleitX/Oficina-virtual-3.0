@@ -544,6 +544,8 @@ class Registro extends BaseController
             $response = curl_exec($curl);
 
             curl_close($curl);
+
+            file_put_contents( "respuesta.txt", $response );
         }
 
         echo json_encode( [ "ok" => $ok, "respuesta" => $response, "base64" => $datax ] );
