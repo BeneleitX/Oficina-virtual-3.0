@@ -31,20 +31,19 @@ class Registro extends BaseController
             [
                 "titulo" => "Contacto",
                 "icono"  => "fa-mobile-screen-button"
-            ],
-         /*    
+            ],        
             [
-                "titulo" => "Identificación",
-                "icono"  => "fa-address-card"
-            ],   */          
-            [
-                "titulo" => "Modelo de negocio",
+                "titulo" => "Patrocinador",
                 "icono"  => "fa-diagram-project"                
             ],
             [
-                "titulo" => "Verificación",
+                "titulo" => "Identificación oficial",
                 "icono"  => "fa-address-card"
             ],    
+[
+                "titulo" => "Prueba de vida",
+                "icono"  => "fa-camera"
+            ],             
             [
                 "titulo" => "Términos y condiciones",
                 "icono"  => "fa-gavel",
@@ -500,6 +499,13 @@ class Registro extends BaseController
         echo template( "registro/camara", $this->data );
     }
 
+    public function upload( $modo, $tempID ){
+        $this->data[ "navbar" ] = false;
+        $this->data[ "modo" ]  = $modo;
+        $this->data[ "tempID" ]  = $tempID;
+
+        echo template( "registro/upload", $this->data );
+    }
 
     public function camara_shot(){
 
@@ -515,7 +521,6 @@ class Registro extends BaseController
         if( !file_exists( "temp" ) ){
             mkdir( "temp" );
         }
-
         $archivo = "temp/{$tempID}_{$modo}.jpg";
 
         if( file_put_contents( $archivo, $data) ){
@@ -548,6 +553,59 @@ class Registro extends BaseController
         }
 
         echo json_encode( [ "ok" => $ok, "respuesta" => $response, "base64" => $datax ] );
+    }
+
+    public function valida_ine(){
+
+        extract( $this->request->getPost() );
+
+
+        $curl = curl_init();
+        $key  = VARIABLES["nubarium"][ "valor" ];
+
+        $frente  = base64_encode( file_get_contents( "temp/{$tempID}_frente.jpg" ) );
+        $reverso = base64_encode( file_get_contents( "temp/{$tempID}_reverso.jpg" ) );
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://ocr.nubarium.com/ocr/v1/obtener_datos_id',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>"{ \"id\" : \"{$frente}\", \"idReverso\" : \"{$reverso}\" }",
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = json_decode( curl_exec($curl) );
+
+        curl_close($curl);
+
+        echo json_encode( $response );
+    }
+
+    public function guarda_ine(){
+        $socio = $this->request->getPost( "tempID" );
+        $data  = $this->request->getPost( "image" );
+        $modo  = $this->request->getPost( "modo" );
+
+        if( !file_exists( "temp" ) ){
+            mkdir( "temp" );
+        }
+
+        $path = "temp/{$socio}_{$modo}.jpg";
+
+        list($type, $data) = explode(';', $data);
+        list(, $data)      = explode(',', $data);
+        $data = base64_decode($data);
+
+        file_put_contents($path, $data);
+        
     }
 }
 

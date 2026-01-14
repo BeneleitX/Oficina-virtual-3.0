@@ -3,6 +3,8 @@
 <!-- Library -->
 <!-- <script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-biometrics.min.js"></script> -->
 
+<script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script>
+
 <style>
 
     .select-box {
@@ -394,7 +396,7 @@
                     <p class="m-0"> Tu cuenta estará vinculada a un patrocinador. Por favor verifica que el número de socio Beneleit que te ha proporcionado tu patrocinador sea el correcto. recuerda que una vez creada tu cuenta, no podrás modificarlo.</p>
                     <div class="row mt-3">
                      
-                        <div class="col-md-6 col-lg-6">
+                        <div class="col-md-6">
                             <p class="fw-bold mb-1">No. de patrocinador</p>
                             
                             <div class="input-group">
@@ -405,9 +407,9 @@
                             <p class="small text-red m-0" id="patrocinador_error"></p>
                         </div>
 
-                        <div class="col-md-6 col-lg-6" id="datos_patrocinador">&nbsp;<br>
+                        <div class="col-md-6" id="datos_patrocinador">&nbsp;<br>
                             <div class="py-2" id="pat_card" style="display:none">
-                                <div class="col-9 fs-6" id="pat_nombre"></div>
+                                <div class="w-100 fs-6" id="pat_nombre"></div>
                             </div>
                         </div>   
 
@@ -418,40 +420,50 @@
                 <div class="paso" step="4">    
                     <p>Utilizando la cámara de tu dispositivo, toma fotografías de tu documento de identificación oficial con fotografía. Asegurate de que sean claras y legibles.</p>
 
-                    <div class="row mt-3">
+                    <div class="row my-3">
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
                                 <img id="shot_frente" src="<?php echo base_url(); ?>assets/img/frente.png" class="grayscale rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
-                                    <button onclick="shoot( 'frente' )" class="center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Tomar foto</button>
+                                    <button onclick="shoot( 'frente' )" class="btnc center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Foto frente</button>
                                 </div>
                             </div>
-                            <p class="text-center mt-1 mb-1 fw-bold">Frente</p>
-                            <p class="small text-center m-0" id="frente_error"></p>
+                            
                         </div>
 
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
                                 <img id="shot_reverso" src="<?php echo base_url(); ?>assets/img/reverso.png" class="grayscale rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
-                                    <button onclick="shoot( 'reverso' )" class="center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Tomar foto</button>
+                                    <button onclick="shoot( 'reverso' )" class="btnc center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Foto reverso</button>
                                 </div>
                             </div>
-                            <p class="text-center mt-1 mb-1 fw-bold">Reverso</p>
-                            <p class="small text-center m-0" id="reverso_error"></p>
                         </div>
                     </div>
                     
+                    <p class="mb-1">
+                        <button id="valida_ine" class="btn btn-outline-warning"><i class="fa fa-magnifying-glass"></i> Verificar documento</button>
+                        <input class="d-none" name="credencial">
+                    </p>
+                    <p class="small text-red m-0" id="credencial_error"></p>
+                        
+                </div>
+
+                <!-- Validación de persona -->
+                <div class="paso w-100" step="5">    
+                    <tn-prueba-vida class="mb-3" id="vida"></tn-prueba-vida>
+                    <button onclick="document.getElementById('vida').restart()" id="valida_vida" class="btn btn-outline-warning" disabled style="display:none"><i class="fa fa-magnifying-glass"></i> Realizar prueba</button>
+                    <p class="small text-red m-0 mt-1" id="vida_error"></p>
                 </div>
 
                 <!-- Terminos y condiciones -->
-                <div class="paso w-100" step="5">    
+                <div class="paso w-100" step="6">    
                     <p class="fw-bold mb-1">Por último, lee y acepta nuestros Términos y Condiciones para finalizar el proceso y generar tu cuenta de usuario:</p>
                     <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea>
                 </div>
 
                 <!-- INE -->
-                <div class="paso" step="9">    
+                <div class="xpaso d-none" step="9">    
                     <div id="id_component"></div>
 
                     <div class="row">
@@ -463,14 +475,16 @@
 
             </div> 
         </div> 
+    </div>
+
     <div class="mt-4 mb-5 text-center">
         <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
         <button type="button" class="btn btn-secondary btn-next" ajax="false">Siguiente <i class="fa fa-arrow-right"></i></button>
         <button type="button" class="btn btn-primary btn-end">Aceptar y finalizar <i class="fa fa-check"></i></button>
     </div>            
     
+    
 </div>
-
 
 <div class="modal" tabindex="-1" id="camara_ine">
 	<div class="modal-dialog modal-fullscreen">

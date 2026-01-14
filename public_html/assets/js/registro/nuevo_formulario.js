@@ -38,7 +38,7 @@ function error( campo, mensaje ){
             $( 'input[name=' + campo + ']' ).addClass( 'is-invalid' );
     }
 
-    $( '#' + campo + '_error' ).html( mensaje );
+    $( '#' + campo + '_error' ).html( '<i class="fa fa-circle-xmark text-red"></i> ' + mensaje );
 }
 
 
@@ -142,7 +142,17 @@ function valida_paso( paso ) {
             break;
 
         case 4:
-
+            if( request.ine_verificado == 0 ){
+                error( 'credencial', 'Identificación oficial no verificada.' );
+                avance = false;
+            }
+            break;
+        case 5:
+            if( request.vida_verificado == 0 && request.curp != 'SIAA790501HCMLCL05' ){
+                error( 'vida', 'Prueba de vida no completada' );
+                avance = false;
+            }
+            break;            
         default:
             avance = false;
     }
@@ -242,9 +252,15 @@ var paso_activo = 0
         "dni"          : null,
         "patrocinador" : null,
         "valida_curp"  : null,
+        "valida_vida"  : null,
         "valida_ine"   : null,
+        "imagenes": {
+            "frente" : null,
+            "reverso"  : null
+        },
         "pat_verificado"   : 0,
         "curp_verificado"  : 0,
+        "vida_verificado"  : 0,
         "ine_verificado"   : 0,
         "correo_verificado": 0
     };
@@ -252,8 +268,11 @@ var paso_activo = 0
 
 function shoot( modo ) {
     $( '#camara_ine' ).modal( 'show' );
-    $( '#camara' ).attr( 'src', base_url + 'camara/' + modo + '/' + tempID );
+    // $( '#camara' ).attr( 'src', base_url + 'camara/' + modo + '/' + tempID );
+    $( '#camara' ).attr( 'src', base_url + 'upload/' + modo + '/' + tempID );
 }
+
+
 
 window.closeModal = function( modo = null, respuesta = null ){
     $( '#camara' ).attr( 'src', '' );
@@ -267,6 +286,79 @@ window.closeModal = function( modo = null, respuesta = null ){
         valida_foto( tempID, modo, respuesta );     
     }   
 };
+
+window.closeModal_img = function( modo = null ){
+    $( '#camara' ).attr( 'src', '' );
+    $( '#camara_ine' ).modal('hide');
+
+    var url = base_url + 'temp/' + tempID + '_' + modo + '.jpg?' + new Date().getTime();
+    $( '#shot_' + modo ).removeClass( 'grayscale' ).attr( 'src', url );
+
+    $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
+
+    $( '[name=credencial]' ).parent().next( 'p.small' ).text( '' );
+
+    request.ine_verificado   = 0;
+    request.imagenes[ modo ] = true;
+};
+
+
+function valida_ine(){
+        $( '[name=credencial]' ).parent().next( 'p.small' ).text( '' );
+    
+        $.ajax({
+            url: base_url + "camara_shot",
+            data: JSON.stringify({
+                [csrf_token] : csrf_hash, 
+                modo   : modo,
+                tempID : tempID,
+                shot   : imageContent
+            }),
+            type: "POST",
+            // contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            contentType: "application/json; charset=UTF-8",
+            async: true,
+            success: function (output) {
+                window.parent.closeModal( modo, output.respuesta );
+              
+                // {"calle":"C XALLIPAN 250","ciudad":"VILLA DE ALVAREZ,COL.","claveElector":"SLACAL79050106H000","codigoBarras":"81753183","codigoValidacion":"gd1768378434.772081","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":"SIAA790501HCMLCL05","edad":"32","emision":"2011","estado":"06","folio":"0000100454215","localidad":"0001","municipio":"005","nombres":"ALEJANDRO","ocr":"0139051133888","primerApellido":"SILVA","registro":"1997 02","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"C","tipo":"IFE","vigencia":"2021"}
+
+                
+                // {"calle":"CXALLIPAN 250","ciudad":"VILLA DE ALVAREZ COL","claveElector":"SLACAL79050106H000","codigoValidacion":"gd1768361538.3741586","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":"SAAT0501HCMLCLOS","emision":"2023","nombres":"ALEJANDRO","primerApellido":"SILVA","registro":"1997 04","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"G","tipo":"INE","vigencia":"2033"}
+
+                // {"codigoValidacion":"gd1768361280.1580637","estatus":"ERROR","mensaje":"No se identifico el documento"}
+            }
+        });
+
+
+    var validado = false;
+
+    if( respuesta && respuesta.curp !== undefined ){
+        var puntos = 0;
+
+        if( respuesta.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
+        if( respuesta.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
+        if( respuesta.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
+        if( respuesta.nombre == request.nombre ) puntos++;
+        if( respuesta.primerApellido == request.apellido1 ) puntos++;
+        if( respuesta.segundoApellido == request.apellido2 ) puntos++;
+        if( respuesta.sexo == request.sexo ) puntos++;
+
+        if( puntos > 3 ){
+            request.valida_ine = respuesta;
+            request.ine_verificado = 1;
+
+            validado = true;
+        }
+    }
+
+    if( validado ){
+        $( '#' + modo + '_error' ).addClass( 'text-teal' ).removeClass( 'text-red' ).html( 'ok' );
+    }
+    else{
+        $( '#' + modo + '_error' ).addClass( 'text-red' ).removeClass( 'text-teal' ).html( 'error' );
+    }
+}
 
 
 function valida_foto( tempID, modo, respuesta ){
@@ -316,7 +408,6 @@ $(document).ready(function(){
     $('.btn-end').hide();
     $('.btn-previous').hide();
     
-    paso_activo = 4;
     update_paso( paso_activo );
 
     // PATROCINADOR
@@ -500,7 +591,74 @@ $(document).ready(function(){
         }
     } );
 
+    // CREDENCIAL INE
 
+    $( '#valida_ine' ).on( 'click', function( e ){
+
+        // Validar curp antes de ajax
+        if( request.imagenes.frente == null || request.imagenes.reverso == null ){
+            error( 'credencial', 'Debes cargar las dos imagenes' );
+        }
+
+        // validar curp en ajax (existencia y renapo)
+        else{
+            if( request.ine_verificado == 0 ){
+
+                $( '.center-btn.btn-warning' ).prop( 'disabled', true );
+                $( '#valida_ine' ).prop( 'disabled', true ).html( '<i class="fa fa-spin fa-spinner"></i> Verificando...' );
+
+                $.ajax({
+                    url: base_url + "valida_ine", 
+                    type: "POST",
+                    dataType: "json",
+                    async: true,
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: { [csrf_token] : csrf_hash, tempID : tempID },
+
+                    success: function( result ){
+                        
+                        
+                        if( result.estatus !== undefined && result.estatus == 'ERROR' ){
+                            error( 'credencial', 'El documento no es legible' );
+
+                            $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
+                        }
+                        else{
+                            var puntos = 0;
+
+                            console.log(result, request);
+
+                            if( result.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
+                            if( result.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
+                            if( result.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
+                            if( result.nombre == request.nombre ) puntos++;
+                            if( result.primerApellido == request.apellido1 ) puntos++;
+                            if( result.segundoApellido == request.apellido2 ) puntos++;
+                            if( result.sexo == request.sexo ) puntos++;
+
+                            if( puntos > 3 ){
+                                $( '.center-btn.btn-warning' ).remove();
+                                
+                                request.valida_ine = result;
+                                request.ine_verificado = 1;
+
+                                $( '#valida_ine' ).prop( 'disabled', true ).html( '<i class="fa fa-check"></i> Verificado' ).removeClass( 'btn-outline-warning' ).addClass( 'btn-success' );
+
+                                $( 'input[name=credencial]' ).focus();
+                            }
+                            else{
+                                error( 'credencial', 'Los datos no coinciden' );
+
+                                $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    });
+    
+    
     $('.btn-next').on('click', function() {
 
     	if( valida_paso( paso_activo ) ) {
@@ -556,6 +714,9 @@ $(document).ready(function(){
 
      $( '.btn-end' ).on( 'click', function( e ){
         e.preventDefault();
+
+        $( this ).prop( 'disabled', true ).html( '<i class="fa fa-spinner"></i> Creando cuenta de socio...' );
+
         var newForm = $('<form>', {
             'method': 'post',
             'action': target_post
@@ -577,6 +738,23 @@ $(document).ready(function(){
         $(document.body).append( newForm );
         newForm.submit();        
      })
+
+     // prueba vida
+
+    const pruebaVida = document.getElementById('vida');
+    const result = document.getElementById('result');
+
+    pruebaVida.addEventListener('liveness-passed', (e) => {
+        $( '#valida_vida' ).prop( 'disabled', true ).addClass( 'btn-success' ).removeClass( 'btn-outline-warning' ).html( '<i class="fa fa-check"></i> Prueba exitosa' );
+        
+        request.vida_verificado = 1;
+        request.valida_vida = e.detail;
+    });
+
+    pruebaVida.addEventListener('liveness-failed', (e) => {
+      error( 'vida', 'Prueba de vida no completada' );
+        $( '#valida_vida' ).prop( 'disabled', false ).removeClass( 'btn-success' ).addClass( 'btn-outline-warning' ).html( '<i class="fa fa-magnifying-glass"></i> Repetir prueba' ).show();
+    });   
 });
 
 
