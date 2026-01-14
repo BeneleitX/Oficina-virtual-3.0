@@ -242,8 +242,10 @@ var paso_activo = 0
         "dni"          : null,
         "patrocinador" : null,
         "valida_curp"  : null,
-        "pat_verificado": 0,
-        "curp_verificado": 0,
+        "valida_ine"   : null,
+        "pat_verificado"   : 0,
+        "curp_verificado"  : 0,
+        "ine_verificado"   : 0,
         "correo_verificado": 0
     };
 
@@ -253,12 +255,51 @@ function shoot( modo ) {
     $( '#camara' ).attr( 'src', base_url + 'camara/' + modo + '/' + tempID );
 }
 
-window.closeModal = function( modo ){
+window.closeModal = function( modo = null, respuesta = null ){
     $( '#camara' ).attr( 'src', '' );
     $('#camara_ine').modal('hide');
 
     $( '#shot_' + modo ).removeClass( 'grayscale' ).attr( 'src', base_url + 'temp/' + tempID + '_' + modo + '.jpg?' + new Date().getTime() );
+
+    console.log( modo, respuesta );
+
+    if( modo ){ 
+        valida_foto( tempID, modo, respuesta );     
+    }   
 };
+
+
+function valida_foto( tempID, modo, respuesta ){
+
+    var validado = false;
+
+    if( respuesta && respuesta.curp !== undefined ){
+        var puntos = 0;
+
+        if( respuesta.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
+        if( respuesta.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
+        if( respuesta.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
+        if( respuesta.nombre == request.nombre ) puntos++;
+        if( respuesta.primerApellido == request.apellido1 ) puntos++;
+        if( respuesta.segundoApellido == request.apellido2 ) puntos++;
+        if( respuesta.sexo == request.sexo ) puntos++;
+
+        if( puntos > 3 ){
+            request.valida_ine = respuesta;
+            request.ine_verificado = 1;
+
+            validado = true;
+        }
+    }
+
+    if( validado ){
+        $( '#' + modo + '_error' ).addClass( 'text-teal' ).removeClass( 'text-red' ).html( 'ok' );
+    }
+    else{
+        $( '#' + modo + '_error' ).addClass( 'text-red' ).removeClass( 'text-teal' ).html( 'error' );
+    }
+}
+
 
 $(document).ready(function(){
     
@@ -319,7 +360,6 @@ $(document).ready(function(){
                         request.pat_verificado = 1; 
 
                         $( '#valida_pat' ).prop( 'disabled', true ).html( '<i class="fa fa-check"></i> Verificado' ).removeClass( 'btn-outline-warning' ).addClass( 'btn-success' );
-                        $( '#pat_card > span').html( result.datos.codigoValidacion );
                         $( '#pat_card').show();
 
                         $( 'input[name=patrocinador]' ).focus();                        

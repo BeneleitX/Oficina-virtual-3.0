@@ -426,7 +426,8 @@
                                     <button onclick="shoot( 'frente' )" class="center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Tomar foto</button>
                                 </div>
                             </div>
-                            <p class="text-center fw-bold">Frente</p>
+                            <p class="text-center mt-1 mb-1 fw-bold">Frente</p>
+                            <p class="small text-center m-0" id="frente_error"></p>
                         </div>
 
                         <div class="col-md-6">
@@ -436,7 +437,8 @@
                                     <button onclick="shoot( 'reverso' )" class="center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Tomar foto</button>
                                 </div>
                             </div>
-                            <p class="text-center fw-bold">Reverso</p>
+                            <p class="text-center mt-1 mb-1 fw-bold">Reverso</p>
+                            <p class="small text-center m-0" id="reverso_error"></p>
                         </div>
                     </div>
                     

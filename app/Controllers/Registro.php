@@ -495,6 +495,7 @@ class Registro extends BaseController
         $this->data[ "navbar" ] = false;
         $this->data[ "modo" ]  = $modo;
         $this->data[ "tempID" ]  = $tempID;
+        $this->data[ "header_x" ] = true;
 
         echo template( "registro/camara", $this->data );
     }
@@ -541,11 +542,9 @@ class Registro extends BaseController
                 ),
             ));
 
-            $response = curl_exec($curl);
+            $response = json_decode( curl_exec($curl) );
 
             curl_close($curl);
-
-            file_put_contents( "respuesta.txt", $response );
         }
 
         echo json_encode( [ "ok" => $ok, "respuesta" => $response, "base64" => $datax ] );

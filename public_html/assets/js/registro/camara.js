@@ -148,13 +148,24 @@
             contentType: "application/json; charset=UTF-8",
             async: true,
             success: function (output) {
-                window.parent.closeModal( modo );
+                window.parent.closeModal( modo, output.respuesta );
+              
+                // {"calle":"CXALLIPAN 250","ciudad":"VILLA DE ALVAREZ COL","claveElector":"SLACAL79050106H000","codigoValidacion":"gd1768361538.3741586","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":"SAAT0501HCMLCLOS","emision":"2023","nombres":"ALEJANDRO","primerApellido":"SILVA","registro":"1997 04","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"G","tipo":"INE","vigencia":"2033"}
+
+                // {"codigoValidacion":"gd1768361280.1580637","estatus":"ERROR","mensaje":"No se identifico el documento"}
             }
         });
     }
 
-
+    function error_shot(){
+        alert( 'credencial no legible' );
+    }
     
 $(document).ready(function(){
+    $( '#cam_frame' ).width(  document.documentElement.clientWidth );
+    $( '#cam_frame' ).height(  document.documentElement.clientHeight );
+    $( '#cameraDisplay' ).width(  document.documentElement.clientWidth );
+    $( '#cameraDisplay' ).height(  document.documentElement.clientHeight );
+
     getCameraDevices();
 });
