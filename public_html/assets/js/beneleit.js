@@ -158,7 +158,7 @@ function calcular_edad(fecha){
     var mes = parseInt(array_fecha[1]);
     var dia = parseInt(array_fecha[2]);
 
-    var edad=hoy.getUTCFullYear() - ano - 1; //-1 porque no se si ha cumplido años ya este año
+    var edad = hoy.getUTCFullYear() - ano - 1; //-1 porque no se si ha cumplido años ya este año
 
     if (hoy.getMonth() + 1 - mes < 0) //+ 1 porque los meses empiezan en 0
        return edad

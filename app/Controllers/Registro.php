@@ -40,7 +40,7 @@ class Registro extends BaseController
                 "titulo" => "Identificación oficial",
                 "icono"  => "fa-address-card"
             ],    
-[
+            [
                 "titulo" => "Prueba de vida",
                 "icono"  => "fa-camera"
             ],             
@@ -172,6 +172,8 @@ class Registro extends BaseController
                     ]
                 ],
                 "valida_curp"   => $data[ "valida_curp" ] ?? null,
+                "valida_vida"   => $data[ "valida_vida" ] ?? null,
+                "valida_ine"    => $data[ "valida_ine" ]  ?? null,
                 "domicilio"     => null,
                 "tarjeta"       => [
                     "numero"        => "",
@@ -329,6 +331,15 @@ class Registro extends BaseController
             "password" => $recibe[ "password" ]
         ] );
 
+        $path = "data/{$id}/";
+        if(!is_dir($path)) mkdir($path, 0755, true);
+
+        copy( "temp/{$data[ "tempID" ]}_frente.jpg",  $path."frente.jpg" );
+        copy( "temp/{$data[ "tempID" ]}_reverso.jpg", $path."reverso.jpg" );
+
+        unlink( "temp/{$data[ "tempID" ]}_frente.jpg" );
+        unlink( "temp/{$data[ "tempID" ]}_reverso.jpg" );
+
         // ENVIAR CORREO
 
         $imagenes = [
@@ -367,7 +378,6 @@ class Registro extends BaseController
 
         $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
         
-
         if( $demo > 0 ){
             return redirect()->to( "red/{$modelo}" );
         }
@@ -426,10 +436,13 @@ class Registro extends BaseController
         $curp      = $this->request->getPost( "curp" );
 
         if( $curp == "SIAA790501HCMLCL05" ){
-            $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"RAZR811012HVZMPB00","nombre":"RAMIRO ALONSO","apellidoPaterno":"RASCON","apellidoMaterno":"ZAPATA","sexo":"HOMBRE","fechaNacimiento":"11/10/1981","paisNacimiento":"MEXICO","estadoNacimiento":"VERACRUZ","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"VERACRUZ","tomo":"","claveMunicipioRegistro":"108","anioReg":"1983","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"MINATITLÁN"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
+            $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"SIAA790501HCMLCL05","nombre":"ALEJANDRO","apellidoPaterno":"SILVA","apellidoMaterno":"ACEVES","sexo":"HOMBRE","fechaNacimiento":"01/05/1979","paisNacimiento":"MEXICO","estadoNacimiento":"COLIMA","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"COLIMA","tomo":"","claveMunicipioRegistro":"108","anioReg":"1979","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"COLIMA"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
         }
         else{
-            
+            $fechacurp = "790501";
+
+            $fechanac = substr( $curp, 6, 4 )."-".substr( $curp, 4, 2 )."-".substr( $curp, 2, 2 );
+
             if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200" )->first() ){
                 $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
                 return json_encode( $respuesta );
@@ -470,8 +483,12 @@ class Registro extends BaseController
         $respuesta = [ "error" => null ];
         $correo      = $this->request->getPost( "correo" );
 
-        if( model( "UsuarioModel" )->where( "correo = '{$correo}' AND SUBSTRING(estatus_codigo, 1, 3) > 200" )->first() ){
+        $db = db_connect();
+        $query = "select count(*) as total from t_usuarios where correo = '{$correo}' AND estatus_codigo = '201-ACTIVO' limit 1";
+
+        if( $db->query( $query )->getRow()->total > 0 ){
             $respuesta[ "error" ] = "El correo electrónico que proporcionaste ya está registrado.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
+
             return json_encode( $respuesta );
         }
     

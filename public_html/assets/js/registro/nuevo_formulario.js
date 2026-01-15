@@ -1,20 +1,25 @@
 function update_paso( paso ) {
 
+    current_active_step = $( '.active.flared' );
+    if( !current_active_step.length ){
+        $( '.f1-step:first').addClass( 'active flared' );
+    }
+
     bar_progress();      
 
     $( '.paso' ).hide();
     $( ' #titulo_paso' ).text( pasos[paso].titulo );
-    $( '.paso[ step="' + paso + '"]' ).show();
+    $( '.paso[ step="' + paso + '"], #botonera_interactiva' ).show();
 
     switch( paso ) {
         case 1:
             // datos personales
             if( request.nacionalidad == 'MX' ) {
-                $( '#instrucciones_datos' ).text( 'Tu CURP ha sido validada exitosamente con la autoridad. Tus datos personales se autocompletaron.' );
+                $( '#instrucciones_datos' ).html( 'Tu CURP ha sido validada exitosamente con la autoridad, por lo tanto tus datos personales se autocompletaron.</p><p class=\"fw-bold text-marine\">Puedes continuar a la siguiente sección</p>' );
                 $( '.paso[step=1] input, .paso[step=1] select' ).prop( 'disabled', true );
             }
             else{
-                $( '#instrucciones_datos' ).text( 'Captura la información tal como aparece en tu identificación oficial vigente con fotografía, la cual será requerida más adelante para validar los datos.' );
+                $( '#instrucciones_datos' ).html( '<p class=\"fw-bold text-marine m-0\">Captura la información solicitada tal como aparece en tu identificación oficial vigente con fotografía, la cual será requerida más adelante para validar los datos.</p>' );
                 $( '.paso[step=1] input, .paso[step=1] select' ).prop( 'disabled', false );
             }
 
@@ -27,6 +32,9 @@ function update_paso( paso ) {
 
             break;            
     }
+
+    // if( valida_paso( paso, false ) )
+    // $('.btn-next').removeClass('btn-secondary').addClass('btn-light');
 }
 
 
@@ -49,26 +57,26 @@ function error( campo, mensaje ){
 }
 
 
-function valida_paso( paso ) {
+function valida_paso( paso, mostrar_errores = true ) {
     var avance = true;
 
     switch( paso ) {
 
         case 0:
             if( request.nacionalidad == undefined || request.nacionalidad.length != 2 ){
-                error( 'nacionalidad', 'Selecciona tu país de residencia para continuar.' );
+                if( mostrar_errores ) error( 'nacionalidad', 'Selecciona tu país de residencia para continuar.' );
                 avance = false;
             }
             else{
                 if( request.nacionalidad == 'US' || request.nacionalidad == 'UM' ) {
-                    error( 'nacionalidad', 'Lo sentimos. Por el momento no se aceptan registros de usuarios residentes en los Estados Unidos de América.' );
+                    if( mostrar_errores ) error( 'nacionalidad', 'Lo sentimos. Por el momento no se aceptan registros de usuarios residentes en los Estados Unidos de América.' );
                     avance = false;
                 }
             }
 
             if( request.nacionalidad == 'MX' ) {
                 if( request.curp_verificado == 0 ){
-                    error( 'curp', 'CURP no verificada.' );
+                    if( mostrar_errores ) error( 'curp', 'CURP no verificada.' );
                     avance = false;
                 }
             }
@@ -79,7 +87,7 @@ function valida_paso( paso ) {
 
                 if( request.dni.length < 5 ){
                     
-                    error( 'dni', 'Ingresa tu documento de identificación correctamente.' );
+                    if( mostrar_errores ) error( 'dni', 'Ingresa tu documento de identificación correctamente.' );
                     avance = false;
                 }
             }
@@ -97,76 +105,96 @@ function valida_paso( paso ) {
             }
             
             if( request.nombre == undefined || request.nombre.length < 3 ){
-                error( 'nombre', 'Nombre no válido.' );
+                if( mostrar_errores ) error( 'nombre', 'Nombre no válido.' );
                 avance = false;
             }
 
             if( request.apellido1 == undefined || request.apellido1.length < 3 ){
-                error( 'apellido1', 'Primer apellido no válido.' );
+                if( mostrar_errores ) error( 'apellido1', 'Primer apellido no válido.' );
                 avance = false;
             }
 
             if( request.apellido2.length > 0 && request.apellido2.length < 3 ){
-                error( 'apellido2', 'Segundo apellido no válido.' );
+                if( mostrar_errores ) error( 'apellido2', 'Segundo apellido no válido.' );
                 avance = false;
             }
 
             if( request.fechanac == undefined || request.fechanac.length < 3 ){
-                error( 'fechanac', 'Fecha de nacimiento no válida.' );
+                if( mostrar_errores ) error( 'fechanac', 'Fecha de nacimiento no válida.' );
                 avance = false;
             }
             else{
                 var edad = calcular_edad( request.fechanac );
 
                 if( edad === false ){
-                    error( 'fechanac', 'Fecha de nacimiento no válida.' );
+                    if( mostrar_errores ) error( 'fechanac', 'Fecha de nacimiento no válida.' );
                     avance = false;
                 }
                 else if( edad < 18 ){
-                    error( 'fechanac', 'Debes ser mayor de edad para registrarte.' );
+                    if( mostrar_errores ) error( 'fechanac', 'Debes ser mayor de edad para registrarte.' );
                     avance = false;
                 }
             }
 
             if( request.sexo == null || request.sexo.length == 0 ){
-                error( 'sexo', 'Selección no válida.' );
+                if( mostrar_errores ) error( 'sexo', 'Selección no válida.' );
                 avance = false;
             }
             break;
 
         case 2:
             if( request.correo_verificado == 0 ){
-                error( 'correo', 'Correo electrónico no verificado.' );
+                if( mostrar_errores ) error( 'correo', 'Correo electrónico no verificado.' );
                 avance = false;
             }
             break;
 
         case 3:           
             if( request.pat_verificado == 0 ){
-                error( 'patrocinador', 'Patrocinador no verificado.' );
+                if( mostrar_errores ) error( 'patrocinador', 'Patrocinador no verificado.' );
                 avance = false;
             }
             break;
 
         case 4:
             if( request.imagenes.frente == null || request.imagenes.reverso == null ){
-                error( 'credencial', 'No se han cargado las dos imagenes' );
+                if( mostrar_errores ) error( 'credencial', 'No se han cargado las dos imagenes' );
                 avance = false;
             }
             else if( request.nacionalidad == 'MX' ){
                 if( request.ine_verificado == 0 ){
-                    error( 'credencial', 'Identificación oficial no verificada.' );
+                    if( mostrar_errores ) error( 'credencial', 'Identificación oficial no verificada.' );
                     avance = false;
                 }
             }
 
             break;
+        
         case 5:
-            if( request.vida_verificado == 0 && request.curp != 'SIAA790501HCMLCL05' ){
-                error( 'vida', 'Prueba de vida no completada' );
+            if( request.vida_verificado == 0  ){
+                if( mostrar_errores ) error( 'vida', 'Prueba de vida no completada' );
                 avance = false;
             }
             break;            
+
+        case 6:
+            if(
+        parseInt( request.pat_verificado ) == 0  ||
+        ( parseInt( request.curp_verificado ) == 0 && request.nacionalidad == 'MX' ) ||
+        parseInt( request.vida_verificado ) == 0 ||
+        ( parseInt( request.ine_verificado ) == 0 && request.nacionalidad == 'MX' )  ||
+        parseInt( request.correo_verificado ) == 0
+            ){
+                if ( parseInt( request.pat_verificado ) == 0 ) error( 'tyc', 'Patrocinador no verificado' );
+                if( parseInt( request.curp_verificado ) == 0 && request.nacionalidad == 'MX' )  error( 'tyc', 'CURP no verificada' );
+                if( parseInt( request.vida_verificado ) == 0 )  error( 'tyc', 'Prueba de vida no completada' );
+                if( parseInt( request.ine_verificado ) == 0 && request.nacionalidad == 'MX' )  error( 'tyc', 'Identificación con fotografía no verificada' );
+                if( parseInt( request.correo_verificado ) == 0 )  error( 'tyc', 'Correo electrónico no verificado' );
+
+                avance = false;
+            }
+            break;
+
         default:
             avance = false;
     }
@@ -253,7 +281,7 @@ function searchCountry() {
     });
 }
 
-var paso_activo = 0
+var paso_activo = 0,
     request = {
         'version'      : 2,
         'nacionalidad' : null,
@@ -276,7 +304,8 @@ var paso_activo = 0
         "curp_verificado"  : 0,
         "vida_verificado"  : 0,
         "ine_verificado"   : 0,
-        "correo_verificado": 0
+        "correo_verificado": 0,
+        "tempID"           : tempID
     };
 
 
@@ -408,7 +437,6 @@ function valida_foto( tempID, modo, respuesta ){
 
 
 $(document).ready(function(){
-    
 
     $( '.vertical-center').on( 'mouseover', function(){ $( this ).find( '.center-btn').show(); } ).on( 'mouseout', function(){ $( this ).find( '.center-btn').hide(); } );
 
@@ -418,7 +446,7 @@ $(document).ready(function(){
         $(this).parent().next( 'p.small' ).text( '' );
     });
     
-    $( '.paso' ).css( 'display', 'inline-block' );
+    // $( '.paso' ).css( 'display', 'inline-block' );
     $('.btn-end').hide();
     $('.btn-previous').hide();
     
@@ -593,8 +621,10 @@ $(document).ready(function(){
                                 request.valida_curp = result.datos;
 
                                 $( '#valida_curp' ).prop( 'disabled', true ).html( '<i class="fa fa-check"></i> Verificado' ).removeClass( 'btn-outline-warning' ).addClass( 'btn-success' );
-                                $( '#curp_card > span').html( result.datos.codigoValidacion );
-                                $( '#curp_card').show();
+                                // $( '#curp_card > span').html( result.datos.codigoValidacion );
+                                // $( '#curp_card').show();
+
+                                // $('.btn-next').addClass('btn-secondary').removeClass('btn-light');
 
                                 $( 'input[name=curp]' ).focus();
                             }
@@ -672,11 +702,12 @@ $(document).ready(function(){
         }
     });
     
-    
+     
     $('.btn-next').on('click', function() {
+        current_active_step = $( '[step=' + paso_activo + ']' );
 
     	if( valida_paso( paso_activo ) ) {
-            current_active_step = $( '[step=' + paso_activo + ']' );
+
             current_active_step.removeClass('active flared').addClass('activated').next().addClass('active flared');
 
             update_paso( ++paso_activo );
@@ -711,7 +742,7 @@ $(document).ready(function(){
 	
 	$( '.option' ).on('click', selectOption );
 	$( '.search-box' ).on( 'input', searchCountry );
-
+ 
     $( '#nacionalidad ol' ).prepend( '<hr>' );
     $( '#nacionalidad [country=GT]' ).parent().prepend( $( '#nacionalidad [country=GT]' ) );
     $( '#nacionalidad [country=CL]' ).parent().prepend( $( '#nacionalidad [country=CL]' ) );
@@ -724,34 +755,37 @@ $(document).ready(function(){
     $( '#nacionalidad [country=PE]' ).parent().prepend( $( '#nacionalidad [country=PE]' ) );
     $( '#nacionalidad [country=MX]' ).parent().prepend( $( '#nacionalidad [country=MX]' ) );  
 
-	 $( '#nacionalidad [country=MX]' ).click();    
+	// $( '#nacionalidad [country=MX]' ).click();    
 
-     $( '.btn-end' ).on( 'click', function( e ){
+    $( '.btn-end' ).on( 'click', function( e ){
         e.preventDefault();
 
-        $( this ).prop( 'disabled', true ).html( '<i class="fa fa-spinner"></i> Creando cuenta de socio...' );
+        if( valida_paso( paso_activo ) ){
+            $( this ).prop( 'disabled', true ).html( '<i class="fa fa-spinner"></i> Creando cuenta de socio...' );
 
-        var newForm = $('<form>', {
-            'method': 'post',
-            'action': target_post
-        });
+            var newForm = $('<form>', {
+                'method': 'post',
+                'action': target_post
+            });
 
-        $.each( request, function( key, value ) {
+            $.each( request, function( key, value ) {
 
-            if( key == 'valida_curp' ){
-                value = JSON.stringify( value );
-            }
+                if( key == 'valida_curp' ){
+                    value = JSON.stringify( value );
+                }
 
-            $('<input>', {
-                'type': 'hidden',
-                'name': key,
-                'value': value
-            }).appendTo( newForm );
-        });
+                $('<input>', {
+                    'type': 'hidden',
+                    'name': key,
+                    'value': value
+                }).appendTo( newForm );
+            });
 
-        $(document.body).append( newForm );
-        newForm.submit();        
-     })
+            $(document.body).append( newForm );
+            newForm.submit();   
+        }     
+    });
+
 
      // prueba vida
 
@@ -768,7 +802,8 @@ $(document).ready(function(){
     pruebaVida.addEventListener('liveness-failed', (e) => {
       error( 'vida', 'Prueba de vida no completada' );
         $( '#valida_vida' ).prop( 'disabled', false ).removeClass( 'btn-success' ).addClass( 'btn-outline-warning' ).html( '<i class="fa fa-magnifying-glass"></i> Repetir prueba' ).show();
-    });   
+    });  
+     
 });
 
 

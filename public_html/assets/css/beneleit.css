@@ -210,7 +210,7 @@ a.mini{
   filter: gray; /* IE6-9 */
   -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
   filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-  opacity:0.4;
+  opacity:0.3;
 }
 
 #lightbox {

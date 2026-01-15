@@ -261,7 +261,7 @@
                     $estatus = "";
 
                     if( $paso['inicio'] ?? false ){
-                        $estatus = "active flared";
+                     //   $estatus = "active flared";
                     } 
 
                     echo "\n<div step=\"{$k}\" class=\"f1-step {$estatus}\" data-bs-toggle=\"tooltip\" title=\"{$paso['titulo']}\"><div class=\"f1-step-icon \"><i class=\"fa {$paso['icono']}\"></i></div></div>";
@@ -279,12 +279,21 @@
             <div id="formulario">
                 
                 <!-- pais y curp -->
-                <div class="paso" step="0">    
-                    <h5>¡Bienvenido!</h5>
-                    <p>Es importante asegurate en cada paso que la información que proporciones sea correcta, y realizar el registro desde un dispositivo con cámara frontal, ya que más adelante necesitaremos validar tu identidad.</p>
+                <div style="display:none" class="paso w-100" step="0">    
+                    <h5>¡Bienvenido a tu Oficina Virtual!</h5>
+                    <p>En estos sencillos pasos, te guiaremos a través del proceso de registro para crear tu cuenta de usuario. Es importante que tomes las siguientes consideraciones:
+                        <ul>
+                            <li>El registro lo debe hacer el titular. No es posible que puedas registrar a terceros.</li>
+                            <li>No es posible el registro de menores de 18 años</li>
+                            <li>Debes contar con una buena conexión a Internet</li>
+                            <li>Asegurate en cada paso que la información que proporciones sea correcta</li> 
+                            <li>Realiza el registro desde un dispositivo con cámara frontal y bocinas o auriculares</li>
+                            <li>Tener a la mano tu credencial o documento de indentidad con fotografía</li>
+                            
+                        </ul></p>
                     <div class="row">
-                        <div class="col-md-6">
-                            <p class="fw-bold mb-1">Para comenzar el proceso, selecciona tu país:</p>
+                        <div class="col-md-6 mt-3">
+                            <p class="fw-bold text-marine mb-1">Para comenzar, selecciona tu país:</p>
 
                             <div class="campo_nacionalidad rounded border p-0 w-100" style="border: 2px solid var(--bs-border-color);" >
                                 <div class="input-group mb-0">
@@ -302,9 +311,9 @@
                             <p class="small text-red m-0" id="nacionalidad_error"></p>
                         </div>
 
-                        <div class="col-md-6 col-lg-6">
+                        <div class="col-md-6 mt-3">
                             <div id="curp_group" class="d-none">
-                                <p class="fw-bold mb-1">Por favor, proporciona tu CURP:</p>
+                                <p class="fw-bold text-marine mb-1">Proporciona tu CURP:</p>
                                
                                 <div class="input-group">
                                      <input name="curp" id="curp" type="text" class="form-control" maxlength="18" placeholder="" />
@@ -320,7 +329,7 @@
                             </div>
 
                             <div id="dni_group" class="d-none">
-                                <p class="fw-bold mb-1">Número de tu identificación oficial (DNI):</p>
+                                <p class="fw-bold text-marine mb-1">Número de tu identificación oficial (DNI):</p>
                                     <input name="dni" id="dni" type="text" class="form-control" maxlength="18" placeholder="" />
                                     <p class="small text-red m-0" id="dni_error"></p>
                             </div>  
@@ -330,7 +339,7 @@
                 </div>
 
                 <!-- datos generales -->
-                <div class="paso" step="1">    
+                <div style="display:none" class="paso w-100" step="1">    
                     <p class="m-0" id="instrucciones_datos"></p>
                     <div class="row">
                         <div class="col-md-6 mt-4 col-lg-4">
@@ -368,14 +377,13 @@
                         </div>
                     </div>  
                 </div>
-
                 
                 <!-- datos de contacto -->
-                <div class="paso" step="2">    
+                <div style="display:none" class="paso w-100" step="2">    
                     <p class="">Tus datos de contacto serán esenciales para finalizar el proceso de registro. Asegurate de que tu correo electrónico esté activo, pues ahi recibirás tus datos de acceso a la plataforma.</p>
                     <div class="row">
                         <div class="col-md-6">
-                            <p class="fw-bold mb-1">Correo electrónico</p>
+                            <p class="fw-bold text-marine mb-1">Correo electrónico</p>
                             <div class="input-group">
                                 <input name="correo" type="email" class="form-control" autocomplete="off" />
                                 <button id="valida_correo" class="btn btn-outline-warning" type="button"><i class="fa fa-magnifying-glass"></i> Verificar</button>
@@ -387,12 +395,12 @@
                 </div>
 
                 <!-- patrocinador -->
-                <div class="paso" step="3">    
+                <div style="display:none" class="paso w-100" step="3">    
                     <p class="m-0"> Tu cuenta estará vinculada a un patrocinador. Por favor verifica que el número de socio Beneleit que te ha proporcionado tu patrocinador sea el correcto. recuerda que una vez creada tu cuenta, no podrás modificarlo.</p>
                     <div class="row mt-3">
                      
                         <div class="col-md-6">
-                            <p class="fw-bold mb-1">No. de patrocinador</p>
+                            <p class="fw-bold mb-1 text-marine">No. de patrocinador</p>
                             
                             <div class="input-group">
                                     <input name="patrocinador" id="patrocinador" type="text" class="form-control" maxlength="18" placeholder="" />
@@ -412,8 +420,8 @@
                 </div>
 
                 <!-- INE -->
-                <div class="paso" step="4">    
-                    <p>Utilizando la cámara de tu dispositivo, toma fotografías de tu documento de identificación oficial con fotografía. Asegurate de que sean claras y legibles.</p>
+                <div style="display:none" class="paso w-100" step="4">    
+                    <p>Utilizando la cámara de tu dispositivo, toma fotografías de tu documento de identificación oficial con fotografía, asegurate de que sean claras y legibles.</p><p class="fw-bold text-marine">Carga las fotos haciendo click en los recuadros</p>
 
                     <div class="row my-3">
                         <div class="col-md-6">
@@ -445,20 +453,26 @@
                 </div>
 
                 <!-- Validación de persona -->
-                <div class="paso w-100" step="5">    
+                <div style="display:none" class="paso w-100" step="5">   
+                    <p class="fw-bold text-marine mb-3">Haz click en el botón para iniciar la prueba y escuchar las instrucciones</p> 
                     <tn-prueba-vida class="mb-3" id="vida"></tn-prueba-vida>
                     <button onclick="document.getElementById('vida').restart()" id="valida_vida" class="btn btn-outline-warning" disabled style="display:none"><i class="fa fa-magnifying-glass"></i> Realizar prueba</button>
                     <p class="small text-red m-0 mt-1" id="vida_error"></p>
                 </div>
 
                 <!-- Terminos y condiciones -->
-                <div class="paso w-100" step="6">    
-                    <p class="fw-bold mb-1">Por último, lee y acepta nuestros Términos y Condiciones para finalizar el proceso y generar tu cuenta de usuario:</p>
-                    <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea>
+                <div style="display:none" class="paso w-100" step="6">    
+                    <p class="fw-bold mb-1">Por último, lee y acepta nuestras políticas de privacidad</p><p class="fw-bold text-marine mb-1">Haz click en el botón para finalizar el proceso y generar tu cuenta de usuario:</p>
+
+                    <?php /* <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea> */ ?>
+
+                    <iframe src="privacidad.pdf" type="application/pdf" width="100%" height="400px"></iframe>
+
+                    <p class="small text-red m-0 mt-1" id="tyc_error"></p>
                 </div>
 
-                <!-- INE -->
-                <div class="xpaso d-none" step="9">    
+                <!-- INE OLD -->
+                <div style="display:none" class="xpaso d-none" step="9">    
                     <div id="id_component"></div>
 
                     <div class="row">
@@ -472,7 +486,7 @@
         </div> 
     </div>
 
-    <div class="mt-4 mb-5 text-center">
+    <div class="mt-4 mb-5 text-center" id="botonera_interactiva" style="display:none">
         <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
         <button type="button" class="btn btn-secondary btn-next" ajax="false">Siguiente <i class="fa fa-arrow-right"></i></button>
         <button type="button" class="btn btn-primary btn-end">Aceptar y finalizar <i class="fa fa-check"></i></button>
