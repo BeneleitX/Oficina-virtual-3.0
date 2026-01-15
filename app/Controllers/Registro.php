@@ -491,13 +491,29 @@ class Registro extends BaseController
         $query = "select count(*) as total from t_usuarios where correo = '{$correo}' AND estatus_codigo = '201-ACTIVO' limit 1";
 
         if( $db->query( $query )->getRow()->total > 0 ){
-            $respuesta[ "error" ] = "El correo electrónico que proporcionaste ya está registrado.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
+            $respuesta[ "error" ] = "El correo electrónico que proporcionaste ya está registrado.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password</p>";
 
             return json_encode( $respuesta );
         }
     
         return json_encode( $respuesta );
     }
+
+    public function valida_celular(){
+        $respuesta = [ "error" => null ];
+        $celular      = $this->request->getPost( "celular" );
+
+        $db = db_connect();
+        $query = "select count(*) as total from t_usuarios where telefono = '{$celular}' AND estatus_codigo = '201-ACTIVO' limit 1";
+
+        if( $db->query( $query )->getRow()->total > 0 ){
+            $respuesta[ "error" ] = "El número que proporcionaste ya está registrado.</p>";
+
+            return json_encode( $respuesta );
+        }
+    
+        return json_encode( $respuesta );
+    }    
 
 
     public function registro_exito( $nuevo_id ){

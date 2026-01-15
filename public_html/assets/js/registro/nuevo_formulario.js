@@ -148,9 +148,44 @@ function valida_paso( paso, mostrar_errores = true ) {
                 avance = false;
             }
 
+            
             if( request.celular != $( 'input[name=celular]' ).val().trim() ){
                 request.celular = $( 'input[name=celular]' ).val().trim();
             }   
+
+            /************ valida telefono  */
+
+
+            if( request.celular.length > 0 &&  request.celular_verificado == 0 ){
+
+                if( request.celular.length < 7 || Number.isInteger( parseInt( request.celular ) ) == false ){
+                    if( mostrar_errores ) error( 'celular', 'Celular no válido.' );
+                    avance = false;
+                }
+                else{
+                
+                    $.ajax({
+                        url: base_url + "valida_celular", 
+                        type: "POST",
+                        dataType: "json",
+                        async: false,
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        data: { [csrf_token] : csrf_hash, celular : request.celular },
+
+                        success: function( result ){
+                            if( result.error ){
+                                error( 'celular', result.error );
+
+                                avance = false;                      
+                            }
+                            else{
+                                request.celular_verificado = 1; 
+                            }
+                        }
+                    });  
+                }              
+            }
+
             break;
 
         case 3:           
@@ -321,6 +356,7 @@ var paso_activo = 0,
         "vida_verificado"  : 0,
         "ine_verificado"   : 0,
         "correo_verificado": 0,
+        "celular_verificado": 0,
         "tempID"           : tempID
     };
 
@@ -564,6 +600,7 @@ $(document).ready(function(){
                         $( '#correo_card').show();
 
                         request.correo_verificado = 1; 
+                        $( '#celular_error' ).text( '' );
 
                         $( '#valida_correo' ).prop( 'disabled', true ).html( '<i class="fa fa-check"></i> Verificado' ).removeClass( 'btn-outline-warning' ).addClass( 'btn-success' );
 
@@ -572,6 +609,10 @@ $(document).ready(function(){
                 }
             });                
         }
+    });
+
+    $( '[name=celular]' ).on( 'keyup', function( e ){
+        request.celular_verificado = 0; 
     });
 
     // CURP
@@ -706,6 +747,8 @@ $(document).ready(function(){
                             }
                             else{
                                 error( 'credencial', 'Los datos no coinciden' );
+
+                                $( '.center-btn.btn-warning' ).prop( 'disabled', false );
 
                                 $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
                             }
