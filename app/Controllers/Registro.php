@@ -162,7 +162,7 @@ class Registro extends BaseController
                 "verificacion"   => [],
                 "verificaciones" => [],
                 "ubicacion"      => [
-                    "code"          => null,
+                    "code"          => $data[ "pais" ],
                     "origen"        => $data[ "origen" ]
                 ],
                 "splash" => [
@@ -171,9 +171,10 @@ class Registro extends BaseController
                         "parametros" => []
                     ]
                 ],
-                "valida_curp"   => $data[ "valida_curp" ] ?? null,
-                "valida_vida"   => $data[ "valida_vida" ] ?? null,
-                "valida_ine"    => $data[ "valida_ine" ]  ?? null,
+                "nacionalidad"  => $data[ "curp" ] ? "MEXICANA" : "EXTRANJERA",
+                "valida_curp"   => json_decode( $data[ "valida_curp" ] ?? [] ),
+                "valida_vida"   => json_decode( $data[ "valida_vida" ] ?? [] ),
+                "valida_ine"    => json_decode( $data[ "valida_ine" ]  ?? [] ),
                 "domicilio"     => null,
                 "tarjeta"       => [
                     "numero"        => "",
@@ -181,9 +182,9 @@ class Registro extends BaseController
                     "folio"         => 0
                 ],
                 "credencial"    => [
-                    "frente"        => null,
-                    "reverso"       => null,
-                    "estatus"       => 0,
+                    "frente"        => $data[ "version" ] == 2  ? "frente.jpg" : null,
+                    "reverso"       => $data[ "version" ] == 2  ? "reverso.jpg" : null,
+                    "estatus"       => $data[ "version" ] == 2  ? ( $data[ "ine_verificado" ] ? 2 : 1 ) : 0,
                     "motivo"        => "",
                     "acta"          => null
                 ],
@@ -331,14 +332,17 @@ class Registro extends BaseController
             "password" => $recibe[ "password" ]
         ] );
 
-        $path = "data/{$id}/";
-        if(!is_dir($path)) mkdir($path, 0755, true);
+        if( $data[ "version" ] == 2 ){
 
-        copy( "temp/{$data[ "tempID" ]}_frente.jpg",  $path."frente.jpg" );
-        copy( "temp/{$data[ "tempID" ]}_reverso.jpg", $path."reverso.jpg" );
+            $path = "data/{$id}/ine/";
+            if(!is_dir($path)) mkdir($path, 0755, true);
 
-        unlink( "temp/{$data[ "tempID" ]}_frente.jpg" );
-        unlink( "temp/{$data[ "tempID" ]}_reverso.jpg" );
+            copy( "temp/{$data[ "tempID" ]}_frente.jpg",  $path."frente.jpg" );
+            copy( "temp/{$data[ "tempID" ]}_reverso.jpg", $path."reverso.jpg" );
+
+            unlink( "temp/{$data[ "tempID" ]}_frente.jpg" );
+            unlink( "temp/{$data[ "tempID" ]}_reverso.jpg" );
+        }
 
         // ENVIAR CORREO
 

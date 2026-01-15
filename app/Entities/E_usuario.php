@@ -402,9 +402,6 @@ class E_usuario extends Entity
             "brown",
         ];
 
-        
-        $data->genero =  substr( $curp, 10, 1) == "H" ? "MASCULINO" : "FEMENINO";
-        $data->nacionalidad = substr( $this->attributes[ "curp" ], 11, 2) != "NE" ? "MEXICANA" : "EXTRANJERA";
         $data->avatar->face = $caras[ rand( 0, sizeof( $caras   ) - 1 ) ];
         $data->avatar->bg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
         $data->beneficiarios = [];

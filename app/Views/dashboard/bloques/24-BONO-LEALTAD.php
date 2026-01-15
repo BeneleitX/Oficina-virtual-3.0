@@ -80,7 +80,7 @@ $promo = model( "PromocionModel" )->find( "210-LEALTAD" );
 
 <div class="m-3 text-<?php echo $ganado == 3 ? "success" : "gray-500"; ?> text-center">
     <?php 
-        echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>Completa 3 meses consecutivos con una calificación BIEX"; 
+        echo $ganado == 3 ? "<h4>¡Felicidades!</h4> conseguiste tus productos" : "<h4>¡".sizeof( $promo[ "productos" ][ "precarga" ] )." productos de regalo!</h4>"; 
     ?>
 </div>
         

@@ -147,6 +147,10 @@ function valida_paso( paso, mostrar_errores = true ) {
                 if( mostrar_errores ) error( 'correo', 'Correo electrónico no verificado.' );
                 avance = false;
             }
+
+            if( request.celular != $( 'input[name=celular]' ).val().trim() ){
+                request.celular = $( 'input[name=celular]' ).val().trim();
+            }   
             break;
 
         case 3:           
@@ -238,35 +242,45 @@ function selectOption() {
     $( '#' + padre + ' .options' ).find('.hide').removeClass( 'hide' );
     $( '#' + padre + ' .search-box' ).val( '' );
 
-    $( 'input[name=nacion]' ).val( nombre );
-    $( 'input[name=origen]' ).val( code );
+    if( padre == 'nacionalidad' ){
 
-    request.nacionalidad = code;
-    request.curp      = null;
-    request.nombre    = null;
-    request.apellido1 = null;
-    request.apellido2 = null;
-    request.fechanac  = null;
-    request.sexo      = null;
+        $( 'input[name=nacion]' ).val( nombre );
 
-    $( 'input[name=curp], input[name=dni]' ).val( '' )
-    $( 'input[name=nombre]' ).val( '' )
-    $( 'input[name=apellido1]' ).val( '' )
-    $( 'input[name=apellido2]' ).val( '' )
-    $( 'input[name=fechanac]' ).val( '' )
-    $( 'select[name=sexo]' ).val( '' )
+        request.nacionalidad = code;
+        request.curp      = null;
+        request.nombre    = null;
+        request.apellido1 = null;
+        request.apellido2 = null;
+        request.fechanac  = null;
+        request.sexo      = null;
 
-    $('.form-control, .form-select').removeClass('is-invalid');
-    $('.form-control, .form-select').next( 'p.small' ).text( '' );
+        $( 'input[name=curp], input[name=dni]' ).val( '' )
+        $( 'input[name=nombre]' ).val( '' )
+        $( 'input[name=apellido1]' ).val( '' )
+        $( 'input[name=apellido2]' ).val( '' )
+        $( 'input[name=fechanac]' ).val( '' )
+        $( 'select[name=sexo]' ).val( '' )        
 
-    if( code == 'MX' ){
-        $( '#curp_group' ).removeClass( 'd-none' );
-        $( '#dni_group' ).addClass( 'd-none' );
-    }
-    else{
-        $( '#curp_group' ).addClass( 'd-none' );
-        $( '#dni_group' ).removeClass( 'd-none' );
-    }
+        $('.form-control, .form-select').removeClass('is-invalid');
+        $('.form-control, .form-select').next( 'p.small' ).text( '' );
+        
+        $( '#celular [country=' + code + ']' ).click();  
+
+        if( code == 'MX' ){
+            $( '#curp_group' ).removeClass( 'd-none' );
+            $( '#dni_group' ).addClass( 'd-none' );
+        }
+        else{
+            $( '#curp_group' ).addClass( 'd-none' );
+            $( '#dni_group' ).removeClass( 'd-none' );
+        }        
+	}
+	else if( padre == 'celular' ){
+		$( '#codigo' ).text( phone_code );
+
+        request.pais = code;
+        request.phone_code = phone_code;
+	}
 }
 
 
@@ -285,6 +299,8 @@ var paso_activo = 0,
     request = {
         'version'      : 2,
         'nacionalidad' : null,
+        "phone_code"   : null,
+        "celular"      : null,
         "nombre"       : null,
         "apellido1"    : null,
         "apellido2"    : null,
@@ -670,8 +686,6 @@ $(document).ready(function(){
                         else{
                             var puntos = 0;
 
-                            console.log(result, request);
-
                             if( result.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
                             if( result.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
                             if( result.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
@@ -736,14 +750,16 @@ $(document).ready(function(){
 		$( '#' + padre + ' .options' ).toggleClass( 'active' );
 		$( '#' + padre + ' .search-box').focus();
 
-        $( '.campo_nacionalidad' ).removeClass('es-invalido');
-        $( '.campo_nacionalidad' ).next().text( '' );
+        if( padre == 'nacionalidad' ){
+            $( '.campo_nacionalidad' ).removeClass('es-invalido');
+            $( '.campo_nacionalidad' ).next().text( '' );
+        }
 	});
 	
 	$( '.option' ).on('click', selectOption );
 	$( '.search-box' ).on( 'input', searchCountry );
  
-    $( '#nacionalidad ol' ).prepend( '<hr>' );
+    $( '#nacionalidad ol, #celular ol' ).prepend( '<hr>' );
     $( '#nacionalidad [country=GT]' ).parent().prepend( $( '#nacionalidad [country=GT]' ) );
     $( '#nacionalidad [country=CL]' ).parent().prepend( $( '#nacionalidad [country=CL]' ) );
     $( '#nacionalidad [country=SV]' ).parent().prepend( $( '#nacionalidad [country=SV]' ) );
@@ -755,7 +771,18 @@ $(document).ready(function(){
     $( '#nacionalidad [country=PE]' ).parent().prepend( $( '#nacionalidad [country=PE]' ) );
     $( '#nacionalidad [country=MX]' ).parent().prepend( $( '#nacionalidad [country=MX]' ) );  
 
-	// $( '#nacionalidad [country=MX]' ).click();    
+    $( '#celular [country=GT]' ).parent().prepend( $( '#celular [country=GT]' ) );
+    $( '#celular [country=CL]' ).parent().prepend( $( '#celular [country=CL]' ) );
+    $( '#celular [country=SV]' ).parent().prepend( $( '#celular [country=SV]' ) );
+    $( '#celular [country=NI]' ).parent().prepend( $( '#celular [country=NI]' ) );
+    $( '#celular [country=CO]' ).parent().prepend( $( '#celular [country=CO]' ) );
+    $( '#celular [country=BO]' ).parent().prepend( $( '#celular [country=BO]' ) );
+    $( '#celular [country=VE]' ).parent().prepend( $( '#celular [country=VE]' ) );
+    $( '#celular [country=EC]' ).parent().prepend( $( '#celular [country=EC]' ) );
+    $( '#celular [country=PE]' ).parent().prepend( $( '#celular [country=PE]' ) );
+    $( '#celular [country=MX]' ).parent().prepend( $( '#celular [country=MX]' ) );  
+	
+    // $( '#nacionalidad [country=MX]' ).click();    
 
     $( '.btn-end' ).on( 'click', function( e ){
         e.preventDefault();
@@ -770,7 +797,7 @@ $(document).ready(function(){
 
             $.each( request, function( key, value ) {
 
-                if( key == 'valida_curp' ){
+                if( Array.isArray( value ) || ( typeof value === 'object' && value !== null ) ){
                     value = JSON.stringify( value );
                 }
 
@@ -793,8 +820,10 @@ $(document).ready(function(){
     const result = document.getElementById('result');
 
     pruebaVida.addEventListener('liveness-passed', (e) => {
-        $( '#valida_vida' ).prop( 'disabled', true ).addClass( 'btn-success' ).removeClass( 'btn-outline-warning' ).html( '<i class="fa fa-check"></i> Prueba exitosa' );
+        $( '#valida_vida' ).prop( 'disabled', true ).addClass( 'btn-success' ).removeClass( 'btn-outline-warning' ).html( '<i class="fa fa-check"></i> Prueba exitosa' ).show();
         
+        $( '#vida_error' ).text( '' );
+
         request.vida_verificado = 1;
         request.valida_vida = e.detail;
     });

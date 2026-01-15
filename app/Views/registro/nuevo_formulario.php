@@ -274,8 +274,6 @@
         <div class="col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
             <h4 class="d-none text-center mb-5 mt-3" id="titulo_paso"></h4>
 
-            <input type="hidden" name="origen" value="">
-
             <div id="formulario">
                 
                 <!-- pais y curp -->
@@ -381,6 +379,7 @@
                 <!-- datos de contacto -->
                 <div style="display:none" class="paso w-100" step="2">    
                     <p class="">Tus datos de contacto serán esenciales para finalizar el proceso de registro. Asegurate de que tu correo electrónico esté activo, pues ahi recibirás tus datos de acceso a la plataforma.</p>
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <p class="fw-bold text-marine mb-1">Correo electrónico</p>
@@ -391,6 +390,24 @@
                             <p class="small text-red m-0" id="correo_error"></p>
                         </div>
 
+                        <div class="col-md-5 offset-md-1">
+                            <p class="fw-bold text-marine mb-1">Teléfono celular</p>
+                                <div class="campo_celular p-0 w-100">
+                                    <div class="input-group mb-0 w-100">
+                                        <div style="border: 2px solid var(--bs-border-color);" class="selected-option" tipo="celular"><div></div></div>
+                                        <span class="input-group-text bg-gray-400 border-0 text-marine fw-bold" id="codigo"></span>
+                                        <input type="text" class="form-control" name="celular" value="" placeholder="">
+                                    </div>            
+                                    
+                                    <div class="select-box" id="celular">
+                                        <div class="options">
+                                            <input type="text" class="search-box form-control" placeholder="Buscar por país">
+                                            <ol></ol>
+                                        </div>
+                                    </div>
+                                </div>     
+                            <p class="small text-red m-0" id="celular_error"></p>
+                        </div>                        
                     </div>  
                 </div>
 
