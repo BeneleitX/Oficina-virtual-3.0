@@ -1,88 +1,88 @@
 <style>
-.loader {
-    position: relative;
-    float:left;
-    user-select: none;
-    box-sizing: border-box;
-    width: 150px;
-    height: 150px;
-}
-.loader-bg {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    box-sizing: border-box;
-    border: 5px solid transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.spinner-holder-one {
-    position: absolute;
-    top:0;
-    left:0;
-    overflow: hidden;
-    width: 50%;
-    height: 50%;
-    background: transparent;
-    box-sizing: border-box;
-}
-.spinner-holder-two {
-    position: absolute;
-    top:0;
-    left:0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    box-sizing: border-box;
-}
-.loader-spinner {
-    width: 200%;
-    height: 200%;
-    border-radius: 50%;
-    border: 5px solid #0b5ac1;
-	opacity: 0.6;
-    box-sizing: border-box;
-}  
-  .animate-0-25-a {
-    transform: rotate(90deg);
-    transform-origin: 100% 100%;
-}
-.animate-0-25-b {
-    transform: rotate(-90deg);
-    transform-origin: 100% 100%;
-}
-.animate-25-50-a {
-    transform: rotate(180deg);
-    transform-origin: 100% 100%;
-}
-.animate-25-50-b {
-    transform: rotate(-90deg);
-    transform-origin: 100% 100%;
-}
-.animate-50-75-a {
-    transform: rotate(270deg);
-    transform-origin: 100% 100%;
-}
-.animate-50-75-b {
-    transform: rotate(-90deg);
-    transform-origin:100% 100%;
-}
-.animate-75-100-a {
-    transform: rotate(0deg);
-    transform-origin: 100% 100%;
-}
-.animate-75-100-b {
-    transform: rotate(-90deg);
-    transform-origin: 100% 100%;
-}
-.text {
-    text-align: center;
-    font-size: 20px;
-    color: #6c757d;
-    font-weight: bold;  
-}
+	.loader {
+		position: relative;
+		float:left;
+		user-select: none;
+		box-sizing: border-box;
+		width: 150px;
+		height: 150px;
+	}
+	.loader-bg {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		box-sizing: border-box;
+		border: 5px solid transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.spinner-holder-one {
+		position: absolute;
+		top:0;
+		left:0;
+		overflow: hidden;
+		width: 50%;
+		height: 50%;
+		background: transparent;
+		box-sizing: border-box;
+	}
+	.spinner-holder-two {
+		position: absolute;
+		top:0;
+		left:0;
+		overflow: hidden;
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		box-sizing: border-box;
+	}
+	.loader-spinner {
+		width: 200%;
+		height: 200%;
+		border-radius: 50%;
+		border: 5px solid #0b5ac1;
+		opacity: 0.6;
+		box-sizing: border-box;
+	}  
+	.animate-0-25-a {
+		transform: rotate(90deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-0-25-b {
+		transform: rotate(-90deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-25-50-a {
+		transform: rotate(180deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-25-50-b {
+		transform: rotate(-90deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-50-75-a {
+		transform: rotate(270deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-50-75-b {
+		transform: rotate(-90deg);
+		transform-origin:100% 100%;
+	}
+	.animate-75-100-a {
+		transform: rotate(0deg);
+		transform-origin: 100% 100%;
+	}
+	.animate-75-100-b {
+		transform: rotate(-90deg);
+		transform-origin: 100% 100%;
+	}
+	.text {
+		text-align: center;
+		font-size: 20px;
+		color: #6c757d;
+		font-weight: bold;  
+	}
 </style>
 
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/circle.js"></script>
@@ -168,7 +168,7 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 							</div>
 							
 						</div>
-						<p class="text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "formulario" ); ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
+						<p class="text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "registro" ); // formulario ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
 
 
 						<p class="text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://core.beneleit.talentonet.com/activar/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Activa tu línea</a></p>
