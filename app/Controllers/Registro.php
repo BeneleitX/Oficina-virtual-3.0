@@ -206,10 +206,10 @@ class Registro extends BaseController
                     "inicia" => null,
                     "estrellas" => 0
                 ],
-                "checks" => null
+                "checks" => null,
+                "genero"    => isset($data[ "sexo" ] ) ? ( $data[ "sexo" ] == "H" ? "MASCULINO" : "FEMENINO" ) : null
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
-            "genero"        => isset($data[ "sexo" ] ) ? ( $data[ "sexo" ] == "H" ? "MASCULINO" : "FEMENINO" ) : null,
             "telefono"      => $data[ "celular" ] ?? null,
             "curp"          => $data[ "origen" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
             "fechanac"      => $fechanac,
