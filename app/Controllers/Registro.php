@@ -243,9 +243,9 @@ class Registro extends BaseController
                     ]
                 ],
                 "nacionalidad"  => $data[ "curp" ] ? "MEXICANA" : "EXTRANJERA",
-                "valida_curp"   => json_decode( $data[ "valida_curp" ] ?? [] ),
-                "valida_vida"   => json_decode( $data[ "valida_vida" ] ?? [] ),
-                "valida_ine"    => json_decode( $data[ "valida_ine" ]  ?? [] ),
+                "valida_curp"   => json_decode( $data[ "valida_curp" ] ?? "{}" ),
+                "valida_vida"   => json_decode( $data[ "valida_vida" ] ?? "{}" ),
+                "valida_ine"    => json_decode( $data[ "valida_ine" ]  ?? "{}" ),
                 "domicilio"     => null,
                 "tarjeta"       => [
                     "numero"        => "",

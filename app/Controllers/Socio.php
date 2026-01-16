@@ -169,10 +169,12 @@ class Socio extends BaseController
             "usuario" => $this->data[ "usuario" ]->id
         ] );
         
-        rename( 
-            "data/{$this->data[ "socio" ]->id}/ine/".$this->data["socio"]->data->credencial->{$tipo}, 
-            "data/{$this->data[ "socio" ]->id}/ine/backup_".time().".jpg" 
-        );
+        if( file_exists( "data/{$this->data[ "socio" ]->id}/ine/".$this->data["socio"]->data->credencial->{$tipo} ) ){
+            @rename( 
+                "data/{$this->data[ "socio" ]->id}/ine/".$this->data["socio"]->data->credencial->{$tipo}, 
+                "data/{$this->data[ "socio" ]->id}/ine/backup_".time().".jpg" 
+            );
+        }
 
         $json = $this->data["socio"]->data;
         $json->credencial->{$tipo} = null;
