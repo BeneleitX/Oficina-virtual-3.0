@@ -86,7 +86,78 @@ class Registro extends BaseController
     }
 
 
-    // recibe formulariod e registro y valida los datos
+    public function vincular()
+    {
+        $this->data[ "navbar" ] = false;
+        $this->data[ "fondo" ]  = "white";
+        $this->data[ "titulo" ] = "Vincula tu cuenta y líneas Beneleit Móvil";
+
+        $this->data[ "pasos" ]  = [
+            [
+                "titulo" => "Identificación",                
+                "icono"  => "fa-key",
+                "inicio"  => true
+            ],      
+            [
+                "titulo" => "CURP",
+                "icono"  => "fa-user"
+            ],   
+            [
+                "titulo" => "Identificación oficial",
+                "icono"  => "fa-address-card"
+            ],                
+            [
+                "titulo" => "Prueba de vida",
+                "icono"  => "fa-camera"
+            ],             
+            [
+                "titulo" => "Términos y condiciones",
+                "icono"  => "fa-gavel",
+                "final" => true
+            ]
+            
+        ];
+
+        $response = json_encode( "{}" );
+        /* $curl = curl_init();
+
+        $key = VARIABLES["nubarium"][ "valor" ];
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.sdk.nubarium.com/jwt/v1/generate",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+            CURLOPT_POSTFIELDS => "{\"expireAfter\": 3600}",
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl); */
+
+        $this->data[ "jwt" ] = json_decode( $response );
+        $this->data[ "tempID" ] = uniqid( time().rand( 100, 999 ) );
+        $this->data[ "bar_inicial" ] = 100 / count( $this->data[ "pasos" ] );
+
+     /*    $myfile = fopen("webdictionary.txt", "r") or die("Error: Unable to open file!");
+        echo fread($myfile, filesize("webdictionary.txt"));
+        fclose($myfile); */
+
+        $this->data[ "terminos" ] = file_get_contents( "tyc.txt" );
+
+        $this->data[ "ine" ]  = $usuario->data->valida_ine->codigoValidacion ?? null;
+        $this->data[ "curp" ] = $usuario->data->valida_curp->codigoValidacion ?? null;
+        $this->data[ "vida" ] = $usuario->data->valida_vida->sessionToken ?? null;
+
+
+        echo template( "registro/vincular", $this->data );
+    }
+
+
+    // recibe formulario de registro y valida los datos
     // si todo sale bien, crea el nuevo socio
     public function procesa_registro( $demo = 0, $modelo = 0 )
     {
@@ -211,7 +282,8 @@ class Registro extends BaseController
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
             "telefono"      => $data[ "celular" ] ?? null,
-            "curp"          => $data[ "origen" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
+            "curp"          => $data[ "curp" ],
+            "dni"           => $data[ "dni" ],
             "fechanac"      => $fechanac,
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
@@ -439,6 +511,8 @@ class Registro extends BaseController
         $respuesta = [ "error" => null ];
         $curp      = $this->request->getPost( "curp" );
 
+
+
         if( $curp == "SIAA790501HCMLCL05" ){
             $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"SIAA790501HCMLCL05","nombre":"ALEJANDRO","apellidoPaterno":"SILVA","apellidoMaterno":"ACEVES","sexo":"HOMBRE","fechaNacimiento":"01/05/1979","paisNacimiento":"MEXICO","estadoNacimiento":"COLIMA","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"COLIMA","tomo":"","claveMunicipioRegistro":"108","anioReg":"1979","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"COLIMA"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
         }
@@ -474,10 +548,20 @@ class Registro extends BaseController
                 );
 
                 $respuesta[ "datos" ] = json_decode( curl_exec( $curl ) );
-    
                 curl_close($curl);
             }
         }
+
+        if( $respuesta[ "datos" ]->estatus == 'OK' && ( $this->request->getPost( "socio" ) ?? null ) ){
+            $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+
+            $socio->curp = $curp;
+
+            $data = $socio->data;
+            $data->valida_curp = $respuesta[ "datos" ];
+            $socio->data = $data;
+            model( "UsuarioModel" )->save( $socio );
+        }            
 
         return json_encode( $respuesta );
     }
@@ -540,7 +624,7 @@ class Registro extends BaseController
         echo template( "registro/camara", $this->data );
     }
 
-    public function upload( $modo, $tempID ){
+    public function upload( $modo, $tempID, $socio = null ){
         $this->data[ "navbar" ] = false;
         $this->data[ "modo" ]  = $modo;
         $this->data[ "tempID" ]  = $tempID;

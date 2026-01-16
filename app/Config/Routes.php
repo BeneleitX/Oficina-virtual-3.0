@@ -13,6 +13,7 @@ $routes->get( "login",                              "Sesion::login" );
 $routes->get( "recover",                            "Sesion::recover" );
 $routes->get( "recover/(:any)",                     "Sesion::recover/$1" );
 $routes->get( "login/(:num)",                       "Sesion::login/$1" );
+$routes->get( "login/white",                        "Sesion::login/0/1" );
 $routes->get( "oauth/(:any)",                       "Sesion::procesa_login/$1" );
 $routes->get( "pass_catch/(:any)",                  "Sesion::pass_catch/$1" );
 $routes->post( "oauth",                             "Sesion::procesa_login" );
@@ -23,8 +24,10 @@ $routes->get( "confirma_retiro/(:any)",             "Sesion::confirma_retiro/$1"
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
 $routes->get( "registro",                           "Registro::nuevo_formulario" );
+$routes->get( "vincular",                           "Registro::vincular" );
 $routes->get( "camara/(:any)/(:any)",               "Registro::camara/$1/$2" );
 $routes->get( "upload/(:any)/(:any)",               "Registro::upload/$1/$2" );
+$routes->get( "upload/(:any)/(:any)/(:any)",        "Registro::upload/$1/$2/$3" );
 $routes->post( "procesa_registro",                  "Registro::procesa_registro" );
 $routes->post( "valida_patrocinador",               "Registro::valida_patrocinador" );
 $routes->post( "valida_curp",                       "Registro::valida_curp" );
@@ -55,6 +58,7 @@ $routes->get( "estatus/test",                       "Admin::estatus_test" );
 $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout",                             "Sesion::logout" );
     $routes->get( "logout/(:num)/(:any)",               "Sesion::logout/$1/$2" );
+    $routes->get( "logout/white",                       "Sesion::logout/0/0/1" );
 
     $routes->get( "procesa_registro/(:num)/(:any)",     "Registro::procesa_registro/$1/$2" );
    

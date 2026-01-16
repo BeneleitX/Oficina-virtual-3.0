@@ -3,6 +3,17 @@
 <!-- Library -->
 <!-- <script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-biometrics.min.js"></script> -->
 
+<script>
+  if( window.self !== window.top ){
+    window.top.location = window.location;
+  }
+
+  var v_curp = '<?php echo $curp; ?>',
+      v_ine  = '<?php echo $ine; ?>',
+      v_vida = '<?php echo $vida; ?>',
+      curp   = '<?php echo $usuario->curp; ?>';
+</script>
+
 <script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script>
 
 <style>
@@ -243,7 +254,7 @@
 
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
-<div class="container wizard">
+<div class="container wizard d-none">
     <div class="row">
         <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
 
@@ -276,174 +287,85 @@
 
             <div id="formulario">
                 
-                <!-- pais y curp -->
+                <!-- login -->
                 <div style="display:none" class="paso w-100" step="0">    
-                    <h5>¡Bienvenido a tu Oficina Virtual!</h5>
-                    <p>En estos sencillos pasos, te guiaremos a través del proceso de registro para crear tu cuenta de usuario. Es importante que tomes las siguientes consideraciones:
+                    <?php if( $usuario->id ){ ?>
+                    <div class="row mb-3">
+                        <div class="col-md-8 col-lg-9">
+                            <?php echo "<p class=\"mb-1\">".$usuario->avatar( 32 )." <span class=\"text-marine\">".$usuario->nombre()."</span></p><p>".$usuario->id( false, "marine" )." <span class=\"badge bg-gray-700\">{$usuario->curp}</span> ".$usuario->bandera()."</p>"; ?>
+                        </div>
+                        <div class="col-md-4 col-lg-3 text-end">
+                            <a href="<?php echo base_url(); ?>logout/white" class="<?php echo $usuario->id ? "" : "d-none"; ?> btn btn-sm btn-outline-danger btn-logout">Cambiar de socio <i class="fa fa-xmark"></i></a>
+                        </div>
+                    </div>
+                    <?php } ?>
+                    <h5>¡Bienvenido!</h5>
+                    <p>En estos sencillos pasos, te guiaremos a través del proceso de vinculación de tu cuenta con tu documentación oficial. Es importante que tomes las siguientes consideraciones:
                         <ul>
-                            <li>El registro lo debe hacer el titular. No es posible que puedas registrar a terceros.</li>
-                            <li>No es posible el registro de menores de 18 años</li>
+                            <li>Este proceso es únicamente para socios ya registrados previamente.</li>
+                            <li>La vinculación la debe hacer el titular. No es posible que puedas vincular cuentas de terceros.</li>
                             <li>Debes contar con una buena conexión a Internet</li>
-                            <li>Asegurate en cada paso que la información que proporciones sea correcta</li> 
-                            <li>Realiza el registro desde un dispositivo con cámara frontal y bocinas o auriculares</li>
-                            <li>Tener a la mano tu credencial o documento de indentidad con fotografía</li>
-                            
-                        </ul></p>
-                    <div class="row">
-                        <div class="col-md-6 mt-3">
-                            <p class="fw-bold text-marine mb-1">Para comenzar, selecciona tu país:</p>
+                            <li>Realiza la vinculación desde un dispositivo con cámara frontal y bocinas o auriculares</li>
+                            <li>Tener a la mano tu credencial de elector con fotografía</li>
+                        </ul>
+                    </p>
 
-                            <div class="campo_nacionalidad rounded border p-0 w-100" style="border: 2px solid var(--bs-border-color);" >
-                                <div class="input-group mb-0">
-                                    <div class="selected-option" tipo="nacionalidad"><div></div></div>
-                                    <input type="text" class="form-control border-0 text-teal" name="nacion" value="" placeholder="" id="nacion" readonly>
-                                </div>
-
-                                <div class="select-box" id="nacionalidad">
-                                    <div class="options">
-                                        <input type="text" class="search-box form-control" placeholder="Buscar por país">
-                                        <ol></ol>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="small text-red m-0" id="nacionalidad_error"></p>
-                        </div>
-
-                        <div class="col-md-6 mt-3">
-                            <div id="curp_group" class="d-none">
-                                <p class="fw-bold text-marine mb-1">Proporciona tu CURP:</p>
-                               
-                                <div class="input-group">
-                                     <input name="curp" id="curp" type="text" class="form-control" maxlength="18" placeholder="" />
-                                    <button id="valida_curp" class="btn btn-outline-warning" type="button"><i class="fa fa-magnifying-glass"></i> Verificar</button>
-                                </div>
-                                                                
-                                <p class="small text-red m-0" id="curp_error"></p>
-                                <div class="mt-3" id="datos_curp">
-                                    <div  id="curp_card" style="display:none">
-                                        <span class="badge fs-5 bg-gray-200 py-2 px-3 text-gray-500"></span>
-                                    </div>
-                                </div>                                      
-                            </div>
-
-                            <div id="dni_group" class="d-none">
-                                <p class="fw-bold text-marine mb-1">Número de tu identificación oficial (DNI):</p>
-                                    <input name="dni" id="dni" type="text" class="form-control" maxlength="18" placeholder="" />
-                                    <p class="small text-red m-0" id="dni_error"></p>
-                            </div>  
-                        </div>
-                    </div>                          
-
-                </div>
-
-                <!-- datos generales -->
-                <div style="display:none" class="paso w-100" step="1">    
-                    <p class="m-0" id="instrucciones_datos"></p>
-                    <div class="row">
-                        <div class="col-md-6 mt-4 col-lg-4">
-                            <p class="fw-bold mb-1">Nombre(s)</p>
-                            <input name="nombre" type="text" class="form-control" placeholder="" />
-                            <p class="small text-red m-0" id="nombre_error"></p>
-                        </div>
-
-                        <div class="col-md-6 mt-4 col-lg-4">
-                            <p class="fw-bold mb-1">Primer apellido</p>
-                            <input name="apellido1" type="text" class="form-control" placeholder="" />
-                            <p class="small text-red m-0" id="apellido1_error"></p>
-                        </div>
-
-                        <div class="col-md-6 mt-4 col-lg-4">
-                            <p class="fw-bold mb-1">Segundo apellido</p>
-                            <input name="apellido2" type="text" class="form-control" placeholder="" />
-                            <p class="small text-red m-0" id="apellido2_error"></p>
-                        </div>
-
-                        <div class="col-md-6 mt-4 col-lg-4">
-                            <p class="fw-bold mb-1">Fecha de nacimiento</p>
-                            <input name="fechanac" type="date" class="form-control" placeholder="" />
-                            <p class="small text-red m-0" id="fechanac_error"></p>
-                        </div>
-                        
-                        <div class="col-md-6 mt-4 col-lg-4">
-                            <p class="fw-bold mb-1">Sexo</p>
-                            <select name="sexo" class="form-select">
-                                <option value="">Selecciona una opción</option>
-                                <option value="H">HOMBRE</option>
-                                <option value="M">MUJER</option>
-                            </select>
-                            <p class="small text-red m-0" id="sexo_error"></p>
-                        </div>
-                    </div>  
+                    <?php
+                    if( $usuario->id ){
+                        if( $usuario->data->ubicacion->origen != "MX" ){
+                            echo "\n<div class=\"alert alert-danger fw-bold mt-4 mb-0\">Esta herramienta es únicamente para personas en México</div>";
+                        }
+                    }
+                    else{
+                        echo "\n<p class=\"fw-bold text-marine mt-4 mb-0\">Para empezar el proceso, inicia sesión con tus datos de acceso a Beneleit</p>";
+                    }
+                    ?>
                 </div>
                 
                 <!-- datos de contacto -->
-                <div style="display:none" class="paso w-100" step="2">    
-                    <p class="">Tus datos de contacto serán esenciales para finalizar el proceso de registro. Asegurate de que tu correo electrónico esté activo, pues ahi recibirás tus datos de acceso a la plataforma.</p>
+                <div style="display:none" class="paso w-100" step="1">    
+                    <p class="">Asegurate de que tu CURP esté bien capturada y coincida con tu documentación oficial. </p>
                     
                     <div class="row">
-                        <div class="col-md-6">
-                            <p class="fw-bold text-marine mb-1">Correo electrónico</p>
-                            <div class="input-group">
-                                <input name="correo" type="email" class="form-control" autocomplete="off" />
-                                <button id="valida_correo" class="btn btn-outline-warning" type="button"><i class="fa fa-magnifying-glass"></i> Verificar</button>
-                            </div>                            
-                            <p class="small text-red m-0" id="correo_error"></p>
-                        </div>
+                        <div class="col-md-6 mt-3">
+                            <div id="curp_group">
+                                <p class="fw-bold text-marine mb-1">CURP asociada:</p>
+                               
+                                <div class="input-group">
+                                     <input <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ? "disabled" : ""; ?> name="curp" id="curp" type="text" class="form-control" maxlength="18" value="<?php echo $usuario->curp; ?>" />
 
-                        <div class="col-md-5 offset-md-1">
-                            <p class="fw-bold text-marine mb-1">Teléfono celular</p>
-                                <div class="campo_celular p-0 w-100">
-                                    <div class="input-group mb-0 w-100">
-                                        <div style="border: 2px solid var(--bs-border-color);" class="selected-option" tipo="celular"><div></div></div>
-                                        <span class="input-group-text bg-gray-400 border-0 text-marine fw-bold" id="codigo"></span>
-                                        <input type="text" class="form-control" name="celular" value="" placeholder="">
-                                    </div>            
-                                    
-                                    <div class="select-box" id="celular">
-                                        <div class="options">
-                                            <input type="text" class="search-box form-control" placeholder="Buscar por país">
-                                            <ol></ol>
-                                        </div>
-                                    </div>
-                                </div>     
-                            <p class="small text-red m-0" id="celular_error"></p>
+                                     <?php if( strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ){ 
+                                        echo "\n<button class=\"btn btn-success\" disabled  type=\"button\"><i class=\"fa fa-check\"></i> Verificado</button>";
+                                     }
+                                     else{
+                                        echo "\n<button id=\"valida_curp\" class=\"btn btn-outline-warning\" type=\"button\"><i class=\"fa fa-magnifying-glass\"></i> Verificar</button>";
+                                     } ?>
+                                </div>
+                                                                
+                                <p class="small text-red m-0" id="curp_error"></p>
+                            </div>
                         </div>                        
                     </div>  
                 </div>
 
-                <!-- patrocinador -->
-                <div style="display:none" class="paso w-100" step="3">    
-                    <p class="m-0"> Tu cuenta estará vinculada a un patrocinador. Por favor verifica que el número de socio Beneleit que te ha proporcionado tu patrocinador sea el correcto. recuerda que una vez creada tu cuenta, no podrás modificarlo.</p>
-                    <div class="row mt-3">
-                     
-                        <div class="col-md-6">
-                            <p class="fw-bold mb-1 text-marine">No. de patrocinador</p>
-                            
-                            <div class="input-group">
-                                    <input name="patrocinador" id="patrocinador" type="text" class="form-control" maxlength="18" placeholder="" />
-                                <button id="valida_pat" class="btn btn-outline-warning" type="button"><i class="fa fa-magnifying-glass"></i> Verificar</button>
-                            </div>
-                                                            
-                            <p class="small text-red m-0" id="patrocinador_error"></p>
-                        </div>
-
-                        <div class="col-md-6" id="datos_patrocinador">&nbsp;<br>
-                            <div class="py-2" id="pat_card" style="display:none">
-                                <div class="w-100 fs-6" id="pat_nombre"></div>
-                            </div>
-                        </div>   
-
-                    </div>  
-                </div>
-
                 <!-- INE -->
-                <div style="display:none" class="paso w-100" step="4">    
+                <div style="display:none" class="paso w-100" step="2">    
                     <p>Utilizando la cámara de tu dispositivo, toma fotografías de tu documento de identificación oficial con fotografía, asegurate de que sean claras y legibles.</p><p class="fw-bold text-marine">Carga las fotos haciendo click en los recuadros</p>
+                    
+                    <?php 
+                        $f = null;
+                        $r = null;
+
+                        if( $usuario->id ){ 
+                            $f = $usuario->data->credencial->frente;
+                            $r = $usuario->data->credencial->reverso;
+                        }
+                    ?>
 
                     <div class="row my-3">
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
-                                <img id="shot_frente" src="<?php echo base_url(); ?>assets/img/frente.png" class="grayscale rounded-2 my-3 img-fluid w-100" alt="">
+                                <img id="shot_frente" src="<?php echo base_url().( "data/{$usuario->id}/".$f ?? "assets/img/frente.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
                                     <button onclick="shoot( 'frente' )" class="btnc center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Foto frente</button>
                                 </div>
@@ -453,7 +375,7 @@
 
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
-                                <img id="shot_reverso" src="<?php echo base_url(); ?>assets/img/reverso.png" class="grayscale rounded-2 my-3 img-fluid w-100" alt="">
+                                <img id="shot_reverso" src="<?php echo base_url().( "data/{$usuario->id}/".$r ?? "assets/img/reverso.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
                                     <button onclick="shoot( 'reverso' )" class="btnc center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Foto reverso</button>
                                 </div>
@@ -470,7 +392,7 @@
                 </div>
 
                 <!-- Validación de persona -->
-                <div style="display:none" class="paso w-100" step="5">   
+                <div style="display:none" class="paso w-100" step="3">   
                     <p class="fw-bold text-marine mb-3">Haz click en el botón para iniciar la prueba y escuchar las instrucciones</p> 
                     <tn-prueba-vida class="mb-3" id="vida"></tn-prueba-vida>
                     <button onclick="document.getElementById('vida').restart()" id="valida_vida" class="btn btn-outline-warning" disabled style="display:none"><i class="fa fa-magnifying-glass"></i> Realizar prueba</button>
@@ -478,7 +400,7 @@
                 </div>
 
                 <!-- Terminos y condiciones -->
-                <div style="display:none" class="paso w-100" step="6">    
+                <div style="display:none" class="paso w-100" step="4">    
                     <p class="fw-bold mb-1">Por último, lee y acepta nuestras políticas de privacidad</p><p class="fw-bold text-marine mb-1">Haz click en el botón para finalizar el proceso y generar tu cuenta de usuario:</p>
 
                     <?php /* <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea> */ ?>
@@ -487,27 +409,31 @@
 
                     <p class="small text-red m-0 mt-1" id="tyc_error"></p>
                 </div>
-
-                <!-- INE OLD -->
-                <div style="display:none" class="xpaso d-none" step="9">    
-                    <div id="id_component"></div>
-
-                    <div class="row">
-                        <div class="col-6"><img id="image-front" style="max-height:260px" /></div>
-                        <div class="col-6"><img id="image-back" style="max-height:260px" /></div>
-                    </div>    
-                    
-                </div>
-
             </div> 
+            
         </div> 
+        
     </div>
 
-    <div class="mt-4 mb-5 text-center" id="botonera_interactiva" style="display:none">
+    <?php if( !$usuario->id ){ ?>
+        <iframe src="login/white" frameborder="0" width="100%" height="300px" scrolling="no" style="overflow:hidden"></iframe>
+    <?php }
+    else{
+        echo "<div class=\"mt-4 mb-5 text-center\" id=\"botonera_interactiva\" style=\"display:none\">";
+        if(  $usuario->data->ubicacion->origen != "MX" ){
+            echo "\n<a href=\"".base_url()."inicio\" class=\"btn btn-secondary btn-back\">Ir a oficina virtual</a>";
+    }
+    else{ 
+        ?>
+   
         <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
-        <button type="button" class="btn btn-secondary btn-next" ajax="false">Siguiente <i class="fa fa-arrow-right"></i></button>
+        <button type="button" class="btn btn-secondary btn-next">Comenzar proceso <i class="fa fa-arrow-right"></i></button>
         <button type="button" class="btn btn-primary btn-end">Aceptar y finalizar <i class="fa fa-check"></i></button>
-    </div>            
+              
+    <?php }
+
+    echo "</div>  ";
+    } ?>
     
     
 </div>
@@ -527,4 +453,23 @@
         jwt   = <?php echo json_encode( $jwt ); ?>,
         bar_inicial = <?php echo $bar_inicial; ?>,
         target_post = '<?php echo base_url( "procesa_registro" ); ?>';
+
+        
+
+var paso_activo = 0,
+    request = {
+
+        "curp"         : null,
+        "valida_curp"  : null,
+        "valida_vida"  : null,
+        "valida_ine"   : null,
+        "imagenes": {
+            "frente" : null,
+            "reverso"  : null
+        },
+        "curp_verificado"  : <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ? 1 : 0; ?>,
+        "vida_verificado"  : 0,
+        "ine_verificado"   : 0
+    };
+
 </script>

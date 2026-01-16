@@ -5,9 +5,13 @@ use App\Entities\Usuario;
 
 class Sesion extends BaseController
 {
-    public function login( $id = null )
+    public function login( $id = null, $white = false )
     {
         $request = service('request');
+
+        if( $id == 0 ){
+            $id = null;
+        }
 
         // si estamos dentro de una petición AJAX cancelar todo y abrir pagina de login
         if( $this->request->isAJAX() ){
@@ -15,8 +19,9 @@ class Sesion extends BaseController
         }
         else{
             $this->data[ "navbar" ] = false;
-            $this->data[ "fondo" ]  = "marine";
+            $this->data[ "fondo" ]  = $white ? "white" : "marine";
             $this->data[ "id" ]     = $id;
+            $this->data[ "white" ]  = $white;
 
             $this->data[ "banners" ] = model( "BannerModel" )->where( "estatus_codigo = '201-ACTIVO' and inicia <= cast( now() as date ) and vigencia >= cast( now() as date )" )->orderby( "posicion" )->findAll();
 
@@ -27,7 +32,7 @@ class Sesion extends BaseController
 
 
     // cerrar sesión
-    public function logout( $socio = null, $modelo = null )
+    public function logout( $socio = null, $modelo = null, $white = false )
     {
         if( session( "usuario" ) ){
             // BITACORA cerre manual de sesión
@@ -42,6 +47,9 @@ class Sesion extends BaseController
         }
 
         // Si fue cierre normal ir a pagina de login
+        elseif( $white ){
+            return redirect()->route( "vincular" );
+        }
         else{
             return redirect()->route( "login" );
         }
@@ -66,6 +74,7 @@ class Sesion extends BaseController
             } 
         }
 
+        $white = $this->request->getPost( "white" );
         $INTENTOS   = 5;   // maximop de intentos
         $INTERVALO  = 3;   // segundos entre intentos
         $CASTIGO    = 120;  //segundos de bloqueo
@@ -150,7 +159,7 @@ class Sesion extends BaseController
              if( strlen( $datax[ "captcha" ] ) != 4 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "0000") ){
                 
                 return redirect() 
-                    ->route( "login" )
+                    ->route( "login".( $white ? "/white" : "") )
                     ->with( "errors", [ "captcha" => "{$icono} El número es incorrecto" ] )
                     ->withInput();
             } 
@@ -298,6 +307,11 @@ class Sesion extends BaseController
             foreach( MODELOS as $m ){
                 $db->query( " CALL p_update_padre( {$usuario->id}, '{$m[ "codigo" ]}' );" );
                 $db->query( "call p_update_primercompra( {$usuario->id}, '{$m[ "codigo" ]}' );" );
+            }
+
+            // si es login desde verificación 
+            if( $white ){
+                return redirect()->route( "vincular" );
             }
 
             // activa modo admin para staff que trenga permiso de ver cuentas de socios

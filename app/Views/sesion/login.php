@@ -88,7 +88,7 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/circle.js"></script>
 
 <?php
-if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
+if( !$white && defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 	echo "<div class=\"alert alert-danger small py-2\"><i class=\"fa fa-warning\"></i> ".VARIABLES[ "aviso_inicio" ][ "valor" ]."</div>";
 }
 ?>
@@ -132,18 +132,20 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 	*/	
 	?>
 		
-	<div class="xfixed-top p-4">
+	<div class="xfixed-top p-2">
 		<div class="row">
 			<div class="col-xl-8 offset-xl-2 col-md-8 offset-md-2">
 				<div class="row">
 					<div class="col-lg-6 offset-lg-3">
-						<p class="mx-5 px-5 py-3 text-center"><img src="<?php echo base_url(); ?>assets/img/logo_blanco.png" class="img-fluid"></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> mx-5 px-5 py-3 text-center"><img src="<?php echo base_url(); ?>assets/img/logo_blanco.png" class="img-fluid"></p>
 
-						<div class="xcard mb-3 bg-marine xtext-white ">
+						<div class="xcard mb-3 bg-<?php echo $white ? "white" : "marine"; ?> xtext-white ">
 							<div class="card-body">
 
 								<form id="login_bsumbit" method="post" action="<?php echo base_url( "oauth" ); ?>">
 									<?php echo csrf_field() ?>
+									<input type="hidden" name="white" value="<?php echo $white ?? ""; ?>">
+
 									<input type="text" class="form-control ps-4 xrounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo $id ?? old( "socio_id" ); ?>" placeholder="Socio">
 									<p class="text-red"><?php echo session( "errors.socio_id" ); ?></p>
 									<input type="password" class="form-control ps-4 mt-3 xrounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password">
@@ -163,24 +165,25 @@ if( defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] ){
 										<p class="text-red text-center m-0"><?php echo session( "errors.captcha" ); ?></p>
 
 									<p class="mt-3 mb-1 text-end"><button type="submit" id="submit_login" class="submit btn btn-primary xrounded-pill col-12">Ingresar <i class="fa fa-right-to-bracket"></i></button></p>
-									<p class="text-center mt-3 mb-0"><a class="text-mustard" href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>
+									<p class="<?php echo $white ? "d-none" : ""; ?> text-center mt-3 mb-0"><a class="text-mustard" href="<?php echo base_url( "recover" ); ?>"><i class="far fa-circle-question"></i> Solicitar un nuevo password</a></p>
 								</form>
 							</div>
 							
 						</div>
-						<p class="text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "registro" ); // formulario ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "registro" ); // formulario ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
 
+						<p class="<?php echo $white || 1 ? "d-none" : ""; ?> text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-warning xpy-2 col-12" href="<?php echo base_url( "vincular" ); ?>" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Vincula tu línea</a></p>
 
-						<p class="text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://core.beneleit.talentonet.com/activar/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Activa tu línea</a></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mb-1 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://core.beneleit.talentonet.com/activar/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Activa tu línea</a></p>
 
-						<p class="text-center mb-1 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://recarga.beneleit.talentonet.com/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Recarga Express</a></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mb-1 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://recarga.beneleit.talentonet.com/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Recarga Express</a></p>
 					</div>
 				</div>		
 			</div>
 		</div>
 	</div>
 </div> 
-<div class="text-center mt-5" style="zoom:0.5">
+<div class="<?php echo $white ? "d-none" : ""; ?> text-center mt-5" style="zoom:0.5">
 <span id="siteseal"><script async type="text/javascript" src="https://seal.godaddy.com/getSealPremium?sealID=SXHRTCqFBcGyLhgSVbyD1lpfJBgTbR4brHwH6uLYrTyiD4N79vq8UKlLcGPk"></script></span>
 </div>
 
