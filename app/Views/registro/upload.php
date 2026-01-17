@@ -1,6 +1,6 @@
 
 
-<link href="<?php echo base_url(); ?>assets/css/croppie.css" rel="stylesheet"/>
+<link href="<?php echo base_url();  ?>assets/css/croppie.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>assets/js/croppie.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/exif.js" type="text/javascript"></script>
 
@@ -33,6 +33,7 @@
 </div>
     
 <script>
-    var modo = '<?php echo $modo; ?>',
-        tempID = '<?php echo $tempID; ?>';
+    var modo   = '<?php echo $modo;   ?>',
+        tempID = '<?php echo $tempID; ?>',
+        s  = '<?php echo $s;  ?>';
 </script>

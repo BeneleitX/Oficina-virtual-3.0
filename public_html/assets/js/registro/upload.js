@@ -1,3 +1,5 @@
+var frente  = null,
+    reverso = null;
 
 
 $(document).ready(function(){
@@ -54,10 +56,11 @@ $(document).ready(function(){
                     [csrf_token] : csrf_hash,
                     "image"  : resp,
                     "modo"   : modo,
+                    "socio"  : s,
                     "tempID" : tempID
                 },
                 success: function(data) {
-                    window.parent.closeModal_img( modo );
+                    window.parent.closeModal_img( modo, data );
                 }
             });
         });

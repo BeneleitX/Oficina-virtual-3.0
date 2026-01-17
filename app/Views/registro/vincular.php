@@ -312,7 +312,12 @@
 
                     <?php
                     if( $usuario->id ){
-                        if( $usuario->data->ubicacion->origen != "MX" ){
+                        if( $usuario->data->ubicacion->origen == "MX" ){
+                            if( $curp && $ine && $vida ){
+                                echo "\n<div class=\"alert alert-success fw-bold mt-4 mb-0\">Tus datos ya han sido vinculados</div>";
+                            }
+                        }
+                        else{
                             echo "\n<div class=\"alert alert-danger fw-bold mt-4 mb-0\">Esta herramienta es únicamente para personas en México</div>";
                         }
                     }
@@ -325,16 +330,16 @@
                 <!-- datos de contacto -->
                 <div style="display:none" class="paso w-100" step="1">    
                     <p class="">Asegurate de que tu CURP esté bien capturada y coincida con tu documentación oficial. </p>
-                    
+                    <?php if( $usuario->id ){ ?>
                     <div class="row">
                         <div class="col-md-6 mt-3">
                             <div id="curp_group">
                                 <p class="fw-bold text-marine mb-1">CURP asociada:</p>
                                
                                 <div class="input-group">
-                                     <input <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ? "disabled" : ""; ?> name="curp" id="curp" type="text" class="form-control" maxlength="18" value="<?php echo $usuario->curp; ?>" />
+                                     <input <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ?? "" ) > 5 ? "disabled" : ""; ?> name="curp" id="curp" type="text" class="form-control" maxlength="18" value="<?php echo $usuario->curp; ?>" />
 
-                                     <?php if( strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ){ 
+                                     <?php if( strlen( $usuario->data->valida_curp->codigoValidacion ?? "" ) > 5 ){ 
                                         echo "\n<button class=\"btn btn-success\" disabled  type=\"button\"><i class=\"fa fa-check\"></i> Verificado</button>";
                                      }
                                      else{
@@ -346,6 +351,7 @@
                             </div>
                         </div>                        
                     </div>  
+                    <?php } ?>
                 </div>
 
                 <!-- INE -->
@@ -356,6 +362,8 @@
                         $f = null;
                         $r = null;
 
+                        $iv = strlen( $usuario->data->valida_ine->codigoValidacion ?? "" ) > 5;
+
                         if( $usuario->id ){ 
                             $f = $usuario->data->credencial->frente;
                             $r = $usuario->data->credencial->reverso;
@@ -365,9 +373,9 @@
                     <div class="row my-3">
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
-                                <img id="shot_frente" src="<?php echo base_url().( "data/{$usuario->id}/".$f ?? "assets/img/frente.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
+                                <img id="shot_frente" src="<?php echo base_url().( "data/{$usuario->id}/ine/".$f ?? "assets/img/frente.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
-                                    <button onclick="shoot( 'frente' )" class="btnc center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Foto frente</button>
+                                    <?php if( !$iv ){ ?><button onclick="shoot( 'frente' )" class="btnc center-btn btn btn-warning" id="frente" style="display:none"><i class="fa fa-camera"></i> Foto frente</button><?php } ?>
                                 </div>
                             </div>
                             
@@ -375,16 +383,25 @@
 
                         <div class="col-md-6">
                             <div class="card px-5" style="position:relative; aspect-ratio: 7/4">
-                                <img id="shot_reverso" src="<?php echo base_url().( "data/{$usuario->id}/".$r ?? "assets/img/reverso.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
+                                <img id="shot_reverso" src="<?php echo base_url().( "data/{$usuario->id}/ine/".$r ?? "assets/img/reverso.png" ); ?>" class="<?php echo $f ? "" : "grayscale"; ?> rounded-2 my-3 img-fluid w-100" alt="">
                                 <div class="vertical-center" style="position:absolute">
-                                    <button onclick="shoot( 'reverso' )" class="btnc center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Foto reverso</button>
+                                    <?php if( !$iv ){ ?>
+                                    <button onclick="shoot( 'reverso' )" class="btnc center-btn btn btn-warning" id="reverso" style="display:none"><i class="fa fa-camera"></i> Foto reverso</button><?php } ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <p class="mb-1">
-                        <button id="valida_ine" class="btn btn-outline-warning"><i class="fa fa-magnifying-glass"></i> Verificar documento</button>
+                        <?php 
+                        if( $iv ){
+                            echo "<button class=\"btn btn-success\" disabled><i class=\"fa fa-check\"></i> Verificado</button>";
+                        }
+                        else{
+                            echo "<button id=\"valida_ine\" class=\"btn btn-outline-warning\"><i class=\"fa fa-magnifying-glass\"></i> Verificar documento</button>";
+                        }
+                        ?>
+                        
                         <input class="d-none" name="credencial">
                     </p>
                     <p class="small text-red m-0" id="credencial_error"></p>
@@ -395,17 +412,24 @@
                 <div style="display:none" class="paso w-100" step="3">   
                     <p class="fw-bold text-marine mb-3">Haz click en el botón para iniciar la prueba y escuchar las instrucciones</p> 
                     <tn-prueba-vida class="mb-3" id="vida"></tn-prueba-vida>
-                    <button onclick="document.getElementById('vida').restart()" id="valida_vida" class="btn btn-outline-warning" disabled style="display:none"><i class="fa fa-magnifying-glass"></i> Realizar prueba</button>
+                    
+                    <?php
+                    if( $vida ){
+                        echo "<button class=\"btn btn-success\" disabled><i class=\"fa fa-check\"></i> Verificado</button>";
+                    }
+                    else{
+                        echo "<button onclick=\"document.getElementById('vida').restart()\" id=\"valida_vida\" class=\"btn btn-outline-warning\" disabled style=\"display:none\"><i class=\"fa fa-magnifying-glass\"></i> Realizar prueba</button>";
+                    }
+                    ?>
+                    
                     <p class="small text-red m-0 mt-1" id="vida_error"></p>
                 </div>
 
                 <!-- Terminos y condiciones -->
                 <div style="display:none" class="paso w-100" step="4">    
-                    <p class="fw-bold mb-1">Por último, lee y acepta nuestras políticas de privacidad</p><p class="fw-bold text-marine mb-1">Haz click en el botón para finalizar el proceso y generar tu cuenta de usuario:</p>
+                    <p class="fw-bold mb-1">¡Muchas gracias!</p><p class="fw-bold text-marine mb-1">La vinculación de tus datos ha sido finalizada exitosamente</p>
 
-                    <?php /* <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea> */ ?>
 
-                    <iframe src="privacidad.pdf" type="application/pdf" width="100%" height="400px"></iframe>
 
                     <p class="small text-red m-0 mt-1" id="tyc_error"></p>
                 </div>
@@ -420,7 +444,7 @@
     <?php }
     else{
         echo "<div class=\"mt-4 mb-5 text-center\" id=\"botonera_interactiva\" style=\"display:none\">";
-        if(  $usuario->data->ubicacion->origen != "MX" ){
+        if(  $usuario->data->ubicacion->origen != "MX" || ( $curp && $ine && $vida ) ){
             echo "\n<a href=\"".base_url()."inicio\" class=\"btn btn-secondary btn-back\">Ir a oficina virtual</a>";
     }
     else{ 
@@ -428,7 +452,7 @@
    
         <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
         <button type="button" class="btn btn-secondary btn-next">Comenzar proceso <i class="fa fa-arrow-right"></i></button>
-        <button type="button" class="btn btn-primary btn-end">Aceptar y finalizar <i class="fa fa-check"></i></button>
+        <a href="<?php echo base_url( "logout" ); ?>" class="btn btn-primary btn-end">finalizar y salir <i class="fa fa-arrow-right"></i></a>
               
     <?php }
 
@@ -454,7 +478,6 @@
         bar_inicial = <?php echo $bar_inicial; ?>,
         target_post = '<?php echo base_url( "procesa_registro" ); ?>';
 
-        
 
 var paso_activo = 0,
     request = {
@@ -464,12 +487,12 @@ var paso_activo = 0,
         "valida_vida"  : null,
         "valida_ine"   : null,
         "imagenes": {
-            "frente" : null,
-            "reverso"  : null
+            "frente"   : <?php echo ( $usuario->data->credencial->frente ?? 0 ) ? "true" : "null"; ?>,
+            "reverso"  : <?php echo ( $usuario->data->credencial->reverso ?? 0 ) ? "true" : "null"; ?>
         },
-        "curp_verificado"  : <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ) > 5 ? 1 : 0; ?>,
-        "vida_verificado"  : 0,
-        "ine_verificado"   : 0
+        "curp_verificado"  : <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ?? "" ) > 5 ? 1 : 0; ?>,
+        "vida_verificado"  : <?php echo strlen( $usuario->data->valida_vida->sessionToken ?? "" ) > 5 ? 1 : 0; ?>,
+        "ine_verificado"   : <?php echo strlen( $usuario->data->valida_ine->codigoValidacion ?? "" ) > 5 ? 1 : 0; ?>
     };
 
 </script>

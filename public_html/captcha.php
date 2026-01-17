@@ -11,6 +11,8 @@ function hextorgb ($hexstring){
 
 session_start();
 
+$white = $_GET["white"];
+
 $captcha = "";
 $captcha_b = "";
 $letra = "";
@@ -21,8 +23,7 @@ $possibleLetters = "1234567890";
 $captchaFont = "assets/captcha.ttf";
 $randomDots = 20;
 $randomLines = 10;
-$textColor = "47c24c";
-$noiseColor = "009779";
+
 $character = 0;
 
 while ($character < $totalCharacters) {
@@ -36,7 +37,19 @@ setcookie( "captcha", md5( $captcha ), time() + 32, "/");
 
 $captchaFontSize = $captchaHeight * 0.65;
 $captchaImage = @imagecreate($captchaWidth,$captchaHeight);
-$backgroundColor = imagecolorallocate($captchaImage,26,37,66); // color fondo
+
+if( $white ){
+    $textColor = "009779";
+    $noiseColor = "47c24c";    
+    $backgroundColor = imagecolorallocate($captchaImage,255,255,255); // color fondo
+}
+else{
+    $textColor = "47c24c";
+    $noiseColor = "009779";    
+    $backgroundColor = imagecolorallocate($captchaImage,26,37,66); // color fondo
+}
+
+
 $arrayTextColor = hextorgb($textColor);
 $textColor = imagecolorallocate($captchaImage,$arrayTextColor['red'],$arrayTextColor['green'],$arrayTextColor['blue']);
 $arrayNoiseColor = hextorgb($noiseColor);

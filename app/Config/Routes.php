@@ -33,6 +33,7 @@ $routes->post( "valida_patrocinador",               "Registro::valida_patrocinad
 $routes->post( "valida_curp",                       "Registro::valida_curp" );
 $routes->post( "valida_correo",                     "Registro::valida_correo" ); 
 $routes->post( "valida_pat",                        "Registro::valida_pat" ); 
+$routes->post( "valida_vida",                       "Registro::valida_vida" ); 
 $routes->post( "valida_ine",                        "Registro::valida_ine" ); 
 $routes->post( "valida_celular",                    "Registro::valida_celular" ); 
 $routes->post( "camara_shot",                       "Registro::camara_shot" ); 

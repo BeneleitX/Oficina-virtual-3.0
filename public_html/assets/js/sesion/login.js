@@ -19,7 +19,7 @@ function reload_captcha(){
         type: "timer"
     });
 
-    $('#captcha').attr('src', base_url + 'captcha.php?' + Math.random()*1000 );
+    $('#captcha').attr('src', base_url + 'captcha.php?white=' + ( white ? 1 : 0) + '&t=' + Math.random()*1000 );
 }
 
 

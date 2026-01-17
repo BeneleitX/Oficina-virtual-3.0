@@ -187,4 +187,7 @@ if( !$white && defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] 
 <span id="siteseal"><script async type="text/javascript" src="https://seal.godaddy.com/getSealPremium?sealID=SXHRTCqFBcGyLhgSVbyD1lpfJBgTbR4brHwH6uLYrTyiD4N79vq8UKlLcGPk"></script></span>
 </div>
 
+<script>
+	var white = "<?php echo $white; ?>";
+</script>
 

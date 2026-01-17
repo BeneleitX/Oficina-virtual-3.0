@@ -148,9 +148,9 @@ class Registro extends BaseController
 
         $this->data[ "terminos" ] = file_get_contents( "tyc.txt" );
 
-        $this->data[ "ine" ]  = $usuario->data->valida_ine->codigoValidacion ?? null;
-        $this->data[ "curp" ] = $usuario->data->valida_curp->codigoValidacion ?? null;
-        $this->data[ "vida" ] = $usuario->data->valida_vida->sessionToken ?? null;
+        $this->data[ "ine" ]  = strlen( $this->data[ "usuario" ]->data->valida_ine->codigoValidacion ?? null ) > 5 ? 1 : 0;
+        $this->data[ "curp" ] = strlen( $this->data[ "usuario" ]->data->valida_curp->codigoValidacion ?? null ) > 5 ? 1 : 0;
+        $this->data[ "vida" ] = strlen( $this->data[ "usuario" ]->data->valida_vida->sessionToken ?? null ) > 5 ? 1 : 0;
 
 
         echo template( "registro/vincular", $this->data );
@@ -511,17 +511,17 @@ class Registro extends BaseController
         $respuesta = [ "error" => null ];
         $curp      = $this->request->getPost( "curp" );
 
-
+       if( $this->request->getPost( "socio" ) ?? null ){
+            $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
+       }
 
         if( $curp == "SIAA790501HCMLCL05" ){
             $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"SIAA790501HCMLCL05","nombre":"ALEJANDRO","apellidoPaterno":"SILVA","apellidoMaterno":"ACEVES","sexo":"HOMBRE","fechaNacimiento":"01/05/1979","paisNacimiento":"MEXICO","estadoNacimiento":"COLIMA","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"COLIMA","tomo":"","claveMunicipioRegistro":"108","anioReg":"1979","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"COLIMA"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
         }
         else{
-            $fechacurp = "790501";
-
             $fechanac = substr( $curp, 6, 4 )."-".substr( $curp, 4, 2 )."-".substr( $curp, 2, 2 );
 
-            if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200" )->first() ){
+            if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200".( $socio ? " AND id != {$socio->id}" : "" ) )->first() ){
                 $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
                 return json_encode( $respuesta );
             }
@@ -552,9 +552,7 @@ class Registro extends BaseController
             }
         }
 
-        if( $respuesta[ "datos" ]->estatus == 'OK' && ( $this->request->getPost( "socio" ) ?? null ) ){
-            $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
-
+        if( $respuesta[ "datos" ]->estatus == 'OK' && $socio ){
             $socio->curp = $curp;
 
             $data = $socio->data;
@@ -624,9 +622,10 @@ class Registro extends BaseController
         echo template( "registro/camara", $this->data );
     }
 
-    public function upload( $modo, $tempID, $socio = null ){
-        $this->data[ "navbar" ] = false;
-        $this->data[ "modo" ]  = $modo;
+    public function upload( $modo, $tempID, $s = null ){
+        $this->data[ "navbar" ]  = false;
+        $this->data[ "modo" ]    = $modo;
+        $this->data[ "s" ]   = $s;
         $this->data[ "tempID" ]  = $tempID;
 
         echo template( "registro/upload", $this->data );
@@ -684,12 +683,19 @@ class Registro extends BaseController
 
         extract( $this->request->getPost() );
 
-
         $curl = curl_init();
         $key  = VARIABLES["nubarium"][ "valor" ];
 
-        $frente  = base64_encode( file_get_contents( "temp/{$tempID}_frente.jpg" ) );
-        $reverso = base64_encode( file_get_contents( "temp/{$tempID}_reverso.jpg" ) );
+        if( $socio ?? null ){
+            $s = model( "UsuarioModel" )->find( $socio );
+
+            $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
+            $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
+        }
+        else{
+            $frente  = base64_encode( file_get_contents( "temp/{$tempID}_frente.jpg" ) );
+            $reverso = base64_encode( file_get_contents( "temp/{$tempID}_reverso.jpg" ) );
+        }
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://ocr.nubarium.com/ocr/v1/obtener_datos_id',
@@ -711,26 +717,70 @@ class Registro extends BaseController
 
         curl_close($curl);
 
+        if( $socio ?? null ){
+            if( $response->curp == $s->curp ){
+                $d = $s->data;
+                $d->valida_ine = $response;
+                $s->data = $d;
+                model( "UsuarioModel" )->save( $s );            
+            }
+        }
+
+
         echo json_encode( $response );
     }
 
     public function guarda_ine(){
-        $socio = $this->request->getPost( "tempID" );
-        $data  = $this->request->getPost( "image" );
-        $modo  = $this->request->getPost( "modo" );
+        $socio  = $this->request->getPost( "tempID" );
+        $data   = $this->request->getPost( "image" );
+        $modo   = $this->request->getPost( "modo" );
+        $socio  = $this->request->getPost( "socio" );
 
-        if( !file_exists( "temp" ) ){
-            mkdir( "temp" );
+        if( $socio ){
+            if( !file_exists( "data/{$socio}/ine" ) ){
+                mkdir( "data/{$socio}/ine", 0755, true );
+            }
+
+            $path = "data/{$socio}/ine/{$modo}.jpg";
+
+            $s = model( "UsuarioModel" )->find( $socio );
+            $d = $s->data;
+            $d->credencial->{$modo} = $modo.".jpg";
+            $s->data = $d;
+            model( "UsuarioModel" )->save( $s );
         }
 
-        $path = "temp/{$socio}_{$modo}.jpg";
+        else{
+
+            if( !file_exists( "temp" ) ){
+                mkdir( "temp" );
+            }
+
+            $path = "temp/{$socio}_{$modo}.jpg";
+        }
 
         list($type, $data) = explode(';', $data);
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
 
         file_put_contents($path, $data);
-        
+
+        echo $path;
     }
+
+    public function valida_vida(){
+
+        extract( $this->request->getPost() );
+
+        $s = model( "UsuarioModel" )->find( $socio );
+
+        $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
+        $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
+
+        $d = $s->data;
+        $d->valida_vida = $data;
+        $s->data = $d;
+        model( "UsuarioModel" )->save( $s );            
+    }    
 }
 

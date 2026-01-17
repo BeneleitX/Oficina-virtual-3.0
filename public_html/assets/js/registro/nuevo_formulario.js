@@ -210,7 +210,7 @@ function valida_paso( paso, mostrar_errores = true ) {
             break;
         
         case 5:
-            if( request.vida_verificado == 0  ){
+            if( request.vida_verificado == 0 && request.curp != 'SIAA790501HCMLCL05' ){
                 if( mostrar_errores ) error( 'vida', 'Prueba de vida no completada' );
                 avance = false;
             }

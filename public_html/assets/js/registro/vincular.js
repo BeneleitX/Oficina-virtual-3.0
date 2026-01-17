@@ -22,7 +22,8 @@ function update_paso( paso ) {
             $( '.btn-next' ).html( 'Continuar <i class="fa fa-arrow-right"></i>' );
             break;
             
-        case 4:
+        case 2:
+          
             break;            
     }
 
@@ -207,11 +208,14 @@ window.closeModal = function( modo = null, respuesta = null ){
     }   
 };
 
-window.closeModal_img = function( modo = null ){
+window.closeModal_img = function( modo = null, path = null ){
     $( '#camara' ).attr( 'src', '' );
     $( '#camara_ine' ).modal('hide');
 
-    var url = base_url + 'temp/' + tempID + '_' + modo + '.jpg?' + new Date().getTime();
+    if( path ){
+        var url = base_url + path + '?' + new Date().getTime();
+    }
+    
     $( '#shot_' + modo ).removeClass( 'grayscale' ).attr( 'src', url );
 
     $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
@@ -394,6 +398,7 @@ $(document).ready(function(){
     // CREDENCIAL INE
 
     $( '#valida_ine' ).on( 'click', function( e ){
+        request.curp = $( 'input[name=curp]' ).val().trim().toUpperCase();
 
         // Validar curp antes de ajax
         if( request.imagenes.frente == null || request.imagenes.reverso == null ){
@@ -413,10 +418,9 @@ $(document).ready(function(){
                     dataType: "json",
                     async: true,
                     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    data: { [csrf_token] : csrf_hash, tempID : tempID },
+                    data: { [csrf_token] : csrf_hash, socio : usuario_id },
 
                     success: function( result ){
-                        
                         
                         if( result.estatus !== undefined && result.estatus == 'ERROR' ){
                             error( 'credencial', 'El documento no es legible' );
@@ -424,17 +428,8 @@ $(document).ready(function(){
                             $( '#valida_ine' ).prop( 'disabled', false ).html( '<i class="fa fa-magnifying-glass"></i> Verificar' ).addClass( 'btn-outline-warning' ).removeClass( 'btn-success' );
                         }
                         else{
-                            var puntos = 0;
 
-                            if( result.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
-                            if( result.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
-                            if( result.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
-                            if( result.nombre == request.nombre ) puntos++;
-                            if( result.primerApellido == request.apellido1 ) puntos++;
-                            if( result.segundoApellido == request.apellido2 ) puntos++;
-                            if( result.sexo == request.sexo ) puntos++;
-
-                            if( puntos > 3 ){
+                            if( result.curp == request.curp ){
                                 $( '.center-btn.btn-warning' ).remove();
                                 
                                 request.valida_ine = result;
@@ -526,7 +521,7 @@ $(document).ready(function(){
 	
     // $( '#nacionalidad [country=MX]' ).click();    
 
-    $( '.btn-end' ).on( 'click', function( e ){
+    $( '.bxtn-end' ).on( 'click', function( e ){
         e.preventDefault();
 
         if( valida_paso( paso_activo ) ){
@@ -555,6 +550,8 @@ $(document).ready(function(){
         }     
     });
 
+   
+
     // prueba vida
 
     const pruebaVida = document.getElementById('vida');
@@ -567,6 +564,18 @@ $(document).ready(function(){
 
         request.vida_verificado = 1;
         request.valida_vida = e.detail;
+
+        $.ajax({
+            url: base_url + "valida_vida", 
+            type: "POST",
+            dataType: "json",
+            async: true,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: { [csrf_token] : csrf_hash, data : e.detail, socio : usuario_id },
+
+            success: function( result ){
+            }
+        });        
     });
 
     pruebaVida.addEventListener('liveness-failed', (e) => {
