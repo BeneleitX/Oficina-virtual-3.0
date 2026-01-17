@@ -731,7 +731,7 @@ class Registro extends BaseController
     }
 
     public function guarda_ine(){
-        $tempID  = $this->request->getPost( "tempID" );
+        $tempID = $this->request->getPost( "tempID" );
         $data   = $this->request->getPost( "image" );
         $modo   = $this->request->getPost( "modo" );
         $socio  = $this->request->getPost( "socio" );

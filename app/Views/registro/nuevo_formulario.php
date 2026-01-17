@@ -162,6 +162,11 @@
     .f1-step.active p { color: var(--bs-teal); }
     .f1 fieldset { display: none; text-align: left; }
 
+    #frame_pdf {
+        width : 100%;
+        height : 400px;
+    }
+
     @media (max-width: 767px) {
         .f1-progress-line { height: 3px; }
         .f1-progress { position: absolute; top: 18px; left: 0; width: 100%; height: 3px; background: #ddd; }
@@ -174,6 +179,11 @@
         .f1-step.activated .f1-step-icon {
             border: 3px solid var(--bs-teal); line-height: 24px;
         }    
+
+        #frame_pdf {
+            height : 200px;
+        }
+
     }
 
     #formulario {
@@ -483,7 +493,7 @@
 
                     <?php /* <textarea style="font-size:0.8rem; font-family: monospace" class="form-control small w-100" readonly id="terminos" rows="15"><?php echo $terminos; ?></textarea> */ ?>
 
-                    <iframe src="privacidad.pdf" type="application/pdf" width="100%" height="400px"></iframe>
+                    <iframe id="frame_pdf" src="privacidad.pdf" type="application/pdf"></iframe>
 
                     <p class="small text-red m-0 mt-1" id="tyc_error"></p>
                 </div>
