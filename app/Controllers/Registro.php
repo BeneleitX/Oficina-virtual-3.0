@@ -731,7 +731,7 @@ class Registro extends BaseController
     }
 
     public function guarda_ine(){
-        $socio  = $this->request->getPost( "tempID" );
+        $tempID  = $this->request->getPost( "tempID" );
         $data   = $this->request->getPost( "image" );
         $modo   = $this->request->getPost( "modo" );
         $socio  = $this->request->getPost( "socio" );
@@ -756,7 +756,7 @@ class Registro extends BaseController
                 mkdir( "temp" );
             }
 
-            $path = "temp/{$socio}_{$modo}.jpg";
+            $path = "temp/{$tempID}_{$modo}.jpg";
         }
 
         list($type, $data) = explode(';', $data);
@@ -767,6 +767,7 @@ class Registro extends BaseController
 
         echo $path;
     }
+
 
     public function valida_vida(){
 
