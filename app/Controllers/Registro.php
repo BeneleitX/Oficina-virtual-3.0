@@ -552,7 +552,7 @@ class Registro extends BaseController
             }
         }
 
-        if( $respuesta[ "datos" ]->estatus == 'OK' && $socio ){
+        if( $respuesta[ "datos" ]->estatus == 'OK' && ( $socio ?? null ) ){
             $socio->curp = $curp;
 
             $data = $socio->data;
