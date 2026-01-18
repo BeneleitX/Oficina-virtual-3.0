@@ -35,8 +35,20 @@
                 </td>
             </tr>
         </table>
+        
     </div>
 </div>
+
+<?php if( 
+    strlen( $usuario->data->valida_curp->codigoValidacion ?? "" ) < 5 ||
+    strlen( $usuario->data->valida_ine->codigoValidacion ?? "" ) < 5 ||
+    strlen( $usuario->data->valida_vida->sessionToken ?? "" ) < 5
+     ){ ?>
+    <a href="<?php echo base_url( "vincular" ); ?>">
+        <span class="d-md-none badge bg-red text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">VERIFICA TU IDENTIDAD</span>
+        <span class="d-none d-md-inline-block badge bg-red text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">IMPORTANTE: VERIFICA TU IDENTIDAD VINCULANDO TU CURP A TU CUENTA</span>
+    </a>
+<?php } ?>
 
 <div class="row">
 

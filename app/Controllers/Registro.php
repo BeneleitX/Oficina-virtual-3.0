@@ -559,6 +559,9 @@ class Registro extends BaseController
             $data->valida_curp = $respuesta[ "datos" ];
             $socio->data = $data;
             model( "UsuarioModel" )->save( $socio );
+
+            // BITACORA Creación de cuenta de usuario
+            bitacora( 117, $socio->id, $respuesta[ "datos" ] );            
         }            
 
         return json_encode( $respuesta );
@@ -724,11 +727,15 @@ class Registro extends BaseController
                 $s->data = $d;
                 model( "UsuarioModel" )->save( $s );            
             }
+
+            // BITACORA Creación de cuenta de usuario
+            bitacora( 118, $socio->id, $response );        
         }
 
 
         echo json_encode( $response );
     }
+
 
     public function guarda_ine(){
         $tempID = $this->request->getPost( "tempID" );
@@ -781,7 +788,10 @@ class Registro extends BaseController
         $d = $s->data;
         $d->valida_vida = $data;
         $s->data = $d;
-        model( "UsuarioModel" )->save( $s );            
+        model( "UsuarioModel" )->save( $s );    
+
+        // BITACORA Creación de cuenta de usuario
+        bitacora( 119, $s->id, $data );     
     }    
 }
 
