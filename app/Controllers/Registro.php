@@ -735,17 +735,16 @@ class Registro extends BaseController
         curl_close($curl);
 
         if( $socio ?? null ){
-            if( $response->curp == $s->curp ){
+            if( ( $response->curp == "" ) == $s->curp ){
                 $d = $s->data;
                 $d->valida_ine = $response;
                 $s->data = $d;
                 model( "UsuarioModel" )->save( $s );            
+
+                // BITACORA Creación de cuenta de usuario
+                bitacora( 118, $s->id, (array)$response );        
             }
-
-            // BITACORA Creación de cuenta de usuario
-            bitacora( 118, $s->id, (array)$response );        
         }
-
 
         echo json_encode( $response );
     }
@@ -796,8 +795,8 @@ class Registro extends BaseController
 
         $s = model( "UsuarioModel" )->find( $socio );
 
-        $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
-        $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
+  //      $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
+  //      $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
 
         $d = $s->data;
         $d->valida_vida = $data;
