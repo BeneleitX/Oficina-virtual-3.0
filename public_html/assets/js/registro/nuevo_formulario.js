@@ -727,15 +727,19 @@ $(document).ready(function(){
                         else{
                             var puntos = 0;
 
-                            if( result.curp.slice(0,4) == request.curp.slice(0,4) ) puntos++;
-                            if( result.curp.slice(4,10) == request.curp.slice(4,10) ) puntos++;
-                            if( result.curp.slice(-5) == request.curp.slice(-5) ) puntos++;
-                            if( result.nombre == request.nombre ) puntos++;
-                            if( result.primerApellido == request.apellido1 ) puntos++;
-                            if( result.segundoApellido == request.apellido2 ) puntos++;
-                            if( result.sexo == request.sexo ) puntos++;
+                            if( result.tipo == "PASAPORTE" ){
+                                if( result.curp == request.curp ) puntos++;
+                                if( result.nombre == request.nombre ) puntos++;
+                                if( result.apellido == request.apellido1 + ' ' + request.apellido2 ) puntos++;
+                            }
 
-                            if( puntos > 3 ){
+                            else{
+                                if( result.curp == request.curp ){
+                                    puntos = 2;
+                                }
+                            }
+
+                            if( puntos > 1 ){
                                 $( '.center-btn.btn-warning' ).remove();
                                 
                                 request.valida_ine = result;
