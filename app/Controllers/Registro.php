@@ -282,8 +282,7 @@ class Registro extends BaseController
             ],
             "correo"        => strtolower( $data[ "correo" ] ),
             "telefono"      => $data[ "celular" ] ?? null,
-            "curp"          => $data[ "curp" ] ?? "",
-            "dni"           => $data[ "dni" ] ?? "",
+            "curp"          => $data[ "origen" ] == "MX" ? $data[ "curp" ] : $data[ "dni" ],
             "fechanac"      => $fechanac,
             "redes"         => [
                 "patrocinador"  => $data[ "patrocinador" ] == 9999999 ? 0 : $data[ "patrocinador" ]
