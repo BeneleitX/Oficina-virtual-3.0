@@ -724,7 +724,7 @@ class Registro extends BaseController
             }
 
             // BITACORA Creación de cuenta de usuario
-            bitacora( 118, $socio->id, (array)$response );        
+            bitacora( 118, $s->id, (array)$response );        
         }
 
 
