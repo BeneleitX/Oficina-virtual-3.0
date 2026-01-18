@@ -673,7 +673,10 @@ class E_usuario extends Entity
     public function porcentaje_beneficiarios( $porcentaje = 0 )
     {
         if( !isset( $this->data->beneficiarios ) ){
-            $this->data->beneficiarios = [];
+            $data = $this->data;
+
+            $data->beneficiarios = [];
+            $this->data = $data;
         }
 
         foreach( $this->data->beneficiarios as $b ){
