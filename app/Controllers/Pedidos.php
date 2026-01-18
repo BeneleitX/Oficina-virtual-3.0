@@ -843,7 +843,7 @@ class Pedidos extends BaseController
                 }
             }
             
-            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13", "15", "19", "90" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ];
+            $this->data[ "pedido" ][ "data" ][ "domicilio" ] = in_array( substr( $this->data[ "pedido" ][ "metodoentrega_codigo" ], 0, 2 ), [ "00", "11", "13", "15", "19", "90" ] ) ? null : $domicilios[ $this->data[ "pedido" ][ "data" ][ "entrega" ] ] ?? null;
 
             $total = $this->data[ "pedido" ][ "data" ][ "total" ] - $this->data[ "socio" ]->saldo( $this->data[ "modelo" ] ) + $this->data[ "pedido" ][ "data" ][ "comisionentrega" ];
 

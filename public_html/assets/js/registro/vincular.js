@@ -429,7 +429,21 @@ $(document).ready(function(){
                         }
                         else{
 
-                            if( result.curp == request.curp ){
+                            var puntos = 0;
+
+                            if( result.tipo == "PASAPORTE" ){
+                                if( result.curp == request.curp ) puntos++;
+                                if( result.nombre == request.nombre ) puntos++;
+                                if( result.apellido == request.apellido1 + ' ' + request.apellido2 ) puntos++;
+                            }
+
+                            else{
+                                if( result.curp == request.curp ){
+                                    puntos = 2;
+                                }
+                            }
+
+                            if( puntos > 1 ){
                                 $( '.center-btn.btn-warning' ).remove();
                                 
                                 request.valida_ine = result;
