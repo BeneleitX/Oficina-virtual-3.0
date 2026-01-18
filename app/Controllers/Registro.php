@@ -517,7 +517,7 @@ class Registro extends BaseController
 
         $fechanac = substr( $curp, 6, 4 )."-".substr( $curp, 4, 2 )."-".substr( $curp, 2, 2 );
 
-        if( $curp != 'SIAA790501HCMOCL05' && model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200".( ( $socio ?? null ) ? " AND id != {$socio->id}" : "" ) )->first() ){
+        if( $curp != 'SIAA790501HCMLCL05' && model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200".( ( $socio ?? null ) ? " AND id != {$socio->id}" : "" ) )->first() ){
             $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
             return json_encode( $respuesta );
         }
