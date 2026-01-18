@@ -404,7 +404,7 @@ class E_usuario extends Entity
 
         $data->avatar->face = $caras[ rand( 0, sizeof( $caras   ) - 1 ) ];
         $data->avatar->bg = $colores[ rand( 0, sizeof( $colores ) - 1 ) ];
-        $data->beneficiarios = [];
+    //    $data->beneficiarios = [];
         $this->attributes[ "data" ] = json_encode( $data );
     }
 
