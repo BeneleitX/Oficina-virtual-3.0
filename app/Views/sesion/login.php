@@ -172,7 +172,7 @@ if( !$white && defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] 
 						</div>
 						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mt-3 text-white"><a class="mt-2 btn btn-danger xpy-3 col-12" href="<?php echo base_url( "registro" ); // formulario ?>" xstyle="border-radius:15px"><i class="fa fa-wand-magic-sparkles"></i> ¿Aún no eres socio? Regístrate aquí</a></p>
 
-						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-warning xpy-2 col-12" xhref="<?php echo base_url( "vincular" ); ?>" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Vincula tu línea</a></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mb-1 mt-4 text-white"><a class="mt-2 btn btn-warning xpy-2 col-12" href="<?php echo base_url( "vincular" ); ?>" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Vincula tu línea</a></p>
 
 						<p class="<?php echo $white ? "d-none" : ""; ?> text-center mb-1 text-white"><a class="mt-2 btn btn-info2 xpy-2 col-12" href="https://core.beneleit.talentonet.com/activar/" xstyle="font-size:1.3rem"><img src="assets/img/logo_beneleit_movil.png" style="width:70px"> &nbsp; Activa tu línea</a></p>
 
