@@ -236,6 +236,7 @@ class Registro extends BaseController
                     "code"          => $data[ "pais" ],
                     "origen"        => $data[ "origen" ]
                 ],
+                "beneficiarios" => [],
                 "splash" => [
                     [
                         "tipo" => "bienvenida",
