@@ -686,6 +686,25 @@ class Registro extends BaseController
         if( $socio ?? null ){
             $s = model( "UsuarioModel" )->find( $socio );
 
+            if( !file_exists( "data/{$s->id}/ine" ) ){
+                mkdir( "data/{$s->id}/ine" );
+            }
+
+            $origen  = "data/{$s->id}/ine/{$s->data->credencial->frente}";
+            $destino = "data/{$s->id}/ine/frente.jpg";
+
+            if( file_exists( $origen ) && !file_exists( $destino ) ){
+                copy( $origen, $destino );
+            }
+
+            $origen  = "data/{$s->id}/ine/{$s->data->credencial->reverso}";
+            $destino = "data/{$s->id}/ine/reverso.jpg";
+
+            if( file_exists( $origen ) && !file_exists( $destino ) ){
+                copy( $origen, $destino );
+            }
+
+
             $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
             $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
         }
