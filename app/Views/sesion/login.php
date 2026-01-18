@@ -137,7 +137,7 @@ if( !$white && defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] 
 			<div class="col-xl-8 offset-xl-2 col-md-8 offset-md-2">
 				<div class="row">
 					<div class="col-lg-6 offset-lg-3">
-						<p class="<?php echo $white ? "d-none" : ""; ?> mx-5 px-5 py-3 text-center"><img src="<?php echo base_url(); ?>assets/img/logo_blanco.png" class="img-fluid mx-3"></p>
+						<p class="<?php echo $white ? "d-none" : ""; ?> mx-5 px-5 py-2 text-center"><img src="<?php echo base_url(); ?>assets/img/logo_blanco.png" class="img-fluid w-75"></p>
 
 						<div class="xcard mb-3 bg-<?php echo $white ? "white" : "marine"; ?> xtext-white ">
 							<div class="card-body">
