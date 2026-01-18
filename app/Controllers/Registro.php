@@ -515,41 +515,36 @@ class Registro extends BaseController
             $socio = model( "UsuarioModel" )->find( $this->request->getPost( "socio" ) );
        }
 
-        if( $curp == "SIAA790501HCMLCL05" ){
-            $respuesta[ "datos" ] = json_decode( '{"estatus":"OK","codigoValidacion":"vc1619806387.2754068","curp":"SIAA790501HCMLCL05","nombre":"ALEJANDRO","apellidoPaterno":"SILVA","apellidoMaterno":"ACEVES","sexo":"HOMBRE","fechaNacimiento":"01/05/1979","paisNacimiento":"MEXICO","estadoNacimiento":"COLIMA","docProbatorio":1,"datosDocProbatorio":{"entidadRegistro":"COLIMA","tomo":"","claveMunicipioRegistro":"108","anioReg":"1979","claveEntidadRegistro":"30","foja":"","numActa":"03382","libro":"","municipioRegistro":"COLIMA"},"estatusCurp":"RCN","codigoMensaje":"0"}' );
+        $fechanac = substr( $curp, 6, 4 )."-".substr( $curp, 4, 2 )."-".substr( $curp, 2, 2 );
+
+        if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200".( ( $socio ?? null ) ? " AND id != {$socio->id}" : "" ) )->first() ){
+            $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
+            return json_encode( $respuesta );
         }
-        else{
-            $fechanac = substr( $curp, 6, 4 )."-".substr( $curp, 4, 2 )."-".substr( $curp, 2, 2 );
+        else{ 
+            $curl = curl_init();
+            $key  = VARIABLES["nubarium"][ "valor" ];
 
-            if( model( "UsuarioModel" )->where( "curp = '{$curp}' AND SUBSTRING(estatus_codigo, 1, 3) > 200".( ( $socio ?? null ) ? " AND id != {$socio->id}" : "" ) )->first() ){
-                $respuesta[ "error" ] = "La CURP que proporcionaste ya está registrada.</p><p class=\"text-marine\"><i class=\"fa fa-circle-info\"></i> <a href=\"".base_url()."recover\">Click aquí</a> si ya estas registrado y necesitas recuperar tu password";
-                return json_encode( $respuesta );
-            }
-            else{ 
-                $curl = curl_init();
-                $key  = VARIABLES["nubarium"][ "valor" ];
+            curl_setopt_array(
+                $curl, array(
+                    CURLOPT_URL => "https://curp.nubarium.com/renapo/v3/valida_curp",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS =>"{\"curp\": \"{$curp}\"}",
+                    CURLOPT_HTTPHEADER => array(
+                        'Content-Type: application/json'
+                    ),
+                )
+            );
 
-                curl_setopt_array(
-                    $curl, array(
-                        CURLOPT_URL => "https://curp.nubarium.com/renapo/v3/valida_curp",
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => "",
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS =>"{\"curp\": \"{$curp}\"}",
-                        CURLOPT_HTTPHEADER => array(
-                            'Content-Type: application/json'
-                        ),
-                    )
-                );
-
-                $respuesta[ "datos" ] = json_decode( curl_exec( $curl ) );
-                curl_close($curl);
-            }
+            $respuesta[ "datos" ] = json_decode( curl_exec( $curl ) );
+            curl_close($curl);
         }
 
         if( $respuesta[ "datos" ]->estatus == 'OK' && ( $socio ?? null ) ){
@@ -561,7 +556,7 @@ class Registro extends BaseController
             model( "UsuarioModel" )->save( $socio );
 
             // BITACORA Creación de cuenta de usuario
-            bitacora( 117, $socio->id, $respuesta[ "datos" ] );            
+            bitacora( 117, $socio->id, (array)$respuesta[ "datos" ] );            
         }            
 
         return json_encode( $respuesta );
@@ -729,7 +724,7 @@ class Registro extends BaseController
             }
 
             // BITACORA Creación de cuenta de usuario
-            bitacora( 118, $socio->id, $response );        
+            bitacora( 118, $socio->id, (array)$response );        
         }
 
 
@@ -791,7 +786,7 @@ class Registro extends BaseController
         model( "UsuarioModel" )->save( $s );    
 
         // BITACORA Creación de cuenta de usuario
-        bitacora( 119, $s->id, $data );     
+        bitacora( 119, $s->id, (array)$data );     
     }    
 }
 
