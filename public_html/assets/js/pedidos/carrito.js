@@ -111,7 +111,7 @@ function update_puntos( promocion, pesaje = false ){
                 }
                 else{
                     puntos = limpia( cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1.00 );
-                    total  = limpia( cantidad * puntos;
+                    total  = limpia( cantidad * puntos );
 
                     pedido.PTS[ promocion ] += limpia( total );
                     
