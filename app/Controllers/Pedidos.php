@@ -1148,10 +1148,6 @@ class Pedidos extends BaseController
             $cantidad = intval( $cantidad * 100 ) / 100;
             $total    = intval( $total * 100 ) / 100;
     
-            // rasurar cantidad con menos de $100
-
-            $cantidad = ( floor( $cantidad / 100 )) * 100;
-
             // Al no existir antes, la registramos en la base de datos de fondeos
 
             model( "FondeoModel" )->ignore( true )->save( [
@@ -1165,7 +1161,10 @@ class Pedidos extends BaseController
                 "extras"            => $tx
             ] );
 
-            $data      = $u->data;                                    
+            // rasurar cantidad con menos de $100
+            // $cantidad = ( floor( $cantidad / 100 )) * 100;
+
+            $data      = $u->data;                         
             $historial = $u->historial;  
 
             // si el deposito es suficiente
@@ -1193,9 +1192,11 @@ class Pedidos extends BaseController
                     $sql = "INSERT INTO t_comisiones 
                             VALUES ( NULL, '255-PENDIENTE', {$pedido[ "id" ]}, {$pedido[ "usuario_id" ]}, '520-SALDO', 0, 0, ".( $cantidad - $total ).", '{$pedido[ "fechas" ][ "reparte" ]}', NULL )";
 
+                    // suspendemos el reintegro de saldos a favor
                     // $db->query( $sql );
+
                     $s->USDT = 0;
-                    $s->cantidad = $cantidad - $total;
+                    $s->cantidad = intval( ( $cantidad - $total ) / 100 ) * 100; // $cantidad - $total;
                     $s->estatus  = 1;
                 }
                 else{

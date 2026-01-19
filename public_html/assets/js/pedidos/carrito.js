@@ -117,8 +117,6 @@ function update_puntos( promocion, pesaje = false ){
                     
                 }
 
-                console.log( producto, cantidad, puntos, total, pedido.PTS[ '010-DISTRIBUIDOR' ] );
-
                 if( pesaje ){
                     ka = ( cantidad * cat_productos[ producto ][ 'data' ].dimensiones.peso );
                     pedido.data.peso += ka;
