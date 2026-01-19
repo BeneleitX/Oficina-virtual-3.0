@@ -105,14 +105,16 @@ function update_puntos( promocion, pesaje = false ){
                 if( promocion == '016-KIT-PESO' ){ 
                     puntos = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
                     total  = Math.floor( cantidad * puntos * 10 ) / 10;
-console.log(promocion, cantidad, puntos, total );
+
                     pedido.PTS[ promocion ] += total;
                     pedido.PTS[ '010-DISTRIBUIDOR' ] += total;
                 }
                 else{
                     puntos = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1;
                     total  = Math.floor( cantidad * puntos * 10 ) / 10;
-                    
+
+console.log(promocion, cantidad, puntos, total );
+
                     pedido.PTS[ promocion ] += total;
                 }
 
@@ -230,7 +232,6 @@ function xupdate_costos(){
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
 
             if( cat_promociones[ promocion ].settings.kit == 'true' ){
-                console.log( primer_producto);
                 total_promo = primer_producto == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio ) * primer_producto;
             }
             else{
@@ -404,7 +405,7 @@ function update_pedido( flag = null ){
         $( '.card[promocion]' ).each( function(){
             pedido.PTS[ promocion ] = 0;
         });
-console.log(promocion );
+
         update_puntos( promocion, true );
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
