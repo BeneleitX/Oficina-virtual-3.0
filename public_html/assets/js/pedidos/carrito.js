@@ -106,14 +106,14 @@ function update_puntos( promocion, pesaje = false ){
                     puntos = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
                     total  = ( Math.floor( cantidad * puntos * 10 ) / 10 ).toFixed(1);
 
-                    pedido.PTS[ promocion ] += total;
+                    pedido.PTS[ promocion ] = ( pedido.PTS[ promocion ] ).toFixed(1) + total;
                     pedido.PTS[ '010-DISTRIBUIDOR' ] = pedido.PTS[ '010-DISTRIBUIDOR' ].toFixed(1) + total;
                 }
                 else{
                     puntos = ( cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1 ).toFixed(1);
                     total  = ( Math.floor( cantidad * puntos * 10 ) / 10 ).toFixed(1);
 
-                    pedido.PTS[ promocion ] = pedido.PTS[ promocion ].toFixed(1) + total;
+                    pedido.PTS[ promocion ] = ( pedido.PTS[ promocion ] ).toFixed(1) + total;
                     
                 }
 
