@@ -1055,7 +1055,7 @@ class Pedidos extends BaseController
                 $d = json_decode( curl_exec( $curl ), true );
                 curl_close($curl); 
 
-                if( sizeof( $d ) ){
+                if( sizeof( $d ) && isset( $d[ "tokenTransferInfo" ] ) ){
                     $tx  = [
                         "block"                 => $d[ "block" ], // 68750547,
                         "contractRet"           => $d[ "contractRet" ], // "SUCCESS",

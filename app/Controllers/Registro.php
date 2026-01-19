@@ -681,6 +681,7 @@ class Registro extends BaseController
 
         extract( $this->request->getPost() );
 
+        $s = null;
         $curl = curl_init();
         $key  = VARIABLES["nubarium"][ "valor" ];
 
@@ -734,8 +735,24 @@ class Registro extends BaseController
 
         curl_close($curl);
 
-        if( $socio ?? null ){
-            if( ( $response->curp == "" ) == $s->curp ){
+        if( $s ){
+
+            $puntos = 0;
+
+            if( $response->tipo == "PASAPORTE" ){
+                if( ( $response->curp ?? "" )     == $s->curp ) $puntos++;
+                if( ( $response->nombre ?? "" )   == $s->nombre ) $puntos++;
+                if( ( $response->apellido ?? "" ) == $s->apellido1 + ' ' + $s->apellido2 ) $puntos++;
+            }
+
+            else{
+                if( ( $response->curp ?? "") == $s->curp ){
+                    $puntos = 2;
+                }
+            }
+
+            if( $puntos > 1 ){
+                                
                 $d = $s->data;
                 $d->valida_ine = $response;
                 $s->data = $d;
