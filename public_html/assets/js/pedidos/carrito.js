@@ -107,13 +107,13 @@ function update_puntos( promocion, pesaje = false ){
                     total  = limpia( cantidad * puntos);
 
                     pedido.PTS[ promocion ] = limpia( pedido.PTS[ promocion ] ) + limpia( total );
-                    pedido.PTS[ '010-DISTRIBUIDOR' ] += ( limpia( total ) * 1 );
+                    pedido.PTS[ '010-DISTRIBUIDOR' ] += Number( limpia( total ) * 1 ).toFixed(1);
                 }
                 else{
                     puntos = limpia( cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1.00 );
                     total  = limpia( cantidad * puntos );
 
-                    pedido.PTS[ promocion ] += ( limpia( total ) * 1 );
+                    pedido.PTS[ promocion ] += Number( limpia( total ) * 1 ).toFixed(1);
                     
                 }
 
