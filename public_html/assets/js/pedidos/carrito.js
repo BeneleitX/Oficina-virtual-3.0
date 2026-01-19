@@ -113,9 +113,8 @@ function update_puntos( promocion, pesaje = false ){
                     puntos = cat_productos[ producto ][ 'data' ].puntos[ promocion ] ?? 1;
                     total  = Math.floor( cantidad * puntos * 10 ) / 10;
 
-                    pedido.PTS[ promocion ] += total;
-
-console.log(promocion, cantidad, puntos, total, pedido.PTS[ promocion ] );
+                    pedido.PTS[ promocion ] += total.toFixed(1);
+                    
                 }
 
                 // console.log( producto, cantidad, puntos, total, pedido.PTS[ '016-KIT-PESO' ],pedido.PTS[ '010-DISTRIBUIDOR' ] );
