@@ -299,7 +299,7 @@ function update_pedido( flag = null ){
     });    
 
     $.each( pedido.PTS, function( promocion, puntos ){
-console.log(promocion, puntos );
+
         // si se bsucan puntos de una promo descontinuada, evitar el chequeo
         if( usuario.PTS[ promocion ] === undefined || ( cat_promociones[ promocion ] === undefined && !pagado ) ){
             pedido.PTS[ promocion ] = 0;
@@ -404,7 +404,7 @@ console.log(promocion, puntos );
         $( '.card[promocion]' ).each( function(){
             pedido.PTS[ promocion ] = 0;
         });
-
+console.log(promocion );
         update_puntos( promocion, true );
 
         if( cat_promociones[ promocion ].settings.paquete == 'true' ){
