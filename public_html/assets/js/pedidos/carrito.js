@@ -105,7 +105,7 @@ function update_puntos( promocion, pesaje = false ){
                 if( promocion == '016-KIT-PESO' ){ 
                     puntos = cat_productos[ producto ][ 'data' ].puntos[ '010-DISTRIBUIDOR' ] ?? 0;
                     total  = Math.floor( cantidad * puntos * 10 ) / 10;
-
+console.log(promocion, cantidad, puntos, total );
                     pedido.PTS[ promocion ] += total;
                     pedido.PTS[ '010-DISTRIBUIDOR' ] += total;
                 }
