@@ -1250,11 +1250,11 @@ class E_usuario extends Entity
                 // si está en morado
                 // buscamos comisiones y las pasamos a saldo USDT
 
-                if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) == "2" ){
+                if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) <= "2" ){
                     $bolsa = 0;
                     $db    = db_connect();
 
-                  echo  $sql   = "SELECT c.id, c.cantidad
+                    $sql   = "SELECT c.id, c.cantidad
                             FROM t_comisiones c
                             JOIN t_periodos p 
                                 ON c.fecha between p.inicia and p.termina 
@@ -1271,7 +1271,7 @@ class E_usuario extends Entity
                         foreach( $comisiones as $c ){
                             $bolsa += $c->cantidad;
 
-                           echo $sql = "UPDATE t_comisiones
+                            $sql = "UPDATE t_comisiones
                             SET estatus_codigo = '421-APLICADO'
                             WHERE id = {$c->id}";
 
