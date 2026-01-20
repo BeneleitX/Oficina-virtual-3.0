@@ -2,10 +2,9 @@
 
 $esquema = model( "EsquemaModel" )->find( "116-ANIVERSARIO" );
 
-$y = date( "Y" ) - ( date( "n" ) < 10 && date( "d" ) < 20 ? 1 : 0 );
+$y = date( "Y" ) - ( date( "n" ) > 10 && date( "d" ) < 20 ? 0 : 1 );
 
-$bono = $usuario->getBono( $esquema, $y );
-
+$bono  = $usuario->getBono( $esquema, $y );
 $date1 = new DateTime( $y.'-09-01' );
 $date2 = new DateTime( ($y+1).'-08-31' );
 $interval = $date1->diff( $date2 );
