@@ -1254,7 +1254,7 @@ class E_usuario extends Entity
                     $bolsa = 0;
                     $db    = db_connect();
 
-               echo     $sql   = "SELECT c.id, c.cantidad
+                    $sql   = "SELECT c.id, c.cantidad
                             FROM t_comisiones c
                             JOIN t_periodos p 
                                 ON c.fecha between p.inicia and p.termina 
