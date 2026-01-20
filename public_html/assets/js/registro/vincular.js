@@ -23,8 +23,8 @@ function update_paso( paso ) {
             break;
             
         case 2:
-          
-            break;            
+
+            break;
     }
 
     // if( valida_paso( paso, false ) )
@@ -33,20 +33,7 @@ function update_paso( paso ) {
 
 
 function error( campo, mensaje ){
-
-    switch( campo ){
-        case 'nacionalidad':
-            $( '.campo_nacionalidad' ).addClass( 'es-invalido' );
-            break;
-
-        case 'sexo':
-            $( 'select[name=' + campo + ']' ).addClass( 'is-invalid' );
-            break;
-
-        default:
-            $( 'input[name=' + campo + ']' ).addClass( 'is-invalid' );
-    }
-
+    $( 'input[name=' + campo + ']' ).addClass( 'is-invalid' );
     $( '#' + campo + '_error' ).html( '<i class="fa fa-circle-xmark text-red"></i> ' + mensaje );
 }
 
@@ -70,11 +57,9 @@ function valida_paso( paso, mostrar_errores = true ) {
                 if( mostrar_errores ) error( 'credencial', 'No se han cargado las dos imagenes' );
                 avance = false;
             }
-            else if( request.nacionalidad == 'MX' ){
-                if( request.ine_verificado == 0 ){
-                    if( mostrar_errores ) error( 'credencial', 'Identificación oficial no verificada.' );
-                    avance = false;
-                }
+            else if( request.ine_verificado == 0 ){
+                if( mostrar_errores ) error( 'credencial', 'Identificación oficial no verificada.' );
+                avance = false;
             }
 
             break;
@@ -116,73 +101,6 @@ function bar_progress() {
     }
 
 	progress_line_object.attr('style', 'width: ' + new_value + '%;').data('now-value', new_value);
-}
-
-
-function selectOption() {
-	var icon 	   = $( this ).find( '.iconify' ).clone( true ),
-		phone_code = $( this ).find( 'strong' ).text(),
-		nombre     = $( this ).attr( 'nacionalidad' ),
-		code 	   = $( this ).attr( 'country' ),
-		padre 	   = $( this ).closest( '.select-box' ).attr( 'id' );
-
-	$( '[tipo=' + padre + '] div' ).html( '' ).append( icon );
-    $( '[tipo=' + padre + '] div' ).removeClass( 'active' );
-    $( '#' + padre + ' .options' ).removeClass( 'active' );
-    $( '#' + padre + ' .options' ).find('.hide').removeClass( 'hide' );
-    $( '#' + padre + ' .search-box' ).val( '' );
-
-    if( padre == 'nacionalidad' ){
-
-        $( 'input[name=nacion]' ).val( nombre );
-
-        request.nacionalidad = code;
-        request.curp      = null;
-        request.nombre    = null;
-        request.apellido1 = null;
-        request.apellido2 = null;
-        request.fechanac  = null;
-        request.sexo      = null;
-
-        $( 'input[name=curp], input[name=dni]' ).val( '' )
-        $( 'input[name=nombre]' ).val( '' )
-        $( 'input[name=apellido1]' ).val( '' )
-        $( 'input[name=apellido2]' ).val( '' )
-        $( 'input[name=fechanac]' ).val( '' )
-        $( 'select[name=sexo]' ).val( '' )        
-
-        $('.form-control, .form-select').removeClass('is-invalid');
-        $('.form-control, .form-select').next( 'p.small' ).text( '' );
-        
-        $( '#celular [country=' + code + ']' ).click();  
-
-        if( code == 'MX' ){
-            $( '#curp_group' ).removeClass( 'd-none' );
-            $( '#dni_group' ).addClass( 'd-none' );
-        }
-        else{
-            $( '#curp_group' ).addClass( 'd-none' );
-            $( '#dni_group' ).removeClass( 'd-none' );
-        }        
-	}
-	else if( padre == 'celular' ){
-		$( '#codigo' ).text( phone_code );
-
-        request.pais = code;
-        request.phone_code = phone_code;
-	}
-}
-
-
-function searchCountry() {
-	var padre        = $( this ).closest( '.select-box' ).attr( 'id' );
-
-    let search_query = $( '#' + padre + ' .search-box' ).val().toLowerCase();
-    
-	$( '#' + padre + ' .option' ).each( function( id, opcion ){
-        let is_matched = $( this ).find('.country-name').text().toLowerCase().includes(search_query);
-        $( this ).toggleClass( 'hide', !is_matched );
-    });
 }
 
 
@@ -488,52 +406,8 @@ $(document).ready(function(){
     	// }
     });
 
-	$.each( countries, function( id, country ){
-		var option = '<li class="option" country="' + country.code + '" nacionalidad="' + country.name + '"><div><span class="iconify rounded-1" data-width="36" data-icon="flag:' + country.code.toLowerCase() + '-4x3"></span><span class="country-name">' + country.name + '</span></div><strong>+' + country.phone + '</strong></li>';
-	
-		$( '.options' ).find('ol').append( option );
-	});
-	
-	$( '.selected-option' ).on( 'click', function( e ){
-		var padre = $( this ).attr( 'tipo' );
 
-		$( this ).find( 'div' ).toggleClass( 'active' );
-		$( '#' + padre + ' .options' ).toggleClass( 'active' );
-		$( '#' + padre + ' .search-box').focus();
-
-        if( padre == 'nacionalidad' ){
-            $( '.campo_nacionalidad' ).removeClass('es-invalido');
-            $( '.campo_nacionalidad' ).next().text( '' );
-        }
-	});
 	
-	$( '.option' ).on('click', selectOption );
-	$( '.search-box' ).on( 'input', searchCountry );
- 
-    $( '#nacionalidad ol, #celular ol' ).prepend( '<hr>' );
-    $( '#nacionalidad [country=GT]' ).parent().prepend( $( '#nacionalidad [country=GT]' ) );
-    $( '#nacionalidad [country=CL]' ).parent().prepend( $( '#nacionalidad [country=CL]' ) );
-    $( '#nacionalidad [country=SV]' ).parent().prepend( $( '#nacionalidad [country=SV]' ) );
-    $( '#nacionalidad [country=NI]' ).parent().prepend( $( '#nacionalidad [country=NI]' ) );
-    $( '#nacionalidad [country=CO]' ).parent().prepend( $( '#nacionalidad [country=CO]' ) );
-    $( '#nacionalidad [country=BO]' ).parent().prepend( $( '#nacionalidad [country=BO]' ) );
-    $( '#nacionalidad [country=VE]' ).parent().prepend( $( '#nacionalidad [country=VE]' ) );
-    $( '#nacionalidad [country=EC]' ).parent().prepend( $( '#nacionalidad [country=EC]' ) );
-    $( '#nacionalidad [country=PE]' ).parent().prepend( $( '#nacionalidad [country=PE]' ) );
-    $( '#nacionalidad [country=MX]' ).parent().prepend( $( '#nacionalidad [country=MX]' ) );  
-
-    $( '#celular [country=GT]' ).parent().prepend( $( '#celular [country=GT]' ) );
-    $( '#celular [country=CL]' ).parent().prepend( $( '#celular [country=CL]' ) );
-    $( '#celular [country=SV]' ).parent().prepend( $( '#celular [country=SV]' ) );
-    $( '#celular [country=NI]' ).parent().prepend( $( '#celular [country=NI]' ) );
-    $( '#celular [country=CO]' ).parent().prepend( $( '#celular [country=CO]' ) );
-    $( '#celular [country=BO]' ).parent().prepend( $( '#celular [country=BO]' ) );
-    $( '#celular [country=VE]' ).parent().prepend( $( '#celular [country=VE]' ) );
-    $( '#celular [country=EC]' ).parent().prepend( $( '#celular [country=EC]' ) );
-    $( '#celular [country=PE]' ).parent().prepend( $( '#celular [country=PE]' ) );
-    $( '#celular [country=MX]' ).parent().prepend( $( '#celular [country=MX]' ) );  
-	
-    // $( '#nacionalidad [country=MX]' ).click();    
 
     $( '.bxtn-end' ).on( 'click', function( e ){
         e.preventDefault();
