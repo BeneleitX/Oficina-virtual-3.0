@@ -1271,7 +1271,7 @@ class E_usuario extends Entity
                         foreach( $comisiones as $c ){
                             $bolsa += $c->cantidad;
 
-                            $sql = "UPDATE t_comisiones
+                           echo $sql = "UPDATE t_comisiones
                             SET estatus_codigo = '421-APLICADO'
                             WHERE id = {$c->id}";
 
