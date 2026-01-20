@@ -618,7 +618,7 @@
                             $saldo = $pedido[ "data"][ "saldo" ] ?? 0;
                         }
                         else{
-                            $saldo = $socio->saldo( $modelo );
+                            $saldo = $socio->saldo( $modelo, true );
                         }
 
                         if( $saldo == "" ) $saldo = 0;

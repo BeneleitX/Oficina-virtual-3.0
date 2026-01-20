@@ -10,6 +10,9 @@ class A extends BaseController
  * @return void
  */
     public function Landing( $u, $numero = null ){
+
+        return redirect()->to( "inicio" );
+
         if( $numero != null ){
             $socio = model( "UsuarioModel" )->find( $numero );
         }

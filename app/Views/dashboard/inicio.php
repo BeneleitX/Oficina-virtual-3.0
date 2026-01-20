@@ -45,8 +45,8 @@
     strlen( $usuario->data->valida_vida->sessionToken ?? "" ) < 5
      ){ ?>
     <a href="<?php echo base_url( "vincular" ); ?>">
-        <span class="d-md-none badge bg-red text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">VERIFICA TU IDENTIDAD</span>
-        <span class="d-none d-md-inline-block badge bg-red text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">IMPORTANTE: VERIFICA TU IDENTIDAD VINCULANDO TU CURP A TU CUENTA</span>
+        <span class="d-md-none badge bg-deep-orange text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">VERIFICA TU IDENTIDAD</span>
+        <span class="d-none d-md-inline-block badge bg-deep-orange text-center w-100" data-bs-toggle="tooltip" title="Verificar tu identidad">IMPORTANTE: VERIFICA TU IDENTIDAD VINCULANDO TU CURP A TU CUENTA</span>
     </a>
 <?php } ?>
 
@@ -88,9 +88,12 @@
                     $y = date( "Y" ) - ( date( "n" ) < 9 ? 1 : 0 );
                     $b[ "data" ][ "titulo" ] .= " {$y}-".( $y + 1 );
                     break;
+
+                case "28-SEMILLERO":
+                    $b[ "data" ][ "titulo" ] .= "<i style=\"font-size:25px; position:absolute; top:8px; right:15px\" class=\"fa fa-qrcode text-light-green\" data-bs-toggle=\"tooltip\" title=\"Encuentra aquí tu código QR para ingresar al evento\"></i>";
             }
 
-            $html .= "<div style=\"cursor:pointer; position:relative\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
+            $html .= "<div style=\"cursor:pointer; position:relative\" onclick=\"save_layout( '{$b[ "codigo" ]}' )\" class=\"card-header bg-{$b[ "data" ][ "fondo" ]}\" data-bs-toggle=\"collapse\" data-bs-target=\"#div_{$b[ "codigo" ]}\" aria-expanded=\"true\" aria-controls=\"div_{$b[ "codigo" ]}\" style=\"position:relative\"><strong class=\"m-0 text-white\">{$b[ "data" ][ "titulo" ]}</strong></div>";
 
 
             $html .= "<div id=\"div_{$b[ "codigo" ]}\" class=\"accordion-collapse collapse ".( ( $usuario->data->layout->{$b[ "codigo" ]} ?? true ) == "true" ? "show" : "" )."\"><a ";

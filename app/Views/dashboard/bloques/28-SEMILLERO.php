@@ -16,12 +16,13 @@ $db = db_connect();
 $inscrito = $db->query( $sql )->getRow()->inscrito;
 ?>
 
-<a href="<?php echo base_url(); ?>tienda/90-SEMILLERO"><img src="<?php echo base_url().$imagen."?".$hash; ?>" class="img-fluid"></a>
+<a href="<?php echo base_url().( $inscrito ? "qr/917-SEMILLERO-17" : "tienda/90-SEMILLERO" ); ?>"><img src="<?php echo base_url().$imagen."?".$hash; ?>" class="img-fluid">
 
 <?php if( $inscrito ){ ?>
 <div class="bg-black p-2">
-    <h5 class="text-center text-white"><i class="fa fa-circle-check text-teal"></i> ¡Ya estas inscrito!</h5>
+    <h5 class="m-0 text-center text-white"><i class="fa fa-qrcode text-light-green"></i> ¡Ya estas inscrito!</h5>
+    <p class="text-center text-white"><small>Haz click en este bloque para ver los detalles de tu acceso al evento</small></p>
 </div>
 <?php } ?>
-
+</a>
 

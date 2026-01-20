@@ -9,7 +9,7 @@ function id( $n, $digitos = 0 )
 {
     $array = array_map('intval', str_split(str_pad($n,$digitos,"0", STR_PAD_LEFT)));
     $i     = array_shift($array);
-    $res   = "<span style='font-weight:100; opacity:.4'>";
+    $res   = "<span style='font-weight:100; opacity:.3'>";
 
     while($i == "0")
     {

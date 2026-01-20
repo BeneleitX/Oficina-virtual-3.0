@@ -1276,7 +1276,7 @@ class E_usuario extends Entity
                             WHERE id = {$c->id}";
 
                             $db->query( $sql );
-                        }                  
+                        }
                     }
 
                     if( $bolsa ){
@@ -1284,6 +1284,7 @@ class E_usuario extends Entity
                         $data->saldo->{$modelo}->USDT += $bolsa;
                         $this->data = $data;
 
+                        $this->data->saldo->{$modelo}->USDT;
                         model( "UsuarioModel" )->save( $this );
                     }
                 }
