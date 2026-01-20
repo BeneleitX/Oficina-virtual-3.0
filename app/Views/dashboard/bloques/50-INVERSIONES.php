@@ -1,7 +1,7 @@
 <?php
 
 $saldo = $usuario->saldo( "50-INVERSION", true );
-echo "x".$saldo;
+
 if( $saldo ){ 
 
     if( !isset( $usuario->historial->vigencia ) ){
