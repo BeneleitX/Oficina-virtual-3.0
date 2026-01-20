@@ -178,7 +178,8 @@ class Registro extends BaseController
                 "curp"          => $abc[ array_rand( $abc ) ]."X".$abc[ array_rand( $abc ) ].$abc[ array_rand( $abc ) ].rand( 70, 99 ).rand( 10, 12 ).rand( 10, 28 ).( rand( 0, 1 ) ? "H" : "M" )."DFXXX0".rand(0, 9),
                 "patrocinador"  => $demo,
                 "origen"        => "MX",
-                "pais"          => "MX"
+                "pais"          => "MX",
+                "version" => 1
             ];
 
             $ms = explode( " ", $data[ "apellido1" ] );
