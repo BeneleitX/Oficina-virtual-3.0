@@ -185,7 +185,15 @@ class Registro extends BaseController
             $ms = explode( " ", $data[ "apellido1" ] );
             $data[ "correo" ] = $ms[ 0 ].rand(10,99999)."@gmail.com";
         }
-        elseif( $data[ "version" ] != 2 ){
+        elseif( $data[ "version" ] == 2 ){
+            if( 
+                !file_exists( "temp/{$data[ "tempID" ]}_frente.jpg" ) or
+                !file_exists( "temp/{$data[ "tempID" ]}_reverso.jpg" )
+            ){
+                return redirect()->back();
+            }
+        }
+        else{
 
             $validation = service( "validation" );
 
@@ -259,7 +267,8 @@ class Registro extends BaseController
                     "reverso"       => $data[ "version" ] == 2  ? "reverso.jpg" : null,
                     "estatus"       => $data[ "version" ] == 2  ? ( $data[ "ine_verificado" ] ? 2 : 1 ) : 0,
                     "motivo"        => "",
-                    "acta"          => null
+                    "acta"          => null,
+                    "tempID"        => $data[ "tempID" ] ?? null
                 ],
                 "clabe"         => "",
                 "saldo"         => [],
@@ -740,10 +749,14 @@ class Registro extends BaseController
 
             $puntos = 0;
 
+            if( !isset( $response->tipo )){
+                $response->tipo = "";
+            }
+
             if( $response->tipo == "PASAPORTE" ){
                 if( ( $response->curp ?? "" )     == $s->curp ) $puntos++;
                 if( ( $response->nombre ?? "" )   == $s->nombre ) $puntos++;
-                if( ( $response->apellido ?? "" ) == $s->apellido1 + ' ' + $s->apellido2 ) $puntos++;
+                if( ( $response->apellido ?? "" ) == $s->apellido1.' '.$s->apellido2 ) $puntos++;
             }
 
             else{

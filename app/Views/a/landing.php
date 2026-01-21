@@ -2,7 +2,7 @@
     <div class="card shadow-sm" style="max-width: 540px; margin: 0 auto;">
         <div class="row g-0">
             <div class="col-md-4 p-3 text-center">
-                <img src="https://randomuser.me/api/portraits/men/64.jpg" class="rounded-circle img-thumbnail" alt="Profile Picture">
+                <?php echo $socio->avatar( 200); ?>
                 <div class="mt-2">
                     <span class="badge bg-success">Online</span>
                 </div>
