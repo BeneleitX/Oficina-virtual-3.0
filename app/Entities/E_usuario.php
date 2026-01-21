@@ -1235,9 +1235,9 @@ class E_usuario extends Entity
 
             // Si no existe la propiedad USDT en el objeto saldo, la creamos
 
-            if( !isset( $this->data->saldo->{$modelo}->USDT ) ){
+            if( !isset( $this->data->saldo->{"50-INVERSION"}->USDT ) ){
                 $data = $this->data;
-                $data->saldo->{$modelo}->USDT = 0;
+                $data->saldo->{"50-INVERSION"}->USDT = 0;
                 $this->data = $data;
 
                 model( "UsuarioModel" )->save( $this );
@@ -1246,11 +1246,12 @@ class E_usuario extends Entity
             // En el caso de los socios en morado, actualizar comisiones ganadas y pasarlas a saldo USDT
 
             if( $checasaldo ){
+                $ps = [];
 
                 // si está en morado
                 // buscamos comisiones y las pasamos a saldo USDT
 
-                if( substr( $this->data->estatus->modelos->{$modelo},0 ,1 ) <= "2" ){
+                if( substr( $this->data->estatus->modelos->{"50-INVERSION"},0 ,1 ) <= "2" ){
                     $bolsa = 0;
                     $db    = db_connect();
 
@@ -1275,22 +1276,35 @@ class E_usuario extends Entity
                             SET estatus_codigo = '421-APLICADO'
                             WHERE id = {$c->id}";
 
+                            $ps[] = [
+                                "comision" => $c->id,
+                                "socio"    => $c->usuario_id,
+                                "pedido"   => $c->pedido_id,
+                                "cantidad" => $c->cantidad
+                            ];
+
                             $db->query( $sql );
                         }
                     }
 
-                    if( $bolsa ){
+                    if( $bolsa > 0 ){
                         $data = $this->data;
-                        $data->saldo->{$modelo}->USDT += $bolsa;
+                        $data->saldo->{"50-INVERSION"}->USDT += $bolsa;
                         $this->data = $data;
 
-                        $this->data->saldo->{$modelo}->USDT;
+                        $this->data->saldo->{"50-INVERSION"}->USDT;
                         model( "UsuarioModel" )->save( $this );
+
+                        // BITACORA marca periodo como pagado
+                        bitacora( 120, $usuario->id, [
+                            "saldo"  => $bolsa,
+                            "origen" => $ps
+                        ] );                          
                     }
                 }
             }
 
-            $cantidad += $this->data->saldo->{$modelo}->USDT ?? 0;
+            $cantidad += $this->data->saldo->{"50-INVERSION"}->USDT ?? 0;
         }
 
         return $cantidad;

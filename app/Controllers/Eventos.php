@@ -221,18 +221,4 @@ class Eventos extends BaseController
     }    
 
 
-    public function qr( $evento_codigo )
-    {
-        $evento = model( "ProductoModel" )->find( $evento_codigo );
-
-        if( !$evento ){ 
-            return redirect()->to( base_url() );
-        }
-
-        $this->data[ "evento" ] = $evento;
-        $this->data[ "navbar" ] = false;
-        $this->data[ "fondo" ]  = "marine";
-
-        echo template( "eventos/qr", $this->data );
-    }
 }

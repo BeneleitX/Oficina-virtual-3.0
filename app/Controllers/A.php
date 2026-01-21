@@ -11,7 +11,7 @@ class A extends BaseController
  */
     public function Landing( $u, $numero = null ){
 
-        return redirect()->to( "inicio" );
+        // return redirect()->to( "inicio" );
 
         if( $numero != null ){
             $socio = model( "UsuarioModel" )->find( $numero );
@@ -21,7 +21,8 @@ class A extends BaseController
             $socio = model( "UsuarioModel" )->where( "password = '{$request}'" )->first();
         }
 
-        
-        echo "<p>TEST Landing page (".$socio->nombre(2).")</p><ul><li>Link para registro directo</li><li>Link para tienda en línea directa</li></ul>";
+        $this->data[ "socio" ] = $socio;
+        echo template( "a/landing", $this->data );
+
     }
 }

@@ -2,7 +2,7 @@
 
 $saldo = $usuario->saldo( "50-INVERSION", true );
 
-if( $saldo ){ 
+if( $saldo > 0 ){ 
 
     if( !isset( $usuario->historial->vigencia ) ){
         $registro = substr( $usuario->historial->registro, 0, 10 ); 
@@ -23,10 +23,9 @@ if( $saldo ){
     if( $fecha < date( "Y-m-d" ) ){
         
         $data = $usuario->data;
-
         $data->saldo->{"50-INVERSION"}->USDT = 0;
-
         $usuario->data = $data;
+
         model( "UsuarioModel" )->save( $usuario );
 
         // BITACORA marca periodo como pagado

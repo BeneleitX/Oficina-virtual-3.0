@@ -16,7 +16,7 @@ $db = db_connect();
 $inscrito = $db->query( $sql )->getRow()->inscrito;
 ?>
 
-<a href="<?php echo base_url().( $inscrito ? "qr/917-SEMILLERO-17" : "tienda/90-SEMILLERO" ); ?>"><img src="<?php echo base_url().$imagen."?".$hash; ?>" class="img-fluid">
+<a href="<?php echo base_url().( $inscrito ? "qr" : "tienda/90-SEMILLERO" ); ?>"><img src="<?php echo base_url().$imagen."?".$hash; ?>" class="img-fluid">
 
 <?php if( $inscrito ){ ?>
 <div class="bg-black p-2">

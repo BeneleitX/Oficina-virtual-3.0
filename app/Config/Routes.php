@@ -16,10 +16,11 @@ $routes->get( "login/(:num)",                       "Sesion::login/$1" );
 $routes->get( "login/white",                        "Sesion::login/0/1" );
 $routes->get( "oauth/(:any)",                       "Sesion::procesa_login/$1" );
 $routes->get( "pass_catch/(:any)",                  "Sesion::pass_catch/$1" );
-$routes->post( "oauth",                             "Sesion::procesa_login" );
-$routes->post( "pass_request",                      "Sesion::pass_request" );
 $routes->get( "captcha",                            "Sesion::captcha" );
 $routes->get( "confirma_retiro/(:any)",             "Sesion::confirma_retiro/$1" );
+$routes->get( "qr",                                 "Eventos::qr" );
+$routes->post( "oauth",                             "Sesion::procesa_login" );
+$routes->post( "pass_request",                      "Sesion::pass_request" );
 
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
@@ -134,7 +135,6 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
 
     $routes->get( "eventos",                            "Eventos::listado" );
     $routes->get( "evento/(:any)",                      "Eventos::detalle/$1" );
-    $routes->get( "qr/(:any)",                          "Eventos::qr/$1" );
     $routes->get( "evento/(:any)/(:any)",               "Eventos::detalle/$1/$2" );
     $routes->post( "excel_semillero",                   "Eventos::excel_semillero" );
 
