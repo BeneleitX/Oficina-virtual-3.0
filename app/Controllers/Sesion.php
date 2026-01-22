@@ -366,7 +366,7 @@ class Sesion extends BaseController
         $validation = service("validation");
         $validation->setRules([
             "socio_id" => "trim|required|is_natural_no_zero|is_not_unique[t_usuarios.id]",
-            "socio_telefono" => "trim|required|exact_length[10]|numeric",
+            // "socio_telefono" => "trim|required|exact_length[10]|numeric",
             "socio_correo" => "trim|required|valid_email|strtolower"
         ],[
             "socio_id" => [
@@ -374,11 +374,11 @@ class Sesion extends BaseController
                 "is_natural_no_zero" => "No es un No. de socio válido",
                 "is_not_unique" => "El socio no existe"
             ],
-            "socio_telefono" => [
+            /* "socio_telefono" => [
                 "required" => "{$icono} No has escrito un número telefónico",
                 "exact_length" => "{$icono} El número debe ser a 10 dígitos",
                 "numeric" => "{$icono} El número no es válido"
-            ],
+            ], */
             "socio_correo" => [
                 "required" => "{$icono} No has escrito un correo electrónico",
                 "valid_email" => "{$icono}  El correo electrónico no es válido"
@@ -395,7 +395,7 @@ class Sesion extends BaseController
         extract( $this->request->getPost() );
         $usuario = model( "UsuarioModel" )->find( $socio_id );
 
-        if( $socio_telefono != $usuario->telefono ){
+        /* if( $socio_telefono != $usuario->telefono ){
             // BITACORA solicitar recuperación de password fallido
             bitacora( 34, $usuario->id, [ 
                 "telefono" => $socio_telefono,
@@ -406,12 +406,12 @@ class Sesion extends BaseController
                 ->back()
                 ->with( "errors", [ "socio_telefono" => "El telefono es incorrecto" ] )
                 ->withInput();
-        }
+        } */
 
-        if( strtoupper( $socio_correo ) != strtoupper( $usuario->correo ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
+        if( mb_strtolower( $socio_correo ) != mb_strtolower( $usuario->correo ) || $usuario->rol_codigos[0] == "00-BLOQUEADO" ){
+            
             // BITACORA solicitar recuperación de password fallido
             bitacora( 34, $usuario->id, [ 
-                "telefono" => $socio_telefono,
                 "correo" => $socio_correo
             ] );
 

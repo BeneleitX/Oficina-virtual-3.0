@@ -108,6 +108,8 @@ abstract class BaseController extends Controller
         if( $this->data[ "usuario" ]->id > 0 && !isset( $this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"} ) ){
             $this->data[ "usuario" ]->update_verificacion();
         }
+
+        echo "x".$this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"};
     }
     
 }

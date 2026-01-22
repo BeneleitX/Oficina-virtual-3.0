@@ -6,6 +6,8 @@ class Registro extends BaseController
 {
     public function formulario()
     {
+        return redirect()->to( "registro" );
+
         $this->data[ "navbar" ] = false;
         $this->data[ "titulo" ] = "Registro de nuevo socio";
 

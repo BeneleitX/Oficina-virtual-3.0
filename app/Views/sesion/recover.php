@@ -4,8 +4,8 @@
 
     Para generar un nuevo password, <strong>proporciona la información que se te solicita</strong>
     <br>
-
     Recibirás un correo electrónico con las instrucciones necesarias para continuar el proceso.
+    
     <div class="row mt-5">
         <div class="col-md-4 offset-md-4">
             <div class="row">
@@ -28,8 +28,6 @@
                                 <input type="text" class="form-control ps-4 rounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo old( "socio_id" ); ?>" placeholder="No. de socio">
                                 <p class="small text-danger"><?php echo session( "errors.socio_id" ); ?></p>
                                 
-                                <input class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_telefono" ) ? "is-invalid" : ""; ?>" name="socio_telefono" value="<?php echo old( "socio_telefono" ); ?>" placeholder="Teléfono a 10 dígitos">
-                                <p class="small text-danger"><?php echo session( "errors.socio_telefono" ); ?></p>
 
                                 <input class="form-control ps-4 mt-3 rounded-pill <?php echo session( "errors.socio_correo" ) ? "is-invalid" : ""; ?>" name="socio_correo" value="<?php echo old( "socio_correo" ); ?>" placeholder="Correo electrónico">
                                 <p class="small text-danger"><?php echo session( "errors.socio_correo" ); ?></p>
