@@ -153,6 +153,27 @@ if( $socio ){
                         </div>
                     </div>           
                 </div>
+<div class="row">
+    <div class="col-md-4 mt-2"><div class="x">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text text-center bg-<?php echo ( $socio->data->valida_curp->codigoValidacion ?? false ) ? "teal" : "red"; ?> border-<?php echo ( $socio->data->valida_curp->codigoValidacion ?? false ) ? "teal" : "red"; ?> ">Vinculación CURP</span>
+            <input disabled type="text" value="<?php echo $socio->data->valida_curp->codigoValidacion ?? ""; ?>" class="<?php echo ( $socio->data->valida_curp->codigoValidacion ?? false ) ? "is-valid" : "is-invalid"; ?> form-control text-center" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+        </div>
+    </div></div>
+    <div class="col-md-4 mt-2"><div class="x">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text text-center bg-<?php echo ( $socio->data->valida_ine->codigoValidacion ?? false ) ? "teal" : "red"; ?> border-<?php echo ( $socio->data->valida_ine->codigoValidacion ?? false ) ? "teal" : "red"; ?> ">Vinculación INE</span>
+            <input disabled type="text" value="<?php echo $socio->data->valida_ine->codigoValidacion ?? ""; ?>" class="<?php echo ( $socio->data->valida_ine->codigoValidacion ?? false ) ? "is-valid" : "is-invalid"; ?> form-control text-center" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+        </div>
+    </div></div>
+    <div class="col-md-4 mt-2"><div class="x">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text text-center bg-<?php echo ( $socio->data->valida_vida->sessionToken ?? false ) ? "teal" : "red"; ?> border-<?php echo ( $socio->data->valida_vida->sessionToken ?? false ) ? "teal" : "red"; ?> ">Prueba de vida</span>
+            <input disabled type="text" value="<?php echo $socio->data->valida_vida->sessionToken ?? ""; ?>" class="<?php echo ( $socio->data->valida_vida->sessionToken ?? false ) ? "is-valid" : "is-invalid"; ?> form-control text-center" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+        </div>
+    </div></div>
+</div>
+
 
                 <?php 
                     $db  = db_connect();
