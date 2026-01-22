@@ -109,7 +109,7 @@ abstract class BaseController extends Controller
             $this->data[ "usuario" ]->update_verificacion();
         }
 
-        echo "x".$this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"};
+        echo $this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"};
     }
     
 }
