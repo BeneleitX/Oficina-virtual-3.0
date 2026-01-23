@@ -927,7 +927,7 @@ class E_usuario extends Entity
     {
         
       
-        if( !$this->attributes[ "password"] ){
+        if( !isset( $this->attributes[ "password"] ) || !$this->attributes[ "password"] ){
             $this->password = random_password();
             model( "UsuarioModel" )->save( $this );
         }
@@ -1255,7 +1255,7 @@ class E_usuario extends Entity
                     $bolsa = 0;
                     $db    = db_connect();
 
-                    $sql   = "SELECT c.id, c.cantidad
+                    $sql   = "SELECT c.id, c.cantidad, c.usuario_id, c.pedido_id
                             FROM t_comisiones c
                             JOIN t_periodos p 
                                 ON c.fecha between p.inicia and p.termina 

@@ -331,6 +331,14 @@ class Sesion extends BaseController
                 return redirect()->route( "vincular" );
             }
 
+            // checa pasword
+            if( $usuario->id > 0 && $usuario->data->verificaciones->PASSWORD == false ){
+                $usuario->update_verificacion();
+
+                return redirect()->to( "reactivar/".urlencode( base64_encode( $this->data[ "usuario" ]->password_original() ) ) );
+            }
+
+
             // activa modo admin para staff que trenga permiso de ver cuentas de socios
             if( $usuario->es_admin() && !session( "admin" ) ){
                 if( 
@@ -441,6 +449,15 @@ class Sesion extends BaseController
         else{
             return redirect()->to( "recover/success" );
         }
+    }
+
+
+    public function reactivar( $hash )
+    {
+        $this->data[ "navbar" ] = false;
+        $this->data[ "hash" ]   = $hash;
+
+        echo template( "sesion/reactivar", $this->data );
     }
 
 

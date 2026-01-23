@@ -63,7 +63,8 @@
                 </script>
                 <?php
             }
-            elseif( $navbar && $_controller[3] != "Socio" AND $usuario->data->verificaciones->{"PASSWORD"} == false ){
+            elseif( $navbar && $_controller[3] != "Socio" && $usuario->data->verificaciones->{"PASSWORD"} == false ){
+
                 echo "
                 <div class=\"modal fade\" id=\"modal_password\" tabindex=\"-1\" aria-labelledby=\"add_rolLabel\" aria-hidden=\"true\">
                     <div class=\"modal-dialog\">

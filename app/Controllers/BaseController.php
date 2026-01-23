@@ -104,15 +104,6 @@ abstract class BaseController extends Controller
         load_catalogo( "variables" );
 
         $this->data[ "usuario" ] = session( "usuario" ) > 0 ? model( "UsuarioModel" )->find( session( "usuario" ) ) : new \App\Entities\E_usuario();
-
-        if( $this->data[ "usuario" ]->id > 0 && !isset( $this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"} ) ){
-            $this->data[ "usuario" ]->update_verificacion();
-        }
-
-        /* echo "x{$this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"}}x";
-        if( ( $this->data[ "usuario" ]->data->verificaciones->{"PASSWORD"} ?? false ) != 1 ){
-            return redirect()->to( "login/restablecer" );
-        } */
     }
     
 }
