@@ -1296,7 +1296,7 @@ class E_usuario extends Entity
                         model( "UsuarioModel" )->save( $this );
 
                         // BITACORA marca periodo como pagado
-                        bitacora( 120, $usuario->id, [
+                        bitacora( 120, $this->id, [
                             "saldo"  => $bolsa,
                             "origen" => $ps
                         ] );                          
