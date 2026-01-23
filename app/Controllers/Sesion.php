@@ -335,7 +335,7 @@ class Sesion extends BaseController
             if( $usuario->id > 0 && $usuario->data->verificaciones->PASSWORD == false ){
                 $usuario->update_verificacion();
 
-                return redirect()->to( "reactivar/".urlencode( base64_encode( $this->data[ "usuario" ]->password_original() ) ) );
+             //   return redirect()->to( "reactivar/".urlencode( base64_encode( $this->data[ "usuario" ]->password_original() ) ) );
             }
 
 
