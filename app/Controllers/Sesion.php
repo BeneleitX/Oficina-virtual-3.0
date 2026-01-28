@@ -77,6 +77,7 @@ class Sesion extends BaseController
     public function procesa_login( $socio = null, $modelo = null )
     {
         $db = db_connect();
+        $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
         // SI es un login automático de switch de admin
         if( $socio && strlen( $socio ) ){
@@ -170,8 +171,6 @@ class Sesion extends BaseController
             }       
 
             $this->session->set( "login", time() );
-            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
-
 
             $datax    = $this->request->getPost();
      
