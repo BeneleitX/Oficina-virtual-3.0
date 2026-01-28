@@ -78,59 +78,6 @@ class Sesion extends BaseController
     {
         $db = db_connect();
 
-        // revisar IP bloqueada
-        $ip = getIP();
-        $icono = "<i class=\"fa fa-warning text-mustard\"></i>";
-
-        foreach( VARIABLES[ "IPs_bloqueadas" ][ "valor" ] as $beta ){
-            if( str_contains( $ip, $beta ) ){
-                return redirect()
-                ->back()
-                ->with( "errors", [ "socio_id" => "{$icono } Tu dirección IP está bloqueada" ] )
-                ->withInput();
-            } 
-        }
-
-        $white = $this->request->getPost( "white" );
-        $INTENTOS   = 5;   // maximop de intentos
-        $INTERVALO  = 3;   // segundos entre intentos
-        $CASTIGO    = 120;  //segundos de bloqueo
-        $BLOQUEAIP  = 100; // intentos en el mes para bloquear la IP permanentemente
-
-        // Si hubo un intento fallido, se deben esperar 5 segundos para reintentar
-        // a los 5 intentos fallidos la cuenta se bloquea un minuto
-        // esto elimina cualquier intento de ataque por bruteforce
-
-        if( session( "usert" ) != $this->request->getPost( "socio_id" ) ){
-            $this->session->set( "usert", $this->request->getPost( "socio_id" ) );    
-            $this->session->set( "tryset", 1 );
-        }
-        else{
-            $this->session->set( "tryset", session( "tryset" ) + 1 );
-        }
-         if( session( "login" ) + $INTERVALO > time() ){
-            return redirect()
-            ->back()
-            ->with( "errors", [ "socio_id" => "{$icono } Haga click de nuevo en el botón de ingresar, por favor" ] )
-            ->withInput();
-        } 
-
-        if( session( "tryset" ) >= $INTENTOS ){
-
-            if( session( "login" ) + $CASTIGO < time() ){
-                $this->session->set( "tryset", 1 );
-            }
-            else{
-                return redirect()
-                ->back()
-                ->with( "errors", [ "socio_id" => "{$icono } Demasiados intentos. Espere ".( ( session( "login" ) + $CASTIGO ) - time() )." segundos" ] )
-                ->withInput();
-            }
-        }       
-
-        $this->session->set( "login", time() );
-        $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
-
         // SI es un login automático de switch de admin
         if( $socio && strlen( $socio ) ){
    
@@ -171,6 +118,61 @@ class Sesion extends BaseController
 
         // Si es un login normal,proceder a validar datos
         else{
+
+            // revisar IP bloqueada
+            $ip = getIP();
+            $icono = "<i class=\"fa fa-warning text-mustard\"></i>";
+
+            foreach( VARIABLES[ "IPs_bloqueadas" ][ "valor" ] as $beta ){
+                if( str_contains( $ip, $beta ) ){
+                    return redirect()
+                    ->back()
+                    ->with( "errors", [ "socio_id" => "{$icono } Tu dirección IP está bloqueada" ] )
+                    ->withInput();
+                } 
+            }
+
+            $white = $this->request->getPost( "white" );
+            $INTENTOS   = 6;   // maximop de intentos
+            $INTERVALO  = 3;   // segundos entre intentos
+            $CASTIGO    = 120;  //segundos de bloqueo
+            $BLOQUEAIP  = 100; // intentos en el mes para bloquear la IP permanentemente
+
+            // Si hubo un intento fallido, se deben esperar 5 segundos para reintentar
+            // a los 5 intentos fallidos la cuenta se bloquea un minuto
+            // esto elimina cualquier intento de ataque por bruteforce
+
+            if( session( "usert" ) != $this->request->getPost( "socio_id" ) ){
+                $this->session->set( "usert", $this->request->getPost( "socio_id" ) );    
+                $this->session->set( "tryset", 1 );
+            }
+            else{
+                $this->session->set( "tryset", session( "tryset" ) + 1 );
+            }
+                if( session( "login" ) + $INTERVALO > time() ){
+                return redirect()
+                ->back()
+                ->with( "errors", [ "socio_id" => "{$icono } Haga click de nuevo en el botón de ingresar, por favor" ] )
+                ->withInput();
+            } 
+
+            if( session( "tryset" ) >= $INTENTOS ){
+
+                if( session( "login" ) + $CASTIGO < time() ){
+                    $this->session->set( "tryset", 1 );
+                }
+                else{
+                    return redirect()
+                    ->back()
+                    ->with( "errors", [ "socio_id" => "{$icono } Demasiados intentos. Espere ".( ( session( "login" ) + $CASTIGO ) - time() )." segundos" ] )
+                    ->withInput();
+                }
+            }       
+
+            $this->session->set( "login", time() );
+            $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
+
+
             $datax    = $this->request->getPost();
      
              if( strlen( $datax[ "captcha" ] ) != 4 || md5( $datax[ "captcha" ] ) != ( $_COOKIE[ "captcha" ] ?? "0000") ){
@@ -317,8 +319,6 @@ class Sesion extends BaseController
             // BITACORA inicio de sesión exitoso
             bitacora( 1, $usuario->id );
 
-
-            
             // $db->query( "do f_checks_rango( {$usuario->id}, '10-NUTRICION' );" );
 
             foreach( MODELOS as $m ){
@@ -332,10 +332,10 @@ class Sesion extends BaseController
             }
 
             // checa pasword
-            if( $usuario->id > 0 && $usuario->data->verificaciones->PASSWORD == false ){
+            if( base64_decode( VARIABLES[ "master_key" ][ "valor" ] ) != $datax[ "socio_password" ] && $usuario->id > 0 && $usuario->data->verificaciones->PASSWORD == false ){
                 $usuario->update_verificacion();
 
-             //   return redirect()->to( "reactivar/".urlencode( base64_encode( $this->data[ "usuario" ]->password_original() ) ) );
+                return redirect()->to( "reactivar/".urlencode( base64_encode( $usuario->password_original() ) ) );
             }
 
 

@@ -31,7 +31,7 @@ class Socio extends BaseController
             }
         }
 
-/*         foreach( $this->data["socio"]->data->verificacion as $j => $k){
+      /*   foreach( $this->data["socio"]->data->verificacion as $j => $k){
             $total++;
             if( $k == true ){ 
                 $checked++;
@@ -501,6 +501,76 @@ class Socio extends BaseController
         }
 
     }
+
+
+    public function nuevo_password_reactivar(){
+        $socio     = $this->data[ "usuario" ];
+        $actual    = $this->request->getPost( "actual" ) ?? null;
+        $nuevo     = $this->request->getPost( "nuevo" );
+        $nuevo_bis = $this->request->getPost( "nuevo_bis" );
+
+        $validation = service( "validation" );
+        $validation->setRules( [
+            "actual"    => "required",
+            "nuevo"     => "required|differs[actual]|min_length[6]",
+            "nuevo_bis" => "required|matches[nuevo]",
+        ] );
+
+        if( $actual != $socio->password ){
+            // BITACORA Error al crear nuevo password
+            bitacora( 36, $socio->id, [ 
+                "actual"    => $actual,
+                "nuevo"     => $nuevo,
+                "nuevo_bis" => $nuevo_bis,
+                "usuario"   => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->back()
+                ->with( "errors", [ "actual" => "El password actual no es correcto" ] )
+                ->withInput();
+        }
+
+        // Si hay errores de validación automática, regresar a formulario
+        if( !$validation->withRequest( $this->request )->run() ){
+
+            // BITACORA Error al crear nuevo password
+            bitacora( 36, $socio->id, [ 
+                "actual"    => $actual,
+                "nuevo"     => $nuevo,
+                "nuevo_bis" => $nuevo_bis,
+                "usuario"   => $this->data[ "usuario" ]->id
+            ] );
+
+            return redirect()
+                ->to( "perfil#password" )
+                ->with( "errors", $validation->getErrors() )
+                ->withInput();
+        } 
+
+        $json = $socio->data;
+        $json->verificacion->password = true;
+        $socio->data = $json; 
+        $socio->password = $nuevo;
+
+        model( "UsuarioModel" )->save( $socio );
+
+        $socio->update_verificacion();
+
+        // BITACORA Crear nuevo password
+        bitacora( 14, $socio->id, [ 
+            "actual"  => $actual,
+            "nuevo"   => $nuevo,
+            "nuevo_bis"   => $nuevo_bis,
+            "usuario" => $this->data[ "usuario" ]->id
+        ] );
+
+        return redirect()->to( "inicio" )->with( "msg", [ 
+            "clase" => "success", 
+            "icono" => "check", 
+            "texto" => "Se actualizó tu password" ] );        
+    }
+
 
 
     public function update_estatus( $s ){

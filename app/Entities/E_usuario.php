@@ -265,6 +265,8 @@ class E_usuario extends Entity
      */
     public function getPassword(): string 
     {
+        //dd( $this->id, $this->attributes );
+
         $encrypter = service( "encrypter" );
         $cadena = base64_decode( $this->attributes[ "password" ] );
         return $encrypter->decrypt( $cadena, [ "key" => $this->id ] );
@@ -928,6 +930,7 @@ class E_usuario extends Entity
         
       
         if( !isset( $this->attributes[ "password"] ) || !$this->attributes[ "password"] ){
+
             $this->password = random_password();
             model( "UsuarioModel" )->save( $this );
         }

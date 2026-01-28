@@ -109,7 +109,11 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
         <p style="margin-top: -10px"><span class="border border-gray-600 badge text-gray-600"><?php echo ( $compras > 32 ? 32 : $compras )." de 32"; ?></span></p>
     </div>
 </div>
-<p class="text-center"><a href="javascript:updateCompras();" id="btn_compras" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Actualizar conteo</a></p>
+<p class="text-center">
+    <a href="javascript:updateCompras();" id="btn_compras" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Actualizar conteo</a> | 
+    <a href="javascript:$( '#listado_compras' ).modal( 'show');" id="btn_compras2" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Ver listado de compras</a>
+</p>
+
 
 
 <div class="m-3 mt-0">
@@ -121,9 +125,39 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
 </div>
 
 
+
+<div class="modal" tabindex="-1" id="listado_compras">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-mustard">
+				<div class="modal-title">
+                    <h5 class="text-white m-0"><i class="fa fa-qrcode"></i> Actualizar TxHash de inversión</h5>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+            <div id="loader" class="modal-body text-center">
+                <img src="<?php echo base_url(); ?>assets/img/loader.gif" style="width:150px; height:150px; opacity:0.4" class="m-5">
+            </div>            
+            <div class="modal-body text-center" id="principal">
+                <p class="text-center">
+                <h3 class="text-center">Pega aquí tu TxHash:</h3>
+                    <input type="text" class="form-control text-center border-3 border-teal" name="_txhash">
+                    <pre id="error" class="mt-2 alert alert-danger text-center" style="display:none"></pre>
+                </p>
+
+                <p class="text-end mt-4 mb-0"><button class="btn btn-warning my-2" id="confirma_hash"><i class="fa fa-check"></i> Registrar inversión</button></p>
+            </div>
+		</div>
+	</div>
+</div>
+
+
 <script>
 
+
+
 $(document).ready(function(){
+    
     var compras1 = <?php echo $compras > 20 ? 20 : $compras; ?>,
         options1 = {
         series: [<?php echo $porcentaje1; ?>],
@@ -234,6 +268,7 @@ $(document).ready(function(){
     
     chart1.render();   
     chart2.render();    
+
 });
 
 </script>
