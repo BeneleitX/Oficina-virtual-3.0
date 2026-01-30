@@ -10,7 +10,6 @@ class Capital extends BaseController
     
 
     /**
-     * Muestra el listado de solicitudes de retiros de una inversi n Capital24.
      *
      * Requiere el par metro $mes, que es el mes en formato "YYYYMM".
      *
@@ -49,7 +48,6 @@ class Capital extends BaseController
 
 
     /**
-     * Muestra el dashboard de Capital24.
      *
      * Mostrar&#225; informaci&#243;n de los retiros de cada mes.
      *
@@ -68,7 +66,7 @@ class Capital extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Capital24";
+        $this->data[ "titulo" ] = "Paquetes de producto";
 
         $db  = db_connect();
         $sql = "UPDATE t_retiros 
@@ -83,7 +81,6 @@ class Capital extends BaseController
 
 
     /**
-     * Muestra el bono de liderazgo de los socios Capital24.
      *
      * Requiere el par metro $mes, que es el mes en formato "YYYYMM".
      *
@@ -185,7 +182,6 @@ class Capital extends BaseController
 
 
     /**
-     * Retrieves and processes investment data for Capital24.
      *
      * This function checks for administrative permissions before proceeding.
      * It gathers various investment-related data such as active investments,
@@ -211,7 +207,7 @@ class Capital extends BaseController
         $db  = db_connect();
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Dashboard Capital24";
+        $this->data[ "titulo" ] = "Paquetes de producto";
         load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500 and estatus_codigo = '201-ACTIVO'" );
 
         $sql = "SELECT count(*) as total from (
@@ -706,7 +702,7 @@ class Capital extends BaseController
                         }
                     }
                     else{
-                        $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red text-center\">Wallet destino incorrecta</h5>La transacción ingresada no tiene como destino alguna wallet de Beneleit / Capital24";
+                        $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red text-center\">Wallet destino incorrecta</h5>La transacción ingresada no tiene como destino alguna wallet de Beneleit";
                     }
                 }
                 else{
@@ -822,7 +818,7 @@ class Capital extends BaseController
                     $message = "
                         
                         <p>¡Hola ".$u->nombre()."! </p>
-                        <p>Hemos recibido tu solicitud de retiro de CAPITAL24. Por favor verifica que todos los datos sean correctos. Para confirmar la solicitud haz click en el botón o el enlace. Una vez confirmada se enviará para ser procesada durante <strong>los primeros tres días hábiles del próximo mes</strong>.</p>
+                        <p>Hemos recibido tu solicitud de retiro de tu paquete de producto. Por favor verifica que todos los datos sean correctos. Para confirmar la solicitud haz click en el botón o el enlace. Una vez confirmada se enviará para ser procesada durante <strong>los primeros tres días hábiles del próximo mes</strong>.</p>
 
                         <table align=\"center\" border=\"1\" cellpadding=\"10\" style=\"border-collapse:collapse\">
                             <tr><td>Socio</td><td>".id( $u->id, 7 )."</td></tr>
@@ -937,7 +933,6 @@ class Capital extends BaseController
 
 
     /**
-     * Muestra el detalle de una inversión Capital24, incluyendo su estado
      * actual y los movimientos realizados en ella.
      *
      * Requiere el parámetro $hash, que es el hash de la transacción
@@ -984,14 +979,13 @@ class Capital extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Detalle de inversión Capital24 <span>".referencia( $pedido )."</span>";
+        $this->data[ "titulo" ] = "Detalle de tu paquete de producto <span>".referencia( $pedido )."</span>";
 
         echo template( "capital/detalle", $this->data );
     }
 
 
     /**
-     * Muestra el listado de retiros de una inversión Capital24.
      *
      * Requiere el parámetro $inversion, que es el id de la inversión.
      *
@@ -1131,7 +1125,7 @@ class Capital extends BaseController
             "cantidad" => $r[ "cantidad" ]
         ] );
 
-        return redirect()->to( "capital24/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
+        return redirect()->to( "paquetes/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "El retiro se ha marcado como transferido" ] );   
@@ -1141,7 +1135,7 @@ class Capital extends BaseController
     /**
      * Marca como entregados todos los retiros del mes. 
      * @param string $mes Mes en formato "YYYYMM".
-     * @return redirect a capital24/$mes
+     * @return redirect a paquetes/$mes
      */
     public function entrega_retiros( $mes )
     {
@@ -1172,7 +1166,7 @@ class Capital extends BaseController
             ] );   
         }
 
-        return redirect()->to( "capital24/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
+        return redirect()->to( "paquetes/".$r[ "fechas" ][ "mes"] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
             "texto" => "Todos los retiros del mes han sido marcados como entregados" ] );   
@@ -1276,7 +1270,6 @@ class Capital extends BaseController
 
 
     /**
-     * Muestra una tabla con los rangos de liderazgo en Capital24,
      * incluyendo el corte de socios directos activos y el volumen
      * de capital semilla de la red.
      *
@@ -1285,13 +1278,12 @@ class Capital extends BaseController
     public function rangos_inversion()
     {
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Rangos de liderazgo en Capital24";
+        $this->data[ "titulo" ] = "Bonos de liderazgo";
 
         echo template( "capital/rangos_inversion", $this->data );
     }
 
     /**
-     * Descarga un Excel con los rangos de liderazgo en Capital24.
      * @return void
      */
     public function excel_rangos()

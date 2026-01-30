@@ -51,7 +51,7 @@ $(document).ready(function(){
     });
 
     $( '#mes_retiros' ).on( 'change', function(){
-        window.location.href = base_url + "capital24/" + $( '#mes_retiros' ).val();
+        window.location.href = base_url + "paquetes/" + $( '#mes_retiros' ).val();
     });
 
     if( ( g_todas == 0 || g_todas == g_pagadas ) || !es_admin ){

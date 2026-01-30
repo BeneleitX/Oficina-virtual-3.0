@@ -572,15 +572,12 @@ class Socio extends BaseController
     }
 
 
-
     public function update_estatus( $s ){
         $db = db_connect();
         $mes_anterior = date('Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) );
 
-        echo $sql = "select f_update_PTS( {$s}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'";
-        $db->query( $sql );  
+        $db->query( "select f_update_PTS( {$s}, codigo, '{$mes_anterior}' ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
         $db->query( "select f_update_PTS( {$s}, codigo, DATE_FORMAT( NOW(), '%Y%m') ) FROM t_modelos WHERE estatus_codigo = '201-ACTIVO'" );  
-
         $db->query( "do f_get_estatus( {$s}, 1 )" );
 
         return redirect()->to( "red" );
@@ -790,7 +787,6 @@ class Socio extends BaseController
     }
 
 
-
     public function create_numero(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -830,7 +826,6 @@ class Socio extends BaseController
 
         echo $id ?? 0;
     }
-
 
 
     public function check_csf(){

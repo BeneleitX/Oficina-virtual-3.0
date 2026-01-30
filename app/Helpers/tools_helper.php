@@ -835,7 +835,7 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] )
                         <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Alimentos</a> |
                         <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Telefonía Móvil</a> |
                         <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Combustibles</a> |
-                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Capital24</a>
+                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Paquetes</a>
                     </p>
                     <p>
                         &copy;".date( "Y")." Beneleit SA de CV, empresa Mexicana con domicilio en Avenida 23 Oriente No. 405–A Colonia El Carmen, C.P. 72530, Histórica Puebla De Zaragoza, México. Este es un correo informativo. Para cualquier aclaración comunicate a nuestro call center.
@@ -906,11 +906,11 @@ function correos_notificacion( $inversion )
                 $subject = "¡Nueva inversión en tu red!";
                 $message = "
                     <img src=\"%%inversion%%\" width=\"100%\" alt=\"inversion\">
-                    <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva inversión en <strong>Capital24</strong>, por lo que el volumen de capital semilla de tu red se ha incrementado.</p>
+                    <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva compra de <strong>Paquetes de producto</strong>, por lo que el volumen de capital semilla de tu red se ha incrementado.</p>
 
                     <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $inversion[ "cantidad" ], 2 )."</span></p>
 
-                    <p style=\"text-align:center\">De parte de todo el equipo Beneleit:<br><strong>¡Felicidades!</strong></p>
+                    <p style=\"text-align:center\">De parte de todo el equipo de Beneleit:<br><strong>¡Felicidades!</strong></p>
                     <p><a href=\"".base_url()."\" style=\"text-decoration:none; cursor:pointer; background:#009779; text-align:center; padding:15px 0; width:100%; display:inline-block; border:1px solid #066545; color:white; border-radius:5px;\" value=\"reset password\">Ir ahora a mi oficina virtual</a></p>";
 
                 envia_correo( $usuario, $subject, $message, $imagenes );

@@ -318,7 +318,7 @@ if( !$socio->data->verificacion->correo ){ ?>
 						<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar cambios</button>
 					</div>
 
-					<p class="text-mustard m-0"><i class="fa fa-circle-info"></i> La dirección de tu <strong>WALLET DIGITAL</strong> es una cadena de 34 caracteres. Es necesaria para recibir pagos y comisiones de <strong>Capital24</strong>.</p>
+					<p class="text-mustard m-0"><i class="fa fa-circle-info"></i> La dirección de tu <strong>WALLET DIGITAL</strong> es una cadena de 34 caracteres. Es necesaria para recibir pagos y paquetes de producto</p>
 
 				</form>
 			</div>

@@ -110,7 +110,8 @@ $porc_bono = ceil( $transcurridos * 100 / $totales );
     </div>
 </div>
 <p class="text-center">
-    <a href="javascript:updateCompras();" id="btn_compras" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Actualizar conteo</a> 
+    <a href="javascript:updateCompras();" id="btn_compras" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Actualizar conteo</a> <!-- | 
+    <a href="javascript:$( '#listado_compras' ).modal( 'show');" id="btn_compras2" class="btn btn-sm btn-link"><i class="fa fa-refresh"></i> Ver listado de compras</a> -->
 </p>
 
 

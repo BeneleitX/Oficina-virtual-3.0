@@ -661,7 +661,7 @@ class Periodos extends BaseController
             }
         } 
 
-        // quitar ISR si es inversión capital24
+        // quitar ISR si es inversión 
 
         if( $periodo[ "modelo_codigo" ] == "50-INVERSION" ){
             $worksheet[ 2 ]->removeColumn('G', 3);

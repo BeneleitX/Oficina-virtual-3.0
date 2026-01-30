@@ -131,24 +131,18 @@ class Dashboard extends BaseController
             $socio->getPrimerCompra( $m[ "codigo" ] );
 
             $db->query( "call p_update_primercompra( {$socio->id}, '{$m[ "codigo" ]}' );" );
-
             $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( 'Ym', strtotime( date('Y-m').'-01'. ' -1 month' ) )."' )" ); 
             $db->query( "select f_update_PTS( {$socio->id}, '{$m[ "codigo" ]}', '".date( "Ym" )."' )" );  
-            
             $db->query( "call p_update_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
         
         foreach( MODELOS as $m ){
-            $sql = "select f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );";
-            $db->query( $sql );
-
-            echo $sql."<br>";
+            $db->query( "select f_reset_padre( {$socio->id}, '{$m[ "codigo" ]}' );" );
         }
         
         $db->query( "select f_get_estatus(  {$socio->id}, 0 )" );
         $db->query( "select f_checks_rango( {$socio->id}, '10-NUTRICION' );" );
 
-        
         
         // BITACORA Forzar update
         bitacora( 62, $this->data[ "usuario" ]->id, [ 

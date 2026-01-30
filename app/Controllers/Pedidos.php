@@ -1127,7 +1127,7 @@ class Pedidos extends BaseController
                             }
                         }
                         else{
-                            $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Wallet destino incorrecta</h5>La transacción ingresada no tiene como destino alguna wallet de Beneleit / Capital24";
+                            $respuesta[ "error" ] = "<h5 class=\"mb-0 text-red\">Wallet destino incorrecta</h5>La transacción ingresada no tiene como destino alguna wallet de Beneleit";
                         }
                     }
                     else{

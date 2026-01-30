@@ -6,7 +6,7 @@
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p>
-    <a class="btn btn-light btn-sm" href="<?php echo base_url( "inversiones" ); ?>"><i class="fa fa-undo"></i> Regresar a dashboard Capital24</a>
+    <a class="btn btn-light btn-sm" href="<?php echo base_url( "inversiones" ); ?>"><i class="fa fa-undo"></i> Regresar a Inversiones de producto</a>
 </p>
 
 <div class="row">
@@ -17,7 +17,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
-                        <a href="<?php echo base_url( "capital24" ); ?>" class="btn btn-lg mb-3 mt-3 btn-outline-info w-100">Retiros</a>
+                        <a href="<?php echo base_url( "paquetes" ); ?>" class="btn btn-lg mb-3 mt-3 btn-outline-info w-100">Retiros</a>
                     </div>
                     <div class="col-6">
                         <a href="<?php echo base_url(); ?>periodos/50-INVERSION" class="btn btn-lg mb-3 mt-3 btn-outline-info w-100">Corte</a>
@@ -26,7 +26,7 @@
                         <a href="<?php echo base_url( "bono_liderazgo" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Rangos</a>
                     </div>
                     <div class="col-6">
-                        <a href="<?php echo base_url( "reporte_inversiones" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Inversiones</a>
+                        <a href="<?php echo base_url( "reporte_inversiones" ); ?>" class="btn btn-lg mb-3 btn-outline-info w-100" >Paquetes</a>
                     </div>
 
                     <div class="col-6">
@@ -41,7 +41,7 @@
 
         <div class="card text-center bg-mustard py-3  text-white">
         <h1 class="m-0 text-white"><?php echo number_format( $total_activos ); ?></h1>
-            <p class="m-0">Socios con inversión activa</p>
+            <p class="m-0">Socios con paquetes activos</p>
         </div>
     </div>
 

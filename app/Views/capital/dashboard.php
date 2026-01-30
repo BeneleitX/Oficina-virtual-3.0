@@ -307,7 +307,7 @@ if( sizeof( $inversiones ) ){
                                 ".( $bt[ "total" ] && !$socio && ( !$retiros_pendientes || !$semilla_pendientes ) && $p->data->porcentaje != 9 && $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] > date( "Y-m-d" ) ? "
                                 <div class=\"col-lg-6\">
                                 
-                                <button class=\"d-none btn xbtn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Retirar rendimientos</button>
+                                <button class=\"d-none btn xbtn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Retirar productos</button>
                                 
                                 <div class=\"dropdown\">
                                     <button class=\"btn w-100 mt-4 btn-outline-danger dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">
@@ -319,7 +319,7 @@ if( sizeof( $inversiones ) ){
                                     ".( $v->estatus || session( "admin" ) ? "
 
                                     ".( !$retiros_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de rendimientos</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de productos</a></li>
                                       
                                     " : "" ).( !$semilla_pendientes ? "
                                         <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de capital semilla</a></li>
@@ -359,7 +359,7 @@ if( sizeof( $inversiones ) ){
 
 
 }else{
-    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
+    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes paquetes</div></div>";
 }
 
 if( sizeof( $inversiones ) ){
@@ -370,7 +370,7 @@ if( sizeof( $inversiones ) ){
             <div class="modal-content">
                 <div class="modal-header bg-red">
                     <div class="modal-title me-3">
-                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de rendimientos</h5>
+                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de productos</h5>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -433,7 +433,7 @@ if( sizeof( $inversiones ) ){
                             </div>
 
                             <div class="alert alert-danger py-2">
-                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa de transacción variable entre <strong>$7.00 y $10.00 USD</strong> que será descontada del monto de tu retiro. Te sugerimos considerarlo al momento de crear tu solicitud.
+                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa de transacción variable entre <strong>$7.00 y $10.00 USD</strong> que será descontada del monto de tu retiro. Te sugerimos considerarlo al momento de crear tu solicitud.
                             </div>
 
                         <?php } else { ?>
@@ -515,7 +515,7 @@ if( sizeof( $inversiones ) ){
                             </div>
 
                                 <div class="alert alert-danger py-2" id="aviso_semilla">
-                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de rendimiento será reducido a la mitad.</strong> Aunque Capital24 no te cobra comisiones al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
+                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de rendimiento será reducido a la mitad.</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
                                 </div>
                                 <?php 
                             } 

@@ -290,26 +290,26 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "update_pin",                        "Rangos::update_pin" ); 
     $routes->post( "agrega_lugar",                      "Rangos::agrega_lugar" ); 
 
-    $routes->get( "capital",                            "Capital::dashboard" );
-    $routes->get( "capital/(:any)",                     "Capital::dashboard/$1" );
-    $routes->get( "inversiones",                        "Capital::inversiones" );
-    $routes->get( "capital24",                          "Capital::admin" );
-    $routes->get( "capital24/(:num)",                   "Capital::admin/$1" );
-    $routes->get( "statement/(:any)",                   "Capital::estadodecuenta/$1" );
-    $routes->get( "entrega_retiro/(:any)",              "Capital::entrega_retiro/$1" );
-    $routes->get( "entrega_retiros/(:num)",             "Capital::entrega_retiros/$1" );
-    $routes->get( "rangos_inversion",                   "Capital::rangos_inversion" ); 
-    $routes->get( "bono_liderazgo",                     "Capital::bono_liderazgo" ); 
-    $routes->get( "reporte_inversiones",                "Capital::reporte_inversiones" ); 
-    $routes->get( "bono_liderazgo/(:num)",              "Capital::bono_liderazgo/$1" ); 
-    $routes->post( "excel_retiros",                     "Capital::excel_retiros" );
-    $routes->post( "excel_reporte_inversiones",         "Capital::excel_reporte_inversiones" );
-    $routes->post( "excel_rangos",                      "Capital::excel_rangos" );
-    $routes->post( "quick_data",                        "Capital::quick_data" ); 
-    $routes->post( "crea_retiro",                       "Capital::crea_retiro" ); 
-    $routes->post( "get_retiros",                       "Capital::get_retiros" );
-    $routes->post( "get_bono_liderazgo",                "Capital::get_bono_liderazgo" );
-    $routes->post( "cancela_retiro",                    "Capital::cancela_retiro" ); 
+    $routes->get( "paquete",                            "Paquetes::dashboard" );
+    $routes->get( "paquete/(:any)",                     "Paquetes::dashboard/$1" );
+    $routes->get( "inversiones",                        "Paquetes::inversiones" );
+    $routes->get( "paquetes",                           "Paquetes::admin" );
+    $routes->get( "paquetes/(:num)",                    "Paquetes::admin/$1" );
+    $routes->get( "statement/(:any)",                   "Paquetes::estadodecuenta/$1" );
+    $routes->get( "entrega_retiro/(:any)",              "Paquetes::entrega_retiro/$1" );
+    $routes->get( "entrega_retiros/(:num)",             "Paquetes::entrega_retiros/$1" );
+    $routes->get( "rangos_inversion",                   "Paquetes::rangos_inversion" ); 
+    $routes->get( "bono_liderazgo",                     "Paquetes::bono_liderazgo" ); 
+    $routes->get( "reporte_inversiones",                "Paquetes::reporte_inversiones" ); 
+    $routes->get( "bono_liderazgo/(:num)",              "Paquetes::bono_liderazgo/$1" ); 
+    $routes->post( "excel_retiros",                     "Paquetes::excel_retiros" );
+    $routes->post( "excel_reporte_inversiones",         "Paquetes::excel_reporte_inversiones" );
+    $routes->post( "excel_rangos",                      "Paquetes::excel_rangos" );
+    $routes->post( "quick_data",                        "Paquetes::quick_data" ); 
+    $routes->post( "crea_retiro",                       "Paquetes::crea_retiro" ); 
+    $routes->post( "get_retiros",                       "Paquetes::get_retiros" );
+    $routes->post( "get_bono_liderazgo",                "Paquetes::get_bono_liderazgo" );
+    $routes->post( "cancela_retiro",                    "Paquetes::cancela_retiro" ); 
     
 });
 
