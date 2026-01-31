@@ -846,9 +846,11 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] )
     ";
     
     if (ENVIRONMENT != 'development') {
+        $usuario->correo = str_replace(array("\n", "\r", "\t"), '', $usuario->correo);
+
         // BITACORA envío de correo     
         bitacora( 35, $usuario->id, [
-            "correo" => $usuario->correo,
+            "correo" => trim( $usuario->correo ),
             "motivo" => $subject
         ] );
 

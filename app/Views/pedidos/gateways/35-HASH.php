@@ -47,7 +47,7 @@ if( $total < 0 ){
                     </div></div>
                 </div></div>
 
-                <a href="<?php echo base_url( "capital" ); ?>" class="mt-3 btn btn-primary"><i class="fa fa-magnifying-glass"></i> Ver detalles</a>
+                <a href="<?php echo base_url( "paquete" ); ?>" class="mt-3 btn btn-primary"><i class="fa fa-magnifying-glass"></i> Ver detalles</a>
             </div>
 
             <div id="principal" style="display: none;">
