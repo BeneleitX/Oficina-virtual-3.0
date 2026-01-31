@@ -195,8 +195,8 @@ if( sizeof( $directos ) ){
     if( sizeof( $pendientes ) ){
         echo "<div class=\"alert alert-warning m-3\">";
         
-        echo "<p class=\"m-0 text-center\">Comisiones generadas por inversiones mayores a 10K que se encuentran pendientes de pago</p>";
-        echo "<table class=\"table my-3\"><thead><tr><th>Inversión</th><th>A pagar</th><th class=\"text-end\">Comision</th></tr></thead><tbody>";
+        echo "<p class=\"m-0 text-center\">Comisiones generadas por paquetes mayores a 10K que se encuentran pendientes de pago</p>";
+        echo "<table class=\"table my-3\"><thead><tr><th>Paquete</th><th>A pagar</th><th class=\"text-end\">Comision</th></tr></thead><tbody>";
 
         foreach( $pendientes as $p ){
             echo "<tr>
@@ -204,7 +204,7 @@ if( sizeof( $directos ) ){
         }
         
         echo "</tbody></table>
-        <p class=\"small m-0\"><i class=\"text-red fa fa-warning\"></i> Recuerda que cuando la ssuma de las inversiones de un socio realizadas durante las ultimas 4 semanas superan los 10K, comenzarán a generar comisiones que serán pagadas después de un plazo de 8 semanas.</p>
+        <p class=\"small m-0\"><i class=\"text-red fa fa-warning\"></i> Recuerda que cuando la ssuma de los paquetes de un socio realizadas durante las ultimas 4 semanas superan los 10K, comenzarán a generar comisiones que serán pagadas después de un plazo de 8 semanas.</p>
         </div>";
     }
 }

@@ -63,7 +63,7 @@ $menu = [
     [ "success", "banners", "newspaper", "Banners", sizeof( $banners ) ,["22-IMAGEN"] ],
     [ "warning", "eventos", "person-chalkboard", "Eventos", $eventos ,[  "35-SEMILLERO", "40-ADMIN"] ],
     [ "danger",  "admin_gasolina", "gas-pump", "Gasolina", $tarjetas ,["40-ADMIN", "31-GASOLINA"] ],
-    [ "info", "inversiones", "arrow-trend-up", "Paquetes de producto", $hash ,["40-ADMIN", "31-GASOLINA"] ],
+    [ "info", "paquetes", "arrow-trend-up", "Paquetes de producto", $hash ,["40-ADMIN", "31-GASOLINA"] ],
     [ "success", "verificaciones", "person-circle-check", "Verificaciones", 0 ,["40-ADMIN"] ],
     [ "success", "geodata", "earth-americas", "Mapa de ventas", 0 ,["40-ADMIN", "22-MAPA"] ],
 ];

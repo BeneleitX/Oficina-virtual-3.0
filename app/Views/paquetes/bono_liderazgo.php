@@ -6,12 +6,12 @@
     <div class="col-4">
     <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
         <p>
-            <a class="btn btn-light btn-sm" href="<?php echo base_url( "inversiones" ); ?>"><i class="fa fa-undo"></i> Regresar a paquetes de producto</a>
+            <a class="btn btn-light btn-sm" href="<?php echo base_url( "paquetes" ); ?>"><i class="fa fa-undo"></i> Regresar a paquetes de producto</a>
         </p>
     </div>
 
     <div class="col-8 text-end pt-3">
-        <h5><?php echo false ? "<a href=\"".base_url( "inversiones" )."\"class=\"btn btn-secondary me-5\"><i class=\"fa fa-dashboard\"></i> Ir a dashboard</a> " : ""; ?>Rangos alcanzados en el mes: 
+        <h5><?php echo false ? "<a href=\"".base_url( "paquetes" )."\"class=\"btn btn-secondary me-5\"><i class=\"fa fa-dashboard\"></i> Ir a dashboard</a> " : ""; ?>Rangos alcanzados en el mes: 
             <span class="badge bg-teal" id="pendientes"><?php echo sizeof( $socios ); ?></span>
             <select id="mes_retiros" class="ms-4 form-select" style="display: inline-block; width:auto">
                 <?php

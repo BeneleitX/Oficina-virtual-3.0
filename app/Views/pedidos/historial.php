@@ -26,7 +26,7 @@
             <th>Estatus</th>
             <th>promociones</th>
             <th>productos</th>
-            <th><?php echo $modelo == "50-INVERSION"  ? "Inversión" : "Precio"; ?></th>
+            <th><?php echo $modelo == "50-INVERSION"  ? "Paquete" : "Precio"; ?></th>
             <th>Fecha pago</th>
             <th>Califica</th>
             <th>pago</th>
