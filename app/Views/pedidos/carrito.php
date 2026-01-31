@@ -1507,7 +1507,7 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
 
                                 echo "<div class=\"row\">
                                     <div class=\"col-7 pt-2\">
-                                        Cantidad a invertir
+                                        Cantidad 
                                     </div>
                                     <div class=\"col-5\">
                                         <input class=\"form-control ".( $modelo == "50-INVERSION" ? "limitado" : "" )." text-end\" type=\"number\" value=\"{$total}\" id=\"cantidad_{$p->codigo}\" min=\"{$total}\" step=\"100\" max=\"99900\">
