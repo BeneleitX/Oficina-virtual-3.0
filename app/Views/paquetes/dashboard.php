@@ -88,7 +88,7 @@ if( sizeof( $inversiones ) ){
             $hash = "<span class=\"text-teal\">{$i[ "extras" ][ "TxHash" ]}</span>";
         }
         else{
-            $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete de inversión aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
+            $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
         }
 
         $mes_actual  = sizeof( $i[ "extras" ][ "meses" ] );
@@ -359,7 +359,7 @@ if( sizeof( $inversiones ) ){
 
 
 }else{
-    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes paquetes</div></div>";
+    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes paquetes</div></div>";
 }
 
 if( sizeof( $inversiones ) ){
