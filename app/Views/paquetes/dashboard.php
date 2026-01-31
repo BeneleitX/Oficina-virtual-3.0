@@ -186,7 +186,7 @@ if( sizeof( $inversiones ) ){
                     $a   = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
                     $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
-                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">CAPITAL SEMILLA</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
+                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">PAQUETES</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
                     
                     if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
                         $semilla_pendientes .= "<a href=\"{$url}\" class=\"btn btn-sm btn-danger\">ADMIN: Confirmar retiro</a>"; 
@@ -196,7 +196,7 @@ if( sizeof( $inversiones ) ){
                 }                    
                 else{
                     $semilla_pendientes .= "\n<tr class=\"\">
-                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-seedling text-red\"></i> capital semilla</td>
+                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-seedling text-red\"></i> PAQUETES</td>
                         <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
                         <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
                 }
@@ -276,7 +276,7 @@ if( sizeof( $inversiones ) ){
                                     <table class=\"table table-sm m-0\">
                                 
                                         <tr>
-                                            <td>Capital semilla</td>
+                                            <td>Paquetes</td>
                                             <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                                         </tr>
                                         <tr>
@@ -322,7 +322,7 @@ if( sizeof( $inversiones ) ){
                                         <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de productos</a></li>
                                       
                                     " : "" ).( !$semilla_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de capital semilla</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de paquetes</a></li>
                                     " : "" )."
 
                                         " : "<li><span class=\"dropdown-item text-red\"><i class=\"fa fa-warning\"></i> Necesitas verificar tu cuenta para realizar retiros</span></li>" )."
@@ -348,7 +348,7 @@ if( sizeof( $inversiones ) ){
                     \"id\": {$i[ "id" ]}, 
                     \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
                     \"valores\" : [
-                        {\"name\":\"Capital semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
+                        {\"name\":\"Paquetes\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Productos\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
                     ]
                 });
             </script>
@@ -386,7 +386,7 @@ if( sizeof( $inversiones ) ){
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
                                     <p class="fs-4">Retiro mensual</p>                                   
-                                    <p>Retirar el rendimiento del mes actual</p>
+                                    <p>Retirar productos del mes actual</p>
                                     <input readonly value="" id="cantidad_1" name="mes" class="cantidades form-control text-center mb-1"></i>
                                 </label>
                             </div>
@@ -395,7 +395,7 @@ if( sizeof( $inversiones ) ){
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_2">
                                     <p class="fs-4">Retiro total</p>                                   
-                                    <p>Retirar el total de rendimiento acumulado</p>
+                                    <p>Retirar el total de productos acumulados</p>
                                     <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
                                 </label>
                             </div>
@@ -459,7 +459,7 @@ if( sizeof( $inversiones ) ){
             <div class="modal-content">
                 <div class="modal-header bg-red">
                     <div class="modal-title me-3">
-                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de capital semilla</h5>
+                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de paquetes</h5>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -477,7 +477,7 @@ if( sizeof( $inversiones ) ){
                                 <input type="radio" class="btn-check" name="opciones_semilla" id="type_4" autocomplete="off" value="4">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_4">
                                     <p class="fs-4">Retiro total</p>                                   
-                                    <p>Retirar el total del capital semilla</p>
+                                    <p>Retirar el total de paquetes</p>
                                     <input readonly value="" id="semilla_2" name="total" class="cantidades form-control text-center mb-1"></i>
                                     </label>
                             </div>
@@ -515,7 +515,7 @@ if( sizeof( $inversiones ) ){
                             </div>
 
                                 <div class="alert alert-danger py-2" id="aviso_semilla">
-                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de rendimiento será reducido a la mitad.</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
+                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de productos será reducido a la mitad.</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
                                 </div>
                                 <?php 
                             } 

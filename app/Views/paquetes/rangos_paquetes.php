@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-lg-4">
             <p><strong>Los rangos son una recompensa por expandir tus conexiones y te dan derecho automático al bono de liderazgo.</strong></p>
-            <p>Según el número de directos activos que tengas, será el porcentaje de ganancia que obtendrás del volumen grupal semilla invertido en tus primeros 4 niveles.</p>
+            <p>Según el número de directos activos que tengas, será el porcentaje de ganancia que obtendrás del volumen grupal de paquetes invertidos en tus primeros 4 niveles.</p>
         </div>
 
         <div class="col-lg-4">
@@ -37,8 +37,8 @@
         <div class="col-lg-4">
             <h5>Cálculo de bono:</h5>
             <ol class="m-0">
-                <li>El rango se calcula al finalizar el mes, haciendo un corte de socios directos activos y el volumen de capital semilla de la red.</li>
-                <li>Se debe esperar a que transcurra el mes siguiente, para que ese volumen de capital semilla genere rendimientos.</li>
+                <li>El rango se calcula al finalizar el mes, haciendo un corte de socios directos activos y el volumen de paquetes de la red.</li>
+                <li>Se debe esperar a que transcurra el mes siguiente, para que ese volumen de paquetes generen productos.</li>
                 <li>El bono se pagará al finalizar el mes siguiente, durante los primeros 3 días hábiles.</li>
             </ol>
         </div>

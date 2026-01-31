@@ -903,10 +903,10 @@ function correos_notificacion( $inversion )
                     "menu" => "assets/img/menu.png"
                 ];
 
-                $subject = "¡Nueva inversión en tu red!";
+                $subject = "¡Nuevo paquete de producto en tu red!";
                 $message = "
-                    <img src=\"%%inversion%%\" width=\"100%\" alt=\"inversion\">
-                    <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva compra de <strong>Paquetes de producto</strong>, por lo que el volumen de capital semilla de tu red se ha incrementado.</p>
+                    <img src=\"%%inversion%%\" width=\"100%\" alt=\"paquete\">
+                    <p>¡Hola ".$usuario->data->nombre."! Tenemos buenas noticias para tí.</p><p>Alguien en tu {$up->nivel}° nivel ha realizado una nueva compra de <strong>Paquete</strong>, por lo que el volumen de producto de tu red se ha incrementado.</p>
 
                     <p style=\" text-align:center; margin:20px 0\"><span style=\"background:#e5e5e5; text-align:center; padding:15px 0; width:200px; display:inline-block; color:#009779; border-radius:5px; font-size:30px;font-weight:bold\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $inversion[ "cantidad" ], 2 )."</span></p>
 
