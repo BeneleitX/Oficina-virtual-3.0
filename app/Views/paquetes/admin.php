@@ -37,7 +37,7 @@
     <div class="row">
         <div class="col-lg-4">
             <h5>Listado de socios</h5> 
-            <p>Este listado incluye a socios que han solicitado retiro de rendimientos durante el mes de <?php echo strtoupper( mes( substr( $mes, 4,2) ) )." ".substr( $mes, 0,4); ?>.</p>
+            <p>Este listado incluye a socios que han solicitado retiro de producto durante el mes de <?php echo strtoupper( mes( substr( $mes, 4,2) ) )." ".substr( $mes, 0,4); ?>.</p>
             <p>Para ver las transferencias solicitadas y enviadas, hacer click en el botón <span class="badge bg-teal text-white">TRANSFERENCIAS</span>. Ahí se podrán marcar como procesadas con el botón <span class="badge bg-mustard text-white">MARCAR COMO TRANSFERIDA</span></p>
         </div>
 

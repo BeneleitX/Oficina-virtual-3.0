@@ -38,7 +38,7 @@ class Paquetes extends BaseController
         /**********************************/
                 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Solicitudes de retiro de rendimientos";
+        $this->data[ "titulo" ] = "Solicitudes de retiro de producto";
         $this->data[ "mes" ]    = $mes;
 
         $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
@@ -826,7 +826,7 @@ class Paquetes extends BaseController
                             <tr><td>TxHash</td><td>{$i[ "extras" ][ "TxHash" ]}</td></tr>
                             <tr><td>Fecha de solicitud</td><td>".fecha( $r[ "fechas" ][ "creacion" ] )."</td></tr>
                             <tr><td>Folio</td><td>".id( $r[ "id" ], 5 )."</td></tr>
-                            <tr><td>Tipo de retiro</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ?  substr( $r[ "tipo" ], 1 )." CAPITAL SEMILLA" : $r[ "tipo" ]." RENDIMIENTOS" )."</td></tr>
+                            <tr><td>Tipo de retiro</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ?  substr( $r[ "tipo" ], 1 )." PAQUETE" : $r[ "tipo" ]." PRODUCTOS" )."</td></tr>
                             <tr><td>Cantidad solicitada</td><td>$".number_format( $r[ "cantidad" ], 2 )."</td></tr>
                             <tr><td>Penalización</td><td>".( substr( $r[ "tipo" ], 0, 1 ) == "S" ? "$".number_format( $r[ "cantidad" ] - $r[ "deposito" ], 2 )." (25%)" : "$0.00" )."</td></tr>
                             <tr><td>Cantidad a depositar</td><td>$".number_format( $r[ "deposito" ], 2 )."</td></tr>
