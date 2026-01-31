@@ -846,16 +846,16 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] )
     ";
     
     if (ENVIRONMENT != 'development') {
-        $usuario->correo = str_replace(array("\n", "\r", "\t"), '', $usuario->correo);
+        $correo = str_replace(array("\n", "\r", "\t"), '', $usuario->correo);
 
         // BITACORA envío de correo     
         bitacora( 35, $usuario->id, [
-            "correo" => trim( $usuario->correo ),
+            "correo" => trim( $correo ),
             "motivo" => $subject
         ] );
 
         $email->setFrom( "app@beneleit.mx", "App Beneleit" ); 
-        $email->setTo( $usuario->correo );
+        $email->setTo( $correo );
         $email->setMailType('html');  
         $email->setSubject( $subject );
         $email->setMessage( $html );
