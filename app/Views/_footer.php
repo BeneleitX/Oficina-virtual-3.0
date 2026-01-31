@@ -112,7 +112,6 @@
 
         <?php
 
-
             $mainscript = "assets/js/beneleit.js";
             if(file_exists( $mainscript )) echo "<script src=\"".base_url().$mainscript."?".filemtime( $mainscript )."\"></script>";
 
