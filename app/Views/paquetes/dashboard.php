@@ -18,7 +18,7 @@
                 <?php echo $rango[ "nombre" ]; ?>
             </h5>
         </td><td nowrap>
-            &nbsp; <a class="btn btn-primary" href="<?php echo base_url( "rangos_inversion" ); ?>"><i class="fa fa-magnifying-glass"></i> Detalles de rangos</a>
+            &nbsp; <a class="btn btn-primary" href="<?php echo base_url( "rangos_paquetes" ); ?>"><i class="fa fa-magnifying-glass"></i> Detalles de rangos</a>
         </td></tr></table>
     </div>
 </div>

@@ -45,7 +45,7 @@ if( $saldo > 0 ){
 <div class="pt-3 px-3 mb-3">
 <?php
     echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
-        "<a href=\"".base_url()."capital\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de paquete\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
+        "<a href=\"".base_url()."paquetes\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de paquete\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
         "<a href=\"".base_url()."perfil\" data-bs-toggle=\"tooltip\" title=\"Click para agregar wallet digital\"  class=\"btn btn-outline-danger p-0 w-100\" style=\"overflow:hidden\">"; 
  ?>
     <table class="w-100 m-0">
@@ -106,7 +106,7 @@ if( $saldo > 0 ){
 
             $k = $inv[ $p->codigo ];
 
-            echo "\n<a href=\"".base_url()."capital\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
+            echo "\n<a href=\"".base_url()."producto\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
                     <div class=\"col-7 py-2 text-start\">
                         <h5 class=\"m-0 text-".( $k[ "total" ] ? $p->data->color : "gray-400" )."\">{$p->data->nombre}".( $k[ "total" ] ? " <span class=\"badge bg-{$p->data->color}\">{$k[ "inversiones" ]}</span>" : "")."</h5>
                         
@@ -119,7 +119,7 @@ if( $saldo > 0 ){
                     </div></div></a>";
         }
     }else{
-        echo "<div class=\"row m-3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-arrow-trend-up\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes inversiones</div></div>";
+        echo "<div class=\"row m-3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes Paquetes</div></div>";
     }
     
     ?>
@@ -163,7 +163,7 @@ if( $saldo > 0 ){
     </div>
 </div>
 
-<a href="<?php echo base_url( "rangos_inversion" ); ?>">
+<a href="<?php echo base_url( "rangos_paquetes" ); ?>">
     <div class="row text-center mx-1 mb-0">
         <div class="col-4"><div class="card"><div class="card-body">
             <p class="text-teal">Directos</p>
@@ -182,7 +182,7 @@ if( $saldo > 0 ){
 
 <div class="card m-3">
     <div class="card-body text-center">
-        Volumen grupal de capital semilla en tu red
+        Volumen grupal de productos en tu red
         <h1 id="volumen_semilla" class="text-teal m-0"></h1>
     </div>
 </div>

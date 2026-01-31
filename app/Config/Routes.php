@@ -298,7 +298,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "statement/(:any)",                   "Paquetes::estadodecuenta/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Paquetes::entrega_retiro/$1" );
     $routes->get( "entrega_retiros/(:num)",             "Paquetes::entrega_retiros/$1" );
-    $routes->get( "rangos_inversion",                   "Paquetes::rangos_inversion" ); 
+    $routes->get( "rangos_paquetes",                   "Paquetes::rangos_paquetes" ); 
     $routes->get( "bono_liderazgo",                     "Paquetes::bono_liderazgo" ); 
     $routes->get( "reporte_inversiones",                "Paquetes::reporte_inversiones" ); 
     $routes->get( "bono_liderazgo/(:num)",              "Paquetes::bono_liderazgo/$1" ); 

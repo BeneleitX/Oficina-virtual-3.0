@@ -187,7 +187,7 @@
                 echo "<td class=\"text-end\"><strong>$".number_format( $s[ "semilla" ], 2 )."</strong></td>";
                 echo "<td class=\"text-end\"><strong>$".number_format( $s[ "bolsa" ], 2 )."</strong></td>";
                 echo "<td>{$s[ "directos" ]}</td>";
-                echo "<td class=\"text-end\"><a target=\"_blank\" href=\"".base_url()."capital/".urlencode( base64_encode( $socio->password_original() ) )."\" class=\"btn btn-xs btn-secondary\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</a></td>";
+                echo "<td class=\"text-end\"><a target=\"_blank\" href=\"".base_url()."paquetes/".urlencode( base64_encode( $socio->password_original() ) )."\" class=\"btn btn-xs btn-secondary\"><i class=\"fa fa-magnifying-glass\"></i> Detalles</a></td>";
                 echo "</tr>";
             }
             ?>

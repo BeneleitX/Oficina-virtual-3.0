@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Capital extends BaseController
+class Paquetes extends BaseController
 {
     function __construct() {
         $this->data[ "menu" ] = "admin";
@@ -43,7 +43,7 @@ class Capital extends BaseController
 
         $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
 
-        echo template( "capital/admin", $this->data );
+        echo template( "paquetes/admin", $this->data );
     }
 
 
@@ -76,7 +76,7 @@ class Capital extends BaseController
 
         $db->query( $sql );
 
-        echo template( "capital/dashboard", $this->data );
+        echo template( "paquetes/dashboard", $this->data );
     }
 
 
@@ -177,7 +177,7 @@ class Capital extends BaseController
             }
         }
 
-        echo template( "capital/bono_liderazgo", $this->data );
+        echo template( "paquetes/bono_liderazgo", $this->data );
     }
 
 
@@ -187,7 +187,7 @@ class Capital extends BaseController
      * It gathers various investment-related data such as active investments,
      * ranks, seeds, monthly returns, purchase periods, commissions, and withdrawals.
      * The processed data is stored in the class's data array for use in rendering
-     * the "capital/inversiones" template.
+     * the "paquetes/inversiones" template.
      *
      * The function performs multiple database queries to fetch information
      * about investments, ranks, purchase periods, and more. It also calculates
@@ -572,7 +572,7 @@ class Capital extends BaseController
             ];
         }
 
-        echo template( "capital/inversiones", $this->data );
+        echo template( "paquetes/inversiones", $this->data );
     }
 
 
@@ -981,7 +981,7 @@ class Capital extends BaseController
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Detalle de tu paquete de producto <span>".referencia( $pedido )."</span>";
 
-        echo template( "capital/detalle", $this->data );
+        echo template( "paquetes/detalle", $this->data );
     }
 
 
@@ -1275,12 +1275,12 @@ class Capital extends BaseController
      *
      * @return void
      */
-    public function rangos_inversion()
+    public function rangos_paquetes()
     {
         $this->data[ "navbar" ] = true;
         $this->data[ "titulo" ] = "Bonos de liderazgo";
 
-        echo template( "capital/rangos_inversion", $this->data );
+        echo template( "paquetes/rangos_paquetes", $this->data );
     }
 
     /**
@@ -1469,7 +1469,7 @@ class Capital extends BaseController
         $this->data[ "titulo" ]    = "Listado de Inversiones";
         load_catalogo( "productos", "modelo_codigo = '50-INVERSION' and substring( codigo, 1 ,3 ) > 500 and estatus_codigo = '201-ACTIVO'" );
 
-        echo template( "capital/reporte_inversiones", $this->data );
+        echo template( "paquetes/reporte_inversiones", $this->data );
     }
 
     
