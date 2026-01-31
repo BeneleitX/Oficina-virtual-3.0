@@ -45,7 +45,7 @@ if( $saldo > 0 ){
 <div class="pt-3 px-3 mb-3">
 <?php
     echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
-        "<a href=\"".base_url()."paquetes\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de paquete\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
+        "<a href=\"".base_url()."paquete\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de paquete\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
         "<a href=\"".base_url()."perfil\" data-bs-toggle=\"tooltip\" title=\"Click para agregar wallet digital\"  class=\"btn btn-outline-danger p-0 w-100\" style=\"overflow:hidden\">"; 
  ?>
     <table class="w-100 m-0">
