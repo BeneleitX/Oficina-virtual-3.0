@@ -846,7 +846,7 @@ class Paquetes extends BaseController
 
                     // redirect para refresh
 
-                    return redirect()->to( "capital" )->with( "msg", [ 
+                    return redirect()->to( "paquete" )->with( "msg", [ 
                         "clase" => "success", 
                         "icono" => "check", 
                         "texto" => "Se generó solicitud de retiro" ] );   
@@ -869,21 +869,21 @@ class Paquetes extends BaseController
                     $r[ "estatus_codigo" ] = "255-PENDIENTE";
                     model( "RetiroModel" )->save( $r );
 
-                    return redirect()->to( "capital" )->with( "msg", [ 
+                    return redirect()->to( "paquete" )->with( "msg", [ 
                         "clase" => "success", 
                         "icono" => "check", 
                         "texto" => "Se procesó el retiro retroactivo" ] );                         
                 }
             }
             else{
-                return redirect()->to( "capital" )->with( "msg", [ 
+                return redirect()->to( "paquete" )->with( "msg", [ 
                     "clase" => "warning", 
                     "icono" => "warning", 
                     "texto" => "Ya existe un retiro programado, no es posible crear solicitud" ] );   
             }
         }
         else{
-            return redirect()->to( "capital" );
+            return redirect()->to( "paquete" );
         }
     }
 
@@ -921,13 +921,13 @@ class Paquetes extends BaseController
                 "retiro_id" => $retiro[ "id" ]
             ]);
 
-            return redirect()->to( "capital" )->with( "msg", [
+            return redirect()->to( "paquete" )->with( "msg", [
                 "clase" => "success",
                 "icono" => "check",
                 "texto" => "Se canceló la solicitud de retiro"
             ]);
         } else {
-            return redirect()->to( "capital" );
+            return redirect()->to( "paquete" );
         }
     }
 
@@ -957,7 +957,7 @@ class Paquetes extends BaseController
         $i = model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
         
         if( !sizeof( $i ) ){
-            return redirect()->to( "capital" );
+            return redirect()->to( "paquete" );
         }
 
         $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
@@ -975,7 +975,7 @@ class Paquetes extends BaseController
             $this->data[ "usuario" ]->permiso( "38-CONTABILIDAD" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
-            return template( "capital", $this->data );
+            return template( "paquetes", $this->data );
         }
 
         $this->data[ "navbar" ] = true;

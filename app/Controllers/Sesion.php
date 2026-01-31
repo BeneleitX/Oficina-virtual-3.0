@@ -647,7 +647,7 @@ class Sesion extends BaseController
                     $retiro[ "estatus_codigo" ] = "150-CANCELADO";
                     model( "RetiroModel" )->save( $retiro );
 
-                    return redirect()->to( "capital" )->with( "msg", [ 
+                    return redirect()->to( "paquete" )->with( "msg", [ 
                         "clase" => "danger", 
                         "icono" => "warning", 
                         "texto" => "Ya existe un retiro de este tipo en el mes. La solicitud ha sido cancelada" ] );                     
@@ -672,7 +672,7 @@ class Sesion extends BaseController
 
                 model( "InversionModel" )->save( $i );
 
-                return redirect()->to( "capital" )->with( "msg", [ 
+                return redirect()->to( "paquete" )->with( "msg", [ 
                     "clase" => "success", 
                     "icono" => "check", 
                     "texto" => "Se confirmó la solicitud de retiro" ] ); 
@@ -688,7 +688,7 @@ class Sesion extends BaseController
                 $retiro[ "estatus_codigo" ] = "150-CANCELADO";
                 model( "RetiroModel" )->save( $retiro );
 
-                return redirect()->to( "capital" )->with( "msg", [ 
+                return redirect()->to( "paquete" )->with( "msg", [ 
                     "clase" => "danger", 
                     "icono" => "warning", 
                     "texto" => "El retiro no corresponde al mes actual" ] ); 
@@ -704,13 +704,13 @@ class Sesion extends BaseController
                 "pass"   => $pass
             ] );
                 
-            return redirect()->to( "capital" )->with( "msg", [ 
+            return redirect()->to( "paquete" )->with( "msg", [ 
                 "clase" => "danger", 
                 "icono" => "warning", 
                 "texto" => "Hubo un problema al confirmar el retiro" ] ); 
         }
 
         
-        return redirect()->to( "capital" );
+        return redirect()->to( "paquete" );
     }
 }

@@ -2,7 +2,7 @@
 
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p>
-    <a class="btn btn-light btn-sm" href="<?php echo base_url( "capital" ); ?>"><i class="fa fa-undo"></i> Regresar a Inversiones</a>
+    <a class="btn btn-light btn-sm" href="<?php echo base_url( "paquete" ); ?>"><i class="fa fa-undo"></i> Regresar a Inversiones</a>
 </p>
 
 
