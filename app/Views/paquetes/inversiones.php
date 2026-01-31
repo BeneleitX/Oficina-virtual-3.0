@@ -75,7 +75,7 @@
                     }
                 ?>
             </div> 
-            <p class="m-0">Total de inversiones por tipo</p>
+            <p class="m-0">Total de compras por tipo</p>
         </div>
     </div>
 
@@ -92,7 +92,7 @@
 
         <div class="card text-center py-3 bg-teal text-white">
             <h1 class="m-0 text-white"><?php echo number_format( $total_compras ); ?></h1>
-            <p class="m-0">Compra de paquetes de inversión</p>
+            <p class="m-0">Compra de paquetes de producto</p>
         </div>
     </div>
 
@@ -103,7 +103,7 @@
 
         <div class="card text-center py-3 bg-teal text-white">
             <h1 class="m-0 text-white">$<?php echo number_format( $data_semilla[ date( "Ym" ) ], 2 ); ?></h1>
-            <p class="m-0">Capital semilla</p>
+            <p class="m-0">Paquetes</p>
         </div>
     </div>
 
@@ -115,7 +115,7 @@
 
         <div class="card text-center py-3 bg-teal text-white">
             <h1 class="m-0 text-white">$<?php echo number_format( $data_rendimiento[ date( "Ym" ) ], 2 ); ?></h1>
-            <p class="m-0">Rendimiento total</p>
+            <p class="m-0">Total de productos</p>
         </div>
     </div>
 
@@ -138,7 +138,7 @@
 
         <div class="card text-center py-3 bg-red text-white">
             <h1 class="m-0 text-white">$<?php echo number_format( $total_retiros, 2 ); ?></h1>
-            <p class="m-0">Retiros de rendimientos</p>
+            <p class="m-0">Retiros de producto</p>
         </div>
     </div>
 
@@ -246,7 +246,7 @@
     var options = {
         colors: ['var(--bs-teal)'],
         series: [{
-            name: 'Capital semilla',
+            name: 'Productos',
             data: <?php echo json_encode( array_values( $data_semilla ) ); ?>
         }],
         chart: {

@@ -171,7 +171,7 @@
 
                                     echo "\n<div class=\"mx-3 alert alert-success\"><div class=\"row\">
                                                 <div class=\"col-6\">
-                                                Capital semilla recibido 
+                                                Compra recibida
                                                 <img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\">
                                                 $".number_format( $paquete[ "cantidad" ], 2 )."<br>
                                                 Fecha de envío: ".date( "d-m-Y", strtotime( $paquete[ "fechas" ][ "pagado" ] ) )."<br>

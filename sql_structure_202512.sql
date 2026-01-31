@@ -3895,7 +3895,6 @@ BEGIN
             
 			SET _inversion  = JSON_UNQUOTE( JSON_EXTRACT( _meses, CONCAT( '$[', _k, ']' ) ) );
 
-			-- si existen datos del mes, extraemos el capital semilla
 			
             IF _inversion->>'$.Ym' = mes and mes <= date_format( now(), "%Y%m" ) THEN
 			    set _semilla = _semilla + _inversion->>'$.semilla';

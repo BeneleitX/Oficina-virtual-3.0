@@ -24,7 +24,7 @@ if( $total < 0 ){
             <div id="finaliza" class="card-body text-center mb-5" style="display: none;">
                 <p style="font-size:100px"><i class="fa fa-circle-check text-teal"></i></p>
                 <h1>¡Felicidades!</h1>
-                <h5>Se ha creado con éxito la inversión <span class="badge bg-<?php echo $producto->data->color; ?>"><?php echo $pedido[ "referencia" ]; ?></span></h5>
+                <h5>Se ha creado con éxito la compra <span class="badge bg-<?php echo $producto->data->color; ?>"><?php echo $pedido[ "referencia" ]; ?></span></h5>
 
                 <span class="badge bg-gray-300 text-marine" style="font-size:monospace" id="txhash"></span>
                 <div class="row"><div class="col-lg-4 offset-lg-4">
@@ -51,7 +51,7 @@ if( $total < 0 ){
             </div>
 
             <div id="principal" style="display: none;">
-                <div class="card-header"><h5 class="text-teal m-0 py-2">Transferencia de capital semilla</h5></div>
+                <div class="card-header"><h5 class="text-teal m-0 py-2">Transferencia de paquetes</h5></div>
 
                 <div class="card-body text-start">
                     <div class="row">
@@ -90,7 +90,7 @@ if( $total < 0 ){
                             <div class="alert alert-warning small">
                             <ul class="m-0">
                                 <li>Una vez finalizada la transacción, deberás colocar el TxHash en el campo de la derecha</li>
-                                <li>El TxHash o hash de transacción es el identificador que genera la transacción de tu inversión. También se le conoce como ID de transacción (TxID)</li>
+                                <li>El TxHash o hash de transacción es el identificador que genera la transacción de tu compra. También se le conoce como ID de transacción (TxID)</li>
                             
                             </div>
 
@@ -116,7 +116,7 @@ if( $total < 0 ){
                                     <input type="hidden" name="_txhash" value="saldo">
                                     <div class="alert alert-success">
                                         <h3>¡Felicidades!</h3>
-                                        <p>Tu saldo a favor cubre la totalidad del costo de tu pedido. Haz click en el siguiente botón para finalizar tu pago y activar tu inversión</p>
+                                        <p>Tu saldo a favor cubre la totalidad del costo de tu pedido. Haz click en el siguiente botón para finalizar tu pago y activar tu compra</p>
                                     </div>
                                 <?php
                                 }
@@ -131,7 +131,7 @@ if( $total < 0 ){
                                 ?>
                             </div>
 
-                            <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar inversión</button></p>
+                            <p class="text-center"><button onclick="check_hash()" type="button" class="btn btn-secondary"><i class="fa fa-check"></i> Registrar compra</button></p>
                         </div>
                     </div>
                 </div>    

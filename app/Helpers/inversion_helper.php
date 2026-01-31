@@ -10,12 +10,9 @@ function aviso_semilla( $i, $p, $mes = null ){
     
     if( $p->data->porcentaje < 9 ){
 
-        // para las inversiones al 3% o 6% liberar el capital semilla a los 12 meses
         $fecha = $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -12 ][ "termina" ];
     }
     else{
-
-        // para las inversiones al 9% liberar el capital semilla a los 24 meses
         $fecha = $i[ "extras" ][ "meses" ][ sizeof( $i[ "extras" ][ "meses" ] ) -1 ][ "termina" ];
     }
     

@@ -200,15 +200,15 @@ echo "\n
                             <td class=\"text-end\">".fecha( $i[ "fechas" ][ "pagado" ] )."</td>
                         </tr>
                         <tr>
-                            <td>Inicio de inversión</td>
+                            <td>Inicio de compra</td>
                             <td class=\"text-end\">".fecha( $f_i )."</td>
                         </tr>
                         <tr>
-                            <td>Cierre de inversión</td>
+                            <td>Cierre de compra</td>
                             <td class=\"text-end\">".fecha( $i[ "extras" ][ "meses" ][ $cuentameses -1 ][ "termina" ] )."</td>
                         </tr>
                         <tr>
-                            <td>Periodo de inversión</td>
+                            <td>Periodo de compra</td>
                             <td class=\"text-end\">".$cuentameses ." meses</td>
                         </tr>
                         <tr>
@@ -222,11 +222,11 @@ echo "\n
                     <table class=\"table table-sm m-0\">
                 
                         <tr>
-                            <td>Capital semilla</td>
+                            <td>Paquetes</td>
                             <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                         </tr>
                         <tr>
-                            <td>Rendimiento total</td>
+                            <td>Total de producto</td>
                             <td class=\"text-end\">$".number_format( $bt[ "suma" ], 2 )."</td>
                         </tr>
                         <tr>
@@ -234,7 +234,7 @@ echo "\n
                             <td class=\"text-end\"><span class=\"text-red \">$".number_format( $bt[ "retiros" ], 2 )."</span></td>
                         </tr>
                         <tr>
-                            <td>Rendimiento actual</td>
+                            <td>Productos actual</td>
                             <td class=\"text-end\">$".number_format( $bt[ "full" ], 2 )."</td>
                         </tr>  
                         <tr>
@@ -254,7 +254,7 @@ echo "\n
             \"id\": {$i[ "id" ]}, 
             \"meses\": [ \"".implode( "\", \"", $meses )."\" ],
             \"valores\" : [
-                {\"name\":\"Capital semilla\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Interés compuesto\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
+                {\"name\":\"Paquetes\",\"data\":[ ".implode( ", ", $semilla )." ]},{\"name\":\"Productos\",\"data\":[ ".implode( ", ", $compuesto )." ]},{\"name\":\"Rendimiento\",\"data\":[ ".implode( ", ", $rendimiento )." ]}
             ]
         };
     </script>
@@ -264,15 +264,15 @@ echo "\n
         <tr>
             <th class=\"text-center\">No.</th>
             <th class=\"text-start\">Mes</th>
-            <th class=\"text-end\">Cap. Semilla</th>
-            <th class=\"text-end\">Int. Compuesto</th>
+            <th class=\"text-end\">Paquetes</th>
+            <th class=\"text-end\">Productos</th>
             <th class=\"text-center\">Porcentaje</th>
-            <th class=\"text-end\">Rend. x día</th>
+            <th class=\"text-end\">Prods. x día</th>
             <th class=\"text-end\">Días</th>
-            <th class=\"text-end\">Rend del mes</th>
-            <th class=\"text-end\">Rend acumulado</th>
-            <th class=\"text-end\">Retiro Rend</th>
-            <th class=\"text-end\">Retiro Semilla</th>
+            <th class=\"text-end\">Prods del mes</th>
+            <th class=\"text-end\">Prods acumulado</th>
+            <th class=\"text-end\">Retiro Prods</th>
+            <th class=\"text-end\">Retiro Paquetes</th>
             <th class=\"text-end\">Saldo final</th>
         </tr>
     </thead><tbody>";
