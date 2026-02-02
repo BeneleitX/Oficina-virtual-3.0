@@ -107,10 +107,20 @@
 			<?php
 
             if( !sizeof( $pedido[ "promociones" ] ) ){
-                echo "\n<div class=\"alert alert-light text-center text-mustard\">
+
+                if( $pagado || $bloqueado ){
+                  
+                    echo "\n<div class=\"alert alert-light text-center text-mustard\">
                             <p><i class=\"fa fa-triangle-exclamation\" style=\"font-size:200px\"></i></p>
                             <p>Hay un problema con este pedido, parece estar vacío.<br>porfavor reportalo a soporte técnico</p>
                         </div>";
+                }
+                else{
+                    echo "\n<div class=\"alert alert-light text-center text-blue\">
+                            <p><i class=\"fa fa-triangle-exclamation\" style=\"font-size:100px\"></i></p>
+                            <p>Por el momento no hay productos disponibles</p>
+                        </div>";
+                }
             }
 
 			foreach( PROMOCIONES as $p ){
@@ -201,6 +211,7 @@
                             </div>";
                 }
 			}
+
 
             if( $modelo == '20-TELEFONIA' ){
                 if( !($pagado || $bloqueado || $cancelado )){
