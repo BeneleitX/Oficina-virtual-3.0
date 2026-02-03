@@ -136,5 +136,5 @@ $u3 = $usuario->getNuevosSocios( 6, "2025-12-01", "2025-12-31" );
 $u4 = $usuario->getNuevosSocios( 6, "2026-01-01", "2026-01-31" );
 
 echo "<pre>";
-print_r( $usuario->id, $u1, $u2, $u3, $u4, $u1 + $u2 + $u3 + $u4 );
+dd( $usuario->id, $u1, $u2, $u3, $u4, $u1 + $u2 + $u3 + $u4 );
 echo "</pre>";
