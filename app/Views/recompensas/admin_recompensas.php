@@ -1,4 +1,15 @@
+<?php 
 
+$usuario = model( "UsuarioModel" )->find( 166980 );
+
+$u1 = array_sum( $usuario->getNuevosSocios( 6, "2025-10-01", "2025-10-31" ) );
+$u2 = array_sum( $usuario->getNuevosSocios( 6, "2025-11-01", "2025-11-30" ) );
+$u3 = array_sum( $usuario->getNuevosSocios( 6, "2025-12-01", "2025-12-31" ) );
+$u4 = array_sum( $usuario->getNuevosSocios( 6, "2026-01-01", "2026-01-31" ) );
+
+dd( $usuario->id, $u1, $u2, $u3, $u4, $u1 + $u2 + $u3 + $u4 );
+
+?>
 <link href="<?php echo base_url(); ?>assets/css/datatables.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>assets/js/datatables.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/datatables_bs5.js" type="text/javascript"></script>
@@ -123,18 +134,3 @@ var cat_recompensas = <?php echo json_encode( RECOMPENSAS ); ?>;
 </script>
 
 
-
-
-<?php 
-
-
-$usuario = model( "UsuarioModel" )->find( 166980 );
-
-$u1 = $usuario->getNuevosSocios( 6, "2025-10-01", "2025-10-31" );
-$u2 = $usuario->getNuevosSocios( 6, "2025-11-01", "2025-11-30" );
-$u3 = $usuario->getNuevosSocios( 6, "2025-12-01", "2025-12-31" );
-$u4 = $usuario->getNuevosSocios( 6, "2026-01-01", "2026-01-31" );
-
-echo "<pre>";
-dd( $usuario->id, $u1, $u2, $u3, $u4, $u1 + $u2 + $u3 + $u4 );
-echo "</pre>";
