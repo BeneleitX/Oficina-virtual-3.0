@@ -42,7 +42,7 @@ $menu = [
     [ "success", "paqueterias/".getModeloPrincipal(), "truck-fast", "Paquetería", sizeof( $paqueterias ), [ "25-PAQUETERIA", "40-ADMIN"] ],
     [ "danger", "periodos/".getModeloPrincipal(), "calendar-days", "Periodos", sizeof( $periodos ), [ "40-ADMIN", "38-CONTABILIDAD" ] ],
     [ "warning", "productos/".getModeloPrincipal(), "spray-can-sparkles", "Productos", sizeof( $productos ), ["20-ALMACEN", "40-ADMIN"] ],
-    [ "success", "admin_recompensas", "award", "Recompensas", sizeof( $recompensas ), ["27-RECOMPENSAS", "40-ADMIN"] ],
+    [ "danger", "admin_recompensas", "award", "Recompensas", $recompensas, ["27-RECOMPENSAS", "40-ADMIN"] ],
     [ "warning", "modelos", "shop", "Modelos de negocio", sizeof( MODELOS ), [] ],
     [ "secondary", "redes/".getModeloPrincipal(), "sitemap", "Redes", 0,[] ],
     [ "secondary", "callcenter", "headset", "Call center", 0,[] ],
@@ -79,7 +79,7 @@ foreach( $menu as $opcion ){
     }
 
     if( $permiso ){
-        echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-outline-{$opcion[0]} col-12 ".($opcion[0] == "secondary" ? "disabled" : "" )."\"  href=\"".base_url( $opcion[1] )."\"><i class=\"fa fa-{$opcion[2]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$opcion[3]}</p><div class=\"contador text-center\">".( isset( $opcion[4] ) && $opcion[4] > 0 ? "<span class=\"badge rounded-pill bg-marine\">{$opcion[4]}</span><br>" : "" ).( str_contains( $opcion[1], "/" ) ? "<i class=\"fa fa-circle elipsis text-mustard\"></i><i class=\"fa fa-circle text-pink elipsis\"></i><i class=\"fa fa-circle text-light-blue elipsis\"></i>" : "")."</div></a></div>";
+        echo "\n<div class=\"col-6 col-md-4 col-lg-3 col-xl-2 mb-4\"><a class=\"btn position-relative btn-".( $opcion[1] == "admin_recompensas" ? "" : "outline-" )."{$opcion[0]} col-12 ".($opcion[0] == "secondary" ? "disabled" : "" )."\"  href=\"".base_url( $opcion[1] )."\"><i class=\"fa fa-{$opcion[2]} m-1\" style=\"font-size:40px\"></i><p class=\"mb-1\">{$opcion[3]}</p><div class=\"contador text-center\">".( isset( $opcion[4] ) && $opcion[4] > 0 ? "<span class=\"badge rounded-pill bg-".( $opcion[1] == "admin_recompensas" ? "white text-red" : "marine" )."\">{$opcion[4]}</span><br>" : "" ).( str_contains( $opcion[1], "/" ) ? "<i class=\"fa fa-circle elipsis text-mustard\"></i><i class=\"fa fa-circle text-pink elipsis\"></i><i class=\"fa fa-circle text-light-blue elipsis\"></i>" : "")."</div></a></div>";
     }
 }
 
