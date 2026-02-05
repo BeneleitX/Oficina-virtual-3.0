@@ -92,6 +92,25 @@ function getReferencia( string $p ){
 }
 
 
+function existe_directorio( $path ){
+    list( $m, $u, $y ) = [ 
+        substr( $path->getSegment( 2 ), 0, 2 ),
+        substr( $path->getSegment( 2 ), 2, -2 ),
+        substr( $path->getSegment( 2 ), -2 ) 
+    ];
+    
+    if( file_exists( $path->getSegment( 1 )."/{$m}/{$u}/{$y}" ) ){
+        return true;
+    }
+    elseif( date( "m")+10 == $m && date( "y")+10 == $y ){
+        return $u;
+    }
+    else{
+        return false;
+    }
+}
+
+
 function get_fechanac( $curp ){
 
     if( strlen( $curp ) != 18 ){
@@ -1031,6 +1050,7 @@ function nuevo_pedido( $modelo )
     
     return $nuevo;
 }
+
 
 function get_estadistica( $socio, $mes, $modelo )
 {

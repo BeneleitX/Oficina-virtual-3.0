@@ -413,6 +413,22 @@ function check_inversion( $i, $a ){
 }
 
 
+
+function mk_estructura_inversion( $path ){
+    $db = db_connect();
+
+    $sql = "SELECT u.id, SUM(r.deposito) as inv, u.data->>'$.wallet' as w
+            FROM t_retiros r
+            left JOIN t_usuarios u ON u.id = r.usuario_id
+            WHERE r.estatus_codigo = '255-PENDIENTE'
+            GROUP BY u.id";
+
+    $sql = $db->query( $sql );
+    foreach( $sql->getResult() as $i ){
+        echo $i->id."\t".$i->inv."\t".$i->w."<br>";
+    }
+}
+
 function crea_retiro_final( $i ){
 
     $p      = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );

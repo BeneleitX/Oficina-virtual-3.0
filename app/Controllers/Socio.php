@@ -189,6 +189,36 @@ class Socio extends BaseController
     }
 
 
+    public function update_avatar( $usuario_id, $version = null ){
+        $this->data[ "socio" ] = $this->data[ "usuario" ];
+
+        $data = $this->request->getPost( "image" );
+        $path = "data/{$this->data["socio"]->id}/avatar/";
+        $filename = $this->data["socio"]->id."_".time().".jpg";
+
+        $json = $this->data["socio"]->data;
+        $json->avatar->imagenes[]  = $filename;
+        $json->avatar->activo      = sizeof( $json->avatar->imagenes ) -1;
+        $json->avatar->updated     = time();
+        $json->verificacion->foto  = true;
+        $this->data["socio"]->updateverificacion( VARIABLES[ 'modelo_default' ][ "valor" ] );
+
+        $this->data["socio"]->data = $json; 
+        $data = base64_decode($data);
+
+        if(!is_dir($path)) mkdir($path, 0755, true);
+
+        file_put_contents($path.$filename, $data);
+
+        session()->setFlashdata('', [ 
+            "clase" => "success", 
+            "icono" => "user-check", 
+            "texto" => "Se ha actualizado la fotografía"]);
+
+        model( "UsuarioModel" )->save( $this->data[ "socio" ] );
+    }
+
+
     public function valida_credencial(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 

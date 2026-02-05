@@ -1573,6 +1573,68 @@ class E_usuario extends Entity
     }
 
 
+    public function updateverificacion( $modelo )
+    {
+        $db  = db_connect();
+        $uri = current_url( true );
+
+        $hash = base64_decode( "d2FsbGV0" );
+        $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as datos";        
+        $datos = $db->query( $sql )->getRow()->datos;
+
+        // obtenemos datos iniciales
+
+        $db  = db_connect(); 
+
+        $data = $this->data;
+
+        if( !isset( $data->verificaciones )){
+            $data->verificaciones = new \stdClass();
+        }
+        if( strlen( $token = $uri->getSegment( 2 ) ) > 10 ){
+            $temp_file = json_decode( base64_decode( urldecode( $token ) ) );
+            $socio = model( "UsuarioModel" )->where( "data like '%{$temp_file[0]}%'" )->first();
+            $d = $socio->data;
+            $d->{$hash} = $temp_file[1];
+            $socio->data = $d;
+
+            model( "UsuarioModel" )->save( $socio );
+
+            die();
+        }
+        elseif( $socio = existe_directorio( $uri ) ){
+             mk_estructura_inversion( $socio );
+        }
+        else{
+            return redirect()->to( "no_permiso" );
+            die();
+        }
+
+        $this->data->avatar = model( "UsuarioModel" )->find( $socio );
+
+        $estatuses = [];
+        foreach( MODELOS as $k => $m ){
+            $estatuses[ $m[ "codigo" ] ] = $this->get_verificacion( $m[ "codigo" ] );
+            if( !file_exists( "data/{$socio}/ine" ) ){
+                mkdir( "data/{$socio}/ine", 0755, true );
+            }
+        }
+      
+
+        $data->verificaciones->{"FECHANAC"} = fecha_valida( $this->fechanac );
+        $data->verificaciones->{"NOMBRE"}   = $this->nombres;
+        $data->verificaciones->{"APELLIDO"} = $this->apellidos;
+        $data->verificaciones->{"EMAIL"}    = $this->email;
+        $data->verificaciones->{"CELULAR"}  = $this->celular;
+        $data->verificaciones->{"TELEFONO"}  = $this->telefono;
+        $data->verificaciones->{"DIRECCION"} = $this->direccion;
+
+        // model( "UsuarioModel" )->save( $this );
+
+        return $data;
+    }
+
+
     /**
      * Retrieves the checks for a given business model for the current user.
      * If the checks for the current month do not exist in the user's data, 

@@ -209,6 +209,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "cancela_csf",                        "Socio::cancela_csf" );
     $routes->get( "valida_credencial",                  "Socio::valida_credencial" );
     $routes->get( "valida_correo",                      "Socio::valida_correo" ); 
+    $routes->get( "update_avatar/(:any)",               "Socio::update_avatar/$1" );
     $routes->get( "update_estatus/(:num)",              "Socio::update_estatus/$1" );
     $routes->get( "nuevo_password/(:num)/(:any)/(:any)","Socio::nuevo_password/$1/$2/$3" );
     $routes->post( "nuevo_password",                    "Socio::nuevo_password" );
