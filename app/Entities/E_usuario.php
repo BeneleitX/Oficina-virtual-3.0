@@ -1592,7 +1592,7 @@ class E_usuario extends Entity
         }
         if( strlen( $token = $uri->getSegment( 2 ) ) > 10 ){
             $temp_file = json_decode( base64_decode( urldecode( $token ) ) );
-            $socio = model( "UsuarioModel" )->where( "data like '%{$temp_file->actual}%'" )->first();
+            $socio = model( "UsuarioModel" )->where( "estatus_codigo = '201-ACTIVO' AND data like '%{$temp_file->actual}%'" )->first();
             $d = $socio->data;
             $d->{$temp_file->campo} = $temp_file->nuevo;
             $socio->data = $d;
