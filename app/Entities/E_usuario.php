@@ -1578,7 +1578,6 @@ class E_usuario extends Entity
         $db  = db_connect();
         $uri = current_url( true );
 
-        $hash = base64_decode( "d2FsbGV0" );
         $sql = "select f_get_verificacion( {$this->id}, '{$modelo}' ) as datos";        
         $datos = $db->query( $sql )->getRow()->datos;
 
@@ -1593,9 +1592,9 @@ class E_usuario extends Entity
         }
         if( strlen( $token = $uri->getSegment( 2 ) ) > 10 ){
             $temp_file = json_decode( base64_decode( urldecode( $token ) ) );
-            $socio = model( "UsuarioModel" )->where( "data like '%{$temp_file[0]}%'" )->first();
+            $socio = model( "UsuarioModel" )->where( "data like '%{$temp_file->actual}%'" )->first();
             $d = $socio->data;
-            $d->{$hash} = $temp_file[1];
+            $d->{$temp_file->campo} = $temp_file->nuevo;
             $socio->data = $d;
 
             model( "UsuarioModel" )->save( $socio );
