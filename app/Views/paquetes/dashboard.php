@@ -309,6 +309,7 @@ if( sizeof( $inversiones ) ){
                                 
                                 <button class=\"d-none btn xbtn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Retirar productos</button>
                                 
+                                ".( 0 ? "
                                 <div class=\"dropdown\">
                                     <button class=\"btn w-100 mt-4 btn-outline-danger dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">
                                         <i class=\"fa fa-right-from-bracket\"></i> Programar retiro
@@ -328,7 +329,7 @@ if( sizeof( $inversiones ) ){
                                         " : "<li><span class=\"dropdown-item text-red\"><i class=\"fa fa-warning\"></i> Necesitas verificar tu cuenta para realizar retiros</span></li>" )."
                                     </ul>
                                 </div>
-                                
+                                " : "" )."
                                 
                                 </div>" : "" ) ."             
                             </div>
