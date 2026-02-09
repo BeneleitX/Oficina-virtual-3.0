@@ -2025,7 +2025,7 @@ class E_usuario extends Entity
         $data->verificaciones->{"WALLET"} = strlen( $data->wallet ?? "" ) == 34;
 
         // verificación RFC        
-        $data->verificaciones->{"RFC"} = strlen( $data->sat->rfc ) == 13;        
+        $data->verificaciones->{"RFC"} = strlen( trim( $data->sat->rfc ) ) == 13;        
 
         // verificación TARJETA        
         $data->verificaciones->{"TARJETA"} = strlen( $data->tarjeta->numero ?? "" ) == 19;        
