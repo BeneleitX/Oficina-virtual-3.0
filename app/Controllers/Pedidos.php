@@ -1329,7 +1329,7 @@ class Pedidos extends BaseController
         $request = $this->request->getPost( "productos" );
         $modelo  = $pedido[ "modelo_codigo" ];
 
-        load_catalogo( "productos",   "modelo_codigo = '{$modelo}'");
+        load_catalogo( "productos",   );
         load_catalogo( "promociones", "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
 
         $cambios = [];
@@ -1425,10 +1425,10 @@ class Pedidos extends BaseController
             ] );            
         }
 
-        return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
+         return redirect()->to( "pedido/".$pedido[ "referencia" ] )->with( "msg", [ 
             "clase" => "success", 
             "icono" => "check", 
-            "texto" => "Se han actualizado los productos del pedido" ] ); 
+            "texto" => "Se han actualizado los productos del pedido" ] );  
     }
 
     // ******************* BUSQUEDA *********************
