@@ -169,7 +169,7 @@ function cambia_cantidad( promocion, producto ){
 }
 
 
-function xupdate_costos(){
+function x// (){
 
     pedido.data.total     = 0;
     pedido.data.productos = 0;
@@ -1282,7 +1282,7 @@ $(document).ready(function()
     update_variantes();
 
     if( update_productos ){
-        update_costos();
+        // update_costos();
     }    
 
     $( '#shoploader' ).hide();
