@@ -169,7 +169,7 @@ function cambia_cantidad( promocion, producto ){
 }
 
 
-function x// (){
+function xupdate_costos// (){
 
     pedido.data.total     = 0;
     pedido.data.productos = 0;
