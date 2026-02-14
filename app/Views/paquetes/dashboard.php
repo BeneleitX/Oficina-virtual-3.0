@@ -214,6 +214,13 @@ if( sizeof( $inversiones ) ){
             $mes_actual = 0;
         }
 
+        switch( $i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] ){
+            case "3" : $r_mensual = "1 a 3"; break;
+            case "6" : $r_mensual = "3 a 6"; break;
+            case "9" : $r_mensual = "6 a 8"; break;
+            case "" : $r_mensual = "pendiente..."; break;
+        }
+
         echo "\n
             <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
                 <div class=\"card-header\">
@@ -266,7 +273,7 @@ if( sizeof( $inversiones ) ){
                                         </tr>                                        
                                         <tr>
                                             <td>Rendimiento mensual</td>
-                                            <td class=\"text-end\">{$i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] }%</td>
+                                            <td class=\"text-end\">{$r_mensual} %</td>
                                         </tr>
                                     </table>
                                     
@@ -276,7 +283,7 @@ if( sizeof( $inversiones ) ){
                                     <table class=\"table table-sm m-0\">
                                 
                                         <tr>
-                                            <td>Paquetes</td>
+                                            <td>Paquete inicial</td>
                                             <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                                         </tr>
                                         <tr>
@@ -360,6 +367,10 @@ if( sizeof( $inversiones ) ){
 }else{
     echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes paquetes</div></div>";
 }
+
+
+// $resultado = generarSerieMensual(1, 3, '2026-02-14');
+
 
 if( sizeof( $inversiones ) ){
 ?>  

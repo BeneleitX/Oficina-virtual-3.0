@@ -398,6 +398,21 @@ function balance_inversion( $i, $fecha = null ){
          $respuesta[ "full" ] = 0;
     }
 
+// TEMPORAL
+
+    if( $fecha > 202601 ){
+
+        $respuesta[ "rendimiento" ] = 0.00;
+        $respuesta[ "suma" ]        = 0.00;
+        $respuesta[ "compuesto" ]   = 0.00;
+        $respuesta[ "total" ]       = 0.00;
+        $respuesta[ "full" ]        = 0.00;
+        $respuesta[ "finmes" ]      = 0.00;
+        $respuesta[ "fecha" ]       = $fecha;
+    }    
+
+
+
     return $respuesta;
 }
 
@@ -470,4 +485,65 @@ function crea_retiro_final( $i ){
     model( "InversionModel" )->save( $i );
 
     return $i;
+}
+
+
+function generarSerieMensual($min, $max, $fecha) {
+
+    // 1️⃣ Obtener mes y año
+    $timestamp = strtotime($fecha);
+    $mes = date('m', $timestamp);
+    $anio = date('Y', $timestamp);
+
+    // 2️⃣ Calcular objetivo
+    $diferencia = $max - $min;
+    $minPermitido = $min + ($diferencia / 3);
+
+    $objetivo = $minPermitido + lcg_value() * ($max - $minPermitido);
+    $objetivo = round($objetivo, 4);
+
+    // 3️⃣ Obtener cantidad de días del mes
+    $diasDelMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
+
+    // 🔒 Valor mínimo por día (para evitar ceros)
+    $valorMinimo = 0.0001;
+
+    // Verificación de seguridad
+    if ($objetivo <= ($diasDelMes * $valorMinimo)) {
+        throw new Exception("El objetivo es demasiado pequeño para garantizar valores mayores a cero.");
+    }
+
+    // 4️⃣ Asignar mínimo a todos los días
+    $valores = array_fill(0, $diasDelMes, $valorMinimo);
+    $restante = $objetivo - ($diasDelMes * $valorMinimo);
+
+    // Generar pesos aleatorios
+    $pesos = [];
+    $sumaPesos = 0;
+
+    for ($i = 0; $i < $diasDelMes; $i++) {
+        $peso = lcg_value();
+        $pesos[] = $peso;
+        $sumaPesos += $peso;
+    }
+
+    // Distribuir el restante proporcionalmente
+    for ($i = 0; $i < $diasDelMes - 1; $i++) {
+        $extra = ($pesos[$i] / $sumaPesos) * $restante;
+        $valores[$i] += $extra;
+        $valores[$i] = round($valores[$i], 4);
+    }
+
+    // Ajustar último valor para suma exacta
+    $sumaParcial = array_sum(array_slice($valores, 0, $diasDelMes - 1));
+    $valores[$diasDelMes - 1] = round($objetivo - $sumaParcial, 4);
+
+    return [
+        'mes' => $mes,
+        'anio' => $anio,
+        'dias' => $diasDelMes,
+        'objetivo' => $objetivo,
+        'serie' => $valores,
+        'suma_final' => array_sum($valores)
+    ];
 }

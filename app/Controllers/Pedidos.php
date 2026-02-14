@@ -35,6 +35,21 @@ class Pedidos extends BaseController
             return redirect()->to( "logout" );
         }
 
+        $this->data[ "especial" ] = false;
+
+        if( $modelo == "50-INVERSION" ){ 
+            $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
+
+            foreach( $upline as $u ){
+                if( in_array( $u->id, [ 163255, 169469]  ) ){
+                    $this->data[ "especial" ] = true;
+                    break;
+                }
+            }
+        }
+
+        // 
+
         $this->data[ "socio" ]   = $this->data[ "usuario" ];
         $this->data[ "navbar" ]  = true;
         $this->data[ "modelo" ]  = $modelo;
@@ -112,7 +127,7 @@ class Pedidos extends BaseController
 
         $this->data[ "update_productos" ] = $this->session->getFlashdata( "update_productos" ) ? 1 : 0;
         $activo = "estatus_codigo = '201-ACTIVO'";
-
+       
         // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
 
@@ -135,6 +150,8 @@ class Pedidos extends BaseController
             load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$modelo}'");
+
+
 
             $staff = false;
 
@@ -202,6 +219,19 @@ class Pedidos extends BaseController
         else{
             $modelo = $data;
             
+            $this->data[ "especial" ] = false;
+
+            if( $modelo == "50-INVERSION" ){ 
+                $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
+
+                foreach( $upline as $u ){
+                    if( in_array( $u->id, [ 163255, 169469]  ) ){
+                        $this->data[ "especial" ] = true;
+                        break;
+                    }
+                }
+            }
+            
             $sql    = "{$activo}".( ( MODELOS[ $modelo ][ "settings" ][ "global" ] ?? false ) ? "" : " AND modelo_codigo = '{$modelo}'" );
 
             $this->data[ "socio" ]     = $this->data[ "usuario" ];
@@ -215,7 +245,7 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    "{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
+            load_catalogo( "promociones",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
@@ -1024,6 +1054,7 @@ class Pedidos extends BaseController
                 $hash  = "saldo"; 
                 $saldo = $pedido[ "data" ][ "total" ];
             }
+            
         }
 
         // marcado de inversiones por saldo a favor y/o acumulación de comisiones
