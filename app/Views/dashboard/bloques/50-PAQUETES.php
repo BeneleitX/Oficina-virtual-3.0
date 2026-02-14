@@ -106,7 +106,9 @@ if( $saldo > 0 ){
 
             $k = $inv[ $p->codigo ];
 
-            if( $k[ "total" ] )
+            if( $k[ "total" ] > 0 && $k[ "inversiones" ] > 0 )
+                
+            
             echo "\n<a href=\"".base_url()."paquete\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
                     <div class=\"col-7 py-2 text-start\">
                         <h5 class=\"m-0 text-".( $k[ "total" ] ? $p->data->color : "gray-400" )."\">{$p->data->nombre}".( $k[ "total" ] ? " <span class=\"badge bg-{$p->data->color}\">{$k[ "inversiones" ]}</span>" : "")."</h5>
