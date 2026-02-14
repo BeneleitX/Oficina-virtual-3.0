@@ -400,7 +400,9 @@ function balance_inversion( $i, $fecha = null ){
 
 // TEMPORAL
 
-    if( $fecha > 202601 ){
+d( $fecha, 202601);
+
+    if( $fecha > asdf202601 ){
 
         $respuesta[ "rendimiento" ] = 0.00;
         $respuesta[ "suma" ]        = 0.00;
