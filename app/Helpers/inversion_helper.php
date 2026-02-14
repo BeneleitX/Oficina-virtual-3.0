@@ -398,23 +398,6 @@ function balance_inversion( $i, $fecha = null ){
          $respuesta[ "full" ] = 0;
     }
 
-// TEMPORAL
-
-d( $fecha, 202601);
-
-    if( $fecha > asdf202601 ){
-
-        $respuesta[ "rendimiento" ] = 0.00;
-        $respuesta[ "suma" ]        = 0.00;
-        $respuesta[ "compuesto" ]   = 0.00;
-        $respuesta[ "total" ]       = 0.00;
-        $respuesta[ "full" ]        = 0.00;
-        $respuesta[ "finmes" ]      = 0.00;
-        $respuesta[ "fecha" ]       = $fecha;
-    }    
-
-
-
     return $respuesta;
 }
 
