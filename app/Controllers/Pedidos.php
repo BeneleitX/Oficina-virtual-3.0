@@ -1302,10 +1302,10 @@ class Pedidos extends BaseController
 
 
                 // Envía correos a su upline avisando de una nueva inversión
-                
+                /* 
                 if( $u->id != 167825 ){
                     correos_notificacion( $inversion );
-                }
+                } */
 
                 $ms = genera_meses( $pedido, $inversion[ "id" ], $producto );
                 $inversion[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
