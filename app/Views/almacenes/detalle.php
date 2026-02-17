@@ -14,10 +14,10 @@
                     $p = PRODUCTOS[ $k ];
                     $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
 
-                    if($c > 50 ){
+                    if($c > 60 ){
                         $class = "teal";
                     }
-                    elseif($c > 0 ){
+                    elseif($c > 30 ){
                         $class = "mustard";
                     }
                     else{
