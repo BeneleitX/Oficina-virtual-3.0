@@ -75,7 +75,7 @@
 
                             $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
 
-                            if( $p->estatus == "201-ACTIVO" ){
+                            if( $p[ "estatus_codigo" ] == "201-ACTIVO" ){
                                 echo "
                                 <div class=\"col-6 col-lg-3 mb-2\" producto=\"{$p[ "codigo" ]}\">
                                     <table class=\"w-100 m-0\"><tr>
