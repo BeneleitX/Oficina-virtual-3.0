@@ -75,14 +75,16 @@
 
                             $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
 
-                            echo "
-                            <div class=\"col-6 col-lg-3 mb-2\" producto=\"{$p[ "codigo" ]}\">
-                                <table class=\"w-100 m-0\"><tr>
-                                    <td><img  style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
-                                    <td nowrap><input name=\"productos[{$p[ "codigo" ]}]\" class=\"form-control mx-2\" type=\"number\" style=\"width:100px !important\"></td>
-                                    <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
-                                </tr></table>
-                            </div>";
+                            if( $p->estatus == "201-ACTIVO" ){
+                                echo "
+                                <div class=\"col-6 col-lg-3 mb-2\" producto=\"{$p[ "codigo" ]}\">
+                                    <table class=\"w-100 m-0\"><tr>
+                                        <td><img  style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
+                                        <td nowrap><input name=\"productos[{$p[ "codigo" ]}]\" class=\"form-control mx-2\" type=\"number\" style=\"width:100px !important\"></td>
+                                        <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
+                                    </tr></table>
+                                </div>";
+                            }
                         }
                     }
                 ?>
