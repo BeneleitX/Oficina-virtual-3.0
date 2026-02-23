@@ -832,8 +832,10 @@ class E_usuario extends Entity
             switch( $m->codigo ){
                 case 111:
                 case 112:
-                    $modelo = MODELOS[ $m->variables->modelo ];
-                    $m->variables->modelo_nombre = $modelo[ "nombre" ];
+                    if( isset( MODELOS[ $m->variables->modelo ] ) ) {               
+                        $modelo = MODELOS[ $m->variables->modelo ];
+                        $m->variables->modelo_nombre = $modelo[ "nombre" ];
+                    }
                 break;
             }
 
