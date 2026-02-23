@@ -52,6 +52,7 @@
                             <table productos class=\"w-100\">";
 
                 foreach( $pedido[ "promociones" ][ $p[ "codigo" ] ][ "productos"] as $k ){
+
                     echo "\n<tr>
                                 <td class=\"w-100\">
                                     <div class=\"row\">
@@ -66,11 +67,11 @@
                                 </td>
                                 <td valign=\"top\" class=\"text-end\" nowrap>
                                     <small>P. unitario</small>
-                                    <h5>$".number_format( $k[ "precio" ], 2 )."</h5>
+                                    <h5>$".number_format( floatval( $k[ "precio" ] ), 2 )."</h5>
                                 </td>
                                 <td valign=\"top\" class=\"text-end\" nowrap>
                                     <small>Subtotal</small>
-                                    <h5 subtotal>$".number_format( $k[ "precio" ] * $k[ "cantidad" ], 2 )."</h5>
+                                    <h5 subtotal>$".number_format( floatval( $k[ "precio" ] ) * $k[ "cantidad" ], 2 )."</h5>
                                 </td>
                             </tr>";
                 }
