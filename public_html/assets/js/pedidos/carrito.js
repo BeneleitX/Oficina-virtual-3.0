@@ -344,7 +344,10 @@ function update_pedido( flag = null ){
                 $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
 
                 $.each( cat_promociones[ promocion ].productos.precarga, function( codigo, producto ){
-                    agrega_producto( producto, promocion, 1, true );
+                    
+                    minimo = eval( cat_promociones[ promocion ].formulas.minimo ?? 1 );
+                    agrega_producto( producto, promocion, minimo, true );
+
                 });
             }   
             pedido.promociones[ promocion ].activo = 'true';
@@ -418,6 +421,8 @@ function update_pedido( flag = null ){
             }
             else{
                 total_promo = cuenta_productos == 0 ? 0 : eval( cat_promociones[ promocion ].formulas.precio );
+
+                
             }
         }
 
@@ -861,6 +866,9 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
                         0 : 
                         eval( cat_promociones[ promocion ].formulas.precio )
         );  
+
+
+        
 
         html_composed = '<tr orden="' + orden + '" producto="' + producto + '">' + 
                         
