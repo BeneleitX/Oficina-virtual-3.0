@@ -19,6 +19,8 @@ function load_inventario( entrega ){
                 },
                 success: function( result ){
                     almacenes[ entrega ].productos = result;
+
+                    almacenes[ entrega ].productos[ '717-GREG' ] = 50;
                 }
             });
         }
