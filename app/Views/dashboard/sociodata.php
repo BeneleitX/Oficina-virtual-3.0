@@ -179,23 +179,23 @@ if( $socio ){
                     $db  = db_connect();
 
                     $filas = [
-                        "CALIFICACION" => [ "<th>Calificación</th>" ],
-                        "PTS"   => [ "<th>Puntos en el mes</th>" ],
-                        "ESTATUS" => [ "<th>Estatus".( $usuario->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
+                        "CALIFICACION" => [ "<th width=\"40%\">Calificación</th>" ],
+                        "PTS"   => [ "<th width=\"40%\">Puntos en el mes</th>" ],
+                        "ESTATUS" => [ "<th width=\"40%\">Estatus".( $usuario->permiso( "41-RED" ) ? " <button type=\"button\" class=\"btn btn-link btn-sm\" onclick=\"$( '#modal_lock' ).modal( 'show' ); \"><i class=\"fa fa-lock text-mustard\"></i></button>" : "" )."</th>" ],
                         
-                        "UPLINE"  => [ "<th>Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
+                        "UPLINE"  => [ "<th width=\"40%\">Upline <a href=\"".base_url()."upline/10-NUTRICION/{$socio->id}"."\" class=\"btn btn-link btn-sm\"><i class=\"fa fa-diagram-project text-mustard\"></i></a></th>" ],
 
-                        "SALDO"   => [ "<th>Saldo a favor</th>" ],
-                        "PRIMERA" => [ "<th>Primer compra</th>" ],
-                        "ULTIMA"  => [ "<th>Ultima compra</th>" ],
-                        "VERIFICACION" => [ "<th>Cuenta verificada</th>" ],
+                        "SALDO"   => [ "<th width=\"40%\">Saldo a favor</th>" ],
+                        "PRIMERA" => [ "<th width=\"40%\">Primer compra</th>" ],
+                        "ULTIMA"  => [ "<th width=\"40%\">Ultima compra</th>" ],
+                        "VERIFICACION" => [ "<th width=\"40%\">Cuenta verificada</th>" ],
                     ];
 
                     foreach( MODELOS as $m ){
                         if( substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
                             $v = $socio->get_verificacion( $m[ "codigo" ] );
 
-                            $filas[ "VERIFICACION" ][] = "\n<td class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "check text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
+                            $filas[ "VERIFICACION" ][] = "\n<td width=\"20%\" class=\"text-center\"><p class=\"fs-4 text-".( $v->estatus ? "teal" : "red" )."\"><i class=\"fa fa-circle-".( $v->estatus ? "check text-teal" : "xmark text-red" )."\"></i> {$v->porcentaje}%</p><ul class=\"text-start small\">";
 
                             foreach( $v->puntos as $p => $e ){
 
@@ -219,17 +219,17 @@ if( $socio ){
                                 if($pr){
                                     $periodo = "<h5><span class=\"badge bg-marine\">".get_semana( $pr )."</span></h5>";
 
-                                    $filas[ "PRIMERA" ][] = "<td width=\"16%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
+                                    $filas[ "PRIMERA" ][] = "<td width=\"20%\" class=\"text-center\">{$periodo}<p class=\"small\"><strong>".fecha( $pr )."</strong></p></td>";
 
                                 }
                                 else{
-                                    $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>"; 
+                                    $filas[ "PRIMERA" ][] = "<td width=\"20%\"></td>"; 
                                 }
                         
                                 $filas[ "ULTIMA" ][] = "<td class=\"text-center\"><a href=\"".base_url( "pedido/".$p[0] )."\">".referencia( $p[0], true, $p[0], $m[ "codigo" ] )."</a><p class= \"my-2 small\"><strong>".fecha( $p[1] )."</strong></p><span class=\"small\">".tipo_entrega( $pedidos[ $m[ "codigo" ] ], $socio )."</span></td>";
                             }
                             else{
-                                $filas[ "PRIMERA" ][] = "<td width=\"16%\"></td>";
+                                $filas[ "PRIMERA" ][] = "<td width=\"20%\"></td>";
                                 $filas[ "ULTIMA" ][] = "<td></td>";
                             }
 
@@ -364,7 +364,7 @@ if( $socio ){
                             foreach( MODELOS AS $m ){
 
                                 if( ( $usuario->permiso( "32-EDICION" ) || $m[ "codigo" ] == "10-NUTRICION" ) && substr( $m[ "estatus_codigo" ], 0, 3 ) > 200 ){
-                                    echo "<th width=\"16%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
+                                    echo "<th width=\"20%\" class=\"px-1\"><h5><span class=\"w-100 py-2 text-center badge bg-{$m[ "settings" ][ "color" ]}\"><i class=\"fa fa-{$m[ "settings" ][ "icono" ]}\"></i> {$m[ "nombre" ]}</span></h5></th>";
                                 }
 
                             }
