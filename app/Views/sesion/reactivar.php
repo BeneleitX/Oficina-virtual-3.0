@@ -6,7 +6,7 @@
             <div class="card-body text-start">
 
 				<?php
-					if(! $usuario->data->verificacion->password ){
+					if( !( $usuario->data->verificacion->password ?? null) ){
 						echo "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i> IMPORTANTE: Debes reemplazar el password temporal, por uno propio que te sea fácil de recordar</div>";
 					}
 				?>

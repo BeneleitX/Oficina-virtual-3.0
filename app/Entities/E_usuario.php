@@ -472,7 +472,13 @@ class E_usuario extends Entity
 
             $calificaciones = $db->query($sql)->getRowArray();
 
-            $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ] ?? ESTATUS[ "000-DESCONOCIDO" ];
+            if( isset( $this->data->estatus->modelos->{$modelo} ) ){
+                $estatus = ESTATUS[ $this->data->estatus->modelos->{$modelo} ] ?? ESTATUS[ "000-DESCONOCIDO" ];
+            }
+            else{
+                $estatus = ESTATUS[ "000-DESCONOCIDO" ];
+            }
+
             $modelo  = MODELOS[ $modelo ];
           
             switch( $modelo[ "codigo" ] ){
