@@ -344,6 +344,17 @@ function balance_inversion( $i, $fecha = null ){
         
         $respuesta[ "semilla" ] = $j[ "semilla" ];
 
+
+        /**********************************************************/
+        // QUITAR RENDIMIENTOS
+
+        $j[ "rendimiento_dia" ] = 0;
+        $j[ "rendimiento_mes" ] = 0;
+        $j[ "porcentaje" ] = 0;
+        $j[ "compuesto" ] = 0;
+        $j[ "retiros" ] = 0;
+        /**********************************************************/
+
         // meses cerrados 
 
         if( $j[ "Ym" ] < $fecha ){
@@ -397,6 +408,10 @@ function balance_inversion( $i, $fecha = null ){
     if( !$respuesta[ "total" ] ){
          $respuesta[ "full" ] = 0;
     }
+
+    $respuesta[ "semilla_inicial" ] =  $i[ "extras" ][ "meses" ][ 0 ][ "semilla" ];
+    $respuesta[ "retiros" ] = $respuesta[ "semilla_inicial" ] - $respuesta[ "semilla" ];
+    
 
     return $respuesta;
 }

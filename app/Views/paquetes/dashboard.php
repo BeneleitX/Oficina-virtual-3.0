@@ -36,7 +36,7 @@ if( sizeof( $inversiones ) ){
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
         $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-/*         if( $f_i < "2025-03-01" ){
+        /* if( $f_i < "2025-03-01" ){
             $f_i = "2025-03-01";
         } */
 
@@ -101,6 +101,17 @@ if( sizeof( $inversiones ) ){
 
         for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
+
+            /**********************************************************/
+            // QUITAR RENDIMIENTOS
+
+            $m[ "rendimiento_dia" ] = 0;
+            $m[ "rendimiento_mes" ] = 0;
+            $m[ "porcentaje" ] = 0;
+            $m[ "compuesto" ] = 0;
+            $m[ "retiros" ] = 0;
+            /**********************************************************/
+
 
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
@@ -284,7 +295,7 @@ if( sizeof( $inversiones ) ){
                                 
                                         <tr>
                                             <td>Paquete inicial</td>
-                                            <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "semilla_inicial" ], 2 )."</td>
                                         </tr>
                                         <tr>
                                             <td>Rendimiento total</td>
