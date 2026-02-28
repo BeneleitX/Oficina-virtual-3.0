@@ -36,7 +36,7 @@ class Dashboard extends BaseController
         if( $query ){
             
             // es busqueda de pedido
-            if( strlen( $query ) == 8 ){
+            if( intval( $query ) > 1000000 ){
                 return redirect()->to( "pedido/{$query}" ); 
             }
 
@@ -59,7 +59,7 @@ class Dashboard extends BaseController
         }
 
         if( !$request ){
-            return redirect()->to( "usuarios" ); 
+            return redirect()->to( "usuarios/".$query ); 
         }
 
         $this->data[ "navbar" ] = true;

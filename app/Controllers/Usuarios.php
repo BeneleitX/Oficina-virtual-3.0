@@ -34,7 +34,12 @@ class Usuarios extends BaseController
 
         /********** POST *************/
 
-        extract( $this->request->getPost() );
+        if( $request ){
+            $query = $request;
+        }
+        else{
+            extract( $this->request->getPost() );
+        }
         
         if( isset( $query ) ){
             $query = strtolower( trim( $query ) );
