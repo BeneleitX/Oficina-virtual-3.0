@@ -41,7 +41,7 @@ class Pedidos extends BaseController
             $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
 
             foreach( $upline as $u ){
-                if( in_array( $u->id, [ 163255, 169469]  ) ){
+                if( in_array( $u->id, [ 163255, 169469, 163683]  ) ){
                     $this->data[ "especial" ] = true;
                     break;
                 }
