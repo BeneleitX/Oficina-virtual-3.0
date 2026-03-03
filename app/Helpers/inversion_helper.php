@@ -221,7 +221,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             $factor = 2;
         }
 
-        if( $f_i < '2026-02-05' ){
+        if( $pedido[ "fechas" ][ "pagado" ] < '2026-02-05' ){
             $r_object[ "porcentajes" ] = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
             $r_object[ "rendimiento" ] = 0.0;
         }
