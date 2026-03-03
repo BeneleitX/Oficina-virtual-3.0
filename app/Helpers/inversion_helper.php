@@ -140,6 +140,8 @@ function genera_meses( $pedido, $i, $producto = null ){
         $date = new \DateTime( $f_i );
     }
 
+    
+
     for( $a = 0; $a < ( 25 + $previos ); $a++ ){
         if( $a ){
             $date->modify( "first day of this month" );
@@ -178,12 +180,50 @@ function genera_meses( $pedido, $i, $producto = null ){
         $inicia_mes_f = $date->format( "Y-m-d" );
 
         $date->modify( "last day of this month" );  
+
+        $termina_mes = $date->format( "d" );
+
+        $r_object = model( "RendimientoModel")->where( "producto_codigo", $producto->codigo )->where( "mes", $date->format( "Ym" ) )->first();
         
+        $r_dias = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
+
+        // si ya existe el registro
+        if( $r_object ){
+            $r_dias = $r_object[ "porcentajes" ];
+
+            if( $r_object[ "rendimiento" ] > 0 ){ 
+                if( floatval( $r_dias[ $termina_mes ] ) > 0 ){
+                    
+                }
+                else{
+                    $r_object[ "dias_en_mes" ] = $termina_mes;
+                    $r_object[ "porcentajes" ] = $r_dias = genera_dias( $r_object[ "mes" ], $r_object[ "rendimiento" ], 0.05 );
+
+                    model( "RendimientoModel" )->save( $r_object );
+                }
+            }
+        }
+        else{
+            $r_object = [
+                    "producto_codigo" => $producto->codigo,
+                    "mes"             => $date->format( "Ym" ),
+                    "porcentajes"     => $r_dias,
+                    "rendimiento"     => 0.0
+                ];
+
+            model( "RendimientoModel" )->save( $r_object );
+        }
+
         $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
 
         if( $semilla_retirada > 0 || ( $a ? $meses[ $a - 1 ][ "r_semilla" ] : false ) ){
             // si hay retiro de semilla en el mes $pedido[ "data" ][ "total" ] != $a_semilla )
             $factor = 2;
+        }
+
+        if( $f_i < '2026-02-05' ){
+            $r_object[ "porcentajes" ] = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
+            $r_object[ "rendimiento" ] = 0.0;
         }
 
         $cantidad = 
@@ -195,19 +235,38 @@ function genera_meses( $pedido, $i, $producto = null ){
         $dias_en_mes     = intval( $date->format( "d" ));
         $termina_mes_f   = $date->format( "Y-m-d" );
         $dias_parcial    = ( !$a && date( "d", strtotime( $f_i ) ) == 1 ) ? 0 : $dias_en_mes - $inicia_mes + 1;
-        $temp            = $cantidad * ( $producto->data->porcentaje / $factor ) / 100;
-        $rendimiento_mes = floor( $temp * 100 ) / 100;
-        $corrije_float   = explode(".", $rendimiento_mes);
+
+        // si es mes actual o futuros
+        if( date( "Ym" ) <= $date->format( "Ym" ) ){
+            $porcentaje_mes = array_sum( array_slice( $r_object[ "porcentajes" ], 0, date( "d" ) ) );
+        }
+        elseif( $dias_en_mes > $dias_parcial ){
+            $porcentaje_mes = array_sum( array_slice( $r_object[ "porcentajes" ], $dias_en_mes - $dias_parcial, $dias_en_mes ) );
+        }
+        else{
+            $porcentaje_mes = $r_object[ "rendimiento" ]; 
+        }
+
+        
+
+        $temp = $cantidad * $porcentaje_mes / 100; // $producto->data->porcentaje
+      //  d($temp);
+
+         $rendimiento_mes = floor( $temp * 100 ) / 100;
+/*        $corrije_float   = explode(".", $rendimiento_mes);
 
         if( isset( $corrije_float[ 1 ] ) && $corrije_float[1] == 99 ){
             $rendimiento_mes = ceil( $rendimiento_mes );
         }
 
-        $rendimiento_dia = floor( ( ( $a_semilla > 0 ) * $rendimiento_mes ) / $dias_en_mes * 100 ) / 100; 
-
         if( $dias_parcial < $dias_en_mes ){
-            $rendimiento_mes = floatval( floor( $dias_parcial * $rendimiento_dia * 100 ) / 100 );
-        }
+            $rendimiento_mes = 0.0000;
+
+            
+            for( $dd = intval( date( "d", strtotime( $f_i ) ) ); $dd <= $dias_en_mes; $dd++ ){
+                $rendimiento_mes += floatval( $r_dias[ $dd ] ); // floatval( floor( $r_dias[ $dd ] * 100 ) / 100 );
+            }     
+        } */
 
         $compuesto = $a ? (
             ( 
@@ -219,7 +278,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
         $meses[ $a ] = [
             "Ym"              => $date->format( "Ym" ),
-            "Porcentaje"      => $producto->data->porcentaje / $factor,
+            "Porcentaje"      => $porcentaje_mes,
             "semilla"         => $a_semilla,
             "c_semilla"       => $c_semilla,
             "compuesto"       => $compuesto,
@@ -227,7 +286,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             "dias_en_mes"     => $dias_en_mes,
             "dias_parcial"    => $dias_parcial,
             "retiros"         => $retiros_mes,
-            "rendimiento_dia" => $rendimiento_dia,
+        //    "rendimiento_dia" => $rendimiento_dia,
             "rendimiento_mes" => $rendimiento_mes,
             "inicia"          => $inicia_mes_f,
             "termina"         => $termina_mes_f
@@ -236,6 +295,75 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     return [ $meses, $i_semilla ];
 }
+
+
+function genera_rendimientos_dia( $data ){
+    $dias = [];
+
+    // Generar valores aleatorios positivos
+    for ($i = 1; $i <= $data[ "dias_en_mes" ]; $i++) {
+        
+        // número aleatorio decimal entre 0 y 1
+        $dias[ $i ] = $data[ "rendimiento" ] > 0 ? mt_rand() / mt_getrandmax()  : 0;
+
+        if( $data[ "rendimiento" ] > 0 ){
+            $sumaProvisional = array_sum( $dias );
+
+            foreach( $dias as $key => $valor ) {
+                $dias[ $key ] = round( ( $valor / $sumaProvisional ) * $data[ "rendimiento" ], 2 );
+            }
+        }   
+    }    
+
+    return $dias;
+}
+
+
+function genera_dias($mesYYYYMM, $rendimientoMensual, $fuerzaSesgo = 2)
+{
+    // 1️⃣ Calcular número de días
+    $year  = substr($mesYYYYMM, 0, 4);
+    $month = substr($mesYYYYMM, 4, 2);
+    $dias  = cal_days_in_month(CAL_GREGORIAN, (int)$month, (int)$year);
+
+    $valores = [];
+    $sumaProvisional = 0;
+
+    // 2️⃣ Generar pesos crecientes con ruido aleatorio
+    for ($i = 1; $i <= $dias; $i++) {
+
+        // Peso base creciente
+        $pesoBase = pow($i / $dias, $fuerzaSesgo);
+
+        // Ruido aleatorio pequeño (±10%)
+        $ruido = 1 + (mt_rand() / mt_getrandmax()) * 0.3;
+
+        $valor = $pesoBase * $ruido;
+
+        $valores[$i] = $valor;
+        $sumaProvisional += $valor;
+    }
+
+    // 3️⃣ Normalizar para que la suma sea exactamente el rendimiento mensual
+    $rendimientos = [];
+
+    foreach ($valores as $k => $valor) {
+        $rendimientos[$k] = round( ($valor / $sumaProvisional) * $rendimientoMensual, 2 );
+    }
+
+    // 4️⃣ Ajuste final por precisión flotante
+
+
+
+
+    $diferencia = intval( $rendimientoMensual * 100) - intval( array_sum($rendimientos) * 100 );
+    if ( abs( $diferencia ) >= 1) {
+        $rendimientos[$dias] += round( $diferencia / 100, 2 ); // ajustar último día
+    }
+
+    return $rendimientos;
+}
+
 
 
 function update_fecha_inversion( $i, $paquete ){
@@ -344,17 +472,6 @@ function balance_inversion( $i, $fecha = null ){
         
         $respuesta[ "semilla" ] = $j[ "semilla" ];
 
-
-        /**********************************************************/
-        // QUITAR RENDIMIENTOS
-
-        $j[ "rendimiento_dia" ] = 0;
-        $j[ "rendimiento_mes" ] = 0;
-        $j[ "porcentaje" ] = 0;
-        $j[ "compuesto" ] = 0;
-        $j[ "retiros" ] = 0;
-        /**********************************************************/
-
         // meses cerrados 
 
         if( $j[ "Ym" ] < $fecha ){
@@ -387,14 +504,54 @@ function balance_inversion( $i, $fecha = null ){
                 $dias = 0;
             }
 
-            $respuesta[ "rendimiento_mes" ] = ( $j[ "rendimiento_dia" ] * $dias );
+            $o = substr( $j[ "Ym" ], 0, 4 )."-".substr( $j[ "Ym" ], 4, 2 )."-01";
+            $termina_mes =  date( "t", strtotime( $o ) );
+
+            $r = model( "RendimientoModel" )->where( "producto_codigo", $i[ "producto_codigo" ] )->where( "mes", $j[ "Ym" ] )->first();
+
+            $r_dias = array_fill_keys( range( 1, $termina_mes ), 0.0 );
+
+            // si ya existe el registro
+            if( $r ){
+                $r_dias = $r[ "porcentajes" ];
+
+                if( $r[ "rendimiento" ] > 0 ){ 
+                    if( floatval( $r_dias[ $termina_mes ] ) > 0 ){
+                        
+                    }
+                    else{
+                        $r[ "dias_en_mes" ] = $termina_mes;
+                        $r[ "porcentajes" ] = $r_dias = genera_dias( $r[ "mes" ], $r[ "rendimiento" ], 0.05 );
+
+                        model( "RendimientoModel" )->save( $r );
+                    }
+                }
+            }
+            else{
+                $r = [
+                        "producto_codigo" => $i[ "producto_codigo" ],
+                        "mes"             => $j[ "Ym" ],
+                        "porcentajes"     => $r_dias,
+                        "rendimiento"     => 0.0
+                    ];
+
+                model( "RendimientoModel" )->save( $r );
+            }
+
+
+
+
+
+
+            $respuesta[ "rendimiento_mes" ] = array_sum( array_slice( $r[ "porcentajes" ], 0, date( "d" ) ) ); //( $j[ "rendimiento_dia" ] * $dias );
             $respuesta[ "rendimiento_mes_total" ] = $j[ "rendimiento_mes" ];
             $respuesta[ "retiros" ]        += $j[ "retiros" ];
-            $respuesta[ "suma" ] += ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "suma" ] += ( $r[ "rendimiento" ] > 0 ? $j[ "rendimiento_mes" ] : 0 );
             $respuesta[ "compuesto" ] = $j[ "compuesto" ];
-            $respuesta[ "rendimiento" ] = $j[ "compuesto" ] + ( $j[ "rendimiento_dia" ] * $dias );
+            $respuesta[ "rendimiento" ] = $j[ "compuesto" ] + ( $r[ "rendimiento" ] > 0 ? $j[ "rendimiento_mes" ] : 0);
             $respuesta[ "full" ] = $respuesta[ "rendimiento" ] - $j[ "retiros" ];
             $respuesta[ "finmes" ]      = $j[ "compuesto" ] + $j[ "rendimiento_mes" ];
+
         }
 
     }
@@ -408,10 +565,6 @@ function balance_inversion( $i, $fecha = null ){
     if( !$respuesta[ "total" ] ){
          $respuesta[ "full" ] = 0;
     }
-
-    $respuesta[ "semilla_inicial" ] =  $i[ "extras" ][ "meses" ][ 0 ][ "semilla" ];
-    $respuesta[ "retiros" ] = $respuesta[ "semilla_inicial" ] - $respuesta[ "semilla" ];
-    
 
     return $respuesta;
 }

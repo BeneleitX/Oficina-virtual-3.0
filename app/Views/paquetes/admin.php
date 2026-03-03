@@ -16,9 +16,10 @@
             de <span class="badge bg-gray-500" id="totales">0</span>
             <select id="mes_retiros" class="ms-4 form-select" style="display: inline-block; width:auto">
                 <?php
-                $fecha = date( "Y-m-d" );
+                $fecha = date( "Y-m-d", strtotime( date( "Y-m-d" )." -1 month" ) );
                 $mes_x = date( "Ym", strtotime( $fecha ) );
 
+                
                 while( $mes_x >= '202408' ){
                     echo "\n<option ".( $mes_x == $mes ? "selected" : "" )." value=\"{$mes_x}\">".substr( $mes_x, 0, 4)." ".strtoupper( mes( substr( $mes_x, 4, 2) ) )."</option>";
 

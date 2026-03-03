@@ -13,12 +13,13 @@
             $directos = $usuario->getDirectosActivos( "50-INVERSION" );
             $rango    = $usuario->getRangoInversion( sizeof( $directos ) );
             ?>
-            <h5 style="line-height:0" class="m-0">
+            <h5 style="line-height:0" class="m-0 d-none">
                 <img src="<?php echo base_url()."assets/img/rangos/".$rango[ "codigo" ]; ?>.png" style="width:50px" alt="">
                 <?php echo $rango[ "nombre" ]; ?>
             </h5>
         </td><td nowrap>
-            &nbsp; <a class="btn btn-primary" href="<?php echo base_url( "rangos_paquetes" ); ?>"><i class="fa fa-magnifying-glass"></i> Detalles de rangos</a>
+            <a href="<?php echo base_url( "tienda/50-INVERSION" ); ?>" class="btn btn-primary"><i class="fa fa-cart-shopping"></i> Nueva inversión</a>
+            &nbsp; <a class="btn btn-secondary" href="<?php echo base_url( "rangos_paquetes" ); ?>"><i class="fa fa-magnifying-glass"></i> Detalles de rangos</a>
         </td></tr></table>
     </div>
 </div>
@@ -34,18 +35,15 @@ if( sizeof( $inversiones ) ){
     foreach( $inversiones as $i ){
 
         $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
-        $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
+        $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] );         
 
-        /* if( $f_i < "2025-03-01" ){
-            $f_i = "2025-03-01";
-        } */
-
-        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || !isset( $i[ "extras" ][ "refresh" ] ) ){
+        if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || ( $i[ "extras" ][ "v" ] ?? 0 ) != 2 ){
             $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
             $ms = genera_meses( $pedido, $i[ "id" ], $p );
 
             $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+            $i[ "extras" ][ "v" ] = 2;
             $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
             $i[ "extras" ][ "refresh" ] = date( "Y-m-d" );
 
@@ -85,7 +83,7 @@ if( sizeof( $inversiones ) ){
         $porc_bono = ceil( $transcurridos * 100 / $total_dias );
 
         if( $i[ "extras" ][ "TxHash" ] ){
-            $hash = "<span class=\"text-teal\">{$i[ "extras" ][ "TxHash" ]}</span>";
+            $hash = "<span class=\"text-primary\"><i class=\"fa fa-link text-secondary\"></i> {$i[ "extras" ][ "TxHash" ]}</span>";
         }
         else{
             $hash = "<span class=\"text-mustard\"><i class=\"fa fa-warning\"></i> Este paquete aun no cuenta con TxHash</span> <button class=\"d-none btn btn-sm btn-warning\" onclick=\"carga_hash( {$i[ "id" ]} )\"><i class=\"fa fa-plus\"></i> Agregar ahora</button>";
@@ -101,17 +99,6 @@ if( sizeof( $inversiones ) ){
 
         for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
-
-            /**********************************************************/
-            // QUITAR RENDIMIENTOS
-
-            $m[ "rendimiento_dia" ] = 0;
-            $m[ "rendimiento_mes" ] = 0;
-            $m[ "porcentaje" ] = 0;
-            $m[ "compuesto" ] = 0;
-            $m[ "retiros" ] = 0;
-            /**********************************************************/
-
 
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
@@ -130,7 +117,7 @@ if( sizeof( $inversiones ) ){
                 if( $dias < 0 ){
                     $dias = 0;
                 }                
-                $r = $m[ "rendimiento_dia" ] * $dias;
+                $r = $m[ "rendimiento_mes" ]; //* $dias;
             }
 
             else{
@@ -145,8 +132,12 @@ if( sizeof( $inversiones ) ){
 
         $bt = balance_inversion( $i );
 
+        $date = new DateTime( date( "Y-m-d" ) );
+        $date->modify( "first day of this month" );
+        $date->modify( "- 1 month" );
+
         $retiros_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( ( session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND" )." substring( estatus_codigo,1,3 ) between 160 and IF( JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."', 300, 200 ) AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( ( session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".$date->format( "Ym" )."' AND" )." substring( estatus_codigo,1,3 ) between 160 and IF( JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".$date->format( "Ym" )."', 300, 200 ) AND inversion_id = {$i[ "id" ]} and tipo in ( 'TOTAL', 'PARCIAL', 'MENSUAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $retiros_pendientes = "<table class=\"table table-sm m-0\">";
@@ -160,7 +151,7 @@ if( sizeof( $inversiones ) ){
                     $a = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
                     $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
-                    $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">PRODUCTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<br><p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
+                    $retiros_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Retiro de <span class=\"badge bg-red\">RENDIMIENTOS</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<br><p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
 
                     if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
                         $retiros_pendientes .= "<a href=\"{$url}\" class=\"btn btn-sm btn-danger\"> ADMIN: Confirmar retiro</a>"; 
@@ -170,8 +161,8 @@ if( sizeof( $inversiones ) ){
                 }
                 else{
                      $retiros_pendientes .= "\n<tr class=\"\">
-                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-sack-dollar text-green\"></i> PRODUCTOS</td>
-                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
+                        <td width=\"35%\" style=\"{$br}\">Retiro de <i class=\"fa fa-sack-dollar text-green\"></i> RENDIMIENTOS</td>
+                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" )." &nbsp; " : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
                         <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
                 }
 
@@ -182,7 +173,7 @@ if( sizeof( $inversiones ) ){
         }
 
         $semilla_pendientes = "";
-        $retiros = model( "RetiroModel" )->where( ( session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."' AND " )."substring( estatus_codigo,1,3 ) between 160 and IF( JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".date( "Ym" )."', 300, 200 ) AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
+        $retiros = model( "RetiroModel" )->where( ( session( "admin" ) ? "" : "JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".$date->format( "Ym" )."' AND " )."substring( estatus_codigo,1,3 ) between 160 and IF( JSON_UNQUOTE( JSON_EXTRACT( fechas, '$.mes' ) ) = '".$date->format( "Ym" )."', 300, 200 ) AND inversion_id = {$i[ "id" ]} and tipo in ( 'STOTAL', 'SPARCIAL' )" )->findAll();
 
         if( sizeof( $retiros ) ){
             $semilla_pendientes = "<table class=\"table table-sm m-0\">";
@@ -197,7 +188,7 @@ if( sizeof( $inversiones ) ){
                     $a   = [ $usuario->password_original().$i[ "extras" ][ "TxHash" ], $retiro[ "id" ] ];
                     $url = base_url()."confirma_retiro/".urlencode( base64_encode( json_encode( $a ) ) );
 
-                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Solicitud de retiro de <span class=\"badge bg-red\">PAQUETES</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
+                    $semilla_pendientes .= "<tr><td colspan=\"3\"><div class=\"card border-red text-red\"><div class=\"card-header\"><i class=\"fa fa-warning\"></i> <strong>Retiro de <span class=\"badge bg-red\">CAPITAL SEMILLA</span> <span class=\"badge bg-marine\">".id( $retiro[ "id" ], 5 )."</span> pendiente de confirmación.</strong></div><div class=\"card-body text-red\">Debes confirmar tu solicitud de retiro haciendo click en el enlace que hemos enviado a tu correo electrónico (el mensaje puede tardar hasta 10 minutos en llegar).<p class=\"text-end m-0\"><button class=\"btn btn-sm btn-light text-red\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\"><i class=\"fa fa-times\"></i> cancelar </button> ";
                     
                     if( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ){
                         $semilla_pendientes .= "<a href=\"{$url}\" class=\"btn btn-sm btn-danger\">ADMIN: Confirmar retiro</a>"; 
@@ -207,8 +198,8 @@ if( sizeof( $inversiones ) ){
                 }                    
                 else{
                     $semilla_pendientes .= "\n<tr class=\"\">
-                        <td style=\"{$br}\">Solicitud de retiro de <i class=\"fa fa-seedling text-red\"></i> PAQUETES</td>
-                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" ) : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
+                        <td width=\"35%\" style=\"{$br}\">Retiro de <i class=\"fa fa-seedling text-red\"></i> CAPITAL SEMILLA</td>
+                        <td style=\"{$br}\">".( $retiro[ "estatus_codigo" ] == "255-PENDIENTE" ? estatus( "522-CONFIRMADO" )." &nbsp; " : "" )." ".estatus( $retiro[ "estatus_codigo" ] )."</td>
                         <td style=\"{$br}\" width=\"25%\" class=\"text-end\"><span class=\"text-red\"><button class=\"btn btn-sm btn-link text-gray-500\" onclick=\"cancela_retiro( {$retiro[ "id" ]} )\" style=\"text-decoration:none\"><i class=\"fa fa-times\"></i> cancelar </button> &nbsp; $".number_format( $retiro[ "cantidad" ], 2 )."</span></td></tr>";
                 }
             }
@@ -225,15 +216,15 @@ if( sizeof( $inversiones ) ){
             $mes_actual = 0;
         }
 
-        switch( $i[ "extras" ][ "meses" ][ $mes_actual ][ "Porcentaje" ] ){
+        switch( $p->data->porcentaje ){
             case "3" : $r_mensual = "1 a 3"; break;
             case "6" : $r_mensual = "3 a 6"; break;
             case "9" : $r_mensual = "6 a 8"; break;
-            case "" : $r_mensual = "pendiente..."; break;
+            default  : $r_mensual = "pendiente..."; break;
         }
 
         echo "\n
-            <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "finmes" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
+            <div class=\"card mb-5\" semilla=\"{$m[ "semilla" ]}\" inversion=\"{$i[ "id" ]}\" rendimiento=\"{$bt[ "compuesto" ]}\" mes=\"{$i[ "extras" ][ "meses" ][ $mes_actual ][ "rendimiento_mes" ]}\" aviso_semilla=\"{$aviso_semilla}\">
                 <div class=\"card-header\">
                     <div class=\"row\">
                         <div class=\"col-2 col-lg-1\">
@@ -262,7 +253,7 @@ if( sizeof( $inversiones ) ){
                 <div class=\"card-body pt-3 pb-0\">
                     <div class=\"row\">
                         <div class=\"col-lg-7\">
-                            <h5 class=\"text-center text-gray-400 mb-3 mb-lg-3\">{$hash}</h5>
+                            <h5 class=\"text-xcenter mb-3 mb-lg-3\">{$hash}</h5>
                             <div class=\"row\">
                                 <div class=\"col-lg-6\">
                                     <table class=\"table table-sm m-0\">
@@ -294,8 +285,8 @@ if( sizeof( $inversiones ) ){
                                     <table class=\"table table-sm m-0\">
                                 
                                         <tr>
-                                            <td>Paquete inicial</td>
-                                            <td class=\"text-end\">$".number_format( $bt[ "semilla_inicial" ], 2 )."</td>
+                                            <td>Capital semilla</td>
+                                            <td class=\"text-end\">$".number_format( $bt[ "semilla" ], 2 )."</td>
                                         </tr>
                                         <tr>
                                             <td>Rendimiento total</td>
@@ -322,7 +313,7 @@ if( sizeof( $inversiones ) ){
 
                             <div class=\"row mb-3 mt-lg-0 \">
                                 <div class=\"col-lg-6\"><a href=\"".base_url()."statement/".urlencode( base64_encode( $i[ "extras" ][ "TxHash" ] ) )."\" class=\"btn xbtn-lg mt-4 btn-outline-info w-100\"><i class=\"fa fa-magnifying-glass\"></i> Detalles de cuenta</a></div>
-                                ".( 0 && $bt[ "total" ] && !$socio && ( !$retiros_pendientes || !$semilla_pendientes ) && $p->data->porcentaje != 9 && $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] > date( "Y-m-d" ) ? "
+                                ".( in_array( date( "d"), [ "01", "02", "03" ] ) && $bt[ "total" ] && !$socio && ( !$retiros_pendientes || !$semilla_pendientes ) && $p->data->porcentaje != 9 && $i[ "extras" ][ "meses" ][ 24 ][ "termina" ] > date( "Y-m-d" ) ? "
                                 <div class=\"col-lg-6\">
                                 
                                 <button class=\"d-none btn xbtn-lg btn-outline-danger w-100 mt-4 \" onclick=\"ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-right-from-bracket\"></i> Retirar productos</button>
@@ -337,10 +328,10 @@ if( sizeof( $inversiones ) ){
                                     ".( $v->estatus || session( "admin" ) ? "
 
                                     ".( !$retiros_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de productos</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_retiro({$i[ "id" ]})\"><i class=\"fa fa-sack-dollar text-green\"></i> Retiro de rendimientos</a></li>
                                       
                                     " : "" ).( !$semilla_pendientes ? "
-                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de paquetes</a></li>
+                                        <li><a class=\"dropdown-item\" href=\"javascript:ask_semilla({$i[ "id" ]})\"><i class=\"fa fa-seedling text-".( $aviso_semilla ? "red" : "green" )."\"></i> Retiro de capital semilla</a></li>
                                     " : "" )."
 
                                         " : "<li><span class=\"dropdown-item text-red\"><i class=\"fa fa-warning\"></i> Necesitas verificar tu cuenta para realizar retiros</span></li>" )."
@@ -376,22 +367,22 @@ if( sizeof( $inversiones ) ){
 
 
 }else{
-    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes paquetes</div></div>";
+    echo "<div class=\"row m-3\" style=\"zoom:3\"><div class=\"col-4 display-3 text-white text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-white text-start\">Aun no tienes inversiones</div></div>";
 }
 
 
 // $resultado = generarSerieMensual(1, 3, '2026-02-14');
 
 
-if( 0 && sizeof( $inversiones ) ){
+if( sizeof( $inversiones ) ){
 ?>  
 
     <div class="modal" tabindex="-1" id="stock_modal">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog moxdal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-red">
                     <div class="modal-title me-3">
-                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de productos</h5>
+                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de rendimientos</h5>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -403,7 +394,7 @@ if( 0 && sizeof( $inversiones ) ){
                     <div class="modal-body">
 
                         <div class="row mb-3">
-                            <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
+                            <div class="col-lg-6 <?php echo 1 || $nueve_finalizada ? "d-none" : ""; ?>">
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_1" autocomplete="off" value="1">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_1">
                                     <p class="fs-4">Retiro mensual</p>                                   
@@ -412,16 +403,16 @@ if( 0 && sizeof( $inversiones ) ){
                                 </label>
                             </div>
 
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_2" autocomplete="off" value="2">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_2">
                                     <p class="fs-4">Retiro total</p>                                   
-                                    <p>Retirar el total de productos acumulados</p>
+                                    <p>Retirar el total de rendimientos acumulados</p>
                                     <input readonly value="" id="cantidad_2" name="total" class="cantidades form-control text-center mb-1"></i>
                                 </label>
                             </div>
 
-                            <div class="col-lg-4 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
+                            <div class="col-lg-6 <?php echo $nueve_finalizada ? "d-none" : ""; ?>">
                                 <input type="radio" class="btn-check" name="opciones_retiro" id="type_3" autocomplete="off" value="3">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_3">
                                     <p class="fs-4">Retiro parcial</p>                                   
@@ -435,13 +426,12 @@ if( 0 && sizeof( $inversiones ) ){
 
                             <div class="row mb-3">
                                 <div class="col-lg-8 small">
-                                    <strong> La solicitud será procesada al finalizar el mes seleccionado y la transferencia se aplicará en los primeros 3 días hábiles del mes siguiente. </strong>
+                                    <strong> La solicitud será procesada al confirmarla por correo electrónico y la transferencia se aplicará del día 4 al 6 del mes en curso. </strong>
                                 </div>
                                 <div class="col-lg-4">
                                     <select name="mes_apply" class="form-select">
                                         <?php
-                                            $date = new DateTime( date( "Y-m-d" ) );
-                                            $date->modify( "first day of this month" );
+
                                                                             
                                             do{
                                                 echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
@@ -454,7 +444,7 @@ if( 0 && sizeof( $inversiones ) ){
                             </div>
 
                             <div class="alert alert-danger py-2">
-                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa de transacción variable entre <strong>$7.00 y $10.00 USD</strong> que será descontada del monto de tu retiro. Te sugerimos considerarlo al momento de crear tu solicitud.
+                                <i class="fa fa-warning"></i> <strong>IMPORTANTE:</strong> Aunque no se cobra comisión al retirar tus rendimientos, la red TRON/USDT genera en automático una tarifa de transacción variable entre <strong>$7.00 y $10.00 USD</strong> que será descontada del monto de tu retiro. Te sugerimos considerarlo al momento de crear tu solicitud.
                             </div>
 
                         <?php } else { ?>
@@ -480,7 +470,7 @@ if( 0 && sizeof( $inversiones ) ){
             <div class="modal-content">
                 <div class="modal-header bg-red">
                     <div class="modal-title me-3">
-                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de paquetes</h5>
+                        <h5 class="text-white m-0"><i class="fa fa-right-from-bracket"></i> Programar retiro de capital semilla</h5>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -498,7 +488,7 @@ if( 0 && sizeof( $inversiones ) ){
                                 <input type="radio" class="btn-check" name="opciones_semilla" id="type_4" autocomplete="off" value="4">
                                 <label class="btn btn-outline-info text-start w-100 mb-2" for="type_4">
                                     <p class="fs-4">Retiro total</p>                                   
-                                    <p>Retirar el total de paquetes</p>
+                                    <p>Retirar el total de capital semilla</p>
                                     <input readonly value="" id="semilla_2" name="total" class="cantidades form-control text-center mb-1"></i>
                                     </label>
                             </div>
@@ -524,6 +514,7 @@ if( 0 && sizeof( $inversiones ) ){
                                         <?php
                                             $date = new DateTime( date( "Y-m-d" ) );
                                             $date->modify( "first day of this month" );
+                                            $date->modify( "- 1 month" );
                                                                             
                                             do{
                                                 echo "\n<option ".( $date->format( "Ym" ) == date( "Ym" ) ? "selected" : "" )." value=\"".$date->format( "Ym" )."\">".mes( $date->format( "m" ) )." ".$date->format( "Y" )."</option>";
@@ -536,7 +527,7 @@ if( 0 && sizeof( $inversiones ) ){
                             </div>
 
                                 <div class="alert alert-danger py-2" id="aviso_semilla">
-                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de productos será reducido a la mitad.</strong> Aunque Beneleit no te cobra comisiones al retirar tus productos, la red TRON/USDT genera en automático una tarifa por transacción de <strong>$7.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
+                                    <i class="fa fa-warning"></i> <strong>IMPORTANTE: Se aplicará un cargo del 25% de la cantidad a retirar y el porcentaje de productos será reducido a la mitad.</strong> La red TRON/USDT genera en automático una tarifa por transacción entre <strong>$7.00 y $10.00 USD</strong> que será descontada de tu retiro. Considera esto al momento de crear tu solicitud.
                                 </div>
                                 <?php 
                             } 

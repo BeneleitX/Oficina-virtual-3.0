@@ -25,14 +25,13 @@ class Paquetes extends BaseController
     public function admin( $mes = null )
     {
         if( !(
-            $this->data[ "usuario" ]->permiso( "31-GASOLINA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN")
         ) ){
             return redirect()->to( "no_permiso" ); 
         }
         
         if( !$mes ){
-            $mes = date( "Ym", strtotime( date("Y-m-d")." - 0 month" ) );
+            $mes = date( "Ym", strtotime( date("Y-m-d")." - 1 month" ) );
         }
 
         /**********************************/
@@ -41,7 +40,15 @@ class Paquetes extends BaseController
         $this->data[ "titulo" ] = "Solicitudes de retiro de producto";
         $this->data[ "mes" ]    = $mes;
 
-        $this->data[ "solicitudes" ] = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo,1,3) > 200 AND JSON_EXTRACT( fechas, '$.mes' ) = '{$mes}' " )->findAll();
+        $this->data[ "solicitudes" ] = model( "RetiroModel" )
+            ->select('t_retiros.*')
+            ->join( "t_inversiones", "t_inversiones.id = t_retiros.inversion_id" )
+            
+            ->where( "SUBSTRING( t_retiros.estatus_codigo,1,3) > 200" )
+            ->where( "JSON_EXTRACT( t_retiros.fechas, '$.mes' ) = '{$mes}'" )
+            ->where( "cast( json_unquote( json_extract( t_inversiones.fechas, '$.pagado' ) ) as date ) > '2026-02-05' " )
+
+            ->findAll();
 
         echo template( "paquetes/admin", $this->data );
     }
@@ -66,7 +73,7 @@ class Paquetes extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Paquetes de producto";
+        $this->data[ "titulo" ] = "Mis inversiones";
 
         $db  = db_connect();
         $sql = "UPDATE t_retiros 
@@ -953,22 +960,30 @@ class Paquetes extends BaseController
     {
         $hash = base64_decode( urldecode( $hash ) );
 
-        $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}' AND substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
-        $i = model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
+        $where = "JSON_UNQUOTE( JSON_EXTRACT( t_inversiones.extras, '$.TxHash' ) ) = '{$hash}'";
+
+        $i = model( "InversionModel" )->where( $where )->first();
         
-        if( !sizeof( $i ) ){
+        if( !$i ){
             return redirect()->to( "paquete" );
         }
 
-        $p      = model( "ProductoModel" )->find( $i[ 0 ][ "producto_codigo" ] );
-        $pedido = model( "PedidoModel" )->find( $i[ 0 ][ "pedido_id" ] );
+        $p      = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
+        $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
-         $ms = genera_meses( $pedido, $i[ 0 ][ "id" ], $p );
-         $i[ 0 ][ "extras" ][ "meses" ] = $ms[ 0 ];
-         $i[ 0 ][ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
-        // model( "InversionModel" )->save( $i );
+        if( 1 || !isset($i[ "extras" ][ "meses" ] ) || ( $i[ "extras" ][ "v" ] ?? 0 ) != 2 ){
 
-        $this->data[ "i" ] = $i[ 0 ];
+            $ms = genera_meses( $pedido, $i[ "id" ], $p );
+
+            $i[ "extras" ][ "meses" ] = $ms[ 0 ];
+            $i[ "extras" ][ "v" ] = 2;
+            $i[ "extras" ][ "semilla_retirada" ] = $ms[ 1 ];
+            $i[ "extras" ][ "refresh" ] = date( "Y-m-d" );
+
+            model( "InversionModel" )->save( $i );
+        }
+
+        $this->data[ "i" ] = $i;
 
         if( $this->data[ "usuario" ]->id != intval( $this->data[ "i" ][ "usuario_id" ] ) && !(
             $this->data[ "usuario" ]->permiso( "28-INGRESA" ) ||
@@ -979,7 +994,7 @@ class Paquetes extends BaseController
         }
 
         $this->data[ "navbar" ] = true;
-        $this->data[ "titulo" ] = "Detalle de tu paquete de producto <span>".referencia( $pedido )."</span>";
+        $this->data[ "titulo" ] = "Detalle de tu paquete de inversión";
 
         echo template( "paquetes/detalle", $this->data );
     }
