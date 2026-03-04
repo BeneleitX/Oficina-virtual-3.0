@@ -65,7 +65,7 @@ $(document).ready(function(){
         });
     });
     
-    let ccNumberInput1 = document.querySelector('[name=v_tarjeta1]'),
+/*     let ccNumberInput1 = document.querySelector('[name=v_tarjeta1]'),
         ccNumberInput2 = document.querySelector('[name=v_tarjeta2]'),
         ccNumberPattern = /^\d{0,16}$/g,
         ccNumberSeparator = " ",
@@ -151,3 +151,4 @@ $(document).ready(function(){
         ccNumberInput2.addEventListener('keydown', ccNumberInputKeyDownHandler);
         ccNumberInput2.addEventListener('input',   ccNumberInputInputHandler);
 });
+ */
