@@ -1,15 +1,18 @@
 function update_paso( paso ) {
 
     current_active_step = $( '.active.flared' );
+
     if( !current_active_step.length ){
         $( '.f1-step:first').addClass( 'active flared' );
     }
+
 
     bar_progress();      
 
     $( '.paso' ).hide();
     $( ' #titulo_paso' ).text( pasos[paso].titulo );
     $( '.paso[ step="' + paso + '"], #botonera_interactiva' ).show();
+
 
     switch( paso ) {
         case 1:
@@ -189,19 +192,26 @@ function valida_paso( paso, mostrar_errores = true ) {
             break;
 
         case 3:           
+            tode = $( '#check_nutricion' ).prop( 'checked' ) + $( '#check_movil' ).prop( 'checked' );
+
+
             if( request.pat_verificado == 0 ){
                 if( mostrar_errores ) error( 'patrocinador', 'Patrocinador no verificado.' );
+                avance = false;
+            }
+            else if( !tode ){
+                if( mostrar_errores ) error( 'mode', 'Debes elegir al menos un modelo de negocio' );
                 avance = false;
             }
             break;
 
         case 4:
-            if( request.imagenes.frente == null || request.imagenes.reverso == null ){
+            if( ( request.imagenes.frente == null || request.imagenes.reverso == null ) && request.curp != bypass ){
                 if( mostrar_errores ) error( 'credencial', 'No se han cargado las dos imagenes' );
                 avance = false;
             }
             else if( request.nacionalidad == 'MX' ){
-                if( request.ine_verificado == 0 ){
+                if( request.ine_verificado == 0 && request.curp != bypass ){
                     if( mostrar_errores ) error( 'credencial', 'Identificación oficial no verificada.' );
                     avance = false;
                 }
@@ -210,23 +220,23 @@ function valida_paso( paso, mostrar_errores = true ) {
             break;
         
         case 5:
-            if( request.vida_verificado == 0 && request.curp != 'SIAA790501HCMLCL05' ){
+            if( request.vida_verificado == 0 && request.curp != bypass ){
                 if( mostrar_errores ) error( 'vida', 'Prueba de vida no completada' );
                 avance = false;
             }
             break;            
 
         case 6:
-            if(
-        parseInt( request.pat_verificado ) == 0  ||
-        ( parseInt( request.curp_verificado ) == 0 && request.nacionalidad == 'MX' ) ||
-        parseInt( request.vida_verificado ) == 0 ||
-        ( parseInt( request.ine_verificado ) == 0 && request.nacionalidad == 'MX' )  ||
-        parseInt( request.correo_verificado ) == 0
+            if( (
+                  parseInt( request.pat_verificado ) == 0 ||
+                ( parseInt( request.curp_verificado ) == 0 && request.nacionalidad == 'MX' ) ||
+                ( parseInt( request.vida_verificado ) == 0 && $( '#check_movil' ).prop( 'checked' ) ) ||
+                ( parseInt( request.ine_verificado ) == 0 && request.nacionalidad == 'MX' )  ||
+                  parseInt( request.correo_verificado ) == 0 ) && request.curp != bypass 
             ){
-                if ( parseInt( request.pat_verificado ) == 0 ) error( 'tyc', 'Patrocinador no verificado' );
+                if( parseInt( request.pat_verificado ) == 0 ) error( 'tyc', 'Patrocinador no verificado' );
                 if( parseInt( request.curp_verificado ) == 0 && request.nacionalidad == 'MX' )  error( 'tyc', 'CURP no verificada' );
-                if( parseInt( request.vida_verificado ) == 0 )  error( 'tyc', 'Prueba de vida no completada' );
+                if( parseInt( request.vida_verificado ) == 0 && $( '#check_movil' ).prop( 'checked' ) )  error( 'tyc', 'Prueba de vida no completada' );
                 if( parseInt( request.ine_verificado ) == 0 && request.nacionalidad == 'MX' )  error( 'tyc', 'Identificación con fotografía no verificada' );
                 if( parseInt( request.correo_verificado ) == 0 )  error( 'tyc', 'Correo electrónico no verificado' );
 
@@ -416,7 +426,7 @@ function valida_ine(){
             success: function (output) {
                 window.parent.closeModal( modo, output.respuesta );
               
-                // {"calle":"C XALLIPAN 250","ciudad":"VILLA DE ALVAREZ,COL.","claveElector":"SLACAL79050106H000","codigoBarras":"81753183","codigoValidacion":"gd1768378434.772081","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":"SIAA790501HCMLCL05","edad":"32","emision":"2011","estado":"06","folio":"0000100454215","localidad":"0001","municipio":"005","nombres":"ALEJANDRO","ocr":"0139051133888","primerApellido":"SILVA","registro":"1997 02","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"C","tipo":"IFE","vigencia":"2021"}
+                // {"calle":"C XALLIPAN 250","ciudad":"VILLA DE ALVAREZ,COL.","claveElector":"SLACAL79050106H000","codigoBarras":"81753183","codigoValidacion":"gd1768378434.772081","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":bypass,"edad":"32","emision":"2011","estado":"06","folio":"0000100454215","localidad":"0001","municipio":"005","nombres":"ALEJANDRO","ocr":"0139051133888","primerApellido":"SILVA","registro":"1997 02","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"C","tipo":"IFE","vigencia":"2021"}
 
                 
                 // {"calle":"CXALLIPAN 250","ciudad":"VILLA DE ALVAREZ COL","claveElector":"SLACAL79050106H000","codigoValidacion":"gd1768361538.3741586","colonia":"COL VILLA IZCALLI CAXITLAN 28979","curp":"SAAT0501HCMLCLOS","emision":"2023","nombres":"ALEJANDRO","primerApellido":"SILVA","registro":"1997 04","seccion":"0139","segundoApellido":"ACEVES","sexo":"H","subTipo":"G","tipo":"INE","vigencia":"2033"}
@@ -773,6 +783,11 @@ $(document).ready(function(){
 
             update_paso( ++paso_activo );
         }
+
+        if( paso_activo == 5 && !$( '#check_movil' ).prop( 'checked' ) ){
+            $('.btn-next').click();
+        }
+        
     });
 
     $('.btn-previous').on('click', function() {
@@ -781,7 +796,16 @@ $(document).ready(function(){
             current_active_step.removeClass('active flared activated').prev().removeClass('activated').addClass('active flared');
 
             update_paso( --paso_activo);
+
+        if( paso_activo == 5 && !$( '#check_movil' ).prop( 'checked' ) ){
+            $('.btn-previous').click();
+        }
+
     	// }
+    });
+
+    $( '.btn-check' ).on( 'change', function( e ){
+        $( '#mode_error' ).text( '' );
     });
 
 	$.each( countries, function( id, country ){

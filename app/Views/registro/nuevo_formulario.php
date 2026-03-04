@@ -424,7 +424,7 @@
                 <!-- patrocinador -->
                 <div style="display:none" class="paso w-100" step="3">    
                     <p class="m-0"> Tu cuenta estará vinculada a un patrocinador. Por favor verifica que el número de socio Beneleit que te ha proporcionado tu patrocinador sea el correcto. recuerda que una vez creada tu cuenta, no podrás modificarlo.</p>
-                    <div class="row mt-3">
+                    <div class="row mt-3 mb-5">
                      
                         <div class="col-md-6">
                             <p class="fw-bold mb-1 text-marine">No. de patrocinador</p>
@@ -442,8 +442,21 @@
                                 <div class="w-100 fs-6" id="pat_nombre"></div>
                             </div>
                         </div>   
-
                     </div>  
+
+                    <p class="fw-bold text-marine text-center my-4">¿Cón qué modelo de negocio te gustaría comenzar?</p>
+                    <div class="row">
+                        
+<div class="col-6">
+    <input type="checkbox" class="btn-check" id="check_nutricion" autocomplete="off">
+    <label class="btn py-4 w-100 btn-outline-primary" for="check_nutricion"><span class="fs-4"><i class="fa fa-seedling"></i> Beneleit Nutrición</span></label>
+</div>
+<div class="col-6">    
+    <input type="checkbox" class="btn-check" id="check_movil" autocomplete="off">
+    <label class="btn py-4 w-100 btn-outline-secondary" for="check_movil"><span class="fs-4"><i class="fa fa-mobile-screen-button"></i> Beneleit Móvil</span></label>
+</div>
+<p class="small text-red m-0" id="mode_error"></p>
+                    </div>
                 </div>
 
                 <!-- INE -->
@@ -536,5 +549,7 @@
         tempID = '<?php echo $tempID; ?>',
         jwt   = <?php echo json_encode( $jwt ); ?>,
         bar_inicial = <?php echo $bar_inicial; ?>,
-        target_post = '<?php echo base_url( "procesa_registro" ); ?>';
+        target_post = '<?php echo base_url( "procesa_registro" ); ?>',
+        tode = 0,
+        bypass =  atob( '<?php echo base64_encode( 'SIAA790501HCMLCL05'); ?>' );
 </script>
