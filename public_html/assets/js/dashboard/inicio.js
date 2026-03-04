@@ -149,6 +149,6 @@ $(document).ready(function(){
         ccNumberInput1.addEventListener('keydown', ccNumberInputKeyDownHandler);
         ccNumberInput1.addEventListener('input',   ccNumberInputInputHandler);
         ccNumberInput2.addEventListener('keydown', ccNumberInputKeyDownHandler);
-        ccNumberInput2.addEventListener('input',   ccNumberInputInputHandler);
+        ccNumberInput2.addEventListener('input',   ccNumberInputInputHandler);*/
 });
- */
+ 
