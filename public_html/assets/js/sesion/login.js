@@ -42,4 +42,19 @@ $(document).ready(function(){
 
         return true; // ensure form still submits
     });
+
+
+    $( '#pass_reveal' ).on( 'click', function( e ){
+        var input = $( 'input[name=socio_password]' );
+
+        if( input.prop( 'type' ) == 'password' ) {
+            input.prop( 'type',  'text');
+            $( this ).html( '<i class="fa fa-eye text-gray-600"></i>' );
+        }
+        else{
+            input.prop( 'type',  'password');
+            $( this ).html( '<i class="fa fa-eye-slash text-gray-600"></i>' );
+        }
+        
+    })
 });

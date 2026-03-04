@@ -147,8 +147,14 @@ if( !$white && defined( "VARIABLES" ) && VARIABLES[ "aviso_inicio" ][ "valor" ] 
 									<input type="hidden" name="white" value="<?php echo $white ?? ""; ?>">
 
 									<input type="text" class="form-control ps-4 xrounded-pill <?php echo session( "errors.socio_id" ) ? "is-invalid" : ""; ?>" name="socio_id" value="<?php echo $id ?? old( "socio_id" ); ?>" placeholder="Socio">
+									
 									<p class="text-red"><?php echo session( "errors.socio_id" ); ?></p>
-									<input type="password" class="form-control ps-4 mt-3 xrounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password">
+
+									<div class="input-group my-3">
+										<input type="password" class="form-control ps-4 xrounded-pill <?php echo session( "errors.socio_password" ) ? "is-invalid" : ""; ?>" name="socio_password" value="<?php echo old( "socio_password" ); ?>" placeholder="Password" aria-describedby="pass_reveal">
+										<span class="input-group-text text-center" style="width:45px; border: var(--bs-border-width) solid var(--bs-border-color); background-color: var(--bs-border-color);" id="pass_reveal"><i class="fa fa-eye-slash text-gray-600"></i></span>
+									</div>
+
 									<p class="text-red"><?php echo session( "errors.socio_password" ); ?></p>
 									
 									<table xclass="w-100" align="center"><tr>
