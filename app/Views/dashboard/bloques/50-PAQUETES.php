@@ -45,7 +45,7 @@ if( $saldo > 0 ){
 <div class="pt-3 px-3 mb-3">
 <?php
     echo isset( $usuario->data->wallet ) && strlen( $usuario->data->wallet ) == 34 ? 
-        "<a href=\"".base_url()."paquete\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de paquete\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
+        "<a href=\"".base_url()."paquete\" data-bs-toggle=\"tooltip\" title=\"Click para ver detalles de inversiones\" class=\"btn btn-outline-info p-0 w-100\" style=\"overflow:hidden\">" : 
         "<a href=\"".base_url()."perfil\" data-bs-toggle=\"tooltip\" title=\"Click para agregar wallet digital\"  class=\"btn btn-outline-danger p-0 w-100\" style=\"overflow:hidden\">"; 
  ?>
     <table class="w-100 m-0">
@@ -106,20 +106,19 @@ if( $saldo > 0 ){
 
             $k = $inv[ $p->codigo ];
 
-            if( $k[ "total" ] > 0 && $k[ "inversiones" ] > 0 )
-                
-            
-            echo "\n<a href=\"".base_url()."paquete\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
-                    <div class=\"col-7 py-2 text-start\">
-                        <h5 class=\"m-0 text-".( $k[ "total" ] ? $p->data->color : "gray-400" )."\">{$p->data->nombre}".( $k[ "total" ] ? " <span class=\"badge bg-{$p->data->color}\">{$k[ "inversiones" ]}</span>" : "")."</h5>
-                        
-                    </div>
-                    <div class=\"col-5 py-2 text-end\">
-                        ".( $k[ "total" ] ? 
-                        "<h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $k[ "total" ], 2 )."</h5>"
-                        : 
-                        "<h5 class=\"m-0 text-gray-400\">$0.00</h5>" )."
-                    </div></div></a>";
+            if( $k[ "total" ] > 0 && $k[ "inversiones" ] > 0 ){
+                echo "\n<a href=\"".base_url()."paquete\" class=\"btn w-100 border border-{$p->data->color} p-0 mb-1\"><div class=\"row m-0\">
+                        <div class=\"col-7 py-2 text-start\">
+                            <h5 class=\"m-0 text-".( $k[ "total" ] ? $p->data->color : "gray-400" )."\">{$p->data->nombre}".( $k[ "total" ] ? " <span class=\"badge bg-{$p->data->color}\">{$k[ "inversiones" ]}</span>" : "")."</h5>
+                            
+                        </div>
+                        <div class=\"col-5 py-2 text-end\">
+                            ".( $k[ "total" ] ? 
+                            "<h5 class=\"m-0\"><img src=\"https://static.tronscan.org/production/logo/usdtlogo.png\" style=\"width:24px\"> $".number_format( $k[ "total" ], 2 )."</h5>"
+                            : 
+                            "<h5 class=\"m-0 text-gray-400\">$0.00</h5>" )."
+                        </div></div></a>";
+            }
         }
     }else{
         echo "<div class=\"row m-3\"><div class=\"col-4 display-3 text-gray-300 text-end\"><i class=\"fa fa fa-box\"></i></div><div class=\"col-8 pt-3 mt-3 text-gray-500 text-start\">Aun no tienes Paquetes</div></div>";

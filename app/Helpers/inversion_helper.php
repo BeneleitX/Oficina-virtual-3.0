@@ -253,7 +253,7 @@ function genera_meses( $pedido, $i, $producto = null ){
       //  d($temp);
 
          $rendimiento_mes = floor( $temp * 100 ) / 100;
-/*        $corrije_float   = explode(".", $rendimiento_mes);
+        /* $corrije_float   = explode(".", $rendimiento_mes);
 
         if( isset( $corrije_float[ 1 ] ) && $corrije_float[1] == 99 ){
             $rendimiento_mes = ceil( $rendimiento_mes );
@@ -470,6 +470,13 @@ function balance_inversion( $i, $fecha = null ){
     for( $a = 0; $a <= 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
+        if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+            $j[ "retiros" ] = 0.00;
+            $j[ "compuesto" ] = 0.00;
+            $j[ "rendimiento" ] = 0.00;
+            $j[ "finmes" ] = 0.00;
+        }
+
         $respuesta[ "semilla" ] = $j[ "semilla" ];
 
         // meses cerrados 
@@ -537,11 +544,6 @@ function balance_inversion( $i, $fecha = null ){
 
                 model( "RendimientoModel" )->save( $r );
             }
-
-
-
-
-
 
             $respuesta[ "rendimiento_mes" ] = array_sum( array_slice( $r[ "porcentajes" ], 0, date( "d" ) ) ); //( $j[ "rendimiento_dia" ] * $dias );
             $respuesta[ "rendimiento_mes_total" ] = $j[ "rendimiento_mes" ];

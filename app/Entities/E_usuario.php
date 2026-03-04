@@ -534,8 +534,8 @@ class E_usuario extends Entity
     public function get_inversiones()
     {
         $where = "t_pedidos.usuario_id = {$this->id} and substring( t_pedidos.estatus_codigo, 1, 3 ) > 400";
-        
-        return model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
+        $ka = model( "InversionModel" )->select("t_inversiones.*" )->join('t_pedidos', 't_pedidos.id = t_inversiones.pedido_id')->where( $where )->findAll();
+        return $ka;
     }
 
 

@@ -10,6 +10,13 @@
 <?php
 $cuentameses = sizeof( $i[ "extras" ][ "meses" ] );
 
+if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+    $m[ "retiros" ] = 0.00;
+    $m[ "compuesto" ] = 0.00;
+    $m[ "rendimiento" ] = 0.00;
+    $m[ "finmes" ] = 0.00;
+}
+
 $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
@@ -66,6 +73,14 @@ for( $a = 0; $a < $cuentameses  ; $a++ ){
 
     $r_object = model( "RendimientoModel")->where( "producto_codigo", $p->codigo )->where( "mes", $m[ "Ym" ] )->first();
 
+
+if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+    $m[ "retiros" ] = 0.00;
+    $m[ "compuesto" ] = 0.00;
+    $m[ "rendimiento" ] = 0.00;
+    $m[ "finmes" ] = 0.00;
+}
+    
     if( $m[ "Ym" ] < date( "Ym" ) ){
         $semilla[]   = $m[ "semilla" ];
         $compuesto[] = $m[ "compuesto" ];

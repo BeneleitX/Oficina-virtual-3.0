@@ -100,6 +100,13 @@ if( sizeof( $inversiones ) ){
         for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
 
+            if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+                $m[ "retiros" ] = 0.00;
+                $m[ "compuesto" ] = 0.00;
+                $m[ "rendimiento" ] = 0.00;
+                $m[ "finmes" ] = 0.00;
+            }
+
             if( $m[ "Ym" ] < date( "Ym" ) ){
                 $semilla[]     = $m[ "semilla" ];
                 $r  = $m[ "rendimiento_mes" ];
