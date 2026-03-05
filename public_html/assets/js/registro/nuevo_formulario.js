@@ -795,13 +795,14 @@ $(document).ready(function(){
 
     $('.btn-previous').on('click', function() {
     	// if( valida_paso( paso_activo ) ) {
-            current_active_step = $( '[step=' + paso_activo + ']' );
-            current_active_step.removeClass('active flared activated').prev().removeClass('activated').addClass('active flared');
-
-            update_paso( --paso_activo);
+        current_active_step = $( '[step=' + paso_activo + ']' );
+        current_active_step.removeClass('active flared activated').prev().removeClass('activated').addClass('active flared');
+        update_paso( --paso_activo);
 
         if( paso_activo == 5 && !$( '#check_movil' ).prop( 'checked' ) ){
-            $('.btn-previous').click();
+            current_active_step = $( '[step=' + paso_activo + ']' );
+            current_active_step.removeClass('active flared activated').prev().removeClass('activated').addClass('active flared');
+            update_paso( --paso_activo);
         }
 
     	// }
