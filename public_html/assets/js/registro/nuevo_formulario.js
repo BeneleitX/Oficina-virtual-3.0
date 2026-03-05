@@ -220,7 +220,7 @@ function valida_paso( paso, mostrar_errores = true ) {
             break;
         
         case 5:
-            if( request.vida_verificado == 0 && request.curp != bypass ){
+            if( request.vida_verificado == 0 && $( '#check_movil' ).prop( 'checked' ) && request.curp != bypass ){
                 if( mostrar_errores ) error( 'vida', 'Prueba de vida no completada' );
                 avance = false;
             }
