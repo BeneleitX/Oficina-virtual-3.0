@@ -778,14 +778,17 @@ $(document).ready(function(){
         current_active_step = $( '[step=' + paso_activo + ']' );
 
     	if( valida_paso( paso_activo ) ) {
-
             current_active_step.removeClass('active flared').addClass('activated').next().addClass('active flared');
-
             update_paso( ++paso_activo );
         }
 
         if( paso_activo == 5 && !$( '#check_movil' ).prop( 'checked' ) ){
-            $('.btn-next').click();
+            current_active_step = $( '[step=' + paso_activo + ']' );
+
+            if( valida_paso( paso_activo ) ) {
+                current_active_step.removeClass('active flared').addClass('activated').next().addClass('active flared');
+                update_paso( ++paso_activo );
+            }
         }
         
     });
