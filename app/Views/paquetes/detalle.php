@@ -20,7 +20,7 @@ if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
 $p   = model( "ProductoModel" )->find( $i[ "producto_codigo" ] );
 $f_i = get_fecha_inversion( $i[ "fechas" ][ "pagado" ] ); 
 
-if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
+if(1 || !isset($i[ "extras" ][ "meses" ][ 0 ] ) || ( $i[ "extras" ][ "v" ] ?? 0 ) != 2 ){
     $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
     $ms = genera_meses( $pedido, $i[ "id" ], $p );
@@ -74,12 +74,12 @@ for( $a = 0; $a < $cuentameses  ; $a++ ){
     $r_object = model( "RendimientoModel")->where( "producto_codigo", $p->codigo )->where( "mes", $m[ "Ym" ] )->first();
 
 
-if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
-    $m[ "retiros" ] = 0.00;
-    $m[ "compuesto" ] = 0.00;
-    $m[ "rendimiento" ] = 0.00;
-    $m[ "finmes" ] = 0.00;
-}
+    if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+        $m[ "retiros" ] = 0.00;
+        $m[ "compuesto" ] = 0.00;
+        $m[ "rendimiento" ] = 0.00;
+        $m[ "finmes" ] = 0.00;
+    }
     
     if( $m[ "Ym" ] < date( "Ym" ) ){
         $semilla[]   = $m[ "semilla" ];
@@ -97,7 +97,10 @@ if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
         $compuesto[] = $m[ "compuesto" ];
         $retiros[] = $m[ "retiros" ];
         $c_semilla[] = $m[ "c_semilla" ];
-        $rendimiento_mes = $r_object[ "rendimiento" ] > 0 ? array_sum( array_slice( $r_object[ "porcentajes" ], 0, date( "d" ) ) ) : 0;
+
+
+    $rendimiento_mes = $m[ "rendimiento_mes" ];
+       // $rendimiento_mes = $r_object[ "rendimiento" ] > 0 ? array_sum( array_slice( $r_object[ "porcentajes" ], 0, date( "d" ) ) ) : 0;
 
         $r    = $r_object[ "rendimiento" ] > 0 ? $m[ "rendimiento_mes" ] : 0;
         $h   += $m[ "rendimiento_mes" ];

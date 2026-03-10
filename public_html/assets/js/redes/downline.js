@@ -100,7 +100,7 @@ $( document ).ready(function()
 
             // filtros
 
-            function filtrar( variable, valor ){
+     /*        function filtrar( variable, valor ){
 
                 $.each( downline, function( indice, node ){
                     go = true;
@@ -193,4 +193,4 @@ $( document ).ready(function()
                         }
                     });
                 });
-            })(bootstrap);
+            })(bootstrap); */

@@ -90,6 +90,7 @@ function genera_meses( $pedido, $i, $producto = null ){
 
     // calculamos fecha de inicio de inversion
     $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+
     $semilla_retirada = $i ? get_semilla_retirada( $i ) : 0;
     // dd($semilla_retirada);
     // Buscamos retiros aplicados a rendimiento
@@ -141,6 +142,218 @@ function genera_meses( $pedido, $i, $producto = null ){
     }
 
     
+
+    for( $a = 0; $a < ( 25 + $previos ); $a++ ){
+        if( $a ){
+            $date->modify( "first day of this month" );
+            $date->modify( "+ 1 month" );
+        }
+ 
+        $retiros_mes = 0;
+        $c_semilla   = 0;
+        $r_semilla   = 0;
+
+        foreach( $rts as $rt ){
+            $rt[ "fechas" ] = json_decode( $rt[ "fechas" ], true );
+
+            if( $rt[ "fechas" ][ "mes" ] == $date->format( "Ym" ) ){ 
+                if( $rt[ "inversion_id" ] == $i ){
+                
+                    if( in_array( $rt[ "tipo" ], [ "TOTAL", "PARCIAL", "MENSUAL" ]) ){
+                        $retiros_mes += $rt[ "cantidad" ];
+                    }
+                    elseif( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
+                        $c_semilla += $rt[ "cantidad" ];
+                    }
+                }
+
+                if( in_array( $rt[ "tipo" ], [ "STOTAL", "SPARCIAL" ]) ){
+                    $r_semilla = true;
+
+                    if( $i_semilla == false ){
+                        $i_semilla = intval( $date->format( "Ym" ) );
+                    }
+                }                
+            }
+        }
+
+        $inicia_mes   = $date->format( "d" );
+        $inicia_mes_f = $date->format( "Y-m-d" );
+
+        $date->modify( "last day of this month" );  
+
+        $termina_mes = $date->format( "d" );
+
+        $r_object = model( "RendimientoModel")->where( "producto_codigo", $producto->codigo )->where( "mes", $date->format( "Ym" ) )->first();
+        
+        $r_dias = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
+
+        // si ya existe el registro
+        if( $r_object ){
+            $r_dias = $r_object[ "porcentajes" ];
+
+            if( $r_object[ "rendimiento" ] > 0 ){ 
+                if( floatval( $r_dias[ $termina_mes ] ) > 0 ){
+                    
+                }
+                else{
+                    $r_object[ "dias_en_mes" ] = $termina_mes;
+                    $r_object[ "porcentajes" ] = $r_dias = genera_dias( $r_object[ "mes" ], $r_object[ "rendimiento" ], 0.05 );
+
+                    model( "RendimientoModel" )->save( $r_object );
+                }
+            }
+        }
+        else{
+            $r_object = [
+                    "producto_codigo" => $producto->codigo,
+                    "mes"             => $date->format( "Ym" ),
+                    "porcentajes"     => $r_dias,
+                    "rendimiento"     => 0.0
+                ];
+
+            model( "RendimientoModel" )->save( $r_object );
+        }
+
+        $a_semilla = $a ? $meses[ $a - 1 ][ "semilla" ] - $meses[ $a - 1 ][ "c_semilla" ] : $pedido[ "data" ][ "total" ];
+
+        if( $semilla_retirada > 0 || ( $a ? $meses[ $a - 1 ][ "r_semilla" ] : false ) ){
+            // si hay retiro de semilla en el mes $pedido[ "data" ][ "total" ] != $a_semilla )
+            $factor = 2;
+        }
+
+        if( $pedido[ "fechas" ][ "pagado" ] < '2026-02-05' ){
+            $r_object[ "porcentajes" ] = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
+            $r_object[ "rendimiento" ] = 0.0;
+        }
+
+        $cantidad = 
+            $a_semilla + 
+            ( $meses[ $a - 1 ][ "rendimiento_mes" ] ?? 0 ) + 
+            ( $meses[ $a - 1 ][ "compuesto" ] ?? 0 ) - 
+            ( $meses[ $a - 1 ][ "retiros" ] ?? 0 );
+
+        $dias_en_mes     = intval( $date->format( "d" ));
+        $termina_mes_f   = $date->format( "Y-m-d" );
+        $dias_parcial    = ( !$a && date( "d", strtotime( $f_i ) ) == 1 ) ? 0 : $dias_en_mes - $inicia_mes + 1;
+        $porcentaje_mes  = 0; 
+
+        // si es mes anterior
+        if( date( "Ym" ) > $date->format( "Ym" ) ){
+            $porcentaje_mes = array_sum( array_slice( $r_object[ "porcentajes" ], 0, date( "d" ) ) );
+        }
+        // si es mes actual TRUNCADO
+        elseif( date( "Ym" ) == $date->format( "Ym" ) && $dias_en_mes > $dias_parcial ){
+            if( $dias_parcial < date( "d" ) ){
+                $porcentaje_mes = array_sum( array_slice( $r_object[ "porcentajes" ], $dias_en_mes - $dias_parcial, $dias_en_mes ) );        
+            }
+        }
+
+        $temp = $cantidad * $porcentaje_mes / 100; // $producto->data->porcentaje
+      //  d($temp);
+
+        $rendimiento_mes = floor( $temp * 100 ) / 100;
+      /*  $corrije_float   = explode(".", $rendimiento_mes);
+
+        if( isset( $corrije_float[ 1 ] ) && $corrije_float[1] == 99 ){
+            $rendimiento_mes = ceil( $rendimiento_mes );
+        }
+
+        if( $dias_parcial < $dias_en_mes ){
+            $rendimiento_mes = 0.0000;
+
+            
+            for( $dd = intval( date( "d", strtotime( $f_i ) ) ); $dd <= $dias_en_mes; $dd++ ){
+                $rendimiento_mes += floatval( $r_dias[ $dd ] ); // floatval( floor( $r_dias[ $dd ] * 100 ) / 100 );
+            }     
+        } */
+
+        $compuesto = $a ? (
+            ( 
+                ( $meses[ $a - 1 ][ "rendimiento_mes" ] * 100 ) + 
+                ( $meses[ $a - 1 ][ "compuesto" ] * 100 ) - 
+                ( $meses[ $a - 1 ][ "retiros" ] * 100 )
+            ) / 100
+        ) : 0;
+
+        $meses[ $a ] = [
+            "Ym"              => $date->format( "Ym" ),
+            "Porcentaje"      => $porcentaje_mes,
+            "semilla"         => $a_semilla,
+            "c_semilla"       => $c_semilla,
+            "compuesto"       => $compuesto,
+            "r_semilla"       => $r_semilla,
+            "dias_en_mes"     => $dias_en_mes,
+            "dias_parcial"    => $dias_parcial,
+            "retiros"         => $retiros_mes,
+        //    "rendimiento_dia" => $rendimiento_dia,
+            "rendimiento_mes" => $rendimiento_mes,
+            "inicia"          => $inicia_mes_f,
+            "termina"         => $termina_mes_f
+        ];
+    }
+
+    return [ $meses, $i_semilla ];
+}
+
+function genera_meses_bak( $pedido, $i, $producto = null ){
+
+    if( !$producto ){
+        $producto = model( "ProductoModel" )->find( array_keys( $pedido[ "promociones"][ "510-SEMILLA" ][ "productos" ] ) )[ 0 ];
+    }
+
+    // calculamos fecha de inicio de inversion
+    $f_i  = get_fecha_inversion( $pedido[ "fechas" ][ "pagado" ] );
+    $semilla_retirada = $i ? get_semilla_retirada( $i ) : 0;
+    // dd($semilla_retirada);
+    // Buscamos retiros aplicados a rendimiento
+    // $rts  = model( "RetiroModel" )->where( "SUBSTRING( estatus_codigo, 1, 3 ) > 200 AND json_unquote( json_extract( fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' AND usuario_id = {$pedido[ "usuario_id" ]}" )->findAll();
+
+    $sql = "SELECT r.*
+        from t_retiros r
+        join t_inversiones i on i.id = r.inversion_id
+        where SUBSTRING( r.estatus_codigo, 1, 3 ) > 200 
+        AND json_unquote( json_extract( r.fechas, '$.mes' ) ) >= '".date( "%Y%m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) )."' 
+        AND r.usuario_id = {$pedido[ "usuario_id" ]} 
+        and i.producto_codigo = '{$producto->codigo}'
+        AND substring( i.estatus_codigo,1,3) > 200";
+
+    $db  = db_connect();
+    $rts = $db->query( $sql )->getResultArray();
+
+    // seleccionamos la fecha para el mes CERO (entre fecha pago y fecha inversion)
+    // si caen en el mismo mes:  m_c = mes 0
+    // si caen en diferente mes: m_c = mes -1
+    // si caen en diferente mes pero f_i cae en día 1: m_c = mes 0
+
+    if( date( "d", strtotime( $f_i ) ) == 1 ){
+        $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
+    }
+    else{
+        $date = new \DateTime( $f_i );
+    }
+
+    $date_temp = $date;
+    $previos = 0;
+
+    while( $date_temp->format( "Ym" ) < 202503 ){
+        
+        $date_temp->modify( "first day of this month" );
+        $date_temp->modify( "+ 1 month" );
+        $previos++;
+    }
+
+    $meses     = [];
+    $factor    = 1;
+    $i_semilla = 0;
+
+    if( date( "d", strtotime( $f_i ) ) == 1 ){
+        $date = new \DateTime( $pedido[ "fechas" ][ "pagado" ] );
+    }
+    else{
+        $date = new \DateTime( $f_i );
+    }
+
 
     for( $a = 0; $a < ( 25 + $previos ); $a++ ){
         if( $a ){
@@ -237,7 +450,7 @@ function genera_meses( $pedido, $i, $producto = null ){
         $dias_parcial    = ( !$a && date( "d", strtotime( $f_i ) ) == 1 ) ? 0 : $dias_en_mes - $inicia_mes + 1;
 
         // si es mes actual o futuros
-        if( date( "Ym" ) <= $date->format( "Ym" ) ){
+        if( date( "Ym" ) < $date->format( "Ym" ) ){
             $porcentaje_mes = array_sum( array_slice( $r_object[ "porcentajes" ], 0, date( "d" ) ) );
         }
         elseif( $dias_en_mes > $dias_parcial ){
@@ -457,7 +670,7 @@ function balance_inversion( $i, $fecha = null ){
         "fecha"       => $fecha
     ];
 
-    if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 ){
+    if( sizeof( $i[ "extras" ][ "meses" ] ) == 0 || ( $i[ "extras" ][ "v" ] ?? 0 ) != 2 ){
         $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
         $ms = genera_meses( $pedido, $i[ "id" ] );
