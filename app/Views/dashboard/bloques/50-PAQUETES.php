@@ -76,7 +76,7 @@ if( $saldo > 0 ){
                 ];
             }
 
-            if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) ){
+            if( !isset($i[ "extras" ][ "meses" ][ 0 ] ) || ( $i[ "extras" ][ "v" ] ?? 0 ) != 2 ){
                 $pedido = model( "PedidoModel" )->find( $i[ "pedido_id" ] );
 
                 $ms = genera_meses( $pedido, $i[ "id" ], $p );
