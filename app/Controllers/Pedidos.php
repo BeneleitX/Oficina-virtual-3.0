@@ -856,7 +856,7 @@ class Pedidos extends BaseController
 
         
 
-        if( $modelo == "50-INVERSION" ){ 
+        if( $this->data[ "pedido" ][ "modelo_codigo" ] == "50-INVERSION" ){ 
             $this->data[ "especial" ] = false;
             $upline = json_decode( $this->data[ "socio" ]->getUplineJSON( "50-INVERSION" ) );
 
