@@ -248,7 +248,7 @@ class Pedidos extends BaseController
             load_catalogo( "promociones",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
-            load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+            load_catalogo( "metodospago",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'");
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $modelo );
