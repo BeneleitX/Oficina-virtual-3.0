@@ -854,6 +854,24 @@ class Pedidos extends BaseController
             return redirect()->to( 'historial' );
         }
 
+        
+
+        if( $modelo == "50-INVERSION" ){ 
+            $this->data[ "especial" ] = false;
+            $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
+
+            foreach( $upline as $u ){
+                if( in_array( $u->id, [ 9163255, 9169469, 9163683 ]  ) ){
+                    $this->data[ "especial" ] = true;
+                    break;
+                }
+            }
+
+            if( !$this->data[ "especial" ] ){
+                return redirect()->to( 'historial' );
+            }
+        }
+
         $this->data[ "modelo" ] = $this->data[ "pedido" ][ "modelo_codigo" ];
 
        // if(  $this->data[ "pedido" ][ "estatus_codigo" ] == "250-EN-PROCESO" ){
