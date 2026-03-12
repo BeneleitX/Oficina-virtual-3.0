@@ -858,7 +858,7 @@ class Pedidos extends BaseController
 
         if( $modelo == "50-INVERSION" ){ 
             $this->data[ "especial" ] = false;
-            $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
+            $upline = json_decode( $this->data[ "socio" ]->getUplineJSON( "50-INVERSION" ) );
 
             foreach( $upline as $u ){
                 if( in_array( $u->id, [ 9163255, 9169469, 9163683 ]  ) ){
@@ -868,7 +868,7 @@ class Pedidos extends BaseController
             }
 
             if( !$this->data[ "especial" ] ){
-                return redirect()->to( 'historial' );
+                return redirect()->to( 'pedido/'.$this->data[ "pedido" ][ "referencia" ] );
             }
         }
 
