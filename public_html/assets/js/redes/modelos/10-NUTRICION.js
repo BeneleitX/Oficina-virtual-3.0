@@ -196,11 +196,14 @@ function beneleit( data ){
                 if( d.x > final_x ){ final_x = d.x; }
                 if( d.y > final_y ){ final_y = d.y; }
                 return 'translate(' + d.x + ',' + d.y + ')';
-            }) 
+            })
+            .attr( 'cursor', 'pointer' ) 
+            .attr( 'onclick', function( d ){ return 'userdata( ' + d.id + ' )'; } )
 
 
             .on( 'click', function( d ){
                 userdata( d.id );
+                console.log(d.id);
             })
 
             // Cambiar color de linea upline al pasar el mouse por encima
