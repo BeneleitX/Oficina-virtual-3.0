@@ -197,14 +197,9 @@ function beneleit( data ){
                 if( d.y > final_y ){ final_y = d.y; }
                 return 'translate(' + d.x + ',' + d.y + ')';
             })
-            .attr( 'cursor', 'pointer' ) 
-            .attr( 'onclick', function( d ){ return 'userdata( ' + d.id + ' )'; } )
 
-
-            .on( 'click', function( d ){
-                userdata( d.id );
-                console.log(d.id);
-            })
+ .attr( 'cursor', 'pointer' ) 
+      //      .attr( 'onclick', function( d ){ return 'javascript:userdata( ' + d.id + ' )'; } )
 
             // Cambiar color de linea upline al pasar el mouse por encima
             .on( 'mouseover', function( d ){
@@ -214,7 +209,7 @@ function beneleit( data ){
                     .style( 'transition', '.4s all ease' )
                     .style( 'stroke', function( e, a ){
                         if ( linkedNodes.includes( e.target.id ) ){
-                            this.parentNode.append( this );
+                       //     this.parentNode.append( this );
                             return e.target.id == 0 ? 'var(--bs-gray-500)' : 'var(--bs-' + estatus[ d.estatus ].color + ')';
                         }
                         else
@@ -222,11 +217,13 @@ function beneleit( data ){
                     });
 
                 node.each( function( e,n ){
-                    if( linkedNodes.includes( e.id ) ) 
-                        this.parentNode.append( this );
+                 //   if( linkedNodes.includes( e.id ) ) 
+                 //       this.parentNode.append( this );
                 });
             })
-            
+
+ 
+
             // Cambiar color de linea upline al pasar el mouse por encima
             .on( 'mouseout', function( d ){
                 var linkedNodes = parentTree( d );
@@ -236,10 +233,17 @@ function beneleit( data ){
                     .style( 'stroke', 'var(--bs-gray-500)' );
 
                 node.each( function( e,n ){
-                    if( linkedNodes.includes( e.id ) ) 
-                        this.parentNode.append( this );
+                 //   if( linkedNodes.includes( e.id ) ) 
+                 //       this.parentNode.append( this );
                 });
-            });
+            })
+
+                       .on( 'click', function( d, i ){
+                d3.event.stopPropagation();
+                userdata( d.id );
+                 
+            });            
+    
 
     // Crear pattern de foto para rellenar circulo (transparente png si no hay foto)
     nodeEnter.append( 'svg:pattern' )
@@ -454,8 +458,11 @@ nodeEnter.append('svg:circle')
 
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-        // mascara para atenuar socios cuando queden fuera de los filtros
 
+
+
+        // mascara para atenuar socios cuando queden fuera de los filtros
+/* 
         nodeEnter.append("rect")
             .attr("x", -50)
             .attr("y", -19)
@@ -464,7 +471,7 @@ nodeEnter.append('svg:circle')
             .attr("width", 100)
             .style("fill", 'white')
             .style("display", 'none')
-            .attr( 'class', 'shadow');
+            .attr( 'class', 'shadow'); */
 
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 

@@ -465,6 +465,10 @@ class Registro extends BaseController
         ";
 
         $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
+
+/* SMS */       
+sms( )
+
         
         if( $demo > 0 ){
             return redirect()->to( "red/{$modelo}" );

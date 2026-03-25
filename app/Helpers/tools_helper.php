@@ -1221,17 +1221,24 @@ function add_months($months, DateTime $dateObject)
     }
 
 function endCycle($d1, $months)
-    {
-        $date = new DateTime($d1);
+{
+    $date = new DateTime($d1);
 
-        // call second function to add the months
-        $newDate = $date->add(add_months($months, $date));
+    // call second function to add the months
+    $newDate = $date->add(add_months($months, $date));
 
-        // goes back 1 day from date, remove if you want same day of month
-        $newDate->sub(new DateInterval('P1D')); 
+    // goes back 1 day from date, remove if you want same day of month
+    $newDate->sub(new DateInterval('P1D')); 
 
-        //formats final date to Y-m-d form
-        $dateReturned = $newDate->format('Y-m-d'); 
+    //formats final date to Y-m-d form
+    $dateReturned = $newDate->format('Y-m-d'); 
 
-        return $dateReturned;
-    }
+    return $dateReturned;
+}
+
+
+function sms( $unique, $numero, $mensaje )
+{
+    $sms = new SmsService();
+    $respuesta = $sms->enviar( $mensaje, [$numero], $unique );
+}

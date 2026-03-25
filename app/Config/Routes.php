@@ -64,6 +64,8 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "logout/white",                       "Sesion::logout/0/0/1" );
 
     $routes->get( "procesa_registro/(:num)/(:any)",     "Registro::procesa_registro/$1/$2" );
+
+    $routes->get( "sms",                                "Sms::config" );
    
     $routes->get( "",                                   "Dashboard::inicio" );
     $routes->get( "inicio",                             "Dashboard::inicio" );
