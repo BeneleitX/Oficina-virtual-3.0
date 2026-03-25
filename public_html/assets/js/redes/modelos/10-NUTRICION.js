@@ -198,7 +198,7 @@ function beneleit( data ){
                 return 'translate(' + d.x + ',' + d.y + ')';
             })
 
- .attr( 'cursor', 'pointer' ) 
+     .attr( 'cursor', 'pointer' ) 
       //      .attr( 'onclick', function( d ){ return 'javascript:userdata( ' + d.id + ' )'; } )
 
             // Cambiar color de linea upline al pasar el mouse por encima
@@ -239,7 +239,6 @@ function beneleit( data ){
             })
 
                        .on( 'click', function( d, i ){
-                d3.event.stopPropagation();
                 userdata( d.id );
                  
             });            
