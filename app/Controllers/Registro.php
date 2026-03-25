@@ -467,7 +467,7 @@ class Registro extends BaseController
         $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
 
 /* SMS */       
-sms( )
+// sms( )
 
         
         if( $demo > 0 ){
