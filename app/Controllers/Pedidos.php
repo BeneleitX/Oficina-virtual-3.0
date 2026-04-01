@@ -128,6 +128,9 @@ class Pedidos extends BaseController
         $this->data[ "update_productos" ] = $this->session->getFlashdata( "update_productos" ) ? 1 : 0;
         $activo = "estatus_codigo = '201-ACTIVO'";
        
+        $this->data[ "especial" ] = false;
+        $this->data[ "sinergy_especial" ] = false;
+        
         // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
 
@@ -219,8 +222,7 @@ class Pedidos extends BaseController
         else{
             $modelo = $data;
             
-            $this->data[ "especial" ] = false;
-            $this->data[ "sinergy_especial" ] = false;
+
 
             if( $modelo == "50-INVERSION" ){ 
                 $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
