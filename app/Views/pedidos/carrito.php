@@ -1600,8 +1600,9 @@ foreach( $productos as $p ){
         mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
         domicilios      = <?php echo json_encode( $domicilios ); ?>,
         hoy = new Date(),
-        update_productos = <?php echo $update_producto ?? 0; ?>,
-        sinergy_especial = <?php echo $sinergy_especial ?? 0; ?>;
+        update_productos = <?php echo $update_producto ?? "0"; ?>,
+        sinergy_especial = <?php echo $sinergy_especial ?? "0"; ?>,
+        ttt = 0;
 
     const mes_actual = <?php echo date( "Ym" ); ?>;
 
