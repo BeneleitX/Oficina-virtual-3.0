@@ -249,7 +249,7 @@ function fecha_valida( $date ) {
 function limpia_acentos($Texto){
     $valor_htm = array('&aacute;','&Aacute;','&eacute;','&Eacute;','&iacute;','&Iacute;','&oacute;','&Oacute;','&uacute;','&Uacute;','&ntilde;','&Ntilde;','&uuml;','&Uuml;',
     '&agrave;','&Agrave;','&egrave;','&Egrave;','&igrave;','&Igrave;','&ograve;','&Ograve;','&ugrave;','&Ugrave;');    // Valores originales   
-    $valor_acent = array('a','A','e','E','i','I','o','O','u','U','ñ','Ñ','u','U','a','A','e','E','i','I','o','O','u','U');    // Nuevos valores   
+    $valor_acent = array('a','A','e','E','i','I','o','O','u','U','n','N','u','U','a','A','e','E','i','I','o','O','u','U');    // Nuevos valores   
         $Cambia_Texto = str_replace($valor_htm,$valor_acent,$Texto);  
     // Separamos cada una de las letras con acentos y dieresis, y la ponemos en un array
     preg_match_all('/\w/u', 'áàäéèëíìïòóöùúüÀÁÄÈÉËÌÍÏÒÓÖÙÚÜñÑ', $Texto);
@@ -258,7 +258,7 @@ function limpia_acentos($Texto){
         $Texto[0]
     );
     // realizamos la sustitución
-    $sustitucion = preg_replace($cadena, str_split('aaaeeeiiiooouuuAAAEEEIIIOOOUUU'), $Cambia_Texto);
+    $sustitucion = preg_replace($cadena, str_split('aaaeeeiiiooouuuAAAEEEIIIOOOUUUnN'), $Cambia_Texto);
         return $sustitucion;
 }
 

@@ -1600,13 +1600,24 @@ foreach( $productos as $p ){
         mesesactuales   = [ '<?php echo strtoupper( mes( date( "m" ) ) ); ?>', '<?php echo strtoupper( mes( date( "m" ) - 1 ) ); ?>' ],
         domicilios      = <?php echo json_encode( $domicilios ); ?>,
         hoy = new Date(),
-        update_productos = <?php echo $update_productos; ?>;
+        update_productos = <?php echo $update_productos; ?>,
+        sinergy_especial = <?php echo $sinergy_especial; ?>;
 
     const mes_actual = <?php echo date( "Ym" ); ?>;
 
     if( !pedido.data.productosxbulto ) pedido.data.productosxbulto = <?php echo MODELOS[ $modelo ][ "settings" ][ "productosxbulto" ]; ?>;
 
 
+
+
+    function activa_promos( puntos, promos_mes_actual ){
+        
+        // Convertimos los puntos distribuidor en puntos por calificación (6 promos por calificación)
+        puntos  = Math.floor( puntos / 3 );
+
+
+        return ( ( puntos * 6 ) - promos_mes_actual ) > 0 ;
+    }
 
 </script>
 

@@ -669,7 +669,7 @@ class E_usuario extends Entity
      */
 
     public function iniciales(){
-        return substr( $this->data->nombre, 0, 1 ).substr( $this->data->apellidos[0], 0, 1 );
+        return substr( limpia_acentos( $this->data->nombre ), 0, 1 ).substr( limpia_acentos( $this->data->apellidos[0] ), 0, 1 );
     }
 
 

@@ -220,6 +220,7 @@ class Pedidos extends BaseController
             $modelo = $data;
             
             $this->data[ "especial" ] = false;
+            $this->data[ "sinergy_especial" ] = false;
 
             if( $modelo == "50-INVERSION" ){ 
                 $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
@@ -227,6 +228,16 @@ class Pedidos extends BaseController
                 foreach( $upline as $u ){
                     if( in_array( $u->id, [ 9163255, 9169469, 9163683 ]  ) ){
                         $this->data[ "especial" ] = true;
+                        break;
+                    }
+                }
+            }
+            if( $modelo == "10-NUTRICION" ){ 
+                $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
+
+                foreach( $upline as $u ){
+                    if( in_array( $u->id, [ 50496  ]  ) ){
+                        $this->data[ "sinergy_especial" ] = true;
                         break;
                     }
                 }
