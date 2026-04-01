@@ -1601,7 +1601,7 @@ foreach( $productos as $p ){
         domicilios      = <?php echo json_encode( $domicilios ); ?>,
         hoy = new Date(),
         update_productos = <?php echo $update_productos; ?>,
-        sinergy_especial = <?php echo $sinergy_especial; ?>;
+        sinergy_especial = <?php echo $sinergy_especial ?? 0; ?>;
 
     const mes_actual = <?php echo date( "Ym" ); ?>;
 
