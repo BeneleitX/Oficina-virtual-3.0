@@ -128,8 +128,8 @@ class Pedidos extends BaseController
         $this->data[ "update_productos" ] = $this->session->getFlashdata( "update_productos" ) ? 1 : 0;
         $activo = "estatus_codigo = '201-ACTIVO'";
        
-        $this->data[ "especial" ] = false;
-        $this->data[ "sinergy_especial" ] = false;
+        $this->data[ "especial" ] = "0";
+        $this->data[ "sinergy_especial" ] = "0";
         
         // Entrar a pedido en espera de pago o pagado (usando referencia)
         if( $tipo == "pedido" ){
@@ -239,7 +239,7 @@ class Pedidos extends BaseController
 
                 foreach( $upline as $u ){
                     if( in_array( $u->id, [ 50496  ]  ) ){
-                        $this->data[ "sinergy_especial" ] = true;
+                        $this->data[ "sinergy_especial" ] = "1";
                         break;
                     }
                 }
