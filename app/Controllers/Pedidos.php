@@ -234,6 +234,10 @@ class Pedidos extends BaseController
                     }
                 }
             }
+
+
+            // red de socios que permite trabajar con 1 o 2 puntos 
+
             if( $modelo == "10-NUTRICION" ){ 
                 $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
 

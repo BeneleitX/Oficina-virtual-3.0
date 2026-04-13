@@ -852,10 +852,7 @@ function envia_correo( $usuario, $subject, $message, $imagenes = [] )
                     <p>
                         <img src=\"{$attachments[2]}\" width=\"50\" height=\"17\" alt=\"Logo beneleit\">
                         <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Nutrición</a> |
-                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Alimentos</a> |
-                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Telefonía Móvil</a> |
-                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Combustibles</a> |
-                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Paquetes</a>
+                        <a style=\"text-decoration:none; color:#009779; font-weight:bold;\" href=\"#\">Telefonía Móvil</a> 
                     </p>
                     <p>
                         &copy;".date( "Y")." Beneleit SA de CV, empresa Mexicana con domicilio en Avenida 23 Oriente No. 405–A Colonia El Carmen, C.P. 72530, Histórica Puebla De Zaragoza, México. Este es un correo informativo. Para cualquier aclaración comunicate a nuestro call center.

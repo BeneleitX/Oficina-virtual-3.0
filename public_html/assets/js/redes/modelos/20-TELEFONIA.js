@@ -233,8 +233,8 @@ function beneleit( data ){
                     .style( 'stroke', 'var(--bs-gray-500)' );
 
                 node.each( function( e,n ){
-                    if( linkedNodes.includes( e.id ) ) 
-                        this.parentNode.append( this );
+                  //  if( linkedNodes.includes( e.id ) ) 
+                 //       this.parentNode.append( this );
                 });
             });
 
