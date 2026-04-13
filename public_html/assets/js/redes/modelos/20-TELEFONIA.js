@@ -187,7 +187,7 @@ function beneleit( data ){
         // funcionalidad de popover
         var nodeEnter = node
             .enter()
-            .append( 'g' )
+            .append( 'g' ) 
              .attr( 'class', 'node')
             .attr( 'socio', function( d ){ return d.id; } )
       

@@ -170,7 +170,7 @@ function beneleit( data ){
             .selectAll( 'g.node' )
             .data( nodes, function( d ){ 
                 return d.id || ( d.id = ++i ); 
-            });
+            }); 
 
         const parentTree = ( d ) => {
             let nodeLinks = [];
