@@ -198,7 +198,7 @@ function beneleit( data ){
                 return 'translate(' + d.x + ',' + d.y + ')';
             }) 
 
-
+ .attr( 'cursor', 'pointer' ) 
             .on( 'click', function( d ){
                 userdata( d.id );
             })
@@ -211,7 +211,7 @@ function beneleit( data ){
                     .style( 'transition', '.4s all ease' )
                     .style( 'stroke', function( e, a ){
                         if ( linkedNodes.includes( e.target.id ) ){
-                            this.parentNode.append( this );
+                      //      this.parentNode.append( this );
                             return e.target.id == 0 ? 'var(--bs-gray-500)' : 'var(--bs-' + estatus[ d.estatus ].color + ')';
                         }
                         else
@@ -219,8 +219,8 @@ function beneleit( data ){
                     });
 
                 node.each( function( e,n ){
-                    if( linkedNodes.includes( e.id ) ) 
-                        this.parentNode.append( this );
+                //    if( linkedNodes.includes( e.id ) ) 
+                  //      this.parentNode.append( this );
                 });
             })
             
