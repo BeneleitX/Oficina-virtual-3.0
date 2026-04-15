@@ -30,13 +30,12 @@ if( sizeof( $directos ) > 0 ){
 
         $meses = "";
         $descalificado = false;
+        $ma = date( "m" );
 
         foreach( $puntos as $k => $i ){
             if( $i < 6 && $ma > intval( $k ) ){
                 $descalificado = true;
             }
-
-            $ma = date( "m" );
 
             $meses .= "<div class=\"col-1 text-center mx-0\" style=\"width:10% !important; padding:0 1px !important;\"><span class=\"badge bg-".( $descalificado ? ( $ma > intval( $k ) ? "red" : "gray-600" ) : ( $i >= 6 ? "teal" : ( $ma == intval( $k ) ? "mustard" : "gray-400" ) ) )."\" style=\"width:100%;display:inline-block; font-size:10px !important;\">{$i}</span></div>";
         }
