@@ -38,7 +38,7 @@ if( sizeof( $directos ) > 0 ){
 
             $ma = date( "m" );
 
-            $meses .= "<div class=\"col-1 text-center mx-0 px-0\" style=\"width:10% !important\"><span class=\"badge bg-".( $descalificado ? ( $ma > intval( $k ) ? "red" : "gray-600" ) : ( $i >= 6 ? "teal" : ( $ma == intval( $k ) ? "mustard" : "gray-400" ) ) )."\" style=\"width:100%;display:inline-block;\">{$i}</span></div>";
+            $meses .= "<div class=\"col-1 text-center mx-0\" style=\"width:10% !important; padding:0 1px !important;\"><span class=\"badge bg-".( $descalificado ? ( $ma > intval( $k ) ? "red" : "gray-600" ) : ( $i >= 6 ? "teal" : ( $ma == intval( $k ) ? "mustard" : "gray-400" ) ) )."\" style=\"width:100%;display:inline-block; font-size:10px !important;\">{$i}</span></div>";
         }
 
         echo "\n<div class=\" mx-3 mb-4 px-3 py-2\" style=\"position:relative\">
@@ -72,4 +72,4 @@ else{
     </div>  
 </div>
 
-
+<p class="mx-3 small">Recuerda que para ganar el viaje debes tener 10 socios directos nuevos calificando como MASTER o ELITE desde su registro hasta que finalice el concurso, y al menos uno de ellos debe alcanzar el rango ORO durante 3 meses consecutivos.</p>
