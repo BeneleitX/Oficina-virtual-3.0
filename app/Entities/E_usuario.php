@@ -1900,6 +1900,59 @@ class E_usuario extends Entity
     }
 
 
+    public function getXcaret()
+    {
+        $db = db_connect();
+
+        $sql = "WITH RECURSIVE meses AS (
+                    SELECT 3 AS mes
+                    UNION ALL
+                    SELECT mes + 1 FROM meses WHERE mes < 12
+                ),
+                periodos AS (
+                    SELECT 
+                        mes,
+                        CONCAT('2026', LPAD(mes, 2, '0')) AS periodo
+                    FROM meses
+                )
+
+                SELECT 
+                    u.id,
+
+                    JSON_OBJECTAGG(
+                        LPAD(p.mes, 2, '0'),
+                        IFNULL(
+                            CAST(
+                                JSON_UNQUOTE(
+                                    JSON_EXTRACT(
+                                        u.historial,
+                                        CONCAT('$.modelos.\"10-NUTRICION\".calificaciones.\"', p.periodo, '\".\"010-DISTRIBUIDOR\"')
+                                    )
+                                ) AS UNSIGNED
+                            ), 0
+                        )
+                    ) AS puntos,
+
+                    JSON_OBJECTAGG(
+                        LPAD(p.mes, 2, '0'),
+                        f_get_ingresos(u.id, p.periodo, '10-NUTRICION')
+                    ) AS ingresos
+
+                FROM t_usuarios u
+                JOIN periodos p
+
+                WHERE          
+                u.redes->>'$.modelos.\"10-NUTRICION\".padre' = {$this->id}           
+                AND CAST(
+                    u.historial->>'$.modelos.\"10-NUTRICION\".primercompra.\"010-DISTRIBUIDOR\"' 
+                    AS DATE
+                ) > '2026-02-28'
+
+                GROUP BY u.id;";
+
+        return $db->query( $sql )->getResult();
+    }
+
 
     public function password_personalizado()
     {
