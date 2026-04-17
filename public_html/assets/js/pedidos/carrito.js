@@ -204,9 +204,11 @@ function xupdate_costos(){
                 var campo    = $( this ).find( 'input.cantidad' ),
                     cantidad = parseInt( campo.val() ),
                     producto = $( this ).attr( 'producto' ),
-                    unitario = parseFloat( campo.attr( 'unitario' ) ),
+                    multiplo = producto == '407-BLSA' && cantidad >= 15 ? 0.85 : 1
+                    unitario = parseFloat( campo.attr( 'unitario' ) * multiplo ),
                     orden    = parseInt( $( this ).attr( 'orden' ) );
 
+                console.log( producto, cantidad, multiplo );
                 cuenta_productos += parseInt( cantidad );
 
                 if( primer_producto == 0 ){
@@ -368,8 +370,13 @@ function update_pedido( flag = null ){
                 var campo    = $( this ).find( 'input.cantidad' ),
                     cantidad = parseInt( campo.val() ),
                     producto = $( this ).attr( 'producto' ),
-                    unitario = parseFloat( campo.attr( 'unitario' ) ),
+                    multiplo = producto == '407-BLSA' && cantidad >= 15 ? 0.85 : 1
+                    unitario = parseFloat( campo.attr( 'unitario' ) * multiplo ),
                     orden    = parseInt( $( this ).attr( 'orden' ) );
+
+
+                console.log( producto, cantidad, unitario );
+
 
                 cuenta_productos += parseInt( cantidad );
 
@@ -399,6 +406,7 @@ function update_pedido( flag = null ){
                     
                     total_promo += ( cantidad * unitario );
                     total_comisionable += ( cantidad * cat_productos[ producto ].precio.base );
+                    $( this ).find( '.unitario' ).html( Moneda.format( unitario ) );
                     $( this ).find( '[subtotal]' ).html( Moneda.format( cat_promociones[ promocion ].settings.paquete == "true" ? 0 : ( cantidad * unitario ) ) );
                 }
                 else{
@@ -878,7 +886,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
                         
                         '<td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? 'd-none ' : '' ) + 'col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td>' + 
                         
-                        '<td valign="top" class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' ) ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500">' +  Moneda.format( precio ) + '</h5></td>' + 
+                        '<td valign="top" class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' ) ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500 unitario">' +  Moneda.format( precio ) + '</h5></td>' + 
                         
                         '<td valign="top" class="text-end text-primary" nowrap><div class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'd-none' : '' )+'"><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5></div>' + ( pagado || bloqueado|| cancelado || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? '' : '<p class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'mt-4' : 'mt-0' )+' mb-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>'
 
