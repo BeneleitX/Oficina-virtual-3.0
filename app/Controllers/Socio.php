@@ -111,7 +111,7 @@ class Socio extends BaseController
         session()->setFlashdata('msg', [ 
             "clase" => "success", 
             "icono" => "user-check", 
-            "texto" => "Se ha actualizado la fotografía"]);
+            "texto" => "Se ha actualizado la fotografía"]); 
     }
 
 
