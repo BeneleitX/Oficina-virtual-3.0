@@ -1,13 +1,13 @@
 <h4 class="mt-1 mb-0">
-    <?php echo $titulo; ?> - 
-    <?php echo "Pedido No. ".referencia( $pedido )." 
+    <?php echo $titulo; ?>
+    <?php echo " - Pedido No. ".referencia( $pedido )." 
     <span style=\"font-size:16px\">
     ".( $pagado ? ( ( $pedido[ "data" ][ "primercompra" ] ?? -1 ) >= 0 ? ( $pedido[ "data" ][ "primercompra" ] == 1 ? "<span class=\"badge bg-violet rounded-pill\"><i class=\"fa fa-check\"></i> primer compra</span>" : "" ) : "<span class=\"badge bg-white rounded-pill border border-red text-red\"><i class=\"fa fa-warning\"></i> no data</span>" ) : "" )."
     ".estatus( $pedido[ "estatus_codigo" ])."</span>"; ?>
 </h4>
 
 <p>
-    <a class="btn btn-light btn-sm" href="<?php echo base_url( "historial/".$modelo ); ?>"><i class="fa fa-undo"></i> Regresar a historial de compras</a>
+    <a class="btn btn-light btn-sm" href="<?php echo base_url( ( $salida ? "salidas" : "historial" )."/".$modelo ); ?>"><i class="fa fa-undo"></i> Regresar a <?php echo $salida ? "salidas" : "historial de compras"; ?></a>
 </p>
 
 <div class="row">
@@ -29,12 +29,12 @@
             
             echo "</ul>"; */
 
-            echo pills( "tienda", $modelo );
+            if( !$salida ) echo pills( $salida ? "salida" : "tienda", $modelo );
         }
         ?>
 
         <p>
-            <?php echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?>
+            <?php if( !$salida ) echo $socio->avatar()." ".$socio->id( $modelo )." ".$socio->nombre( 2 ); ?>
         </p>
     </div>
 
@@ -49,7 +49,7 @@
                 <button id="borra_todo" class="btn btn-outline-danger"><i class="fa fa-xmark"></i> Reiniciar pedido</button>
             </p>
 
-            <table align="right">
+            <table align="right" <?php if( $salida ) echo "class=\"d-none\""; ?>>
                 <tr>
                     <td class="text-end small pe-3">Puntajes acumulados por compras<br>anteriores en este mes:</td>
                     <td id="pre_puntajes">
@@ -198,7 +198,7 @@
                                 }                                
 
                                 
-                    echo "<div contenido class=\"card-footer bg-gray-300 text-end\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
+                    echo "<div contenido class=\"card-footer bg-gray-300 text-end ".( $salida ? "d-none" : "" )."\" style=\"".( $evento == "true" ? "display:none" : "" )."\">
                                     <table align=\"right\">
                                         <tr>
                                             <td>Total de {$p[ "settings" ][ "nombre" ]} &nbsp; </td>
@@ -229,7 +229,39 @@
 	</div>
 
     <div class="col-lg-6">
-        <div class="card mb-3">
+        <div class="card mb-3 <?php echo !$salida ? "d-none" : "" ?>">
+            <div class="card-header"><h5 class="m-0">Origen</h5></div>
+            <div class="card-body">
+                <strong>Almacen donde se descontarán los productos</strong><br>
+
+                            <select class="form-select bg-mustard text-white" name="select_almacen" style="display:inline-block; width:50%">
+                                <?php
+                                $existe_almacen = 0;
+
+                                foreach( ALMACENES as $a ){
+
+                                    if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
+                                        if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                            $existe_almacen = 1;
+                                        }
+                                        
+                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                                        echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
+                                    }
+                                }
+                                ?>
+                            </select>                
+
+            </div>
+        </div>
+        <div class="card mb-3 <?php echo !$salida ? "d-none" : "" ?>">
+            <div class="card-header"><h5 class="m-0">Anotaciones</h5></div>
+            <div class="card-body">
+                <strong>Observaciones relacionadas con esta salida de producto</strong><br>
+                <textarea class="form-control" name="observaciones" id="observaciones" rows="3"><?php echo $salida ? $pedido[ "data" ][ "observaciones" ] ?? "" : "" ?></textarea>
+            </div>
+        </div>
+        <div class="card mb-3 <?php echo $salida ? "d-none" : "" ?>">
             <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
 
             <div class="card-body m-0">
@@ -517,7 +549,7 @@
 
         </div>
 
-        <div id="puntajes" class="mb-3">
+        <div id="puntajes" class="mb-3 <?php echo $salida ? "d-none" : "" ?>">
             <?php
             if( ( $pagado || $bloqueado || $cancelado ) ){
                 foreach( PROMOCIONES as $p ){
@@ -552,7 +584,7 @@
         ?>
 
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 <?php echo $salida ? "d-none" : "" ?>">
                 <div class="card mb-3" style="overflow:hidden">
                     <table class="table rounded-3 m-0">
                         <tr>
@@ -816,7 +848,7 @@
 
                         if( $mp[ "settings" ][ "tipocomision" ] != "saldo" || $socio->data->saldo->{$modelo}->estatus == 1 ){
                     
-                            echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cash-register\" style=\"font-size:50px;\"></i></td><td>Finalizar pedido y elegir<br>método de pago</td></tr></table></button></span>";    
+                            echo "\n<span id=\"btn-wrapper\" class=\"d-inline-block w-100\" tabindex=\"0\" data-bs-html=\"true\" data-bs-toggle=\"tooltip\" title=\"Cargando...\"><button class=\"btn col-12 m-0 btn-light col-12\" disabled id=\"open_checkout\"><table class=\"w-100\"><tr><td><i class=\"mx-3 my-2 fa fa-cart-flatbed\" style=\"font-size:50px;\"></i></td><td>".( $salida ? "Finalizar salida de producto" : "Finalizar pedido y elegir<br>método de pago" )."</td></tr></table></button></span>";    
                             
                         }
 
@@ -861,7 +893,7 @@
 </div>
 
 <?php 
-if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){
+if( !$salida && ( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ) ){
     if( $pagado ){
         echo "\n<div class=\"card mb-5\">
                     <div class=\"card-header bg-blue\">
@@ -1025,12 +1057,12 @@ if( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->data[ "usuario" 
                     </div>
                     <div class="modal-body">
 
-                        <h1 class="display-4 text-center mb-4"><span class="badge bg-light text-teal" id="calcula_total">$<?php echo number_format( $tt2, 2 ) ?></span></h1>
+                        <h1 class="display-4 text-center mb-4"><span class="badge bg-light text-teal" id="calcula_total">$<?php echo number_format( $tt2, 2 ); ?></span></h1>
                         <label class="form-label"><strong>Elige el tipo de pago:</strong></label>
                         <select class="form-select mb-3" name="metodopago" id="calcula_pago">
                             <?php
 
-                            $pago = METODOSPAGO[ "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
+                            $pago = METODOSPAGO[ $salida ? "4".substr( $modelo, 0, 1 )."-SALIDA" : "8".substr( $modelo, 0, 1 )."-DIRECTO" ];
                             echo "\n<option tipo=\"{$pago[ "settings" ][ "tipocomision" ]}\" cantidad=\"{$pago[ "settings" ][ "comision" ]}\" value=\"{$pago[ "codigo" ]}\" selected>{$pago[ "settings" ][ "descripcion" ]} | Comisión: ".( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "" : "$" ).number_format( $pago[ "settings" ][ "comision" ], 2 ).( $pago[ "settings" ][ "tipocomision" ] == "porcentaje" ? "%" : "")."</option>"; 
 
                             if( $modelo!= "50-INVERSION" ){
@@ -1593,6 +1625,7 @@ foreach( $productos as $p ){
         pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
         tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
         pagado 		    = <?php echo $pagado; ?>,
+        salida 		    = <?php echo $salida == 1 ? 1 : 0; ?>,
         pedidos_gratis  = <?php echo $pg;  ?>,
         total_pedido    = <?php echo $tt2; ?>,
         bloqueado 	    = <?php echo $bloqueado; ?>,

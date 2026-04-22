@@ -374,10 +374,6 @@ function update_pedido( flag = null ){
                     unitario = parseFloat( campo.attr( 'unitario' ) * multiplo ),
                     orden    = parseInt( $( this ).attr( 'orden' ) );
 
-
-                console.log( producto, cantidad, unitario );
-
-
                 cuenta_productos += parseInt( cantidad );
 
                 if( primer_producto == 0 ){
@@ -712,8 +708,17 @@ function update_pedido( flag = null ){
             ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ) &&
             ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen );
         
-            $errores = '';
+            errores = '';
         
+        if( salida ){
+            pedido.data.observaciones = $( '#observaciones' ).val();
+            pedido.data.salida = 1;
+            observaciones = ( pedido.data.observaciones ).length;
+            permitepagos  = total_productos_pedido > 0 && observaciones > 0;
+            
+            pedido.data.domicilio = null;
+        }
+
         /*      
         console.log(
             ( ( pedido.metodoentrega_codigo && pedido.data.peso > 0 ) || pedido.data.peso == 0 ),
@@ -734,28 +739,36 @@ function update_pedido( flag = null ){
 
             // mostrar error
 
-            if( pendientes ){
-                $errores = 'Hay productos obligatorios que no has seleccionados';
-            }
-
-            if( !pedido.metodoentrega_codigo && pedido.data.peso > 0 ){
-                $errores = 'No has seleccionado método de entrega';
-            }
-
-            if( pedido.no_stock ){
-                $errores = 'Stock insuficiente en almacen seleccionado';
-            }
-
             if( total_productos_pedido == 0 ){
-                $errores = 'Tu pedido está vacío';
+                errores = 'Tu pedido está vacío';
             }
 
-            if( es_paqueteria && !( parseInt( pedido.data.entrega ) > 0 ) ){
-                $errores = 'Debes seleccionar un domicilio';
+            if( salida ){
+                if( !observaciones ){
+                    errores = 'Debes ingresar observaciones';
+                }
             }
+            else{
+                if( pendientes ){
+                    errores = 'Hay productos obligatorios que no has seleccionados';
+                }
 
-            if( es_almacen && pedido.data.entrega == null ){
-                $errores = 'Debes seleccionar un almacen';
+                if( !pedido.metodoentrega_codigo && pedido.data.peso > 0 ){
+                    errores = 'No has seleccionado método de entrega';
+                }
+
+                if( pedido.no_stock ){
+                    errores = 'Stock insuficiente en almacen seleccionado';
+                }
+
+
+                if( es_paqueteria && !( parseInt( pedido.data.entrega ) > 0 ) ){
+                    errores = 'Debes seleccionar un domicilio';
+                }
+
+                if( es_almacen && pedido.data.entrega == null ){
+                    errores = 'Debes seleccionar un almacen';
+                }
             }
         }
         else{
@@ -764,11 +777,11 @@ function update_pedido( flag = null ){
             $( this ).addClass( 'btn-primary' );
 
             $( '#open_checkout' ).addClass( 'btn-success' ).removeClass( 'btn-light' ).prop( 'disabled', false );
-            $errores = 'Click para finalizar el pedido y seleccionar método de pago';
+            errores = salida ? 'Click para finalizar la salida de producto' : 'Click para finalizar el pedido y seleccionar método de pago';
         }
 
         const tooltip = bootstrap.Tooltip.getInstance('#btn-wrapper');
-        if( !( pagado || bloqueado || cancelado ) )  tooltip.setContent( { '.tooltip-inner': $errores } ); 
+        if( !( pagado || bloqueado || cancelado ) )  tooltip.setContent( { '.tooltip-inner': errores } ); 
 
     });
     
@@ -886,9 +899,9 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
                         
                         '<td class="w-100"><div class="row"><div class="col-md-9"><h5 class="m-0">' + cat_productos[ producto ].data.nombre.toUpperCase() + '</h5><p class="small mb-3">' + cat_productos[ producto ][ 'data' ][ 'descripcion' ] + '<br>' + ( promocion == '010-DISTRIBUIDOR' ? '<span class="badge bg-gray-500">' + cat_productos[ producto ][ 'data' ][ 'puntos' ][ promocion ] + ' pts' : '' ) + '</span></p></div><div class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? 'd-none ' : '' ) + 'col-md-3 small px-0">Cantidad: <input min="1" max="99" unitario="' + precio + '" ' + ( ( pagado || bloqueado || cancelado ) ? 'disabled' : ' onchange="cambia_cantidad(\'' + promocion + '\', \'' + producto + '\')"') + ' type="number" ' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'disabled' : '' ) + ' class="cantidad form-control bg-white" value="' + cantidad + '"></div></div></td>' + 
                         
-                        '<td valign="top" class="' + ( modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' ) ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500 unitario">' +  Moneda.format( precio ) + '</h5></td>' + 
+                        '<td valign="top" class="' + ( salida || modelo == '50-INVERSION' || ( cat_promociones[ promocion ].settings.kit == 'true' ) ? 'd-lg-none ' : '' ) + 'text-end text-primary d-none d-lg-table-cell" nowrap><small>P. unitario</small><h5 class="text-gray-500 unitario">' +  Moneda.format( precio ) + '</h5></td>' + 
                         
-                        '<td valign="top" class="text-end text-primary" nowrap><div class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'd-none' : '' )+'"><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5></div>' + ( pagado || bloqueado|| cancelado || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? '' : '<p class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'mt-4' : 'mt-0' )+' mb-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>'
+                        '<td valign="top" class="text-end text-primary" nowrap><div class="'+( salida || cat_promociones[ promocion ].settings.kit == 'true' ? 'd-none' : '' )+'"><small>Subtotal</small><h5 subtotal>' + Moneda.format( precio * cantidad ) + '</h5></div>' + ( pagado || bloqueado|| cancelado || ( cat_promociones[ promocion ].settings.kit == 'true' && Object.keys( cat_promociones[ promocion ].productos.precarga ).length > orden ) ? '' : '<p class="'+( cat_promociones[ promocion ].settings.kit == 'true' ? 'mt-4' : 'mt-0' )+' mb-0"><button onclick="borra_producto(\'' + promocion + '\', \'' + producto + '\')" class="' + ( cat_promociones[ promocion ].settings.forced == "true" ? 'd-none' : '' ) + ' btn btn-sm btn-light text-red"><i class="fa fa-xmark"></i> Eliminar</button></p>' ) + '</td></tr>'
 
         $( '.card[promocion=' + promocion + '] table[productos]' ).append( html_composed );
         $( '.card[promocion=' + promocion + ']' ).show();
@@ -1012,7 +1025,9 @@ $(document).ready(function()
         pedido.data.costoxbulto = 0;
         pedido.metodoentrega_codigo = null;
         pedido.data.mesanterior = 0;
+        pedido.data.observaciones = '';
 
+        $( '[name=observaciones]' ).val( '' );
         $( '[total_productos]' ).attr( 'total_productos', 0 );
         $( '[total_entrega]' ).attr( 'total_entrega', 0 );
         $( '[total_saldo]' ).attr( 'total_saldo', 0 );
@@ -1053,7 +1068,16 @@ $(document).ready(function()
 
         $( '.card[promocion=' + promocion + '] [conteo]' ).text( conteo + ' productos' );
     });
-        
+    
+    // elige metodo de entrega
+    $( '[name=observaciones]' ).on( 'change', function(){
+
+        pedido.data.salida = 1;
+        pedido.data.observaciones = $( this ).val();
+
+        update_pedido( "metodo entrega" ); 
+    } );
+
     // elige metodo de entrega
     $( '[name=metodosentrega]' ).on( 'change', function(){
         var metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val() != '' ? $( '[name=metodosentrega]:checked' ).val() : null,
@@ -1294,6 +1318,7 @@ $(document).ready(function()
     });
 
     $( '#open_checkout' ).on( 'click', function(){
+        console.log( salida );
         $( '#modal_checkout' ).modal( 'show' );
     });
 

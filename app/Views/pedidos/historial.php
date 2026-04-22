@@ -7,14 +7,20 @@
 <div class="row">
     
         <?php 
-        if( $modelo == '20-TELEFONIA' ){
-            echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Paquetes y activaciones</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> SIM cards y Promocionales</a></div>";
-        }elseif( $modelo == '40-GASOLINAS'  ){
-            echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\">".( $usuario->data->tarjeta->numero ?? null ? "<div class=\"alert alert-info text-center py-2 mt-4 h4\">{$usuario->data->tarjeta->numero}</div>" : "<button class=\"btn btn-lg mt-4 col-12 btn-info2\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</button>" )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-credit-card\"></i> &nbsp;Nuevos pedidos</a></div>";
-        }elseif( $modelo == '50-INVERSION' ){
-            echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\">".( $especial ? "<a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-hand-holding-dollar\"></i> Nuevo paquete</a>" : "" )."</div>";
-        }else{
-            echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
+        if( $salidas ){
+            echo "<div class=\"col-lg-8\">".pills( "salidas", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-warning\" href=\"".base_url( "salida/".$modelo )."\"><i class=\"fa fa-cart-flatbed\"></i> Nueva salida de producto</a></div>";
+        }
+        else{
+
+            if( $modelo == '20-TELEFONIA' ){
+                echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-success\" href=\"".base_url( "beneleit_movil" )."\"><i class=\"fa fa-shopping-cart\"></i> Paquetes y activaciones</a></div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-sim-card\"></i> SIM cards y Promocionales</a></div>";
+            }elseif( $modelo == '40-GASOLINAS'  ){
+                echo "<div class=\"col-lg-6\">".pills( "historial", $modelo )."</div><div class=\"col-lg-3\">".( $usuario->data->tarjeta->numero ?? null ? "<div class=\"alert alert-info text-center py-2 mt-4 h4\">{$usuario->data->tarjeta->numero}</div>" : "<button class=\"btn btn-lg mt-4 col-12 btn-info2\" onclick=\"$( '#activa_tarjeta' ).modal( 'show' )\"><i class=\"fa fa-credit-card\"></i> Activar tarjeta</button>" )."</div><div class=\"col-lg-3\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-credit-card\"></i> &nbsp;Nuevos pedidos</a></div>";
+            }elseif( $modelo == '50-INVERSION' ){
+                echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\">".( $especial ? "<a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-hand-holding-dollar\"></i> Nuevo paquete</a>" : "" )."</div>";
+            }else{
+                echo "<div class=\"col-lg-8\">".pills( "historial", $modelo )."</div><div class=\"col-lg-4\"><a class=\"btn btn-lg mt-4 col-12 btn-secondary\" href=\"".base_url( "tienda/".$modelo )."\"><i class=\"fa fa-shopping-cart\"></i> Nuevos pedidos</a></div>";
+            }
         }
 
         ?>
@@ -79,7 +85,7 @@
 
                     echo "</td><td class=\"text-end\">".( $p[ "data" ][ "sat" ][ "factura" ] ?? null ? " <small class=\"\"><span style=\"vertical-align: text-top;\" class=\"badge bg-".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? ( $p[ "data" ][ "cfd" ] ?? null ? "teal" : "red" ) : "mustard" )."\">".( $p[ "data" ][ "sat" ][ "factura" ] == "146-FACTURA-OK" ? $p[ "data" ][ "cfd" ] ?? "CFD ERROR" : "<i class=\"fa fa-file-invoice-dollar\"></i>" )."</span></small> " : "" ).( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) < 255 ? "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" : "$".number_format( $p[ "data" ][ "total" ] + $p[ "data" ][ "comisionbanco" ] + $p[ "data" ][ "comisionentrega" ], 2 ) )."</td>
                     
-                    <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? "<span class=\"d-none\">".substr( $p[ "fechas" ][ "pagado" ], 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10 ) ) ) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
+                    <td class=\"text-center\">".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 400 ? "<span class=\"d-none\">".substr( $p[ "fechas" ][ $salidas ? "entregado" : "pagado" ] ?? "", 0, 10 )."</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ $salidas ? "entregado" : "pagado" ] ?? "", 0, 10 ) ) ) : "<span class=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>
                     
                     <td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span><span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\">".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "<span class=\"d-none\">".date( "Y-m-d H:i:s" )."</span>" )."</td>
 

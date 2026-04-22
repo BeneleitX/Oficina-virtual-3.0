@@ -111,9 +111,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "historial",                          "Pedidos::historial" ); 
     $routes->post( "historial/fuente",                  "Pedidos::fuente" ); 
     $routes->get( "historial/(:any)",                   "Pedidos::historial/$1" ); 
+    $routes->get( "salidas/(:any)",                     "Pedidos::historial/$1/salida" ); 
     $routes->get( "pedido",                             "Pedidos::historial" ); 
     $routes->get( "pedido/(:num)",                      "Pedidos::carrito/pedido/$1" ); 
     $routes->get( "tienda/(:any)",                      "Pedidos::carrito/modelo/$1" ); 
+    $routes->get( "salida/(:any)",                      "Pedidos::carrito/salida/$1" ); 
     $routes->get( "shop/(:any)",                        "Pedidos::shop/modelo/$1" ); 
     $routes->get( "pagoyenvio/(:any)",                  "Pedidos::pagoyenvio/$1" ); 
     $routes->get( "compra_demo/(:num)/(:any)/(:num)",   "Pedidos::compra_demo/$1/$2/$3" );

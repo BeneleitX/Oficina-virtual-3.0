@@ -21,7 +21,7 @@ class Pedidos extends BaseController
         echo template( "pedidos/dashboard", $this->data );
     }
 
-    public function historial( $modelo = null )
+    public function historial( $modelo = null, $salidas = false )
     {
         if( !$modelo ){
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
@@ -36,6 +36,7 @@ class Pedidos extends BaseController
         }
 
         $this->data[ "especial" ] = false;
+        $this->data[ "salidas" ]  = $salidas ? true : false;
 
         if( $modelo == "50-INVERSION" ){ 
             $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
@@ -53,10 +54,11 @@ class Pedidos extends BaseController
         $this->data[ "socio" ]   = $this->data[ "usuario" ];
         $this->data[ "navbar" ]  = true;
         $this->data[ "modelo" ]  = $modelo;
-        $this->data[ "titulo" ]  = "Mis pedidos";
+        $this->data[ "titulo" ]  = $this->data[ "salidas" ] ? "Registro de salidas especiales de producto" : "Mis pedidos";
 
         $sql = "substring( estatus_codigo, 1, 3 ) > 250
                 AND modelo_codigo = '{$modelo}' 
+                ".( $salidas ? "and json_extract( data, '$.salida' ) = 1 " : "and ( json_extract( data, '$.salida' ) = 0 or json_extract( data, '$.salida' ) is null )" )."
                 AND usuario_id = ".$this->data[ "socio" ]->id;
 
         $this->data[ "pedidos" ] = model( "PedidoModel" )->where( $sql, null, false )->findAll();
@@ -130,8 +132,8 @@ class Pedidos extends BaseController
        
         $this->data[ "especial" ] = "0";
         $this->data[ "sinergy_especial" ] = "0";
-        
-        // Entrar a pedido en espera de pago o pagado (usando referencia)
+        $this->data[ "salida" ] = $tipo == "salida" ? true : false;
+
         if( $tipo == "pedido" ){
 
             $this->data[ "titulo" ] = "Detalles de pedido";
@@ -221,8 +223,6 @@ class Pedidos extends BaseController
         // Entrar directo a URl tienda (sin referencia, pedido en proceso)
         else{
             $modelo = $data;
-            
-
 
             if( $modelo == "50-INVERSION" ){ 
                 $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
@@ -262,14 +262,16 @@ class Pedidos extends BaseController
             $this->data[ "premieres" ][ date( "Ym" ) ] = $this->data[ "socio" ]->getPremieres( date( "Ym" ) );
             $this->data[ "productos" ] = model( "ProductoModel" )->where( $sql , null, false )->findAll();
 
-            load_catalogo( "promociones",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina");
+            $q = ( $tipo == "salida" ? "json_extract( settings, '$.salida' ) = true AND " : "( json_extract( settings, '$.salida' ) = false or json_extract( settings, '$.salida' ) is null ) and " ).( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."{$activo} AND modelo_codigo = '{$modelo}' and now() between inicia and termina";
+
+            load_catalogo( "promociones", $q);
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
-            load_catalogo( "metodospago",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'");
+            load_catalogo( "metodospago",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'".( $tipo == "salida" ? " and json_extract( settings, '$.salida' ) = true" : "") );
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
             $this->data[ "socio" ]->PTS = $this->data[ "socio" ]->getCalificaciones( $modelo );
-            $this->data[ "titulo" ] = "Tienda en línea";
+            $this->data[ "titulo" ] = $this->data[ "salida" ] ? "Salida de producto" : "Tienda en línea";
             $this->data[ "pedido" ][ "data" ][ "pesoxbulto" ] = MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ];
         }
 
@@ -695,7 +697,7 @@ class Pedidos extends BaseController
     public function fondeo()
     {
         extract( $this->request->getPost() );
-        echo $this->data[ "usuario" ]->fondeo( $pedido, $metodo, $cantidad );
+        echo $this->data[ "usuario" ]->fondeo( $pedido, $metodo, $cantidad, null, $salida );
     }
 
 

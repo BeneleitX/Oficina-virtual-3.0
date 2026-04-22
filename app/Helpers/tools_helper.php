@@ -456,7 +456,7 @@ function get_hash( $pedido ){
  * @param int $dia_limite Día límite para considerar si el socio tiene regalo biex
  * @return void
  */
-function check_biex( $pedido, $usuario, $dia_limite = 20 )
+function check_biex( $pedido, $usuario, $dia_limite = 30 )
 {     
     $fecha = $pedido[ "fechas" ][ "pagado" ];
     $mes   = date( "m", strtotime( $fecha ) );

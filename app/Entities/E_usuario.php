@@ -1332,12 +1332,13 @@ class E_usuario extends Entity
      * 
      * @return string Referencia del pedido pagado.
      */
-    public function fondeo( $pedido, $metodo, $cantidad, $mes = null ){
+    public function fondeo( $pedido, $metodo, $cantidad, $mes = null, $salida = 0 ){
 
         if( $mes && $mes == date( "Ym" ) ) $mes = null;
 
         $pedido = model( "PedidoModel" )->find( $pedido );
         $modelo = $pedido[ "modelo_codigo" ];
+
 
         if( !$pedido || $pedido[ "usuario_id"] != $this->id ){
             return 0;
@@ -1369,9 +1370,19 @@ class E_usuario extends Entity
 
         $total = $subtotal + $comisionbanco;
 
+        // si es salida de productos
+
+        if( $salida ){
+            $pedido[ "fechas" ][ "entregado" ]   = $fecha;
+            $pedido[ "estatus_codigo" ] = "622-ENTREGADO";
+    
+            model( "PedidoModel" )->save( $pedido );
+        }
+
+
         // PAGA PEDIDO
         // si la cantidad depositada es mayor o igual que el monto a pagar 
-        if( $total <= ( $saldo + $cantidad ) ){
+        elseif( $total <= ( $saldo + $cantidad ) ){
             $pedido[ "metodopago_codigo" ] = $metodopago[ "codigo" ];
             $pedido[ "data" ][ "comisionbanco" ] = $comisionbanco;
             $pedido[ "fechas" ][ "pagado" ]   = $fecha;

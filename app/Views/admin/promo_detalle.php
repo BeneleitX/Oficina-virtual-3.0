@@ -66,6 +66,7 @@
             "cyan",
             "light-blue",
             "blue",
+            "marine",
             "gray-500",
             "brown",
         ];
