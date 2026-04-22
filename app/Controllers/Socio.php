@@ -245,7 +245,7 @@ class Socio extends BaseController
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
         $nuevo = [
-            "nombre" => preg_replace('/[^A-Za-z0-9\-]/', ' ', $this->request->getPost( "beneficiario_nuevo" ) ),
+            "nombre" => preg_replace('/[^a-zA-Z]/', '', $this->request->getPost( "beneficiario_nuevo" )),
             "porcentaje" => $this->request->getPost( "beneficiario_porcentaje" )
         ];
 
