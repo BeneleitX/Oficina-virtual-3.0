@@ -218,7 +218,7 @@ class Socio extends BaseController
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
     }
  
-
+ 
     public function valida_credencial(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
