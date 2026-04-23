@@ -228,8 +228,9 @@
         <p id="shoploader" class="text-center m-0 p-3"><i style="zoom:4" class="fa fa-circle-notch fa-spin"></i></p>
 	</div>
 
-    <?php if( $salida ){ ?>
     <div class="col-lg-6">
+    <?php if( $salida ){ ?>
+    
         <div class="card mb-3">
             <div class="card-header"><h5 class="m-0">Origen</h5></div>
             <div class="card-body">
@@ -255,6 +256,7 @@
         </div>
 
         <?php } ?>
+        
         <div class="card mb-3 <?php echo !$salida ? "d-none" : "" ?>">
             <div class="card-header"><h5 class="m-0">Anotaciones</h5></div>
             <div class="card-body">
@@ -262,6 +264,7 @@
                 <textarea class="form-control" name="observaciones" id="observaciones" rows="3" <?php echo $pagado ? "disabled" : "" ?>><?php echo $salida ? $pedido[ "data" ][ "observaciones" ] ?? "" : "" ?></textarea>
             </div>
         </div>
+
         <div class="card mb-3 <?php echo $salida ? "d-none" : "" ?>">
             <div class="card-header bg-teal"><h5 class="mb-0 text-white">Método de Entrega</h5></div>
 
