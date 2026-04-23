@@ -41,7 +41,10 @@ function revisa_stock(){
 
         if( d == 'ALMACEN' || d == 'PAQUETERIA' ){
             entrega = d == 'ALMACEN' ? $( '[name=select_almacen]' ).val() : ( modelo.substring( 0, 1 ) -1 ) + '10-PUEBLA';
-            load_inventario( entrega );
+            if( !salida ){
+                load_inventario( entrega );
+                console.log( 'load inventario' );
+            }            
             
             if( entrega ){
                 $( '.card[promocion] table[productos] > tr[producto]' ).each( function(){
@@ -560,7 +563,7 @@ function update_pedido( flag = null ){
 
     puntos = pedido.suma[ "010-DISTRIBUIDOR" ];
     pedido.data.enviogratis = 0;
-    pedido.data.comisionentrega = ( pedido.data.costoxbulto ?? 0 ) * bultos;
+    pedido.data.comisionentrega = salida ? 0 : ( pedido.data.costoxbulto ?? 0 ) * bultos;
 
     if( pedidos_gratis == 0 ){
         if( puntos < 6 ){
@@ -706,15 +709,17 @@ function update_pedido( flag = null ){
             !pedido.no_stock && 
             total_productos_pedido > 0 && 
             ( ( es_paqueteria && parseInt( pedido.data.entrega ) > 0 ) || !es_paqueteria ) &&
-            ( ( es_almacen && pedido.data.entrega != null ) || !es_almacen );
+            ( ( es_almacen && pedido.data.entrega != null && (pedido.data.entrega ).length > 0 ) || !es_almacen );
         
             errores = '';
         
         if( salida ){
+            pedido.metodoentrega_codigo = '00-ALMACEN';
+            es_almacen = true;
             pedido.data.observaciones = $( '#observaciones' ).val();
             pedido.data.salida = 1;
             observaciones = ( pedido.data.observaciones ).length;
-            permitepagos  = total_productos_pedido > 0 && observaciones > 0;
+            permitepagos  = total_productos_pedido > 0 && observaciones > 0 && pedido.data.entrega != null && ( pedido.data.entrega ?? '' ).length > 0;
             
             pedido.data.domicilio = null;
         }
@@ -742,6 +747,16 @@ function update_pedido( flag = null ){
             if( total_productos_pedido == 0 ){
                 errores = 'Tu pedido está vacío';
             }
+console.log( es_almacen,  pedido.data.entrega == null, ( pedido.data.entrega ?? '' ).length == 0 );
+            if( es_almacen){
+                if( pedido.data.entrega == null || ( pedido.data.entrega ?? '' ).length == 0 ){
+                    errores = 'Debes seleccionar un almacen';
+                }
+                else{
+                    if( salida ) $( '#select_almacen' ).val( pedido.data.entrega );
+                }
+            }
+            
 
             if( salida ){
                 if( !observaciones ){
@@ -766,9 +781,7 @@ function update_pedido( flag = null ){
                     errores = 'Debes seleccionar un domicilio';
                 }
 
-                if( es_almacen && pedido.data.entrega == null ){
-                    errores = 'Debes seleccionar un almacen';
-                }
+
             }
         }
         else{
@@ -885,7 +898,7 @@ function agrega_producto( producto, promocion = null, cantidad = 1, auto = false
             modelo == '50-INVERSION' ? (
                 auto ? pedido.data.total  : $( '#cantidad_' + producto ).val()
             ) : (
-                    cat_promociones[ promocion ].settings.paquete == "true" || cat_promociones[ promocion ].formulas.precio === undefined ? 
+                    cat_promociones[ promocion ].settings.paquete == "true" || salida || cat_promociones[ promocion ].formulas.precio === undefined ? 
                         0 : 
                         eval( cat_promociones[ promocion ].formulas.precio )
         );  
@@ -1099,7 +1112,10 @@ $(document).ready(function()
             if( metodoentrega_activo.substring( 0, 2 ) == '00' ){
                 $( '.me_formulario[mp=almacen]' ).show();
                 entrega = $( '[name=select_almacen]' ).val();
-                load_inventario( entrega );
+                if( !salida ){
+                    load_inventario( entrega );
+                    console.log( 'load inventario' );
+                }
 
                 pedido.data.domicilio  = null;
 
@@ -1152,7 +1168,10 @@ $(document).ready(function()
         var entrega = $( this ).val(),
             metodoentrega_activo = $( '[name=metodosentrega]:checked' ).val();
 
-        load_inventario( entrega );
+        if( !salida ){
+            load_inventario( entrega );
+            console.log( 'load inventario' );
+        }
         pedido.data.costoxbulto = parseFloat( tarifas[ almacenes[ entrega ].settings.tarifa ], 2 );
         pedido.data.entrega = entrega;
         pedido.metodoentrega_codigo = metodoentrega_activo;
@@ -1218,7 +1237,16 @@ $(document).ready(function()
     $( 'button[name=metodopago], div.metodopago' ).show();
     // $( 'img[metodopago]' ).show();
 
-    if( !( pagado || bloqueado || cancelado ) ) update_pedido( "inicial" );
+    if( !( pagado || bloqueado || cancelado ) ){
+        if( salida ){
+            pedido.metodopago_codigo    = '41-SALIDA';
+            pedido.metodoentrega_codigo = '00-ALMACEN';
+
+            // $( '[name=select_almacen]' ).val( '' );
+        }
+
+        update_pedido( "inicial" );
+    }
 
     if( $( '[name=metodosentrega]' ).length == 1 ){
      //   $( '[name=metodosentrega]' ).click();
@@ -1318,7 +1346,6 @@ $(document).ready(function()
     });
 
     $( '#open_checkout' ).on( 'click', function(){
-        console.log( salida );
         $( '#modal_checkout' ).modal( 'show' );
     });
 

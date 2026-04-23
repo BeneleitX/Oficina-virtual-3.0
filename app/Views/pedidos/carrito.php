@@ -228,37 +228,38 @@
         <p id="shoploader" class="text-center m-0 p-3"><i style="zoom:4" class="fa fa-circle-notch fa-spin"></i></p>
 	</div>
 
+    <?php if( $salida ){ ?>
     <div class="col-lg-6">
-        <div class="card mb-3 <?php echo !$salida ? "d-none" : "" ?>">
+        <div class="card mb-3">
             <div class="card-header"><h5 class="m-0">Origen</h5></div>
             <div class="card-body">
                 <strong>Almacen donde se descontarán los productos</strong><br>
 
-                            <select class="form-select bg-mustard text-white" name="select_almacen" style="display:inline-block; width:50%">
-                                <?php
-                                $existe_almacen = 0;
+                <select class="form-select bg-mustard text-white" name="select_almacen" style="display:inline-block; width:50%">
+                    <?php
+                    $existe_almacen = 0;
 
-                                foreach( ALMACENES as $a ){
+                    foreach( ALMACENES as $a ){
 
-                                    if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
-                                        if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
-                                            $existe_almacen = 1;
-                                        }
-                                        
-                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
-                                        echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
-                                    }
-                                }
-                                ?>
-                            </select>                
+                            if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                $existe_almacen = 1;
+                            }
+                            
+                            if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                            echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
+                    }
+                    ?>
+                </select>                
 
             </div>
         </div>
+
+        <?php } ?>
         <div class="card mb-3 <?php echo !$salida ? "d-none" : "" ?>">
             <div class="card-header"><h5 class="m-0">Anotaciones</h5></div>
             <div class="card-body">
                 <strong>Observaciones relacionadas con esta salida de producto</strong><br>
-                <textarea class="form-control" name="observaciones" id="observaciones" rows="3"><?php echo $salida ? $pedido[ "data" ][ "observaciones" ] ?? "" : "" ?></textarea>
+                <textarea class="form-control" name="observaciones" id="observaciones" rows="3" <?php echo $pagado ? "disabled" : "" ?>><?php echo $salida ? $pedido[ "data" ][ "observaciones" ] ?? "" : "" ?></textarea>
             </div>
         </div>
         <div class="card mb-3 <?php echo $salida ? "d-none" : "" ?>">
@@ -323,7 +324,7 @@
 
                 <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
 
-                            <select class="form-select bg-mustard text-white" name="select_almacen" style="display:inline-block; width:50%">
+                            <select class="form-select bg-mustard text-white" name="select_almacen<?php echo $salida ? "2" : "" ?>" style="display:inline-block; width:50%">
                                 <?php
                                 $existe_almacen = 0;
 
@@ -619,7 +620,7 @@
                                         
                                     elseif( $pagado ){
 
-                                        $mesenvio = strtoupper( mes( date( "m", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) ) );
+                                        $mesenvio = strtoupper( mes( date( "m", strtotime( $pedido[ "fechas" ][ $salida ? "entregado" : "pagado" ] ) ) ) );
                                         if( !isset( $pedido[ "data" ][ "enviogratis" ] ) ){
                                             $pedido[ "data" ][ "enviogratis" ] = 0;
                                         }
@@ -723,14 +724,14 @@
                     <?php 
                     if( $pagado ){
                         ?>
-                        <div class="card mb-3" style="overflow:hidden">
+                        <div class="card mb-3 <?php echo $salida ? "d-none" : ""; ?>" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
                                 <tr>
                                     <td valign="middle" class="">Fecha de pago</td>
                                     
                                     <td valign="middle" class="text-end">
                                         <h5 class="m-0">
-                                            <?php echo $pedido[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ "pagado" ] ) ) : ""; ?>
+                                            <?php echo $pedido[ "fechas" ][ $salida ? "entregado" : "pagado" ] ? date( "d-m-Y", strtotime( $pedido[ "fechas" ][ $salida ? "entregado" : "pagado" ] ) ) : ""; ?>
                                         </h5>
                                     </td>
                                 </tr>
@@ -751,7 +752,7 @@
                                     
                                     <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
                                         <span class="badge bg-teal" style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "color:white"; ?>">
-                                            <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ "califica" ], 0, 4 ); ?>
+                                            <?php echo strtoupper( mes(substr( $pedido[ "fechas" ][ $salida ? "entregado" : "califica" ], 5, 2 ) ) )." ".substr( $pedido[ "fechas" ][ $salida ? "entregado" : "califica" ], 0, 4 ); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -762,14 +763,14 @@
                                     <td style="<?php if( intval( $pedido[ "data" ][ "mesanterior" ] ) ) echo "background:red"; ?>" valign="middle" class="text-end">
                                         
                                             <small><?php
-                                            $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ "reparte" ] ) );
+                                            $periodo = model( "PeriodoModel" )->find( codigo_periodo( $pedido[ "modelo_codigo" ], $pedido[ "fechas" ][ $salida ? "entregado" : "reparte" ] ) );
 
                                             if( $periodo ){
                                                 echo estatus( $periodo[ "estatus_codigo" ] );
                                             }
                                             ?></small>
                                         <span class="badge bg-marine">
-                                            <?php echo isset( $pedido[ "fechas" ][ "reparte" ] ) ? date( ( $periodo[ "tipo" ] ?? "SEMANAL" ) == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ "reparte" ] ) ) : "-ERROR-" ; ?>
+                                            <?php echo isset( $pedido[ "fechas" ][ $salida ? "entregado" : "reparte" ] ) ? date( ( $periodo[ "tipo" ] ?? "SEMANAL" ) == "SEMANAL" ? "W-o" : "m-Y" , strtotime( $pedido[ "fechas" ][ $salida ? "entregado" : "reparte" ] ) ) : "-ERROR-" ; ?>
                                         </span>
                                         
                                     </td>
@@ -777,7 +778,7 @@
                             </table>
                         </div>
 
-                        <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
+                        <a href="<?php echo base_url( "ticket/".urlencode( $link ) ); ?>" target="_new" class="mb-3 <?php echo $salida ? "d-none" : ""; ?> btn btn-primary col-12 <?php echo 1 || $existe_almacen ? "" : "disabled"; ?> " id="imprime">Imprimir ticket</a>
                         <?php
                     }
                     elseif( $cancelado ){

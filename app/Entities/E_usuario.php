@@ -1374,7 +1374,7 @@ class E_usuario extends Entity
 
         if( $salida ){
             $pedido[ "fechas" ][ "entregado" ]   = $fecha;
-            $pedido[ "estatus_codigo" ] = "622-ENTREGADO";
+            $pedido[ "estatus_codigo" ] = "421-APLICADO";  // "622-ENTREGADO";
     
             model( "PedidoModel" )->save( $pedido );
         }

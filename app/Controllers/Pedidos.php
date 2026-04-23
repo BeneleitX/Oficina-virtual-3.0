@@ -36,7 +36,7 @@ class Pedidos extends BaseController
         }
 
         $this->data[ "especial" ] = false;
-        $this->data[ "salidas" ]  = $salidas ? true : false;
+        $this->data[ "salidas" ]  = $salidas ? 1 : 0;
 
         if( $modelo == "50-INVERSION" ){ 
             $upline = json_decode( $this->data[ "usuario" ]->getUplineJSON( $modelo ) );
@@ -132,13 +132,15 @@ class Pedidos extends BaseController
        
         $this->data[ "especial" ] = "0";
         $this->data[ "sinergy_especial" ] = "0";
-        $this->data[ "salida" ] = $tipo == "salida" ? true : false;
+        
 
         if( $tipo == "pedido" ){
 
             $this->data[ "titulo" ] = "Detalles de pedido";
             $this->data[ "pedido" ] = model( "PedidoModel" )->where( "referencia = ".$data )->first();
- 
+
+            $this->data[ "salida" ] = $this->data[ "pedido" ][ "data" ][ "salida" ] == 1 ? true : false;
+
             if( !$this->data[ "pedido" ] ){ 
                 // return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
                 return template( "pedidos/no_pedido", $this->data );
@@ -222,6 +224,8 @@ class Pedidos extends BaseController
 
         // Entrar directo a URl tienda (sin referencia, pedido en proceso)
         else{
+            $this->data[ "salida" ] = $tipo == "salida" ? true : false;
+            
             $modelo = $data;
 
             if( $modelo == "50-INVERSION" ){ 
@@ -266,7 +270,7 @@ class Pedidos extends BaseController
 
             load_catalogo( "promociones", $q);
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
-            load_catalogo( "almacenes",      "{$activo} AND modelo_codigo = '{$modelo}'");
+            load_catalogo( "almacenes",      ( $this->data[ "salida" ] ? "" : $activo." AND " )." modelo_codigo = '{$modelo}'");
             load_catalogo( "metodospago",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'".( $tipo == "salida" ? " and json_extract( settings, '$.salida' ) = true" : "and ( json_extract( settings, '$.salida' ) = false or json_extract( settings, '$.salida' ) is null )") );
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );

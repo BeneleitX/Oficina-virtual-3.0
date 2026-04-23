@@ -111,7 +111,7 @@ class Socio extends BaseController
         session()->setFlashdata('msg', [ 
             "clase" => "success", 
             "icono" => "user-check", 
-            "texto" => "Se ha actualizado la fotografía"]); 
+            "texto" => "Se ha actualizado la fotografía"]);
     }
 
 
@@ -217,8 +217,8 @@ class Socio extends BaseController
 
         model( "UsuarioModel" )->save( $this->data[ "socio" ] );
     }
- 
- 
+
+
     public function valida_credencial(){
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
@@ -245,7 +245,7 @@ class Socio extends BaseController
         $this->data[ "socio" ] = $this->data[ "usuario" ];
 
         $nuevo = [
-            "nombre" => preg_replace('/^[\p{L}\s]+$/u', '', $this->request->getPost( "beneficiario_nuevo" )),
+            "nombre" => preg_replace('/[^a-zA-Z]/', '', $this->request->getPost( "beneficiario_nuevo" )),
             "porcentaje" => $this->request->getPost( "beneficiario_porcentaje" )
         ];
 
