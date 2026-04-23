@@ -12,7 +12,7 @@
     <?php if( $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" ) ){ ?>
     <div class="col-lg-2">
-        <a href="<?php echo base_url( "salidas/".$modelo ); ?>" class="btn btn-warning col-12 my-4"><i class="fa fa-cart-flatbed"></i> Salida de producto</a>
+        <?php if( $usuario->permiso( "21-SALIDAS" ) ){ ?><a href="<?php echo base_url( "salidas/".$modelo ); ?>" class="btn btn-warning col-12 my-4"><i class="fa fa-cart-flatbed"></i> Salida de producto</a> <?php } ?>
     </div>
     <div class="col-lg-2">
         <a href="<?php echo base_url( "transferencias/".$modelo ); ?>" class="btn btn-secondary col-12 my-4"><i class="fa fa-truck-arrow-right"></i> Transferir productos</a>

@@ -42,6 +42,9 @@ class Almacenes extends BaseController
                 FROM t_almacenes a 
                 LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
                 WHERE a.modelo_codigo = '{$modelo}'
+
+                and ( json_extract( p.data, '$.salida' ) = 0 or json_extract( p.data, '$.salida' ) is null )
+                
                 ".( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) ? "AND json_contains( a.settings->>'$.staff', '{$this->data[ "usuario" ]->id}' )" : "" )."
                 GROUP BY a.codigo";
 
@@ -94,6 +97,7 @@ class Almacenes extends BaseController
         $sql = "SELECT p.*, u.data AS socio from t_pedidos p
             LEFT JOIN t_usuarios u ON u.id = p.usuario_id
             WHERE p.data->>'$.entrega' = '{$almacen}' 
+            and ( json_extract( p.data, '$.salida' ) = 0 or json_extract( p.data, '$.salida' ) is null )
             AND SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600";
 
         $this->data[ "pedidos" ] = $db->query( $sql )->getResultArray();

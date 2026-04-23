@@ -51,6 +51,8 @@
 
     <tbody>
         <?php 
+            $aa = [];
+
             foreach( $pedidos as $p ){
                 $PTS = "";
 
@@ -69,9 +71,14 @@
                     $p[ "data" ][ "primercompra" ] = get_primercompra( $p[ "usuario_id" ], $p[ "modelo_codigo" ] );
                 }
 
-                if( $salidas && !isset( $almacen[ $p[ "data" ][ "entrega" ] ] ) ){
-                    $almacen[ $p[ "data" ][ "entrega" ] ] = model( "AlmacenModel" )->find( $p[ "data" ][ "entrega" ] );
+                if( $salidas ){
+                    if( strlen( $p[ "data" ][ "entrega" ] ) && !isset( $aa[ $p[ "data" ][ "entrega" ] ] ) ){
+                        $aa[ $p[ "data" ][ "entrega" ] ] = model( "AlmacenModel" )->find( $p[ "data" ][ "entrega" ] );
+                    }
+
+                    $almacen = $aa[ $p[ "data" ][ "entrega" ] ];
                 }
+                
 
                 echo "\n<tr pedido=\"{$p[ "id" ]}\">
                     <td class=\"text-center\">".referencia( $p ).( $p[ "data" ][ "primercompra" ] == 1 ? " <span class=\"badge bg-white small text-purple border border-purple\">1°</span>" : "" )."</td>
@@ -81,7 +88,7 @@
                 for( $b = 0; $b < $p[ "estrellas" ]; $b++ ){ 
                     echo "<i class=\"fa fa-star text-amber\"></i>";
                 }
-             
+              
                 echo "</td>
                     <td class=\"text-center\">";
                     
@@ -101,10 +108,10 @@
                     
                     ".( $salidas ? "" : "<td class=\"text-center\">".( isset( $p[ "fechas" ][ "califica" ] ) ? "<span class=\"d-none\">{$p[ "fechas" ][ "califica" ]}</span><span class=\"badge bg-".( $p[ "data" ][ "mesanterior" ] ? "red" : "indigo" )."\">".date( "m-Y", strtotime( $p[ "fechas" ][ "califica" ] ) )."</span>" : "<span class=\"d-none\">".date( "Y-m-d H:i:s" )."</span>" )."</td><td>".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 250 && $p[ "metodopago_codigo" ] ? METODOSPAGO[ $p[ "metodopago_codigo" ] ][ "nombre" ] : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" )."</td>" )."
 
-                    ".( $salidas ? "<td nowrap>{$almacen[ $p[ "data" ][ "entrega" ] ][ "codigo" ]}</td>" : "<td nowrap>".( $p[ "data" ][ "enviogratis" ] == 1 ? "<span class=\"badge bg-white border border-teal text-teal\">GRATIS</span> " : "" )."".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 250 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> dato pendiente</span>" )."</strong>" : "" )."</td>" )."
+                    ".( $salidas ? "<td nowrap>{$almacen[ "nombre" ]}</td>" : "<td nowrap>".( $p[ "data" ][ "enviogratis" ] == 1 ? "<span class=\"badge bg-white border border-teal text-teal\">GRATIS</span> " : "" )."".( intval( substr( $p[ "estatus_codigo" ], 0, 3 ) ) > 250 ? ( $p[ "metodoentrega_codigo" ] ? METODOSENTREGA[ $p[ "metodoentrega_codigo" ] ][ "nombre" ] : ( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ? "<i class=\"fa fa-circle-info text-marine\"></i> No aplica" : "<i class=\"fa fa-warning text-red\"></i> Sin detalles" ) ) : "<span clasS=\"badge bg-gray-300 text-red\">Pendiente</span>" ).( isset( $p[ "promociones" ][ "310-TELEFONIA" ] ) ? " <strong>".( $p[ "data" ][ "entrega" ] ?? "<span class=\"text-red\"><i class=\"fa fa-warning\"></i> dato pendiente</span>" )."</strong>" : "" )."</td>" )."
 
                     <td class=\"text-end\"><a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-primary\">DETALLES</a></td>
-                </tr>";
+                </tr>"; 
             }
         ?>
      

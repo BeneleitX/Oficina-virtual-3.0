@@ -26,14 +26,18 @@ class Pedidos extends BaseController
         if( !$modelo ){
             $modelo = VARIABLES[ "modelo_default" ][ "valor" ];
         }
-        
-        load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
-        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
-        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
+
+        if( $salidas && !$this->data[ "usuario" ] ->permiso( "21-SALIDAS" ) ){
+            return redirect()->to( "inicio" );
+        }
 
         if( $this->data[ "usuario" ] === null ){
             return redirect()->to( "logout" );
         }
+
+        load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+        load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
+        load_catalogo( "promociones",    "modelo_codigo = '{$modelo}'");
 
         $this->data[ "especial" ] = false;
         $this->data[ "salidas" ]  = $salidas ? 1 : 0;
@@ -141,6 +145,10 @@ class Pedidos extends BaseController
 
             $this->data[ "salida" ] = ( $this->data[ "pedido" ][ "data" ][ "salida" ] ?? 0 ) == 1 ? true : false;
 
+            if( $this->data[ "salida" ] && !$this->data[ "usuario" ] ->permiso( "21-SALIDAS" ) ){
+                return redirect()->to( "inicio" );
+            }
+
             if( !$this->data[ "pedido" ] ){ 
                 // return redirect()->to( 'historial/'.( $modelo ?? VARIABLES[ "modelo_default" ][ "valor" ] ) );
                 return template( "pedidos/no_pedido", $this->data );
@@ -225,7 +233,11 @@ class Pedidos extends BaseController
         // Entrar directo a URl tienda (sin referencia, pedido en proceso)
         else{
             $this->data[ "salida" ] = $tipo == "salida" ? true : false;
-            
+
+            if( $this->data[ "salida" ] && !$this->data[ "usuario" ] ->permiso( "21-SALIDAS" ) ){
+                return redirect()->to( "inicio" );
+            }
+
             $modelo = $data;
 
             if( $modelo == "50-INVERSION" ){ 
