@@ -713,7 +713,7 @@ function update_pedido( flag = null ){
         
             errores = '';
         
-        if( salida ){
+        if( salida == 1 ){
             pedido.metodoentrega_codigo = '00-ALMACEN';
             es_almacen = true;
             pedido.data.observaciones = $( '#observaciones' ).val();
@@ -752,7 +752,7 @@ console.log( es_almacen,  pedido.data.entrega == null, ( pedido.data.entrega ?? 
                 if( pedido.data.entrega == null || ( pedido.data.entrega ?? '' ).length == 0 ){
                     errores = 'Debes seleccionar un almacen';
                 }
-                else{
+                else{ 
                     if( salida ) $( '#select_almacen' ).val( pedido.data.entrega );
                 }
             }
