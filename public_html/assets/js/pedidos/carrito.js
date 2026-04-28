@@ -1085,7 +1085,7 @@ $(document).ready(function()
     // elige metodo de entrega
     $( '[name=observaciones]' ).on( 'change', function(){
 
-        pedido.data.salida = 1;
+        // pedido.data.salida = 1;
         pedido.data.observaciones = $( this ).val();
 
         update_pedido( "metodo entrega" ); 

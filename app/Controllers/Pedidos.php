@@ -283,6 +283,7 @@ class Pedidos extends BaseController
             load_catalogo( "promociones", $q);
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      ( $this->data[ "salida" ] ? "" : $activo." AND " )." modelo_codigo = '{$modelo}'");
+            
             load_catalogo( "metodospago",    ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'".( $tipo == "salida" ? " and json_extract( settings, '$.salida' ) = true" : "and ( json_extract( settings, '$.salida' ) = false or json_extract( settings, '$.salida' ) is null )") );
 
             $this->data[ "pedido" ] = $this->data[ "socio" ]->getPedido( $modelo );
