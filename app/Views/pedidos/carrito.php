@@ -1629,7 +1629,8 @@ foreach( $productos as $p ){
         pesoxbulto      = <?php echo MODELOS[ $modelo ][ "settings" ][ "pesoxbulto" ]; ?>,
         tarifas         = <?php echo json_encode( VARIABLES[ "tarifas_almacen" ][ "valor" ] ); ?>,
         pagado 		    = <?php echo $pagado; ?>,
-        salida 		    = <?php echo $salida == 1 ? 1 : 0; ?>,
+        salida 		    = <?php echo $usuario->permiso( "21-SALIDAS" ) && $salida == 1 ? 1 : 0; ?>,
+        permiso_salida  = <?php echo $usuario->permiso( "21-SALIDAS" ) ? 1 : 0; ?>,
         pedidos_gratis  = <?php echo $pg;  ?>,
         total_pedido    = <?php echo $tt2; ?>,
         bloqueado 	    = <?php echo $bloqueado; ?>,
@@ -1658,4 +1659,3 @@ foreach( $productos as $p ){
     }
 
 </script>
-

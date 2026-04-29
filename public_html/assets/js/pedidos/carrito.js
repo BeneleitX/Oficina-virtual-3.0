@@ -360,6 +360,7 @@ function update_pedido( flag = null ){
             pedido.promociones[ promocion ].activo = 'true';
         }
         else{
+            
             pedido.promociones[ promocion ].activo = 'false';
             $( '.card[promocion=' + promocion + '] table[productos]' ).empty();
             $( '.card[promocion=' + promocion + ']' ).hide();
@@ -502,6 +503,8 @@ function update_pedido( flag = null ){
     var bultos = bultos2 > bultos1 ? bultos2 : bultos1;
     pluses = 0;
     packs  = 0;
+
+    
     if( pedido.data.peso == 0 ){
         metodoentrega_activo    = null;
         // pedido.data.costoxbulto = 0;
@@ -713,11 +716,12 @@ function update_pedido( flag = null ){
         
             errores = '';
         
-        if( salida == 1 ){
+        if( permiso_salida && salida ){
             pedido.metodoentrega_codigo = '00-ALMACEN';
             es_almacen = true;
             pedido.data.observaciones = $( '#observaciones' ).val();
             pedido.data.salida = 1;
+          
             observaciones = ( pedido.data.observaciones ).length;
             permitepagos  = total_productos_pedido > 0 && observaciones > 0 && pedido.data.entrega != null && ( pedido.data.entrega ?? '' ).length > 0;
             
@@ -747,7 +751,6 @@ function update_pedido( flag = null ){
             if( total_productos_pedido == 0 ){
                 errores = 'Tu pedido está vacío';
             }
-console.log( es_almacen,  pedido.data.entrega == null, ( pedido.data.entrega ?? '' ).length == 0 );
             if( es_almacen){
                 if( pedido.data.entrega == null || ( pedido.data.entrega ?? '' ).length == 0 ){
                     errores = 'Debes seleccionar un almacen';
@@ -1085,10 +1088,13 @@ $(document).ready(function()
     // elige metodo de entrega
     $( '[name=observaciones]' ).on( 'change', function(){
 
-        // pedido.data.salida = 1;
-        pedido.data.observaciones = $( this ).val();
-
-        update_pedido( "metodo entrega" ); 
+        if( permiso_salida ){ 
+            pedido.data.salida = 1;
+            pedido.data.observaciones = $( this ).val();
+            
+            update_pedido( "metodo entrega" ); 
+        }
+            
     } );
 
     // elige metodo de entrega
@@ -1238,7 +1244,9 @@ $(document).ready(function()
     // $( 'img[metodopago]' ).show();
 
     if( !( pagado || bloqueado || cancelado ) ){
+        
         if( salida ){
+            
             pedido.metodopago_codigo    = '41-SALIDA';
             pedido.metodoentrega_codigo = '00-ALMACEN';
 
@@ -1246,6 +1254,7 @@ $(document).ready(function()
         }
 
         update_pedido( "inicial" );
+        
     }
 
     if( $( '[name=metodosentrega]' ).length == 1 ){
