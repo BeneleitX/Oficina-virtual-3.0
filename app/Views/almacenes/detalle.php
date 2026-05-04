@@ -65,7 +65,7 @@
                     $p[ "fechas"      ] = json_decode( $p[ "fechas" ], true );
 
                     //$p[ "socio" ] = new \App\Entities\E_usuario( $p[ "usuario_id" ], $p[ "socio" ] );
-
+                    $fecha = strlen( $p[ "fechas" ][ "pagado" ] ?? "" ) >= 10 ? date( "d-m-Y", strtotime( $p[ "fechas" ][ "pagado" ] ) ) : "";
                     
                     $p[ "socio" ] = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
@@ -73,11 +73,8 @@
                         <td>".referencia( $p )."</td>
                         <td>".$p[ "socio" ]->avatar(24)." ".$p[ "socio" ]->id( $p[ "modelo_codigo" ] )." ".$p[ "socio" ]->nombre(2)."</td>
                         <td>".estatus( $p[ "estatus_codigo" ] )."</td>
-
                         <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
-
-                        <td class=\"text-center\"><span class=\"d-none\">".( $p[ "fechas" ][ "pagado" ] ?? "" )."</span> ".( ( $p[ "fechas" ][ "pagado" ] ?? false ) ? date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10) ) ) : "--" )."</td>
-
+                        <td class=\"text-center\"><span class=\"d-none\">{$fecha}</span> {$fecha}</td>
                         <td class=\"text-end\">
                             <a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a>
                             <button type=\"submit\" name=\"pedido\" value=\"{$p[ "id" ]}\" class=\"btn btn-xs btn-primary\">ENTREGAR</button>
