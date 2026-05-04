@@ -76,7 +76,7 @@
 
                         <td class=\"text-center\">{$p[ "data" ][ "productos" ]}</td>
 
-                        <td class=\"text-center\"><span class=\"d-none\">{$p[ "fechas" ][ "pagado" ]}</span> ".date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10) ) )."</td>
+                        <td class=\"text-center\"><span class=\"d-none\">".( $p[ "fechas" ][ "pagado" ] ?? "" )."</span> ".( $p[ "fechas" ][ "pagado" ] ? date( "d-m-Y", strtotime( substr( $p[ "fechas" ][ "pagado" ], 0, 10) ) ) : "--" )."</td>
 
                         <td class=\"text-end\">
                             <a href=\"".base_url( "pedido/".$p[ "referencia" ] )."\" class=\"btn btn-xs btn-secondary\">VER PEDIDO</a>
