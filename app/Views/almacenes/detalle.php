@@ -59,15 +59,16 @@
         <tbody>
             <?php 
                 foreach( $pedidos as $p ){
+                    $p[ "fechas"      ] = json_decode( $p[ "fechas" ], true );
+
                     if( strlen( $p[ "fechas" ][ "pagado" ] ?? "" ) >= 10 ){
 
                         $p[ "PTS"         ] = json_decode( $p[ "PTS"  ], true );
                         $p[ "data"        ] = json_decode( $p[ "data" ], true );
                         $p[ "promociones" ] = json_decode( $p[ "promociones"  ], true );
-                        $p[ "fechas"      ] = json_decode( $p[ "fechas" ], true );
 
                         //$p[ "socio" ] = new \App\Entities\E_usuario( $p[ "usuario_id" ], $p[ "socio" ] );
-                        $fecha = strlen( $p[ "fechas" ][ "pagado" ] ?? "" ) >= 10 ? date( "d-m-Y", strtotime( $p[ "fechas" ][ "pagado" ] ) ) : "";
+                        $fecha = date( "d-m-Y", strtotime( $p[ "fechas" ][ "pagado" ] ) );
                         
                         $p[ "socio" ] = model( "UsuarioModel" )->find( $p[ "usuario_id" ] );
 
