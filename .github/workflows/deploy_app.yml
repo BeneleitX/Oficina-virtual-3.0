@@ -14,3 +14,5 @@ jobs:
         server: 208.109.233.170
         username: app@beneleit.mx
         password: ${{secrets.FTP_PASSWORD }}
+        exclude: |
+          **/writable/logs/**
