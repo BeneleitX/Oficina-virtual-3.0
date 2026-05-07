@@ -61,7 +61,7 @@ if( $saldo > 0 ){
     <?php
     $inversiones = $usuario->get_inversiones();
 
-    if( sizeof( $inversiones ) ){
+    if( sizeof( $inversiones ) ){ 
         $inv = [];
 
         foreach( $inversiones as $i ){
