@@ -97,6 +97,7 @@ abstract class BaseController extends Controller
         $this->data[ "_controller" ] = explode("\\", $router->controllerName()); 
 
         if( !defined( "MESES" ) ) define( "MESES", $meses );
+        define( "FECHA_BASE", "2026-12-05" ); // 2026-02-05
 
         load_catalogo( "modelos", !in_array( $this->data[ "_controller" ][ 3 ], [ "Geodata", "Pedidos", "Admin", "Bancos", "Eventos", "Reportes" ] ) && $this->data[ "_method" ] != "promociones" ? "estatus_codigo = '201-ACTIVO'" : "" );
         load_catalogo( "estatus" );

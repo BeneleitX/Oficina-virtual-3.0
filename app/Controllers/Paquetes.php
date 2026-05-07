@@ -46,7 +46,7 @@ class Paquetes extends BaseController
             
             ->where( "SUBSTRING( t_retiros.estatus_codigo,1,3) > 200" )
             ->where( "JSON_EXTRACT( t_retiros.fechas, '$.mes' ) = '{$mes}'" )
-            ->where( "cast( json_unquote( json_extract( t_inversiones.fechas, '$.pagado' ) ) as date ) > '2026-02-05' " )
+            ->where( "cast( json_unquote( json_extract( t_inversiones.fechas, '$.pagado' ) ) as date ) > '".FECHA_BASE."' " )
 
             ->findAll();
 

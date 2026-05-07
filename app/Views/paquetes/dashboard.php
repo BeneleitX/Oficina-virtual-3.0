@@ -100,7 +100,7 @@ if( sizeof( $inversiones ) ){
         for( $a = 0; $a < sizeof( $i[ "extras" ][ "meses" ] ); $a++ ){
             $m = $i[ "extras" ][ "meses" ][ $a ];
 
-            if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+            if( $i[ "fechas" ][ "pagado"] < FECHA_BASE ){
                 $m[ "retiros" ] = 0.00;
                 $m[ "compuesto" ] = 0.00;
                 $m[ "rendimiento" ] = 0.00;

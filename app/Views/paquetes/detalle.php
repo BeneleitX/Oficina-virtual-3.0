@@ -10,7 +10,7 @@
 <?php
 $cuentameses = sizeof( $i[ "extras" ][ "meses" ] );
 
-if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+if( $i[ "fechas" ][ "pagado"] < FECHA_BASE ){
     $m[ "retiros" ] = 0.00;
     $m[ "compuesto" ] = 0.00;
     $m[ "rendimiento" ] = 0.00;
@@ -74,7 +74,7 @@ for( $a = 0; $a < $cuentameses  ; $a++ ){
     $r_object = model( "RendimientoModel")->where( "producto_codigo", $p->codigo )->where( "mes", $m[ "Ym" ] )->first();
 
 
-    if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+    if( $i[ "fechas" ][ "pagado"] < FECHA_BASE ){
         $m[ "retiros" ] = 0.00;
         $m[ "compuesto" ] = 0.00;
         $m[ "rendimiento" ] = 0.00;

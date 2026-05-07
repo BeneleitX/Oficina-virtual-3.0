@@ -222,7 +222,7 @@ function genera_meses( $pedido, $i, $producto = null ){
             $factor = 2;
         }
 
-        if( $pedido[ "fechas" ][ "pagado" ] < '2026-02-05' ){
+        if( $pedido[ "fechas" ][ "pagado" ] < FECHA_BASE ){
             $r_object[ "porcentajes" ] = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
             $r_object[ "rendimiento" ] = 0.0;
         }
@@ -434,7 +434,7 @@ function genera_meses_bak( $pedido, $i, $producto = null ){
             $factor = 2;
         }
 
-        if( $pedido[ "fechas" ][ "pagado" ] < '2026-02-05' ){
+        if( $pedido[ "fechas" ][ "pagado" ] < FECHA_BASE ){
             $r_object[ "porcentajes" ] = array_fill_keys( range( 1, $date->format( "d" ) ), 0.0 );
             $r_object[ "rendimiento" ] = 0.0;
         }
@@ -683,10 +683,11 @@ function balance_inversion( $i, $fecha = null ){
     for( $a = 0; $a <= 24; $a++ ){
         $j = $i[ "extras" ][ "meses" ][ $a ];
         
-        if( $i[ "fechas" ][ "pagado"] < '2026-02-05' ){
+        if( $i[ "fechas" ][ "pagado"] < FECHA_BASE ){
             $j[ "retiros" ] = 0.00;
             $j[ "compuesto" ] = 0.00;
             $j[ "rendimiento" ] = 0.00;
+            $j[ "rendimiento_mes" ] = 0.00; // temporal quitar rendiumiento a todos
             $j[ "finmes" ] = 0.00;
         }
 
