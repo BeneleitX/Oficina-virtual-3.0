@@ -1,4 +1,7 @@
 <style>
+	html{
+		background: <?php echo $white ? "#fff" : "var(--bs-marine);" ?>;
+	}
 	.loader {
 		position: relative;
 		float:left;
@@ -83,7 +86,6 @@
 		color: #6c757d;
 		font-weight: bold;  
 	}
-	html{background-color:var(--bs-marine)}
 </style>
 
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/circle.js"></script>
