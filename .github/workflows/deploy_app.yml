@@ -15,4 +15,4 @@ jobs:
         username: app@beneleit.mx
         password: ${{secrets.FTP_PASSWORD }}
         exclude: |
-          **/writable/logs/**
+          **/writable/**
