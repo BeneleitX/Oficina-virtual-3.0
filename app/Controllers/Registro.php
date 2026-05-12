@@ -87,6 +87,78 @@ class Registro extends BaseController
         echo template( "registro/nuevo_formulario", $this->data );
     }
 
+    public function registro_b()
+    {
+        $this->data[ "navbar" ] = false;
+        $this->data[ "fondo" ]  = "white";
+        $this->data[ "titulo" ] = "Registro de nuevo socio";
+
+        $this->data[ "pasos" ]  = [
+            [
+                "titulo" => "Ubicación",                
+                "icono"  => "fa-location-dot",
+                "inicio"  => true
+            ],      
+            [
+                "titulo" => "Datos personales",
+                "icono"  => "fa-user"
+            ],
+            [
+                "titulo" => "Contacto",
+                "icono"  => "fa-mobile-screen-button"
+            ],        
+            [
+                "titulo" => "Patrocinador",
+                "icono"  => "fa-diagram-project"                
+            ],
+            [
+                "titulo" => "Identificación oficial",
+                "icono"  => "fa-address-card"
+            ],    
+            [
+                "titulo" => "Prueba de vida",
+                "icono"  => "fa-camera"
+            ],             
+            [
+                "titulo" => "Términos y condiciones",
+                "icono"  => "fa-gavel",
+                "final" => true
+            ]
+            
+        ];
+
+        $response = json_encode( "{}" );
+        /* $curl = curl_init();
+
+        $key = VARIABLES["nubarium"][ "valor" ];
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.sdk.nubarium.com/jwt/v1/generate",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+            CURLOPT_POSTFIELDS => "{\"expireAfter\": 3600}",
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl); */
+
+        $this->data[ "jwt" ] = json_decode( $response );
+        $this->data[ "tempID" ] = uniqid( time().rand( 100, 999 ) );
+        $this->data[ "bar_inicial" ] = 100 / count( $this->data[ "pasos" ] );
+
+     /*    $myfile = fopen("webdictionary.txt", "r") or die("Error: Unable to open file!");
+        echo fread($myfile, filesize("webdictionary.txt"));
+        fclose($myfile); */
+
+        $this->data[ "terminos" ] = file_get_contents( "tyc.txt" );
+
+        echo template( "registro/registro_b", $this->data );
+    }
 
     public function vincular()
     {
@@ -144,7 +216,7 @@ class Registro extends BaseController
         $this->data[ "tempID" ] = uniqid( time().rand( 100, 999 ) );
         $this->data[ "bar_inicial" ] = 100 / count( $this->data[ "pasos" ] );
 
-     /*    $myfile = fopen("webdictionary.txt", "r") or die("Error: Unable to open file!");
+       /*    $myfile = fopen("webdictionary.txt", "r") or die("Error: Unable to open file!");
         echo fread($myfile, filesize("webdictionary.txt"));
         fclose($myfile); */
 
@@ -466,8 +538,8 @@ class Registro extends BaseController
 
         $respuesta = envia_correo( $usuario, $subject, $message, $imagenes );
 
-/* SMS */       
-// sms( )
+        /* SMS */       
+        // sms( )
 
         
         if( $demo > 0 ){
@@ -832,8 +904,8 @@ class Registro extends BaseController
 
         $s = model( "UsuarioModel" )->find( $socio );
 
-  //      $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
-  //      $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
+        //      $frente  = base64_encode( file_get_contents( "data/{$s->id}/ine/frente.jpg" ) );
+        //      $reverso = base64_encode( file_get_contents( "data/{$s->id}/ine/reverso.jpg" ) );            
 
         $d = $s->data;
         $d->valida_vida = $data;
@@ -843,5 +915,61 @@ class Registro extends BaseController
         // BITACORA Creación de cuenta de usuario
         bitacora( 119, $s->id, (array)$data );     
     }    
+
+    public function valida_selfie()
+    {
+        $data = $this->request->getJSON(true);
+
+        if (!isset($data['imagen'])) {
+            return $this->response->setJSON(['error' => 'Imagen requerida']);
+        }
+
+        $base64 = $data['imagen'];
+
+        // Limpiar encabezado base64
+        $base64 = preg_replace('#^data:image/\w+;base64,#i', '', $base64);
+
+        $imageData = base64_decode($base64);
+
+        // Guardar temporal (opcional)
+        $filePath = WRITEPATH . 'uploads/selfie_' . time() . '.jpg';
+        file_put_contents($filePath, $imageData);
+
+        // Enviar a tu API externa
+        $responseAPI = $this->enviarAProveedor($base64);
+
+        return $this->response->setJSON($responseAPI);
+    }
+
+    private function enviarAProveedor($base64)
+    {
+        $curl = curl_init();
+        $key  = VARIABLES["nubarium"][ "valor" ];
+
+
+        curl_setopt_array(
+            $curl, array(
+                CURLOPT_URL => "https://api.nubarium.com/global/biometrics/v1/liveness-face",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_USERPWD  => $key[ "user" ].":".$key[ "pass" ],
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS =>"{\"face\": \"{$base64}\"}",
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            )
+        );
+
+        $respuesta[ "datos" ] = json_decode( curl_exec( $curl ) );
+        curl_close($curl);
+
+
+        echo json_encode($respuesta, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+    }
 }
 

@@ -26,6 +26,7 @@ $routes->post( "pass_request",                      "Sesion::pass_request" );
 $routes->get( "formulario",                         "Registro::formulario" );
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
 $routes->get( "registro",                           "Registro::nuevo_formulario" );
+$routes->get( "registro_b",                         "Registro::registro_b" );
 $routes->get( "vincular",                           "Registro::vincular" );
 $routes->get( "camara/(:any)/(:any)",               "Registro::camara/$1/$2" );
 $routes->get( "upload/(:any)/(:any)",               "Registro::upload/$1/$2" );
@@ -40,6 +41,7 @@ $routes->post( "valida_ine",                        "Registro::valida_ine" );
 $routes->post( "valida_celular",                    "Registro::valida_celular" ); 
 $routes->post( "camara_shot",                       "Registro::camara_shot" ); 
 $routes->post( "guarda_ine",                        "Registro::guarda_ine" ); 
+$routes->post( "validaselfie",                      "Registro::valida_selfie" ); 
 
 
 $routes->get( "GetnetRedirect",                     "Gateway::GetnetRedirect" );

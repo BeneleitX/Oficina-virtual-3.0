@@ -163,10 +163,10 @@ class Pedidos extends BaseController
             load_catalogo( "metodosentrega", "modelo_codigo = '{$modelo}' OR codigo in ( '00-ALMACEN', '90-NO-ENTREGA' )");
             load_catalogo( "almacenes",      "modelo_codigo = '{$modelo}'");
             load_catalogo( "promociones",    "modelo_codigo = '{$modelo}' OR settings->'$.universal' = true");
-            load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
+            // load_catalogo( "metodospago",    "modelo_codigo = '{$modelo}'");
             load_catalogo( "esquemas",       "modelo_codigo = '{$modelo}'");
 
-
+            load_catalogo( "metodospago", ( $modelo == "50-INVERSION" && !$this->data[ "especial" ] ? "0 AND " : "" )."modelo_codigo = '{$modelo}'".( $tipo == "salida" ? " and json_extract( settings, '$.salida' ) = true" : "and ( json_extract( settings, '$.salida' ) = false or json_extract( settings, '$.salida' ) is null )") );
 
             $staff = false;
 
