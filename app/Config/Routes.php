@@ -23,7 +23,7 @@ $routes->get( "qr",                                 "Eventos::qr" );
 $routes->post( "oauth",                             "Sesion::procesa_login" );
 $routes->post( "pass_request",                      "Sesion::pass_request" );
 
-$routes->get( "formulario",                         "Registro::formulario" );
+$routes->get( "formulario",                         "Registro::formulario" ); 
 $routes->get( "registro_exito/(:any)",              "Registro::registro_exito/$1" );
 $routes->get( "registro",                           "Registro::nuevo_formulario" );
 $routes->get( "registro_b",                         "Registro::registro_b" );
