@@ -3,7 +3,10 @@
 <!-- Library -->
 <!-- <script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-biometrics.min.js"></script> -->
 
-<script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/js/liveness.js" type="module" defer></script>
+
+<!-- <script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script> -->
 
 <style>
 
@@ -447,15 +450,15 @@
                     <p class="fw-bold text-marine text-center my-4">¿Cón qué modelo de negocio te gustaría comenzar?</p>
                     <div class="row">
                         
-<div class="col-6">
-    <input type="checkbox" class="btn-check" id="check_nutricion" autocomplete="off">
-    <label class="btn py-4 w-100 btn-outline-primary" for="check_nutricion"><span class="fs-4"><i class="fa fa-seedling"></i> Beneleit Nutrición</span></label>
-</div>
-<div class="col-6">    
-    <input type="checkbox" class="btn-check" id="check_movil" autocomplete="off">
-    <label class="btn py-4 w-100 btn-outline-secondary" for="check_movil"><span class="fs-4"><i class="fa fa-mobile-screen-button"></i> Beneleit Móvil</span></label>
-</div>
-<p class="small text-red m-0" id="mode_error"></p>
+                        <div class="col-6">
+                            <input type="checkbox" class="btn-check" id="check_nutricion" autocomplete="off">
+                            <label class="btn py-4 w-100 btn-outline-primary" for="check_nutricion"><span class="fs-4"><i class="fa fa-seedling"></i> Beneleit Nutrición</span></label>
+                        </div>
+                        <div class="col-6">    
+                            <input type="checkbox" class="btn-check" id="check_movil" autocomplete="off">
+                            <label class="btn py-4 w-100 btn-outline-secondary" for="check_movil"><span class="fs-4"><i class="fa fa-mobile-screen-button"></i> Beneleit Móvil</span></label>
+                        </div>
+                        <p class="small text-red m-0" id="mode_error"></p>
                     </div>
                 </div>
 
@@ -494,11 +497,58 @@
 
                 <!-- Validación de persona -->
                 <div style="display:none" class="paso w-100" step="5">   
-                    <p class="fw-bold text-marine mb-3">Haz click en el botón para iniciar la prueba y escuchar las instrucciones</p> 
-<video id="video" autoplay playsinline></video>
-<canvas id="canvas" style="display:none;"></canvas>
-<button id="capture">Tomar selfie</button>
-<img id="preview"/>
+<?php /*************************************************************/ ?>
+
+    <!-- Main Content -->
+            <p class="fw-bold mb-1">Prueba de vida</p>
+
+            <!-- Consent Form -->
+            <div id="consent-form">
+                <div class="my-4">
+                    <ul>
+                        <li>La prueba de vida es un test para certificar que el registro está siendo solicitado por una persona real.</li>
+                        <li>Valida que tu imagen no se trata de una fotografía o video previamente grabado.</li>
+                        <li>Al comenzar, se activará tu cámara y deberás seguir unas instrucciones sencillas</li>
+                        <li>La información se procesa totalmente desde tu dispositivo, no guardaremos ninguna imagen tuya en nuestros servidores.</li>
+                    </ul>
+                </div>
+                <form>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-video"></i> Comenzar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loading-section" class="text-center d-none">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p class="text-center"><i class="fas fa-spinner fa-spin" style="font-size:50px"></i></p>
+                    <p class="">Cargando...</p>
+            </div>
+
+            <!-- Webcam Section -->
+            <div id="webcam-section" class="d-none px-5 mx-5">
+                <div style="position:relative" class="px-5 mx-5">
+                    
+                    <div xstyle="position-absolute; clip-path: ellipse(30% 47% at 50% 50%);" class="w-100 h-100 rounded overflow-visible">
+                        <video id="webcam" class="w-100 h-100 rounded" autoplay playsinline></video>
+                    </div>
+
+                    <h3 class="text-center fw-bold">Acercate y mira de frente a la cámara.</h3>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="d-none">
+                <div class="text-center">
+                    <h5 class="my-5 text-green"><i class="fa fa-check-circle"></i>
+                    Prueba completada con éxito</h5>
+                </div>
+            </div>
+
+
+<?php /*************************************************************/ ?>
+
                     <button onclick="document.getElementById('vida').restart()" id="valida_vida" class="btn btn-outline-warning" disabled style="display:none"><i class="fa fa-magnifying-glass"></i> Realizar prueba</button>
                     <p class="small text-red m-0 mt-1" id="vida_error"></p>
                 </div>

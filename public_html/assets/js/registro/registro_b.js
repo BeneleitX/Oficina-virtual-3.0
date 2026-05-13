@@ -1,3 +1,5 @@
+
+
 function update_paso( paso ) {
 
     current_active_step = $( '.active.flared' );
@@ -33,7 +35,11 @@ function update_paso( paso ) {
                 $( '#valida_ine' ).hide();
             }
 
-            break;            
+            break;    
+            
+        case 5:
+
+            break;
     }
 
     // if( valida_paso( paso, false ) )
@@ -909,57 +915,6 @@ $(document).ready(function(){
     });   */
 
 
-
-const video = document.getElementById('video');
-
-async function initCamera() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user" }, // cámara frontal
-            audio: false
-        });
-        video.srcObject = stream;
-    } catch (err) {
-        console.error("Error al acceder a la cámara:", err);
-    }
-}
-
-initCamera();    
-     
-const canvas = document.getElementById('canvas');
-const captureBtn = document.getElementById('capture');
-const preview = document.getElementById('preview');
-
-captureBtn.addEventListener('click', () => {
-    const context = canvas.getContext('2d');
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convertir a base64
-    const base64Image = canvas.toDataURL('image/jpeg', 0.9);
-
-    preview.src = base64Image;
-
-    // Enviar al backend
-    enviarImagen(base64Image);
-});
-
-function enviarImagen(base64) {
-    fetch( base_url + 'validaselfie', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ [csrf_token] : csrf_hash, imagen: base64 })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log(data);
-    });
-}
 
 });
 

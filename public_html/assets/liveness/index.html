@@ -1,79 +1,37 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./styles/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liveness Checker - Universal Verify</title>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="./scripts/index.js" type="module" defer></script>
 </head>
 <body>
+  
 
-
-                <form class="space-y-6">
-                    <div class="flex items-start">
-                        <input type="checkbox" id="biometric-consent" class="mt-1 h-4 w-4 text-blue-600" required>
-                        <label for="biometric-consent" class="ml-2 text-gray-700">
-                            I consent to local processing of my facial biometrics for liveness verification.
-                        </label>
-                    </div>
-                    <div class="flex justify-center">
-                        <button type="submit" class="w-fit bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Start Camera
-                        </button>
-                    </div>
-                </form>
-       
-
-            <!-- Loading Section -->
-            <div id="loading-section" class="bg-white rounded-lg shadow-lg p-8 hidden">
-                <div class="text-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Loading Liveness Checker</h2>
-                    <p class="text-gray-600">Please wait while we load the liveness checker...</p>
-                </div>
-            </div>
-
+    <!-- Main Content -->
+   
             <!-- Webcam Section -->
-            <div id="webcam-section" class="bg-white rounded-lg shadow-lg p-6 hidden">
+            <div id="webcam-section">
                 <div class="aspect-w-16 aspect-h-9 mb-3 relative">
-                    <video id="webcam" class="w-full h-full object-cover rounded-lg" autoplay playsinline></video>
+                    
+                    <div style="clip-path: ellipse(30% 50% at 50% 50%);" class="w-full h-full">
+                        <video id="webcam" class="w-full h-full object-cover rounded-lg" autoplay playsinline></video>
+                    </div>
+
                     <div id="checkmark-overlay" class="absolute inset-0 flex items-center justify-center hidden">
                         <div class="bg-green-500 bg-opacity-75 rounded-full p-4">
                             <i class="fas fa-check text-white text-4xl"></i>
                         </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
-                        <p class="text-center text-white font-medium">Please look straight at the camera</p>
+
+                    <div class="xabsolute bottom-0 left-0 right-0 xbg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
+                        <p class="text-center xtext-white font-medium">Por favor, mire de frente a la cámara</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Results Section -->
-            <div id="results-section" class="bg-white rounded-lg shadow-lg p-8 hidden">
-                <div class="text-center">
-                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Liveness Check Complete</h2>
-                    <p class="text-gray-600 mb-6">Successfully verified that you are physically present.</p>
-                    <div class="space-y-4">
-                        <button class="try-again-btn w-fit bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                            Try Again
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Model Error Section -->
-            <div id="model-error" class="bg-white rounded-lg shadow-lg p-6 hidden">
-                <div class="text-center">
-                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Model Loading Error</h2>
-                    <p class="text-gray-600 mb-4">Unable to load liveness detection models. Please refresh the page and try again.</p>
-                    <button onclick="window.location.reload()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        Refresh Page
-                    </button>
-                </div>
-            </div>
-
-       
 </body>
 </html> 
