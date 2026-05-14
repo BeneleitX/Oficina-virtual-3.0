@@ -83,9 +83,9 @@ class Main {
                     let rightEye = detection.landmarks.getRightEye()[0].x;
                     let eyeDistance = Math.abs(rightEye - leftEye);
                     let nose = detection.landmarks.getNose()[4].x;
-                    let lookingLeft = nose < leftEye || Math.abs(leftEye - nose) < eyeDistance * 0.25;
-                    let lookingRight = nose > rightEye || Math.abs(rightEye - nose) < eyeDistance * 0.25;
-                    let lookingStraight = Math.abs(nose - (leftEye + rightEye) / 2) < eyeDistance * 0.125;
+                    let lookingLeft = nose < leftEye || Math.abs(leftEye - nose) < eyeDistance * 0.30;
+                    let lookingRight = nose > rightEye || Math.abs(rightEye - nose) < eyeDistance * 0.30;
+                    let lookingStraight = Math.abs(nose - (leftEye + rightEye) / 2) < eyeDistance * 0.20;
                     
 /*                     if(direction == 'a tu izquierda' && lookingLeft) {
                         direction = 'a tu derecha';
