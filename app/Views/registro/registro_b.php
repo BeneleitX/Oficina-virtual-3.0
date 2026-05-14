@@ -530,10 +530,8 @@
             <div id="webcam-section" class="d-none">
                 <div style="position:relative" class="col-lg-6 offset-lg-3">
                     <video id="webcam" style="width:100%" class="rounded" autoplay playsinline></video>
-                 
                         
                     <div style="width:100%; position:absolute; top:0; left:0;"><img style="width:100%" src="<?php echo base_url(); ?>assets/img/mask.png"></div>
-
                     
                 </div>
                 <h5 class="text-center text-marine">Acercate y mira de frente a la cámara.</h5>
