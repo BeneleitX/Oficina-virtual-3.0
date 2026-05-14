@@ -527,15 +527,16 @@
             </div>
 
             <!-- Webcam Section -->
-            <div id="webcam-section" class="d-none px-5 mx-5">
-                <div style="position:relative" class="px-5 mx-5">
-                    
-                    <div xstyle="position-absolute; clip-path: ellipse(30% 47% at 50% 50%);" class="w-100 h-100 rounded overflow-visible">
-                        <video id="webcam" class="w-100 h-100 rounded" autoplay playsinline></video>
-                    </div>
+            <div id="webcam-section" class="d-none">
+                <div style="position:relative" class="col-lg-6 offset-lg-3">
+                    <video id="webcam" style="width:100%" class="rounded" autoplay playsinline></video>
+                 
+                        
+                    <div style="width:100%; position:absolute; top:0; left:0;"><img style="width:100%" src="<?php echo base_url(); ?>assets/img/mask.png"></div>
 
-                    <h3 class="text-center fw-bold">Acercate y mira de frente a la cámara.</h3>
+                    
                 </div>
+                <h5 class="text-center text-marine">Acercate y mira de frente a la cámara.</h5>
             </div>
 
             <!-- Results Section -->
