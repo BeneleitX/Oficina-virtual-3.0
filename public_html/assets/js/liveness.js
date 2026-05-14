@@ -76,7 +76,7 @@ class Main {
                 ).withFaceLandmarks();
 
                 if (detection) {
-                    this.webcamSection.querySelector('h5').textContent = 'Mira ' + direction;
+                    this.webcamSection.querySelector('h5').textContent = 'Por favor, Mira ' + direction;
 
                     //check if the face is looking to the left or right
                     let leftEye = detection.landmarks.getLeftEye()[0].x;

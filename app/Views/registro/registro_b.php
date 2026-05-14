@@ -534,7 +534,7 @@
                     <div style="width:100%; position:absolute; top:0; left:0;"><img style="width:100%" src="<?php echo base_url(); ?>assets/img/mask.png"></div>
                     
                 </div>
-                <h5 class="text-center text-marine">Acercate y mira de frente a la cámara.</h5>
+                <h5 class="text-center text-red fw-bold">Acercate y mira de frente a la cámara.</h5>
             </div>
 
             <!-- Results Section -->
