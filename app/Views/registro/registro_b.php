@@ -534,13 +534,14 @@
                     <div style="width:100%; position:absolute; top:0; left:0;"><img style="width:100%" src="<?php echo base_url(); ?>assets/img/mask.png"></div>
                     
                 </div>
-                <h5 class="text-center text-red fw-bold">Acercate y mira de frente a la cámara.</h5>
+                <h5 class="text-center text-red fw-bold">Por favor acercate a la cámara</h5>
             </div>
 
             <!-- Results Section -->
             <div id="results-section" class="d-none">
                 <div class="text-center">
-                    <h5 class="my-5 text-green"><i class="fa fa-check-circle"></i>
+                    <i style="font-size:150px" class="fa fa-check-circle text-green my-5"></i>
+                    <h5>
                     Prueba completada con éxito</h5>
                 </div>
             </div>
