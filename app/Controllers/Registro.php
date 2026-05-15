@@ -16,6 +16,8 @@ class Registro extends BaseController
 
     public function nuevo_formulario()
     {
+        return redirect()->to( "registro_b" );
+
         $this->data[ "navbar" ] = false;
         $this->data[ "fondo" ]  = "white";
         $this->data[ "titulo" ] = "Registro de nuevo socio";

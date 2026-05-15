@@ -346,7 +346,7 @@ function searchCountry() {
     });
 }
 
-var paso_activo = 5,
+var paso_activo = 0,
     request = {
         'version'      : 2,
         'nacionalidad' : null,

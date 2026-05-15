@@ -487,7 +487,7 @@ class Socio extends BaseController
                 ->withInput();
         }
 
-        // Si hay errores de validacióna utomática, regresar a formulario
+        // Si hay errores de validación automática, regresar a formulario
         if( !$validation->withRequest( $this->request )->run() ){
             // BITACORA Error al crear nuevo password
             bitacora( 36, $socio->id, [ 

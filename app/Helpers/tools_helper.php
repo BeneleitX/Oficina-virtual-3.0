@@ -203,9 +203,17 @@ function mask( $texto, $tipo = "nombre" ){
 
 function bitacora( $accion, $usuario, array $variables = [] ){
     $db = db_connect();
-    $sql = "insert into t_bitacoras values(NULL, {$accion}, {$usuario}, '".date("Y-m-d H:i:s")."', '".json_encode($variables)."', '".getIP()."') ";
+    $sql = "insert into t_bitacoras values(NULL, ?,?,?,?,? )";
 
-    $db->query( $sql );
+    $sqlvars = [        
+        $accion, 
+        $usuario, 
+        date("Y-m-d H:i:s"), 
+        json_encode($variables), 
+        getIP()
+    ];
+
+    $db->query( $sql, $sqlvars );
 }
 
 
