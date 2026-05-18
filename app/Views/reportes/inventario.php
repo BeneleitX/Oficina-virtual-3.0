@@ -5,7 +5,7 @@
 <h4 class="mt-1 mb-0"><?php echo $titulo; ?></h4>
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "reportes" ); ?>"><i class="fa fa-undo"></i> Regresar a reportes</a></p>
 
-<div class="row mt-5">
+<div class="row my-5">
     <div class="col-lg-6">
 
         <div class="row mb-3">
@@ -70,20 +70,35 @@
                 <button type="button" id="download_button" class="d-none btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
             </div>
         </div>
-    
+    </div>
+
+    <div class="col-lg-6 d-none d-lg-block text-center">
+        <img src="<?php echo base_url(); ?>assets/img/stock.png" style="width:40%">
+</div>
+
+
+<div class="row my-3">
+    <div class="col-lg-6">
+        <h5>Productos vendidos</h5>
         <div class="xcard mt-4">
-        <table id="tabla_datos" class="table table-bordered table-striped m-0 bg-white">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+            <table id="tabla_datos" class="table table-bordered table-striped m-0 bg-white">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
 
-</div></div>
+    </div>
 
+    <div class="col-lg-6" id="div_detalles">
+        <h5>Pedidos relacionados</h5>
+        <div class="xcard mt-4"><table id="tabla_detalle" class="table table-bordered table-striped m-0 bg-white"><thead><tr><th>Pedido</th><th>Socio</th><th>Fecha pago</th><th>Cantidad</th></tr></thead><tbody></tbody></table></div>
+    </div>
+</div>

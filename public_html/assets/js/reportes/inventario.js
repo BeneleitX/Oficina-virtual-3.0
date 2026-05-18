@@ -1,22 +1,54 @@
 
+function verDetalle( producto ){
+    
+    var inicia      = $( '[name=d_inicia]'  ).val(),
+        termina     = $( '[name=d_termina]'  ).val();
+        modelo      = $( '[name=d_modelo]' ).val();
+        almacen     = $( '[name=d_almacen]' ).val();
+        filtro      = $( '[name=d_filtro]' ).val();
+
+    $( '#tabla_detalle tbody' ).html( '<tr><td colspan="5">' + loader + '</td></tr>' );
+
+    $.ajax({
+        url: base_url + 'tabla_detalles',
+        data: { 
+            [csrf_token] : csrf_hash, 
+            'inicia' : inicia, 
+            'termina': termina, 
+            'modelo': modelo, 
+            'almacen': almacen,
+            'filtro': filtro,
+            'producto': producto },
+        type: 'POST',
+        success: function( data ){
+            tabla2.clear().rows.add(JSON.parse(data) ).draw();
+        }
+    });     
+}
+
+tabla2  = new DataTable('#tabla_detalle', {
+            pageLength: 50
+        });
+
 $(document).ready(function(){
     var modelo = null,
         tabla  = new DataTable('#tabla_datos', {
-        pageLength: 50,
-  createdRow: function(row, data, dataIndex) {
+            pageLength: 50,
+            createdRow: function(row, data, dataIndex) {
 
-        // Obtener valor de la primera columna
-        let valor = parseFloat(data[0]);
+                // Obtener valor de la primera columna
+                let valor = parseFloat(data[0]);
 
-        // Validar que sea número y menor a 6
-        if (!isNaN(valor) && valor < 6) {
+                // Validar que sea número y menor a 6
+                if (!isNaN(valor) && valor < 6) {
 
-            // Colorear fila completa
-            row.style.backgroundColor = '#d4edda';
+                    // Colorear fila completa
+                    row.style.backgroundColor = '#d4edda';
 
-        }
-    }        
-    });
+                }
+            }        
+        });
+        
 
     $( '[name=d_modelo]' ).on ( 'change', function(){
         modelo = $( this ).val();

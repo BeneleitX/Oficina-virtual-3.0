@@ -174,6 +174,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "reportes/pedidos_diarios",           "Reportes::pedidos_diarios" );
     $routes->post( "tabla_ingresos_por_empresa",        "Reportes::tabla_ingresos_por_empresa" ); 
     $routes->post( "tabla_inventario",                  "Reportes::tabla_inventario" ); 
+    $routes->post( "tabla_detalles",                    "Reportes::tabla_detalles" ); 
     $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
     $routes->get( "reportes/inventario",                "Reportes::inventario" );
     $routes->get( "reportes/venta_producto",            "Reportes::venta_producto" );

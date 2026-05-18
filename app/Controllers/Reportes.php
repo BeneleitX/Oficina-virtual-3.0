@@ -583,7 +583,7 @@ class Reportes extends BaseController
 
                 JOIN t_productos p ON p.codigo = prod.producto
 
-                WHERE CAST( tp.fechas->>'$.pagado' as date ) BETWEEN '2026-05-01' AND '2026-05-31'
+                WHERE CAST( tp.fechas->>'$.pagado' as date ) BETWEEN '{$inicia}' AND '{$termina}'
                     and tp.modelo_codigo = '{$modelo}'
                     and substring( tp.estatus_codigo,1,3) > 400
                     
@@ -599,7 +599,8 @@ class Reportes extends BaseController
             $r[] = [
                 $k++,
                 $p->nombre,
-                $p->total_vendido
+                $p->total_vendido,
+                "<button class=\"btn btn-outline-secondary btn-sm\" onclick=\"verDetalle( '{$p->codigo}' )\"><i class=\"fa fa-magnifying-glass\"></i></button>"
             ];    
 
             $tabla .= "<tr>";
@@ -607,6 +608,101 @@ class Reportes extends BaseController
             $tabla .= "<td>{$p->nombre}</td>";
             $tabla .= "<td class=\"text-end\">".number_format( $p->total_vendido )."</td>";
             $tabla .= "</tr>";
+        }
+
+        //echo $tabla;
+        echo json_encode( $r );
+    }
+
+    public function tabla_detalles()
+    {    
+        if( !(
+            $this->data[ "usuario" ]->permiso( "44-INVENTARIO" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $db = db_connect();
+
+        extract( $this->request->getPost() );
+
+        $filtrado = $filtro ? "on promo.promocion IN (
+            '010-DISTRIBUIDOR',
+            '020-PROMO-50'
+        )" : "";
+
+        $tabla = "";
+
+        if( $almacen == "TODOS" ){
+            $almacenes = "";
+        }
+        elseif( $almacen == "010-PUEBLA" ){
+            $almacenes = "AND tp.metodoentrega_codigo in ('10-PAQUETERIA', '12-EXPRESS')";
+        }
+        else{
+            $almacenes = "and tp.metodoentrega_codigo = '00-ALMACEN' AND tp.data->>'$.entrega' = '{$almacen}'";
+        }
+        
+
+        $sql = "
+        
+        SELECT 
+                    tp.referencia,
+                    ANY_VALUE( tp.usuario_id ) as usuario,
+                    ANY_VALUE( CAST( tp.fechas->>'$.pagado' as DATE ) ) as fecha,
+                  
+                    SUM(
+                        CAST(
+                            JSON_UNQUOTE(
+                                JSON_EXTRACT(
+                                    tp.promociones,
+                                    CONCAT( '$.\"', promo.promocion, '\".productos.\"', prod.producto, '\".cantidad' )
+                                )
+                            ) AS UNSIGNED
+                        )
+                    ) AS productos
+
+                FROM t_pedidos tp
+
+                JOIN JSON_TABLE(
+                    JSON_KEYS(tp.promociones),
+                    '$[*]'
+                    COLUMNS ( promocion VARCHAR(255) PATH '$' )
+                ) AS promo
+
+                {$filtrado}
+
+                JOIN JSON_TABLE(
+                    JSON_KEYS(
+                        JSON_EXTRACT( tp.promociones, CONCAT('$.\"', promo.promocion, '\".productos') )
+                    ),
+                    '$[*]'
+                    COLUMNS ( producto VARCHAR(255) PATH '$')
+                ) AS prod
+                
+                ON prod.producto = '{$producto}'
+
+                WHERE CAST( tp.fechas->>'$.pagado' as date ) BETWEEN '{$inicia}' AND '{$termina}'
+                    and tp.modelo_codigo = '{$modelo}'
+                    and substring( tp.estatus_codigo,1,3) > 400
+                    
+                    {$almacenes}
+
+                GROUP BY tp.referencia
+                ORDER BY tp.referencia DESC";
+
+        $datos = $db->query( $sql )->getResult();
+        $k = 1;
+        $r = [];
+        foreach( $datos as $p ){        
+            $r[] = [
+                "<a href=\"".base_url()."pedido/{$p->referencia}\">".referencia( [ "modelo_codigo" => "10-NUTRICION", "referencia" => $p->referencia ] )."</a>",
+                $p->usuario,
+                $p->fecha,
+                $p->productos
+            ];    
+
         }
 
         //echo $tabla;
