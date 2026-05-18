@@ -650,6 +650,11 @@ class Reportes extends BaseController
         SELECT 
                     tp.referencia,
                     ANY_VALUE( tp.usuario_id ) as usuario,
+                    concat_ws( ' ', 
+                        json_unquote( json_extract( ANY_VALUE( u.data ), '$.nombre' ) ),
+                        json_unquote( json_extract( ANY_VALUE( u.data ), '$.apellidos[0]' ) ),
+                        json_unquote( json_extract( ANY_VALUE( u.data ), '$.apellidos[1]'  ) ) )
+                        as usuario,
                     ANY_VALUE( CAST( tp.fechas->>'$.pagado' as DATE ) ) as fecha,
                   
                     SUM(
@@ -664,6 +669,8 @@ class Reportes extends BaseController
                     ) AS productos
 
                 FROM t_pedidos tp
+
+                join t_usuarios u on u.id = tp.usuario_id
 
                 JOIN JSON_TABLE(
                     JSON_KEYS(tp.promociones),

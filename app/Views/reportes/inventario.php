@@ -6,7 +6,7 @@
 <p><a class="btn btn-sm btn-light" href="<?php echo base_url( "reportes" ); ?>"><i class="fa fa-undo"></i> Regresar a reportes</a></p>
 
 <div class="row my-5">
-    <div class="col-lg-6">
+    <div class="col-lg-5">
 
         <div class="row mb-3">
             <label class="col-sm-4 col-form-label">Empresa</label>
@@ -72,13 +72,13 @@
         </div>
     </div>
 
-    <div class="col-lg-6 d-none d-lg-block text-center">
+    <div class="col-lg-7 d-none d-lg-block text-center">
         <img src="<?php echo base_url(); ?>assets/img/stock.png" style="width:40%">
 </div>
 
 
 <div class="row my-3">
-    <div class="col-lg-6">
+    <div class="col-lg-5">
         <h5>Productos vendidos</h5>
         <div class="xcard mt-4">
             <table id="tabla_datos" class="table table-bordered table-striped m-0 bg-white">
@@ -97,8 +97,8 @@
 
     </div>
 
-    <div class="col-lg-6" id="div_detalles">
+    <div class="col-lg-7" id="div_detalles">
         <h5>Pedidos relacionados</h5>
-        <div class="xcard mt-4"><table id="tabla_detalle" class="table table-bordered table-striped m-0 bg-white"><thead><tr><th>Pedido</th><th>Socio</th><th>Fecha pago</th><th>Cantidad</th></tr></thead><tbody></tbody></table></div>
+        <div class="xcard mt-4"><table id="tabla_detalle" class="table nowrap table-bordered table-striped m-0 bg-white"><thead><tr><th>Pedido</th><th>Socio</th><th>Fecha pago</th><th>Cantidad</th></tr></thead><tbody></tbody></table></div>
     </div>
 </div>
