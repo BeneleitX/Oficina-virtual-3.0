@@ -65,8 +65,10 @@
         
 
         <div class="row mb-3">
-            <button type="button" id="submit_button" class="btn btn-secondary" disabled><i class="fa fa-redo"></i> Actualizar datos</button>
-            <button type="button" id="download_button" class="d-none btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
+            <div class="col-sm-8 offset-sm-4">
+                <button type="button" id="submit_button" class="btn btn-secondary" disabled><i class="fa fa-redo"></i> Actualizar datos</button>
+                <button type="button" id="download_button" class="d-none btn btn-primary" disabled><i class="fa fa-circle-down"></i> Descargar Excel</button>
+            </div>
         </div>
     
         <div class="xcard mt-4">
