@@ -33,6 +33,12 @@
             "permisos" => [ "39-REPORTES-CONTA", "40-ADMIN", "36-REPORTES" ]
         ],
         [
+            "url" => base_url( "reportes/inventario" ),
+            "icono" => "box",
+            "texto" => "Movimiento de inventario",
+            "permisos" => [ "40-ADMIN", "44-INVENTARIO" ]
+        ],
+        [
             "url" => base_url( "reportes/calificaciones_mes" ),
             "icono" => "user-tag",
             "texto" => "Calificaciones en el mes",

@@ -171,9 +171,11 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "reportes/socios_por_estatus",        "Reportes::socios_por_estatus" );
     $routes->post( "excel_socios_por_estatus",          "Reportes::excel_socios_por_estatus" ); 
     $routes->get( "reportes/ingresos_por_empresa",      "Reportes::ingresos_por_empresa" );
-    $routes->post( "tabla_ingresos_por_empresa",        "Reportes::tabla_ingresos_por_empresa" ); 
     $routes->get( "reportes/pedidos_diarios",           "Reportes::pedidos_diarios" );
+    $routes->post( "tabla_ingresos_por_empresa",        "Reportes::tabla_ingresos_por_empresa" ); 
+    $routes->post( "tabla_inventario",                  "Reportes::tabla_inventario" ); 
     $routes->post( "excel_pedidos_diarios",             "Reportes::excel_pedidos_diarios" ); 
+    $routes->get( "reportes/inventario",                "Reportes::inventario" );
     $routes->get( "reportes/venta_producto",            "Reportes::venta_producto" );
     $routes->get( "excel_venta_producto",               "Reportes::excel_venta_producto" ); 
     $routes->post( "excel_venta_producto",              "Reportes::excel_venta_producto" ); 
@@ -306,7 +308,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->get( "statement/(:any)",                   "Paquetes::estadodecuenta/$1" );
     $routes->get( "entrega_retiro/(:any)",              "Paquetes::entrega_retiro/$1" );
     $routes->get( "entrega_retiros/(:num)",             "Paquetes::entrega_retiros/$1" );
-    $routes->get( "rangos_paquetes",                   "Paquetes::rangos_paquetes" ); 
+    $routes->get( "rangos_paquetes",                    "Paquetes::rangos_paquetes" ); 
     $routes->get( "bono_liderazgo",                     "Paquetes::bono_liderazgo" ); 
     $routes->get( "reporte_inversiones",                "Paquetes::reporte_inversiones" ); 
     $routes->get( "bono_liderazgo/(:num)",              "Paquetes::bono_liderazgo/$1" ); 

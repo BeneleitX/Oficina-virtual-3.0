@@ -12,6 +12,7 @@ class Reportes extends BaseController
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" ) ||
+            $this->data[ "usuario" ]->permiso( "44-INVENTARIO" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
         ) ){
             return redirect()->to( "no_permiso" ); 
@@ -39,7 +40,8 @@ class Reportes extends BaseController
     }
 
 
-    public function socios_por_estatus(){
+    public function socios_por_estatus()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -249,7 +251,8 @@ class Reportes extends BaseController
     }
 
 
-    public function pedidos_diarios(){
+    public function pedidos_diarios()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "39-REPORTES-CONTA" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -440,7 +443,8 @@ class Reportes extends BaseController
     
     
 
-    public function venta_producto(){
+    public function venta_producto()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )
@@ -474,6 +478,140 @@ class Reportes extends BaseController
     }
     
     
+    public function inventario()
+    {
+        if( !(
+            $this->data[ "usuario" ]->permiso( "44-INVENTARIO" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        load_catalogo( "promociones" );
+
+        $sql = "SELECT 
+                modelo_codigo, 
+                metodoentrega_codigo
+                from t_pedidos
+                where substring( estatus_codigo,1,3) > 200
+                and metodoentrega_codigo is not null
+                and fechas->>'$.pagado' > '2024-10-01'
+                group by modelo_codigo, metodoentrega_codigo";
+
+        $db     = db_connect();
+        $result = $db->query( $sql );
+        $this->data[ "metodosentrega" ] = [];
+        
+        foreach( $result->getResult() as $m ){
+            $this->data[ "metodosentrega" ][ $m->modelo_codigo ][] = $m->metodoentrega_codigo;
+        }
+
+        load_catalogo( "almacenes" );
+
+        $this->data[ "navbar" ] = true;
+        $this->data[ "titulo" ] = "Reportes: Movimiento de inventario";
+
+        echo template( "reportes/inventario", $this->data );
+    }
+    
+        
+    public function tabla_inventario()
+    {    
+        if( !(
+            $this->data[ "usuario" ]->permiso( "44-INVENTARIO" ) ||
+            $this->data[ "usuario" ]->permiso( "40-ADMIN" )
+        ) ){
+            return redirect()->to( "no_permiso" ); 
+        }
+
+        $db = db_connect();
+
+        extract( $this->request->getPost() );
+
+        $filtrado = $filtro ? "on promo.promocion IN (
+            '010-DISTRIBUIDOR',
+            '020-PROMO-50'
+        )" : "";
+
+        $tabla = "";
+
+        if( $almacen == "TODOS" ){
+            $almacenes = "";
+        }
+        elseif( $almacen == "010-PUEBLA" ){
+            $almacenes = "AND tp.metodoentrega_codigo in ('10-PAQUETERIA', '12-EXPRESS')";
+        }
+        else{
+            $almacenes = "and tp.metodoentrega_codigo = '00-ALMACEN' AND tp.data->>'$.entrega' = '{$almacen}'";
+        }
+        
+
+        $sql = "SELECT 
+                    p.codigo,
+                    JSON_UNQUOTE(
+                        JSON_EXTRACT(p.data, '$.nombre')
+                    ) AS nombre,
+                    
+                    SUM(
+                        CAST(
+                            JSON_UNQUOTE(
+                                JSON_EXTRACT(
+                                    tp.promociones,
+                                    CONCAT( '$.\"', promo.promocion, '\".productos.\"', prod.producto, '\".cantidad' )
+                                )
+                            ) AS UNSIGNED
+                        )
+                    ) AS total_vendido
+
+                FROM t_pedidos tp
+
+                JOIN JSON_TABLE(
+                    JSON_KEYS(tp.promociones),
+                    '$[*]'
+                    COLUMNS ( promocion VARCHAR(255) PATH '$' )
+                ) AS promo
+
+                {$filtrado}
+
+                JOIN JSON_TABLE(
+                    JSON_KEYS(
+                        JSON_EXTRACT( tp.promociones, CONCAT('$.\"', promo.promocion, '\".productos') )
+                    ),
+                    '$[*]'
+                    COLUMNS ( producto VARCHAR(255) PATH '$')
+                ) AS prod
+
+                JOIN t_productos p ON p.codigo = prod.producto
+
+                WHERE CAST( tp.fechas->>'$.pagado' as date ) BETWEEN '2026-05-01' AND '2026-05-31'
+                    and tp.modelo_codigo = '{$modelo}'
+                    and substring( tp.estatus_codigo,1,3) > 400
+                    
+                    {$almacenes}
+
+                GROUP BY p.codigo
+                ORDER BY total_vendido DESC;";
+
+        $datos = $db->query( $sql )->getResult();
+        $k = 1;
+        $r = [];
+        foreach( $datos as $p ){        
+            $r[] = [
+                $k++,
+                $p->nombre,
+                $p->total_vendido
+            ];    
+
+            $tabla .= "<tr>";
+            $tabla .= "<td>{$k}</td>";
+            $tabla .= "<td>{$p->nombre}</td>";
+            $tabla .= "<td class=\"text-end\">".number_format( $p->total_vendido )."</td>";
+            $tabla .= "</tr>";
+        }
+
+        //echo $tabla;
+        echo json_encode( $r );
+    }
 
     public function excel_venta_producto()
     {
@@ -598,7 +736,8 @@ class Reportes extends BaseController
 
     
     
-    public function calificaciones_mes(){
+    public function calificaciones_mes()
+    {
         if( !(
             $this->data[ "usuario" ]->permiso( "36-REPORTES" ) ||
             $this->data[ "usuario" ]->permiso( "40-ADMIN" )

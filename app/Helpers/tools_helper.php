@@ -1050,7 +1050,8 @@ function nuevo_pedido( $modelo )
         "metodopago_codigo" => null,
         "metodoentrega_codigo" => null,
         "fechas" => [
-            "creado" => date( "Y-m-d H:i:s" )
+            "creado" => date( "Y-m-d H:i:s" ),
+            "pagado" => null
         ]
     ];
     
