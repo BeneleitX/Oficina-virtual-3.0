@@ -62,22 +62,6 @@
                 </select>
             </div>
         </div>
-
-        <div class="row mb-3 d-none">
-            <legend class="col-form-label col-sm-4">Promociones</legend>
-            <div class="col-sm-8"><div class="alert alert-warning py-2 mb-0">Elige una empresa</div><div class="row" id="lista_promos">
-            <?php
-            foreach( PROMOCIONES as $promo ){
-                if(substr( $promo[ "estatus_codigo" ], 0, 3 ) > 200 ){
-                    echo "\n
-                        <div class=\"d-none col-md-6 form-check form-switch\">
-                            <input modelo=\"{$promo[ "modelo_codigo" ]}\" class=\"form-check-input\" type=\"checkbox\" role=\"switch\" id=\"switch_{$promo[ "codigo" ]}\" name=\"d_promociones[{$promo[ "codigo" ]}]\" value=\"{$promo[ "codigo" ]}\" checked>
-                            <label class=\"form-check-label\" for=\"switch_{$promo[ "codigo" ]}\">{$promo[ "settings" ][ "nombre" ]}</label>
-                        </div>";
-                }
-            }
-            ?>
-            </div></div>
         
 
         <div class="row mb-3 d-none">
