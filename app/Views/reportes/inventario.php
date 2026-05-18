@@ -85,16 +85,3 @@
 
 </div></div>
 
-<?php /*
-
-nunca entenderé la obsesión de algunos maestros en querer reprobar alumnos... transferir al alumno la carga del fracaso de sus padres, de la precariedad en la que viven o del mismo maestro que no logra aplicar las técnicas correctas de aprendizaje para el o canalizarlo a la ayuda necesaria... porque si un alumno no aprende, es culpa de todo su entorno, reprobar es lo más fácil: culparlo a el, que no es "disciplinado", que es "flojo", que "no se esfuerza lo suficiente" y todas las etiquetas clasistas que se les ocurran... del fracaso de todo el sistema que lo rodea
-
-
-es correcto, en la mayoría de los casos no hay ayuda especializada, me estas dando la razón entonces, en que el sistema ahí está fallando y no puedes hacer que el alumno cargue con la culpa de eso... reprobarlo es la salida más fácil y la más injusta, es el fracaso del sistema transferido al alumno
-
- todos somos parte del sistema, el creer que las fallas del sistema son ajenas, es un error... si un sindicato nacional puede hacer marchas y huelgas para defender prestaciones, tambien podría hacerlo para que ese niño tenga ayuda especializada... es llevar la famosa "defensa de la educación" a la práctica... y no solo cuando se trata de pedir beneficios al docente.. y obviamente los padres tambien tenemos nuestra responsabilidad ahí, normalmente nos preocupamos cuando nuestro hijo es el afectado, cuando no... ni nos importa, tristemente
-
-  y tienes razón, yo tambien pienso eso, culpar a los maestros es injusto... pero entonces culpar al alumno y "reprobarlo", tambien es injusto... sin embargo hay maestros, como la doña de la publicación que compartes, que justifica hacerlo... y hasta dice que hay que reprobarlos porque "son indisciplinados y no se esfuerzan" lo cual es un prejuicio terrible...
-
-
-  */ ?>
