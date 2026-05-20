@@ -110,6 +110,7 @@ $routes->group( "/",  [ "filter" => "auth" ], static function ( $routes ) {
     $routes->post( "analiza_layout",                    "Bancos::analiza_layout" );    
 
     $routes->get( "ticket/(:any)",                      "Pedidos::ticket/$1" ); 
+    $routes->get( "entregado/(:any)",                   "Pedidos::entregado/$1" ); 
     $routes->get( "historial",                          "Pedidos::historial" ); 
     $routes->post( "historial/fuente",                  "Pedidos::fuente" ); 
     $routes->get( "historial/(:any)",                   "Pedidos::historial/$1" ); 

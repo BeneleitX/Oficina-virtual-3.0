@@ -325,34 +325,39 @@
                     ?>
                 </p>
 
-                <div class="me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
+                <div class="row me_formulario" mp="almacen" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) != "00" ) echo "style=\"display:none\""; ?>>
+                    <div class="col-6">
+                        <select class="form-select bg-mustard text-white" name="select_almacen<?php echo $salida ? "2" : "" ?>">
+                            <?php
+                            $existe_almacen = 0;
 
-                            <select class="form-select bg-mustard text-white" name="select_almacen<?php echo $salida ? "2" : "" ?>" style="display:inline-block; width:50%">
-                                <?php
-                                $existe_almacen = 0;
+                            foreach( ALMACENES as $a ){
 
-                                foreach( ALMACENES as $a ){
-
-                                    if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
-                                        if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
-                                            $existe_almacen = 1;
-                                        }
-                                        
-                                        if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
-                                        echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
+                                if( $a[ "settings" ][ "tipo" ] != "ALMACEN" ){
+                                    if( !$existe_almacen && $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ){
+                                        $existe_almacen = 1;
                                     }
+                                    
+                                    if( ( !$pagado && !$bloqueado && !$cancelado ) || $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] )
+                                    echo "\n<option ".( $a[ "codigo" ] == $pedido[ "data" ][ "entrega" ] ? "selected" : "" )." value=\"{$a[ "codigo" ]}\">{$a[ "nombre" ]}</option>";
                                 }
-                                ?>
-                            </select>
-
-                            
-                            <?php 
-                            if( $bloqueado && !$entregado ){ 
-                                if( $usuario->es_admin() || ( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ) ){
-                                    echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_almacen' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
-                                }
-                            } 
+                            }
                             ?>
+                        </select>
+                    </div>
+
+                    <div class="col-6">    
+                        <?php 
+                        if( $usuario->es_admin() || ( session( "admin" ) && session( "admin" ) != urlencode( base64_encode( $usuario->password_original() ) ) ) ){
+                            if( $bloqueado && !$entregado ){ 
+                                echo " <button data-bs-toggle=\"tooltip\" title=\"Editar almacen\" class=\"btn btn-warning btn-sm\" onclick=\"$( '#edita_almacen' ).modal( 'show' )\"><i class=\"fa fa-edit\"></i></button>";
+                            } 
+                            elseif( $entregado ){
+                                echo " <button onclick=\"$( '#entregado' ).modal( 'show' )\" class=\"btn btn-outline-info w-100\"><i class=\"fa fa-truck\"></i> Detalles de entrega</button>";
+                            }                                
+                        }
+                        ?>
+                    </div>
                 </div>
 
                 <div class="me_formulario" mp="celular" <?php if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 3 ) != "CELULAR" ) echo "style=\"display:none\""; ?>>
@@ -1221,7 +1226,68 @@ if( !$salida && ( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->da
         </div>
     </div>    
     <?php 
+
+    if( $entregado ){
+
+        if( substr( $pedido[ "metodoentrega_codigo" ] ?? "", 0, 2 ) == "00" ){
+
+        $files = glob("assets/img/evidencias/{$pedido['id']}*.jpg"); 
+
+        $sql = "select * from t_bitacoras where accion_id = 27 and variables->>'$.pedido.id' = '{$pedido[ "id" ]}' order by id desc limit 1";
+        
+        $bitacora = $db->query( $sql )->getRow();
+
+
+        $bitacora->variables = json_decode( $bitacora->variables, true );
+        $entrega = model( "UsuarioModel" )->find( $bitacora->variables[ "usuario" ] );
+
+        ?>
+        
+        <div class="modal" tabindex="-1" id="entregado">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fa fa-truck"></i> Detalles de entrega</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="m-0">Entrega</p>
+                                    <input readonly class="form-control" value="<?php echo $entrega->id." - ".$entrega->nombre( 0, false, true ); ?>">
+
+                                    <p class="mt-3 mb-0">Recibe</p>
+                                    <input readonly class="form-control" value="<?php echo $bitacora->variables[ "recibe" ] ?? ""; ?>">
+
+                                    <p class="mt-3 mb-0">Almacen</p>
+                                    <input readonly class="form-control" value="<?php echo ALMACENES[ $pedido[ "data" ][ "entrega" ] ][ "nombre" ]; ?>">
+
+                                    <p class="mt-3 mb-0">Fecha y hora</p>
+                                    <input readonly class="form-control" value="<?php echo $bitacora->fecha; ?>">
+
+                                    <p class="mt-3 mb-0">Celular</p>
+                                    <input readonly class="form-control" value="<?php echo $bitacora->variables[ "celular" ] ?? ""; ?>">
+                                </div>
+                                <div class="col-6">
+                                    <?php if( sizeof( $files ) ){ ?>
+                                        <div class="alert alert-warning"><i class="fa fa-triangle-exclamation"></i> No se han cargado evidencias de entrega para este pedido</div>
+                                    <img src="<?php echo base_url().$files[0]; ?>" class="w-100">
+                                    <?php } else { ?>
+                                        <div class="alert alert-warning"><i class="fa fa-triangle-exclamation"></i> No se han cargado evidencias de entrega para este pedido</div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <?php
+        }
+    }
 }
+
 ?>
 
 

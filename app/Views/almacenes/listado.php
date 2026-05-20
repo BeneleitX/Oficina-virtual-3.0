@@ -6,7 +6,7 @@
 <p><a href="<?php echo base_url( "admin" ); ?>"><i class="fa fa-undo"></i> Regresar a configuración</a></p>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <?php echo pills( "almacenes", $modelo ); ?>        
     </div>
     <?php if( $this->data[ "usuario" ]->permiso( "20-ALMACEN" ) ||
@@ -14,9 +14,7 @@
     <div class="col-lg-2">
         <?php if( $usuario->permiso( "21-SALIDAS" ) ){ ?><a href="<?php echo base_url( "salidas/".$modelo ); ?>" class="btn btn-warning col-12 my-4"><i class="fa fa-cart-flatbed"></i> Salida de producto</a> <?php } ?>
     </div>
-    <div class="col-lg-2">
-       <a href="<?php echo base_url( "entregas/".$modelo ); ?>" class="btn btn-info2 col-12 my-4"><i class="fa fa-clipboard-check"></i> Pedidos entregados</a>
-    </div>
+
     <div class="col-lg-2">
         <a href="<?php echo base_url( "transferencias/".$modelo ); ?>" class="btn btn-secondary col-12 my-4"><i class="fa fa-truck-arrow-right"></i> Transferir productos</a>
     </div>
