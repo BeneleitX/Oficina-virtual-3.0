@@ -1270,8 +1270,7 @@ if( !$salida && ( $this->data[ "usuario" ]->permiso( "28-INGRESA" ) || $this->da
                                 </div>
                                 <div class="col-6">
                                     <?php if( sizeof( $files ) ){ ?>
-                                        <div class="alert alert-warning"><i class="fa fa-triangle-exclamation"></i> No se han cargado evidencias de entrega para este pedido</div>
-                                    <img src="<?php echo base_url().$files[0]; ?>" class="w-100">
+                                        <img src="<?php echo base_url().$files[0]; ?>" class="w-100">
                                     <?php } else { ?>
                                         <div class="alert alert-warning"><i class="fa fa-triangle-exclamation"></i> No se han cargado evidencias de entrega para este pedido</div>
                                     <?php } ?>
