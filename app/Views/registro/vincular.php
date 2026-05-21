@@ -3,6 +3,9 @@
 <!-- Library -->
 <!-- <script src="//cdn.nubarium.com/nubSdk/nubSdk@latest/nubSdk-biometrics.min.js"></script> -->
 
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/js/liveness.js" type="module" defer></script>
+
 <script>
   if( window.self !== window.top ){
     window.top.location = window.location;
@@ -14,7 +17,7 @@
       curp   = '<?php echo $usuario->curp; ?>';
 </script>
 
-<script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script>
+<!-- <script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script> -->
 
 <style>
 
@@ -410,17 +413,58 @@
 
                 <!-- Validación de persona -->
                 <div style="display:none" class="paso w-100" step="3">   
-                    <p class="fw-bold text-marine mb-3">Haz click en el botón para iniciar la prueba y escuchar las instrucciones</p> 
-                    <tn-prueba-vida class="mb-3" id="vida"></tn-prueba-vida>
+
+                <?php /*************************************************************/ ?>
+
+    <!-- Main Content -->
+            <p class="fw-bold mb-1">Prueba de vida</p>
+
+            <!-- Consent Form -->
+            <div id="consent-form">
+                <div class="my-4">
+                    <ul>
+                        <li>La prueba de vida es un test para certificar que el registro está siendo solicitado por una persona real.</li>
+                        <li>Valida que tu imagen no se trata de una fotografía o video previamente grabado.</li>
+                        <li>Al comenzar, se activará tu cámara y deberás seguir unas instrucciones sencillas</li>
+                        <li>La información se procesa totalmente desde tu dispositivo, no guardaremos ninguna imagen tuya en nuestros servidores.</li>
+                    </ul>
+                </div>
+                <form>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-video"></i> Comenzar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loading-section" class="text-center d-none">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p class="text-center"><i class="fas fa-spinner fa-spin" style="font-size:50px"></i></p>
+                    <p class="">Cargando...</p>
+            </div>
+
+            <!-- Webcam Section -->
+            <div id="webcam-section" class="d-none">
+                <div style="position:relative" class="col-lg-6 offset-lg-3">
+                    <video id="webcam" style="width:100%" class="rounded" autoplay playsinline></video>
+                        
+                    <div style="width:100%; position:absolute; top:0; left:0;"><img style="width:100%" src="<?php echo base_url(); ?>assets/img/mask.png"></div>
                     
-                    <?php
-                    if( $vida ){
-                        echo "<button class=\"btn btn-success\" disabled><i class=\"fa fa-check\"></i> Verificado</button>";
-                    }
-                    else{
-                        echo "<button onclick=\"document.getElementById('vida').restart()\" id=\"valida_vida\" class=\"btn btn-outline-warning\" disabled style=\"display:none\"><i class=\"fa fa-magnifying-glass\"></i> Realizar prueba</button>";
-                    }
-                    ?>
+                </div>
+                <h5 class="text-center text-red fw-bold">Por favor acercate a la cámara</h5>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="d-none">
+                <div class="text-center">
+                    <i style="font-size:150px" class="fa fa-check-circle text-green my-5"></i>
+                    <h5>
+                    Prueba completada con éxito</h5>
+                </div>
+            </div>
+
+
+<?php /*************************************************************/ ?>
                     
                     <p class="small text-red m-0 mt-1" id="vida_error"></p>
                 </div>
@@ -452,7 +496,7 @@
    
         <button type="button" class="btn btn-outline-secondary2 btn-previous"><i class="fa fa-undo"></i> Anterior</button>
         <button type="button" class="btn btn-secondary btn-next">Comenzar proceso <i class="fa fa-arrow-right"></i></button>
-        <a href="<?php echo base_url( "logout" ); ?>" class="btn btn-primary btn-end">finalizar y salir <i class="fa fa-arrow-right"></i></a>
+        <button type="button" class="btn btn-primary btn-end" style="display:none">finalizar y salir <i class="fa fa-arrow-right"></i></button>
               
     <?php }
 
@@ -476,16 +520,18 @@
         tempID = '<?php echo $tempID; ?>',
         jwt   = <?php echo json_encode( $jwt ); ?>,
         bar_inicial = <?php echo $bar_inicial; ?>,
-        target_post = '<?php echo base_url( "procesa_registro" ); ?>';
+        target_post = '<?php echo base_url( "procesa_vinculacion" ); ?>';
 
 
 var paso_activo = 0,
     request = {
+        "usuario"   : <?php echo $usuario->id; ?>,
+        "curp"         : <?php echo strlen( $usuario->curp ?? "" ) > 5 ? "'".$usuario->curp."'" : "null"; ?>,
 
-        "curp"         : null,
-        "valida_curp"  : null,
-        "valida_vida"  : null,
-        "valida_ine"   : null,
+        "valida_curp"  : <?php echo strlen( $usuario->data->valida_curp->codigoValidacion ?? "" ) > 5 ? "'".$usuario->data->valida_curp->codigoValidacion."'" : "null"; ?>,
+        "valida_vida"  : <?php echo strlen( $usuario->data->valida_vida->codigoValidacion ?? "" ) > 5 ? "'".$usuario->data->valida_vida->codigoValidacion."'" : "null"; ?>,
+        "valida_ine"   : <?php echo strlen( $usuario->data->valida_ine->codigoValidacion ?? "" ) > 5 ? "'".$usuario->data->valida_ine->codigoValidacion."'" : "null"; ?>,
+
         "imagenes": {
             "frente"   : <?php echo ( $usuario->data->credencial->frente ?? 0 ) ? "true" : "null"; ?>,
             "reverso"  : <?php echo ( $usuario->data->credencial->reverso ?? 0 ) ? "true" : "null"; ?>

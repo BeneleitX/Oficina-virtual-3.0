@@ -117,7 +117,7 @@ class Main {
                         key = MD5( escape( Date.now() ) ).substring(1, 10) + '.' + escape(window.btoa( Date.now() ) ).substring(1, 5);
 
                         window.request.vida_verificado = 1;
-                        window.request.valida_vida = key;
+                        window.request.valida_vida = { "codigoValidacion" : key };
 
                         console.log(window.request.valida_vida);
 
@@ -126,7 +126,7 @@ class Main {
 
 
                 } else {
-                    this.webcamSection.querySelector('h3').textContent = 'Acercate a la cámara.';
+                    this.webcamSection.querySelector('h5').textContent = 'Acercate a la cámara.';
                 }
             } catch (error) {
                 console.error('Error processing frame:', error);

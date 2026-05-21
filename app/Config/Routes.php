@@ -32,6 +32,7 @@ $routes->get( "camara/(:any)/(:any)",               "Registro::camara/$1/$2" );
 $routes->get( "upload/(:any)/(:any)",               "Registro::upload/$1/$2" );
 $routes->get( "upload/(:any)/(:any)/(:any)",        "Registro::upload/$1/$2/$3" );
 $routes->post( "procesa_registro",                  "Registro::procesa_registro" );
+$routes->post( "procesa_vinculacion",               "Registro::procesa_vinculacion" );
 $routes->post( "valida_patrocinador",               "Registro::valida_patrocinador" );
 $routes->post( "valida_curp",                       "Registro::valida_curp" );
 $routes->post( "valida_correo",                     "Registro::valida_correo" ); 

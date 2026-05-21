@@ -555,6 +555,31 @@ class Registro extends BaseController
         }
     }
 
+
+    // recibe formulario de registro y valida los datos
+    // si todo sale bien, crea el nuevo socio
+    public function procesa_vinculacion()
+    {
+        $data = $this->request->getPost();
+
+        if( !isset( $data[ "version" ] ) ){
+            $data[ "version" ] = 2;
+        }
+
+        $usuario = model( "UsuarioModel" )->find( $data[ "usuario" ] );
+        $codigo = (array)json_decode( $data[ "valida_vida" ] );
+
+        $datax = $usuario->data;
+        $datax->valida_vida = $codigo;
+        bitacora( 119, $usuario->id, $codigo );
+        $usuario->data = $datax;
+     
+        model( "UsuarioModel" )->save( $usuario );
+
+        return redirect()->to( "perfil" );
+    }
+
+
     public function valida_patrocinador(){
         $respuesta    = [ "error" => null ];
         $patrocinador = model( "UsuarioModel" )->find( $this->request->getPost( "id" ) );

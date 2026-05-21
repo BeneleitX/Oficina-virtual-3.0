@@ -889,6 +889,12 @@ $(document).ready(function(){
                 }).appendTo( newForm );
             });
 
+            $('<input>', {
+                'type': 'hidden',
+                'name': [csrf_token],
+                'value': csrf_hash
+            }).appendTo( newForm );
+                        
             $(document.body).append( newForm );
             newForm.submit();   
         }     

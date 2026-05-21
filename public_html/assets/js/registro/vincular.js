@@ -409,11 +409,11 @@ $(document).ready(function(){
 
 	
 
-    $( '.bxtn-end' ).on( 'click', function( e ){
+    $( '.btn-end' ).on( 'click', function( e ){
         e.preventDefault();
 
         if( valida_paso( paso_activo ) ){
-            $( this ).prop( 'disabled', true ).html( '<i class="fa fa-spinner"></i> Creando cuenta de socio...' );
+            $( this ).prop( 'disabled', true ).html( '<i class="fa fa-spinner"></i> Guardando datos...' );
 
             var newForm = $('<form>', {
                 'method': 'post',
@@ -433,6 +433,12 @@ $(document).ready(function(){
                 }).appendTo( newForm );
             });
 
+            $('<input>', {
+                'type': 'hidden',
+                'name': [csrf_token],
+                'value': csrf_hash
+            }).appendTo( newForm );
+
             $(document.body).append( newForm );
             newForm.submit();   
         }     
@@ -442,7 +448,7 @@ $(document).ready(function(){
 
     // prueba vida
 
-    const pruebaVida = document.getElementById('vida');
+/*     const pruebaVida = document.getElementById('vida');
     const result = document.getElementById('result');
 
     pruebaVida.addEventListener('liveness-passed', (e) => {
@@ -469,7 +475,7 @@ $(document).ready(function(){
     pruebaVida.addEventListener('liveness-failed', (e) => {
       error( 'vida', 'Prueba de vida no completada' );
         $( '#valida_vida' ).prop( 'disabled', false ).removeClass( 'btn-success' ).addClass( 'btn-outline-warning' ).html( '<i class="fa fa-magnifying-glass"></i> Repetir prueba' ).show();
-    });  
+    });   */
     
     $( '.wizard' ).removeClass( 'd-none' );
 });
