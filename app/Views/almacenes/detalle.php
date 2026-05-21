@@ -8,12 +8,12 @@
 
         <div class="row mb-4" id="inventario">
             <?php  
-
                 foreach($almacen[ "inventario" ][ "balance" ] as $k => $c ){
 
                     $p = PRODUCTOS[ $k ];
                     $avatar = file_exists( "assets/img/productos/{$p[ "codigo" ]}.png" );
 
+                    /*  
                     if($c > 60 ){
                         $class = "teal";
                     }
@@ -22,18 +22,39 @@
                     }
                     else{
                         $class = "red";
+                    } 
+                    */ 
+
+                    $maximo = get_maximo( $almacen, $k ); 
+
+                    $porcentaje = $maximo > 0 ? round( ( $c / $maximo ) * 100 ) : 0;
+
+                    if($porcentaje > 70 ){
+                        $class = "green";
+                    }
+                    elseif($porcentaje > 30 ){
+                        $class = "mustard";
+                    }
+                    elseif($porcentaje > 0 ){
+                        $class = "red";
+                    }
+                    else{
+                        $class = "gray-500";
                     }
 
                     echo "
-                        <div class=\"col-6 col-lg-3 mb-2 detalle_producto\" producto=\"{$p[ "codigo" ]}\" style=\"cursor:pointer\">
+                        <div class=\"col-md-6 col-lg-4 col-xl-3 mb-2 detalle_producto\" producto=\"{$p[ "codigo" ]}\" style=\"cursor:pointer\">
                             <div class=\"card border-{$class}\" style=\"overflow:hidden\">
                                 <div class=\"card-body p-0\">
-                                    <table class=\"w-100 m-0 p-0\"><tr class=\"text-{$class}\">
-                                        <td class=\"\"><img class=\"m-1\" style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
-                                        <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )."</td>
+                                    <table class=\"w-100 m-0 p-0\"><tr>
+                                        <td class=\"\"><img class=\"mx-1 my-0\" style=\"width:30px !important\" src=\"".base_url()."assets/img/productos/".( $avatar ? $p[ "codigo" ] : "NO-IMAGEN" ).".png\"></td>
+                                        <td width=\"100%\">".mb_strtoupper( $p[ "data" ][ "nombre" ] )." {$maximo}</td>
                                         <td class=\"pe-2 pb-1\">".( ( $tf = $almacen[ "inventario" ][ "transfers_destino" ][ "530" ][ $k ] ?? 0 ) != 0 ? "<span class=\"badge bg-marine\"><i class=\"fa fa-truck-arrow-right\"></i> {$tf}</span>" : "" )."</td>
-                                        <td nowrap class=\"pe-3 text-end\"><strong class=\"fs-5\">".number_format( $c )."</strong></td>
+                                        <td nowrap class=\"pe-3 text-end\"><strong class=\"fs-5 text-{$class}\">".number_format( $c )."</strong> <span class=\"small\"> de {$maximo}</span></td>
                                     </tr></table>
+                                </div>
+                                <div class=\"progress\" role=\"progressbar\" style=\"border-radius: 0; height:7px;\">
+                                    <div class=\"progress-bar bg-{$class} fw-bold\" style=\"width: {$porcentaje}%; line-height:0\"></div>
                                 </div>
                             </div>
                         </div>";

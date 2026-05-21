@@ -1248,3 +1248,45 @@ function sms( $unique, $numero, $mensaje )
     $sms = new SmsService();
     $respuesta = $sms->enviar( $mensaje, [$numero], $unique );
 }
+
+
+function get_maximo( $almacen, $producto )
+{
+    $db = db_connect();
+
+    $inicial = $almacen[ "inventario" ][ "iniciales"][ $producto ] ?? 0;
+    $maximo  = $almacen[ "inventario" ][ "maximos"][ $producto ] ?? 0;
+    $actual  = $almacen[ "inventario" ][ "balance"][ $producto ] ?? 0;
+
+    if( $maximo < $inicial ){
+        $sql = "UPDATE 
+                    t_almacenes 
+                SET maximos = if( 
+                    JSON_TYPE( maximos ) != 'OBJECT', 
+                    JSON_OBJECT('{$producto}', {$inicial}), 
+                    JSON_SET( maximos, '$.\"{$producto}\"', {$inicial} )
+                ) 
+                WHERE codigo = '{$almacen[ "codigo" ]}'";
+      
+        $db->query( $sql );
+
+        $maximo = $inicial;
+    }
+
+    if( $maximo < $actual ){
+        $sql = "UPDATE 
+                    t_almacenes 
+                SET maximos = if( 
+                    JSON_TYPE( maximos ) != 'OBJECT', 
+                    JSON_OBJECT('{$producto}', {$actual}), 
+                    JSON_SET( maximos, '$.\"{$producto}\"', {$actual} )
+                ) 
+                WHERE codigo = '{$almacen[ "codigo" ]}'";
+      
+        $db->query( $sql );
+
+        $maximo = $actual;
+    }
+
+    return $maximo;
+}
