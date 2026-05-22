@@ -119,7 +119,7 @@ class Main {
 
                         var ts = Date.now();
 
-                        key = MD5( escape( ts ) ).substring(1, 10) + '.' + escape(window.btoa( ts ) ).substring(1, 5);
+                        key = MD5( escape( ts ) ).substring(1, 10) + '.' + escape( window.btoa( ts ) .substring(15, 10) );
 
                         window.request.vida_verificado = 1;
                         window.request.valida_vida = JSON.stringify({ 
