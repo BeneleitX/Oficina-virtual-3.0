@@ -570,7 +570,7 @@ class Registro extends BaseController
         $codigo = (array)json_decode( $data[ "valida_vida" ] );
 
         $datax = $usuario->data;
-        $datax->sessionToken = $codigo;
+        $datax->valida_vida = $codigo;
         bitacora( 119, $usuario->id, $codigo );
         $usuario->data = $datax;
      

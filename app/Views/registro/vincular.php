@@ -520,7 +520,8 @@
         tempID = '<?php echo $tempID; ?>',
         jwt   = <?php echo json_encode( $jwt ); ?>,
         bar_inicial = <?php echo $bar_inicial; ?>,
-        target_post = '<?php echo base_url( "procesa_vinculacion" ); ?>';
+        target_post = '<?php echo base_url( "procesa_vinculacion" ); ?>',
+        hash = '<?php echo urlencode( base64_encode( $usuario->password_original() ) ); ?>';
 
 
 var paso_activo = 0,
