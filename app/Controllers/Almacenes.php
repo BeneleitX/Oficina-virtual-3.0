@@ -40,10 +40,8 @@ class Almacenes extends BaseController
                     SELECT COUNT(DISTINCT t.fecha) FROM t_transferencias t where t.destino = a.codigo AND estatus_codigo = '530-ENVIADO'
                 ) AS transferencias
                 FROM t_almacenes a 
-                LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600
+                LEFT JOIN t_pedidos p ON p.data->>'$.entrega' = a.codigo and SUBSTRING( p.estatus_codigo, 1, 3 ) between 400 and 600 AND (json_extract(p.data, '$.salida') = 0 OR json_extract(p.data, '$.salida') IS NULL)
                 WHERE a.modelo_codigo = '{$modelo}'
-
-                and ( json_extract( p.data, '$.salida' ) = 0 or json_extract( p.data, '$.salida' ) is null )
                 
                 ".( $this->data[ "usuario" ]->permiso( "18-STOCK", true ) ? "AND json_contains( a.settings->>'$.staff', '{$this->data[ "usuario" ]->id}' )" : "" )."
                 GROUP BY a.codigo";
