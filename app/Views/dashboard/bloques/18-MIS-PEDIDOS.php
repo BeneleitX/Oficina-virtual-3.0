@@ -9,7 +9,7 @@ $sql = "SELECT * FROM t_pedidos p
         WHERE p.usuario_id = {$usuario->id}
         AND SUBSTRING( p.estatus_codigo, 1, 3 ) > 400
         and p.fechas->>'$.pagado' >= '".date( "Y-m" )."-01'
-        and ( json_extract( settings, '$.salida' ) = false or json_extract( settings, '$.salida' ) is null )
+        and ( json_extract( data, '$.salida' ) = false or json_extract( data, '$.salida' ) is null )
         ORDER BY p.fechas->>'$.pagado' DESC LIMIT 5";
 
 $pedidos = $db->query( $sql )->getResultArray();
@@ -46,6 +46,7 @@ load_catalogo( "promociones" );
         <?php 
         if( sizeof( $pedidos ) ){
             foreach( $pedidos as $p ){
+                
                 $PTS = "";
                 $p[ "PTS" ] = json_decode( $p[ "PTS" ], 1 );
                 $p[ "data" ] = json_decode( $p[ "data" ], 1 );
