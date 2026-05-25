@@ -14,7 +14,7 @@
   var v_curp = '<?php echo $curp; ?>',
       v_ine  = '<?php echo $ine; ?>',
       v_vida = '<?php echo $vida; ?>',
-      curp   = '<?php echo $usuario->curp; ?>';
+      curp   = '<?php echo $usuario->curp ?? ""; ?>';
 </script>
 
 <!-- <script type="module" src="https://assets-newww-app.s3.us-west-1.amazonaws.com/tnbioms/tnbioms-livtlwc.js"></script> -->
@@ -521,7 +521,7 @@
         jwt   = <?php echo json_encode( $jwt ); ?>,
         bar_inicial = <?php echo $bar_inicial; ?>,
         target_post = '<?php echo base_url( "procesa_vinculacion" ); ?>',
-        hash = '<?php echo urlencode( base64_encode( $usuario->password_original() ) ); ?>';
+        hash = '<?php echo $usuario->id ? urlencode( base64_encode( $usuario->password_original() ) ) : ""; ?>';
 
 
 var paso_activo = 0,
