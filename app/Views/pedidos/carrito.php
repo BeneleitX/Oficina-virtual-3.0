@@ -730,7 +730,7 @@
                
 
                     <?php 
-                    if( $pagado ){
+                    if( $pagado && !$salida ){
                         ?>
                         <div class="card mb-3 <?php echo $salida ? "d-none" : ""; ?>" style="overflow:hidden">
                             <table class="table rounded-3 m-0">
